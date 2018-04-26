@@ -1,0 +1,133 @@
+<div>
+<p>
+The <code class="jarombek-inline-code">this</code> keyword in JavaScript is a piece of
+the language that has always confused me.  It doesn't work like
+<code class="jarombek-inline-code">this</code> in Java where it refers to the method or
+constructors object.  Often in the past when using <code class="jarombek-inline-code">this</code>
+I have taken shortcuts such as the popular <code class="jarombek-inline-code">var self = this;</code>
+so I wouldn't have to worry about what value <code class="jarombek-inline-code">this</code>
+holds in nested functions.
+</p>
+<p>
+What makes <code class="jarombek-inline-code">this</code> so confusing is that it is set during
+program runtime instead of defined at author time<sup>1</sup>.  In other words it
+does not follow the rules of
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/
+11-Nov/11-8-JS-Scope-Hoisting/View/scope-hoisting.html">lexical scope</a>
+that I am comfortable with.  It also is incredibly daunting for new programmers since the value
+of <code class="jarombek-inline-code">this</code> can potentially be different when calling the same
+function at different instances.
+</p>
+<p>
+So what are the rules for <code class="jarombek-inline-code">this</code>?  If you are in the global
+scope it refers to the global object, which will be different depending on the environment you are
+running JavaScript in.  For example if you are running JavaScript in your browser, this will be the
+window object.
+</p>
+<p>
+There is an exception to this rule though.  If you are using strict mode, a function won't default
+its <code class="jarombek-inline-code">this</code> binding to the global object and instead will return
+<code class="jarombek-inline-code">undefined</code>.  The following example shows an IIFE (Immediately
+Invoked Function Expression) that is set to strict mode so <code class="jarombek-inline-code">this</code>
+is set to <code class="jarombek-inline-code">undefined</code>. However, if we removed
+<code class="jarombek-inline-code">'use strict';</code> it would return the global object.
+</p>
+<CodeSnippet language="JavaScript">
+(function() {
+    'use strict';
+
+    console.info(this);
+})();
+</CodeSnippet>
+<p>
+You can imagine how confusing it would be dealing with <code class="jarombek-inline-code">this</code> if
+some parts of the code were in strict mode and others weren't.  Beacuse of this (and potentially more confusing
+cases I haven't discovered yet) having different pieces of a codebase be strict while others
+are not is considered bad practice<sup>2</sup>.
+</p>
+<p>
+You can also explicity define the value of <code class="jarombek-inline-code">this</code> when calling a
+function with the <code class="jarombek-inline-code">call()</code>,
+<code class="jarombek-inline-code">apply()</code> and <code class="jarombek-inline-code">bind()</code>
+functions.  All objects that have Object.prototype on their prototype chain will have these functions
+<sup>3</sup>.  Both functions take a parameter which is the value you want to set to
+<code class="jarombek-inline-code">this</code>.  The difference is that while
+<code class="jarombek-inline-code">call()</code> and <code class="jarombek-inline-code">apply()</code>
+bind the <code class="jarombek-inline-code">this</code> value for this one call,
+<code class="jarombek-inline-code">bind()</code> creates an immutable bind for all future calls.
+First lets look at an example of <code class="jarombek-inline-code">call()</code>:
+</p>
+<CodeSnippet language="JavaScript">
+function name() {
+    console.info(this.username);
+}
+
+var user = {
+    username: "Andy"
+}
+
+name(); // undefined
+name.call(user); // Andy
+</CodeSnippet>
+<p>
+In is example instead of the function call defaulting to the global scope for
+<code class="jarombek-inline-code">this</code>, we manipulate it and pass in an object
+<code>user</code> to bind to <code class="jarombek-inline-code">this</code>.  Now lets look at
+<code class="jarombek-inline-code">bind()</code>:
+</p>
+<CodeSnippet language="JavaScript">
+var n = name.bind(user); // Andy
+</CodeSnippet>
+<p>
+The result we get back from the <code class="jarombek-inline-code">bind()</code> function is a
+function itself.  The above code is the equivalent of:
+</p>
+<CodeSnippet language="JavaScript">
+var n = function _n() {
+    name.call(user);
+}
+</CodeSnippet>
+<p>
+    When we call the function created by <code class="jarombek-inline-code">bind()</code> the
+    <code class="jarombek-inline-code">this</code> value we passed to it is used.  You can also see
+    if we try and change the value of <code class="jarombek-inline-code">this</code>, we are unable to:
+</p>
+<CodeSnippet language="JavaScript">
+var secondUser = {
+    username: "Joe"
+}
+
+n.call(secondUser);
+n.bind(secondUser);
+n(); // Andy
+</CodeSnippet>
+<p>
+    Another way to manipulate <code class="jarombek-inline-code">this</code> is by performing a constructor
+    call on an object with the <code class="jarombek-inline-code">new</code> keyword.  In this
+    case <code class="jarombek-inline-code">this</code> is set to the newly created object<sup>4</sup>.
+</p>
+<p>
+    Finally if you call a function in the context of an object, that object is used as the value for
+    <code class="jarombek-inline-code">this</code>.  Here is an example:
+</p>
+<CodeSnippet language="JavaScript">
+var n = name.bind(user); // Andy
+</CodeSnippet>
+<p>
+You can see that we make the call <code class="jarombek-inline-code">user.name();</code> in the context
+of the <code class="jarombek-inline-code">user</code> object, so the value of
+<code class="jarombek-inline-code">this.username</code> is the one defined in
+<code class="jarombek-inline-code">user</code>.  Of course you can overwrite this rule if you explicitly
+bind <code class="jarombek-inline-code">this</code> using the <code class="jarombek-inline-code">call()</code>
+function
+</p>
+<p>
+In my opinion if you have a team of developers that understand how
+<code class="jarombek-inline-code">this</code> works then by all means use it!  However if you are on a team
+of people who are new to JavaScript it may be smart to avoid it.  I do agree with Kyle Simpson that
+<code class="jarombek-inline-code">self = this</code> is a confusing hack around practice that shouldn't
+be used <sup>5</sup>.  You can find the source code for the examples I used
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/11-Nov/
+11-11-JS-This/Source/this.js">HERE</a>.
+</p>
+</div>
