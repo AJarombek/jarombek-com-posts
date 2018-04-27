@@ -1,0 +1,93 @@
+<div>
+<p>
+In many programming languages arrow functions are added to allow for concise one liners and
+decreased verbosity.  Less lines of code is one of the things that made the Java 8 release with
+lambdas so appealing.  In ES6 JavaScript also added arrow functions to write
+shorter, more readable code.  In JavaScript however these new functions aren’t as universally
+praised due to some quirks.
+</p>
+<p>
+In JavaScript I have
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/11-Nov/
+11-11-JS-This/View/js-this.html">looked at</a> <code class="jarombek-inline-code">this</code> and how
+it is set dynamically at runtime instead of lexically depending on the scope code is written in.  I
+also went over how many JavaScript users (including myself!) are easily confused by how
+<code class="jarombek-inline-code">this</code> works in the language.  Arrow functions look to ‘fix’
+these confusions by implementing a lexical <code class="jarombek-inline-code">this</code>.  Now the value of
+<code class="jarombek-inline-code">this</code> in an arrow function depends on what
+<code class="jarombek-inline-code">this</code> is equal to at the time it was written (instead
+of where it is called).  This leads to confusing behavior if you are expecting arrow functions to act
+like normal function definitions.  Let’s look at an example.
+</p>
+<CodeSnippet language="JavaScript">
+'use strict';
+
+function mult() {
+    this.x = 50;
+
+    var x2Arrow = () => {
+        console.info(this);
+        return this.x * 2;
+    };
+
+    var x2 = function times2() {
+        console.info(this);
+        return this.x * 2;
+    };
+
+    return {x2, x2Arrow};
+}
+
+var m = new mult();
+</CodeSnippet>
+<p>
+In this example we have a function <code class="jarombek-inline-code">mult()</code> which creates
+an API for multiplying the <code class="jarombek-inline-code">this</code> value by two.  Since we use
+the constructor call (with the <code class="jarombek-inline-code">new</code> keyword)
+<code class="jarombek-inline-code">this</code> is assigned with the newly created object, in this case
+the returned object.  Now let’s look at what happens when we call these functions:
+</p>
+<CodeSnippet language="JavaScript">
+m.x2Arrow(); // this -> mult {x: 50}, return -> 100
+m.x2(); // this -> {x2: function(), x2Arrow: function()}, return -> NaN
+</CodeSnippet>
+<p>
+Why does the regular function definition return <code class="jarombek-inline-code">NaN</code>?
+Remember that <code class="jarombek-inline-code">this</code> is defined as the return object of
+<code class="jarombek-inline-code">mult()</code>, which contains two properties:
+<code class="jarombek-inline-code">x2</code> and <code class="jarombek-inline-code">x2Arrow</code>.
+Notice there is no <code class="jarombek-inline-code">x</code> property defined, so
+<code class="jarombek-inline-code">this.x</code> equals
+<code class="jarombek-inline-code">undefined</code>.  Multiplying a number by
+<code class="jarombek-inline-code">undefined</code> in JavaScript equals
+<code class="jarombek-inline-code">NaN</code>.
+</p>
+<p>
+But why does the arrow function maintain the correct <code class="jarombek-inline-code">this.x</code>
+value and return the intended result?  Because of lexical <code class="jarombek-inline-code">this</code>
+, the <code class="jarombek-inline-code">this</code> reference in <code class="jarombek-inline-code">
+x2Arrow</code> is the value that was held by <code class="jarombek-inline-code">this</code> in the
+function definitions scope (<code class="jarombek-inline-code">this.x = 50</code>).
+Lexical scoped <code class="jarombek-inline-code">this</code> values cannot be changed even when called
+later in the code in different scopes.  Let’s put this claim to the test by trying to
+explicitly set <code class="jarombek-inline-code">this</code>:
+</p>
+<CodeSnippet language="JavaScript">
+m.x2Arrow.call({x: 5}); // this -> mult {x: 50}, return -> 100
+m.x2.call({x: 5}); // this => {x: 5}, return -> 10
+</CodeSnippet>
+<p>
+As you can see the arrow function was not effected by our explicit
+<code class="jarombek-inline-code">this</code> binding!  Very cool (and a bit confusing).  Some claim
+that arrow functions fix some of JavaScript’s flaws<sup>1</sup> (in this case confusing
+<code class="jarombek-inline-code">this</code> rules).  Others say it breaks expected behavior in the
+language<sup>2</sup>.  I think if you aren’t using <code class="jarombek-inline-code">this</code> in
+your code arrow functions can be a great way to increase readability.  Just be careful if the code gets
+in the hands of developers who aren’t aware of JavaScript’s quirks!
+</p>
+<p>
+You can find the full example code
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/11-Nov/
+11-20-JS-Arrow-Function/Source/arrow-functions.js">HERE</a>.
+</p>
+</div>

@@ -1,0 +1,126 @@
+<div>
+<p>
+In a previous posts I looked at Promises and Generators in JavaScript.  I mentioned that
+these two new ES6 features can be especially powerful when combined.  I do think that Promises on
+their own are very useful, however I am not yet sold on Generators.  Now we can
+see how Generators can potentially be used in production level code.
+</p>
+<p>
+When combining Promises and Generators, we can create a function that handles asynchronous tasks
+(let us call it <code class="jarombek-inline-code">async</code>).  This function takes one parameter -
+a generator function.  Each <code class="jarombek-inline-code">yield</code> statement in the generator
+passes a promise, which when resolved with a value calls the generators iterator.  Therefore each
+asynchronous task in the <code class="jarombek-inline-code">async</code> function moves
+on to the next task in sequential order when the promise is completed.  Let's look at some pseudocode:
+</p>
+<CodeSnippet language="JavaScript">
+function async(generator) {
+    var iterator = generator();
+    await(iterator.next())
+
+    function await(promise) {
+        promise.then(function() {
+            await(iterator.next());
+        })
+    }
+}
+</CodeSnippet>
+<p>
+This code lacks all the error handling and other technicalities that would be seen in production code,
+but displays the basic ideas of the <code class="jarombek-inline-code">async</code> function.  Now lets
+look at some pseudocode of how <code class="jarombek-inline-code">async()</code> would be called using
+some made up functions that execute HTTP GET calls.
+</p>
+<CodeSnippet language="JavaScript">
+async(function *tasks() {
+    yield httpGet("www.example.com/search/1");
+    yield httpGet("www.example.com/search/2");
+    yield httpGet("www.example.com/search/3");
+})
+</CodeSnippet>
+<p>
+With our reusable <code class="jarombek-inline-code">async</code> function, this is now how simple our
+asynchronous code can be!  Even better, it is laid out in a synchronous manner, no promises or dreaded
+callbacks to deal with!  All of the <code class="jarombek-inline-code">Promise</code> code is extracted out.
+So why am I only showing pseudocode and not the real thing?  This is because in ECMAScript 2017 (or following
+the old naming convention ES8) this pattern has gotten even easier with a standardized
+<code class="jarombek-inline-code">async</code> function<sup>1</sup> which is created using the
+<code class="jarombek-inline-code">async</code> and
+<code class="jarombek-inline-code">await</code> keywords.
+</p>
+<p>
+In my discovery on promises I created a google search API for cat posts.  I am going to use this example
+again except this time using an ES2017 <code class="jarombek-inline-code">async</code> function.  I will
+use Node 9 so that I won't have to transpile my code with Babel.  One thing that Node 9
+(the newest version of Node.js as of November 2017) does not currently support is ES6 modules by default, so
+I have to use the <code class="jarombek-inline-code">--experimental-modules</code> flag when running my code
+to enable them<sup>2</sup>.  I also have to use the .mjs extension for my JavaScript
+files so Node.js knows that they are modules.  These files are hilariously referred to as Micheal Jackson
+Scripts.  Hopefully the .mjs files are just for the experimental version and not here to stay - I would miss
+those .js files (and it doesn't seem like an elegant solution)!
+</p>
+<p>
+Now let's get to the code.  Our first stop is the meowHttp module which creates a promise for our google
+search<sup>3</sup>.  This module will be imported into the main JavaScript file and used in the
+<code class="jarombek-inline-code">async</code> function:
+</p>
+<CodeSnippet language="JavaScript">
+import {default as https} from 'https';
+
+export function search(query = 'cat') {
+
+const url = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyA2QIPJoGYMx_DuQH6wDqNG3AHXG7bcb94' +
+            '&cx=005720647135116730303:chkg-pnyocg&q=' + query + '&prettyPrint=false';
+
+return new Promise(function (resolve, reject) {
+
+    https.get(url, res => {
+        res.setEncoding('utf-8');
+        let response = '';
+
+        res.on('data', data => {
+            response += data;
+        });
+
+        res.on('end', () => {
+            resolve(JSON.parse(response));
+        });
+        });
+    });
+}
+</CodeSnippet>
+<p>
+Let's put this module to work with our ES2017 <code class="jarombek-inline-code">async</code> function:
+</p>
+<CodeSnippet language="JavaScript">
+import * as http from './meowHttp';
+
+(async function search() {
+    let catResult = await http.search();
+    print(catResult);
+
+    let meowResult = await http.search('meow');
+    print(meowResult);
+})();
+</CodeSnippet>
+<p>
+If you compare this code with the previous Promise and Generator code you can see that the
+<code class="jarombek-inline-code">async</code> and <code class="jarombek-inline-code">await</code>
+keywords and simply syntactic sugar for our <code class="jarombek-inline-code">async()</code> and
+<code class="jarombek-inline-code">await()</code> functions.  Now this is a truly elegant solution
+that allows asynchronous code to be written in an easy to understand synchronous manner.  All of the
+synchronous code is separated out in our imported modules <code class="jarombek-inline-code">search()</code>
+function.  In this code the <code class="jarombek-inline-code">print()</code> function displays the names
+of the articles from the API, and the result of running the code is as follows:
+</p>
+<figure>
+<img src="results.png">
+</figure>
+<p>
+Now you can see how powerful the ES2017 <code class="jarombek-inline-code">async</code> function is!
+Although you don't actually work with the details of combined Promises
+and Generators in ES2017, it is still good to know what is going on behind the scenes!  You can
+find all the code from this discovery <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/
+master/Discoveries/2017/11-Nov/11-26-JS-Async-Function/Source/Async">HERE</a>.
+</p>
+</div>
