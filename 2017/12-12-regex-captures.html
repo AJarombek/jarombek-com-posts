@@ -1,0 +1,66 @@
+<div>
+<p>
+Regular expressions are very commonly used in my code.  However, their are still certain aspects of
+them that have remained a mystery to me.  Today I will explore one new aspect of regular expressions
+- captures.  I will write the code for captures in JavaScript but this applies to many languages with
+regex capabilities (including my main language Java).  Let's dig in.
+</p>
+<p>
+Captures allow us to save pieces of a regular expression so we can use them later on.  For example,
+it we have a regex that matches emails, we can capture certain aspects of the email - the local part
+and the domain.  We can also do the same thing with dates, saving
+the day, month, and year.  That is what happens in the following example:
+</p>
+<CodeSnippet language="JavaScript">
+let date = "02/26/1995";
+
+let pattern = /(\d{1,2})\/(\d{2})\/(\d{4})/;
+let captures = date.match(pattern);
+
+console.info(captures); // ["02/26/1995", "02", "26", "1995"]
+
+// The captures can be accessed from the array produced by match()
+console.info(`Month: ${captures[1]}, Day: ${captures[2]}, Year: ${captures[3]}`);
+</CodeSnippet>
+<p>
+We use the grouping syntax <code class="jarombek-inline-code">(...)</code> to define a capture.  The
+value matched inside this capture is then saved into an array when the
+<code class="jarombek-inline-code">match()</code> function is called on the string.  We can then access
+this arrays elements, as shown on the last line.
+</p>
+<p>
+If we want to use grouping but don't need to capture pieces of our regular expression, JavaScript allows
+us to specify that a group shouldn't create a capture with the
+<code class="jarombek-inline-code">(?: ...)</code> syntax.  This will result in less work for the
+languages engine to perform<sup>1</sup>.
+</p>
+<CodeSnippet language="JavaScript">
+let pattern2 = /(?:\d{1,2})\/(?:\d{2})\/(?:\d{4})/;
+let captures2 = date.match(pattern2);
+console.info(captures2); // ["02/26/1995"]
+</CodeSnippet>
+<p>
+One final thing to explore with captures is backreferences.  This allows us to refer to previous captures
+created in the same regular expression<sup>2</sup>.  We can use backreferences to check if the month and
+day in our dates are equal.  In the following code the <code class="jarombek-inline-code">\1</code>
+token will refer to the contents of the first capture (the dates month) which is defined at runtime.  Now
+our regular expressions are even more dynamic!
+</p>
+<CodeSnippet language="JavaScript">
+let date = "02/26/1995";
+let date2 = "02/02/2017";
+
+let sameDayMonthPattern = /(\d{1,2})\/\1\/\d{4}/;
+
+let fails = sameDayMonthPattern.test(date);
+let succeeds = sameDayMonthPattern.test(date2);
+
+console.info(fails); // false
+console.info(succeeds); // true
+</CodeSnippet>
+<p>
+You can find the full code from this discovery
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
+12-12-JS-Regex-Captures/Source/captures.js">HERE</a>.
+</p>
+</div>

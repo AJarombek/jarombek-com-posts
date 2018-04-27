@@ -1,0 +1,51 @@
+<div>
+<p>
+In many languages I have worked with creating getters and setters for private class variables is
+a common practice.  In Java getters and setters are implemented as two functions which can be
+called directly on an object instance.  They are commonly used in the POJO structure.  In JavaScript
+getters and setters have native support in the language itself.  You can create these getters and setters
+with the <code class="jarombek-inline-code">get</code> and <code class="jarombek-inline-code">set</code>
+keywords.  They are commonly used for computing properties, as shown in the next example.
+</p>
+<CodeSnippet language="JavaScript">
+    var person = {
+        _first: 'Andy',
+        _last: 'Jarombek',
+        get full() {
+            console.info('Accessing Full Name');
+            // Use ES6 template literals
+            return `${this._first} ${this._last}`;
+        }
+    };
+</CodeSnippet>
+<p>
+You can also use setters to perform validation on incoming data.  In the dynamically typed JavaScript
+language we can implement a strictly typed variable<sup>1</sup>:
+</p>
+<CodeSnippet language="JavaScript">
+var person = {
+    _first: 'Andy',
+    _last: 'Jarombek',
+    set first(str) {
+        console.info('Setting First Name');
+        if (typeof str === 'string' || str instanceof String) {
+            var s = str.toLowerCase();
+            this._first = s.charAt(0).toUpperCase() + s.slice(1);
+        } else {
+            throw new TypeError('First Name Must be a String');
+        }
+    }
+};
+</CodeSnippet>
+<p>
+You can see that we can perform any sort of logic inside our getters and setters.  To make things even
+nicer we don't have to call a function to use our native getters and setters.  We just have to assign a
+value or access a property just like any normal object property!
+</p>
+<p>
+Out of all the other languages I use, the only other one with native getter and setter support like
+JavaScript is Swift<sup>2</sup>.  You can check out the full getter and setter code in both languages
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
+12-7-Native-Getter-Setter/Source">HERE</a>.
+</p>
+</div>
