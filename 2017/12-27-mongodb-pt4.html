@@ -1,0 +1,149 @@
+<div>
+<p>
+For more complex queries and data manipulation in MongoDB, we can use the aggregation framework.
+First introduced in MongoDB V2.2 (the current version as of this writing is V3.6) the aggregation
+framework creates a pipeline of operations to perform on documents<sup>1</sup>.  Inside the pipeline
+we can do operations such as sorting, filtering, and grouping documents similar to a SQL
+<code class="jarombek-inline-code">GROUP BY</code> clause.  You can even manipulate grouped data
+inside the pipeline, creating entirely new collections in the process.  Lets use our tree database used in the
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
+12-15-MongoDB-Pt1/View/mongodb1.html">first</a> and
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
+12-16-MongoDB-Pt2/View/mongodb2.html">second</a>
+MongoDB discoveries to explore this framework.
+</p>
+<p>
+If you remember each tree has a type and a grade specifying the height of the tree.  Let's say we
+wanted to find the total number of trees in each grade with type frazier fir.  The aggregation function
+would be like so:
+</p>
+<CodeSnippet language="JavaScript">
+db.tree.aggregate([
+    {$match: {type: 'frazier'}},
+    {$group: {
+        _id: '$grade',
+        count: {$sum:1}
+    }},
+    {$sort: {count: -1}}
+])
+
+/* Result */
+{ "_id" : "9-10ft", "count" : 71 }
+{ "_id" : "10+ft", "count" : 70 }
+{ "_id" : "6-7ft", "count" : 68 }
+{ "_id" : "7-8ft", "count" : 67 }
+{ "_id" : "5-6ft", "count" : 63 }
+{ "_id" : "3-4ft", "count" : 61 }
+{ "_id" : "8-9ft", "count" : 61 }
+{ "_id" : "4-5ft", "count" : 58 }
+</CodeSnippet>
+<p>
+You can see that the <code class="jarombek-inline-code">aggregate()</code> function takes an array
+of pipeline steps.  So we first match on type frazier, group by the grade and get a count of documents
+in that group, and finally sort by the count with the <code class="jarombek-inline-code">$match</code>,
+<code class="jarombek-inline-code">$group</code>,
+and <code class="jarombek-inline-code">$sort</code> operators respectively.
+</p>
+<p>
+You can also group on more than one property by adding it to the <code class="jarombek-inline-code">
+_id</code> object.  In the next example we group on both type and grade.  Also since we are matching
+on the entire collection, we can exclude the <code class="jarombek-inline-code">$match</code> step
+from the pipeline.
+</p>
+<CodeSnippet language="JavaScript">
+db.tree.aggregate([
+    {$group: {
+        _id: {type: '$type', grade: '$grade'},
+        count: {$sum:1}
+    }},
+    {$sort: {count: -1}}
+])
+</CodeSnippet>
+<p>
+You can also combine multiple <code class="jarombek-inline-code">$group</code> operations in an
+aggregation pipeline.  In the next pipeline we are going to get all the tree statistics - count,
+expenses, revenue, and profits.  Since we don't want the result of this aggregation to go to waste,
+we are going to save its result to a collection with the <code class="jarombek-inline-code">$out</code>
+operator.  We just need to specify the name of the collection to save to, in this case
+<code class="jarombek-inline-code">treestat</code>.  We also use the <code class="jarombek-inline-code">
+$project</code> operator to structure and pick the properties that we want in the collection.  All
+properties specified in the <code class="jarombek-inline-code">$project</code> step are passed to the
+next step in the pipeline.
+</p>
+<CodeSnippet language="JavaScript">
+db.tree.aggregate([
+    {$group: {
+        _id: {
+            type: '$type',
+            grade: '$grade',
+            source: '$source_price',
+            sell: '$sell_price'
+        },
+        count: {$sum:1},
+        expenses: {$sum: '$source_price'},
+        revenue: {$sum: '$sell_price'}
+    }},
+    {$group: {
+        _id: {
+            type: '$_id.type',
+            grade: '$_id.grade',
+            source: '$_id.source',
+            sell: '$_id.sell',
+            count: '$count',
+            expenses: '$expenses',
+            revenue: '$revenue'
+        },
+        profit: {$sum: {$subtract: ['$revenue', '$expenses']}}
+    }},
+    {$sort: {profit: -1}},
+    {$project: {
+        _id: {
+            type: '$_id.type',
+            grade: '$_id.grade'
+        },
+        count: '$_id.count',
+        expenses: '$_id.expenses',
+        revenue: '$_id.revenue',
+        profit: '$profit'
+    }},
+    {$out: 'treestat'}
+])
+</CodeSnippet>
+<p>
+One important thing to note about the <code class="jarombek-inline-code">$out</code> operator is that
+it completely replaces the existing collection with the result of our aggregation<sup>2</sup>.  This
+means that you could accidentally wipe out an entire collection such as
+<code class="jarombek-inline-code">tree</code>. Then our database would be ruined!
+</p>
+<p>
+Let's now get the tree count, expenses, revenue, and profits for all trees using our newly created tree
+stat collection:
+</p>
+<CodeSnippet language="JavaScript">
+db.treestat.aggregate([
+    {$group: {
+        _id: 'all_trees',
+        total_trees: {$sum: '$count'},
+        total_expenses: {$sum: '$expenses'},
+        total_revenue: {$sum: '$revenue'},
+        total_profit: {$sum: '$profit'}
+    }}
+])
+
+/* Result */
+{
+    "_id" : "all_trees",
+    "total_trees" : 1001,
+    "total_expenses" : 10220.5,
+    "total_revenue" : 62245,
+    "total_profit" : 52024.5
+}
+</CodeSnippet>
+<p>
+Hopefully this has begun to show the power of the aggregation framework.  You can even use the framework
+to create a kind of pseudo <code class="jarombek-inline-code">JOIN</code>
+operation between collections<sup>3</sup>!  You can find the source code for this discovery
+<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
+12-27-MongoDB-Pt4/Source/dbscripts.js">HERE</a>.
+</p>
+</div>
