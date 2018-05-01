@@ -1,0 +1,179 @@
+<div>
+<p>
+Recently I have spent a lot of time working in React.js for my upcoming website (which by the time
+you are reading this is completed!).  One of the challenges I faced was dynamically deciding at
+runtime which JSX element to render.  It turns out there is a pretty nice solution to this problem with
+one major catch.
+</p>
+<p>
+First however, if you have been following by posts you will know that this is the first time I have posted
+about React.js.  Therefore lets quickly review/initiate ourselves with the React library.
+</p>
+<p>
+React.js is a frontend library written in JavaScript for creating and maintaining views.  Unlike the
+Angular framework which I had been looking before React does not control any aspect of your project besides
+for the views.  This makes it quite lightweight and gives the developer a lot of flexibility and freedom.
+</p>
+<p>
+Let’s quickly run through some of the major selling points of React.  React creates a virtual layer on top
+of the DOM called the Virtual DOM.  React uses the virtual DOM to interact with the real DOM API, allowing
+the developer to not have to interact with the DOM itself<sup>1</sup>.  React also has an extremely
+effective diffing algorithm which makes updates to the DOM quick and effective by only changing necessary
+pieces of the DOM on state changes<sup>2</sup>.
+</p>
+<p>
+React is also isomorphic (code that can be run on multiple platforms), meaning that it does not necessarily
+have to render its views on the DOM<sup>3</sup>.  It can also do so rending HTML on the server (server-side
+rendering) or on mobile apps!  I haven’t explored React Native for mobile apps yet but it sounds extremely
+cool!  My website takes advantage of server-side rendering, which I will cover in detail in a future discovery.
+</p>
+<p>
+Also importantly React tries to take advantage of JavaScripts functional aspects.  Much of my React code is
+functional, and working with React helps me to think functionally making my code more testable and
+maintainable.  I went into detail on <a href="https://jarombek.com/blog/feb-8-2018-java8-functional">
+functional programming in Java</a> in a previous discovery and all
+the benefits that come with it.  These benefits also carry over to JavaScript.
+</p>
+<p>
+So, how to we work with the virtual DOM that React offers us?  We do so with React elements, which correspond
+to HTML elements.  These React elements are JavaScript objects that we can manipulate.  We can even group
+together React elements into a modularized component.  These components can be passed to the virtual DOM
+as well.  When a component is passed to the virtual DOM, the elements inside it will be rendered.  This
+practice allows us to make easily reusable HTML elements.
+</p>
+<p>
+Here is an example of a React component that I will use later on:
+</p>
+<CodeSnippet language="JavaScript">
+import React from "react";
+
+const Link = ({ name, link }) =>
+React.createElement("a", {href: link}, name);
+
+export default Link;
+</CodeSnippet>
+<p>
+This React component is very simple, it creates a new React element which corresponds to the HTML
+<code class="jarombek-inline-code">&lt;a&gt;</code> element.  This element has an
+<code class="jarombek-inline-code">href</code> attribute which links it to a url passed in to the component via
+<code class="jarombek-inline-code">link</code>.  The <code class="jarombek-inline-code">&lt;a&gt;</code> element
+also displays the text passed to the component by the <code class="jarombek-inline-code">name</code> property.
+</p>
+<p>
+The function <code class="jarombek-inline-code">React.createElement()</code> is what creates the React element
+corresponding to an HTML element.  You can image how tiresome and verbose it would be to type out this
+function call for every single HTML element that you wanted a webpage to display.  Luckily there is an
+alternative, JSX.  JSX allows us to create React elements in a syntax that looks like HTML.  Here is an
+example of the previous component except with JSX:
+</p>
+<CodeSnippet language="JavaScript">
+import React from "react";
+
+const Link = ({ name, link }) =>
+&lt;a href={link}&gt;
+    {name}
+&lt;/a&gt;;
+
+export default Link;
+</CodeSnippet>
+<p>
+As you can see, it is much more readable and will be easier to write (although yes, it is a bit of an eyesore
+at first having to mix HTML syntax with JavaScript code).
+</p>
+<p>
+on some JSON that I received from my server.  For example, if the JSON had a property
+<code class="jarombek-inline-code">tag</code> with the value <code class="jarombek-inline-code">div</code>,
+I would want the JSX element to represent an HTML <code class="jarombek-inline-code">div</code>.  In doing
+this, I could store a JSON representation of some HTML and have my React code create and render it on the fly.
+</p>
+<p>
+The code used by my website is a bit more involved but I’m going to go through the basic process.  First I
+import react and the <code class="jarombek-inline-code">Link</code> component I created.  I also get a
+JavaScript object representation of some HTML I want to display:
+</p>
+<CodeSnippet language="JavaScript">
+import React from "react";
+import { render } from "react-dom";
+import Link from "./Link";
+
+const elements = [
+    {
+        tag: "h1",
+        attributes: null,
+        value: "Webpage Title"
+    },
+    {
+        tag: "p",
+        attributes: null,
+        value: "Hey"
+    },
+    {
+        tag: "Link",
+        attributes: {
+            name: "Check out my GitHub!",
+            link: "https://github.com/AJarombek"
+        },
+        value: "Ok"
+    }
+];
+</CodeSnippet>
+<p>
+The object representation of HTML has three properties.  <code class="jarombek-inline-code">tag</code>
+represents the HTML element type, <code class="jarombek-inline-code">attributes</code> lists the HTML
+attributes, and <code class="jarombek-inline-code">value</code> is the content shown inside the HTML tag.
+</p>
+<p>
+Next I need to loop through this <code class="jarombek-inline-code">elements</code> array and generate some
+JSX for each object.  This JSX will then be rendered in the websites HTML.
+</p>
+<CodeSnippet language="JavaScript">
+const App = () =>
+    elements.map(e => {
+        let Tag = e.tag;
+
+        // If we are using a custom react component, we must
+        // assign it directly.
+        if (Tag === "Link") {
+            Tag = Link;
+        }
+
+        return (
+        &lt;Tag key={e.toString()} {...e.attributes}&gt;
+            {e.value}
+        &lt;/Tag&gt;
+        );
+    });
+
+render(&lt;App /&gt;, document.getElementById("root"));
+</CodeSnippet>
+<p>
+The important piece here is that we create a variable <code class="jarombek-inline-code">Tag</code> which
+represents the JSX element.  Remember that a JSX element is simply syntactic sugar for a React element which
+will be sent to the virtual DOM.
+</p>
+<p>
+Native HTML elements are passed to <code class="jarombek-inline-code">React.createElement()</code> as a
+string.  This is why the below code works for <code class="jarombek-inline-code">h1</code> and
+<code class="jarombek-inline-code">p</code> element names.  If you tried assigning the variable
+<code class="jarombek-inline-code">Tag</code> the string “Link” it would not render.  The reason is because
+<code class="jarombek-inline-code">&lt;Link&gt;</code> is not a valid HTML element!  It is a React component
+that I created!  The <code class="jarombek-inline-code">React.createElement()</code> will take in React
+components as well, but you have to pass it the actual component module.  This is the reason for the
+<code class="jarombek-inline-code">if</code> clause in the code above.
+</p>
+<p>
+Here is the end result:
+</p>
+<figure>
+    <img src="dynamic-jsx.png">
+</figure>
+<p>
+I still have a lot of learning and work to do with React.  So far I have really enjoyed it despite a few
+shortcomings that I miss from frameworks such as Angular.  But that is for another post!
+</p>
+<p>
+The full code for this discovery is up on
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/04-Apr/4-29-React-Dynamic-JSX-Tag">
+ Github</a> (as it is for all my posts!).
+</p>
+</div>
