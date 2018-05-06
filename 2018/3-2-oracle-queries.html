@@ -1,7 +1,7 @@
 <div>
 <p>
-In my previous <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/
-2018/02-Feb/2-12-Oracle-Start/View">Oracle database discovery</a> I got a database instance up and
+In my previous <a href="https://jarombek.com/blog/feb-12-2018-oracle-start">Oracle database discovery</a>
+I got a database instance up and
 running plus set up my basic table structure.  The database held programming language information
 and different books that I have read.  In this discovery I continue with that example and perform
 some interesting queries on the database of intermediate difficulty.
@@ -15,10 +15,10 @@ was interesting to me!  I will start out pretty simple and then get more complex
 <h5>Fun Queries!</h5>
 <p>
 Often I perform queries with multiple <code class="jarombek-inline-code">WHERE</code> conditions, chained
-by <code class="jarombek-inline-code">AND</code> clauses.  If I wanted to find it a column is between two
+by <code class="jarombek-inline-code">AND</code> clauses.  If I wanted to find whether a column is between two
 different values, I can use the <code class="jarombek-inline-code">BETWEEN</code>
-clause.  This mill make my intentions more clear and reduce
-my queries <code class="jarombek-inline-code">AND</code> clauses.  The following query looks for books
+clause.  This will make my intentions more clear and reduce
+my use of <code class="jarombek-inline-code">AND</code> clauses.  The following query looks for books
 between two dates:
 </p>
 <CodeSnippet language="SQL">
@@ -28,8 +28,8 @@ AND to_date('2014-08-31', 'YYYY-mm-dd');
 </CodeSnippet>
 <p>
 <code class="jarombek-inline-code">WHERE</code> clauses can also look for soft varchar matches, where
-only a portion of a string has to match a columns value.  In this
-case you can use the <code class="jarombek-inline-code">LIKE</code> clause which can be chained with a
+only a portion of a string has to match a columns value.  Soft matches use the
+<code class="jarombek-inline-code">LIKE</code> clause which can be chained with a
 string value.  The <code class="jarombek-inline-code">%</code> wildcard is used to match any
 number of characters.  The following query searches for books with titles containing the word 'Java':
 </p>
@@ -48,8 +48,8 @@ The current table structure of this database forms a many to many relationship. 
     <img class="jarombek-blog-image" src="./assets/Database-ER.png">
 </figure>
 <p>
-In the following query I perfromed an inner join across this many to many relationship to get a book, the
-language that it is about, and the date that language was created.  Inner joins only return rows when the
+In the following query I perform an inner join across this many to many relationship to get a book, the
+language that it is about, and the inception date of the language.  Inner joins only return rows when the
 columns in the <code class="jarombek-inline-code">JOIN ON</code> clause have non-null
 values<sup>1</sup>.  Therefore, no row will be returned for a language that has no corresponding book.
 </p>
@@ -104,7 +104,7 @@ Spring In Action            Finished Reading  Short Read
 </span>
 <p>
 The next query is going to look at hierarchical data.  This data forms parent child relationships in
-a tree structure.  Now the current three tables we have in the database don't have any hierarchical data.
+a tree structure.  The three tables in the database don't have any hierarchical data.
 Let's change that by creating a new table called <code class="jarombek-inline-code">language_hierarchy</code>
 which stores data about languages and other languages that influenced them.
 </p>
@@ -149,7 +149,7 @@ CONNECT BY PRIOR</code> and <code class="jarombek-inline-code">START WITH</code>
 (it does not have to be the root node in the graph).  In
 the following query we start with the language 'C' since so many modern day languages were influenced by it.
 The <code class="jarombek-inline-code">CONNECT BY
-PRIOR</code> defines the parent child relationship.  Let's say we have two rows where the
+ PRIOR</code> defines the parent child relationship.  Let's say we have two rows where the
 <code class="jarombek-inline-code">name</code> column in row #1 equals
 the <code class="jarombek-inline-code">influenced_by</code> column in row #2.  The
 <code class="jarombek-inline-code">CONNECT BY PRIOR name = influnced_by</code> statement defines that row
@@ -221,8 +221,8 @@ This is a pretty simple use case of the <code class="jarombek-inline-code">GROUP
 let's say I also want a row in the result set that totals all the time spent
 reading.  This is where the <code class="jarombek-inline-code">ROLLUP</code> clause comes in.  You
 use <code class="jarombek-inline-code">ROLLUP</code> in conjunction with the
-<code class="jarombek-inline-code">GROUP BY</code> clause which
-will return a row with the subtotal for the grouping<sup>5</sup>:
+<code class="jarombek-inline-code">GROUP BY</code> clause to
+return a row with the subtotal for the grouping<sup>5</sup>:
 </p>
 <CodeSnippet language="SQL">
 -- In this scenario you could also use the CUBE clause to the same effect.
@@ -272,7 +272,6 @@ SQL           26
 <p>
 There are a ton more cool queries to explore in Oracle, and next time I plan on exploring analytic
 functions.  You can check out all the code for this discovery on
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/03-Mar/
-3-2-Oracle-Queries/Source">GitHub</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/03-Mar/3-2-Oracle-Queries">GitHub</a>.
 </p>
 </div>

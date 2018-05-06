@@ -1,14 +1,13 @@
 <div>
 <p>
 In my
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/01-Jan/
-1-6-Angular-5-First-Impression/View">First Reactions to Angular</a>
+<a href="https://jarombek.com/blog/jan-6-2018-angular-5-first-impressions">First Reactions to Angular</a>
 discovery post, I was quite critical of TypeScript.  I questioned whether it truly was a pure
-superset of JavaScript and didn’t like how it made the MEAN stack no longer just JavaScript.  Now I had
+superset of JavaScript and didn’t like how it made the MEAN stack no longer just JavaScript.  With TypeScript I had
 to change languages again when moving between layers!
 </p>
 <p>
-I did finish my talk about TypeScript in that post saying how I would continue to work with it and see
+I did finish my discussion about TypeScript in that post saying how I would continue to work with it and see
 if I warmed up to the language.  So is TypeScript going to replace my JavaScript now that I have built a
 full Angular 5 app with it?  Not quite, but it is a really cool language that brings a lot to the
 JavaScript ecosystem!
@@ -42,7 +41,7 @@ class User {
     // automatically make them instance variables
     constructor(private username: string, private first: string, private last: string) { }
 
-        public getUsername() {
+    public getUsername() {
 
         // Access the automatically created instance variable
         return this.username;
@@ -56,7 +55,7 @@ console.info(newUser.getUsername()); // andy
 In JavaScript we don’t have this shortcut and have to explicitly assign properties on the object.
 Now here is the equivalent in JavaScript**:
 </p>
-<CodeSnippet language="TypeScript">
+<CodeSnippet language="JavaScript">
 class User {
 
     constructor(username, first, last) {
@@ -106,13 +105,13 @@ interface HttpService {
 }
 </CodeSnippet>
 <p>
-You can see that the <code class="jarombek-inline-code">patch()</code> function defined in the interface
-is also optional for classes to implement (as defined with the <code class="jarombek-inline-code">?</code>
+The <code class="jarombek-inline-code">patch()</code> function defined in the interface
+is optional for classes to implement (as defined with the <code class="jarombek-inline-code">?</code>
 token).  This allows my classes to still be flexible even with an interface!
 </p>
 <h5>Conclusions</h5>
 <p>
-These were a few of the features of TypeScript that really stood out to me.  I really misses optional
+These were a few of the features of TypeScript that really stood out to me.  I really missed optional
 static typing amongst other features when switching back to JavaScript.  While I don’t think TypeScript
 will replace my use of JavaScript, I do hope JavaScript
 implements some of these features in the future (in fact, there is a

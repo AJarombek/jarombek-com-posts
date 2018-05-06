@@ -6,8 +6,8 @@ and it is the <a href="http://pypl.github.io/DB.html">most popular database</a> 
 it is good to know well!
 </p>
 <p>
-This discovery is going to follow me through the setup of my database.  I will skip the actually Oracle
-installation and configuration (which was a challenge itself!) and skip straight to the moment I started
+This discovery is going to follow me through the setup of my database.  I will skip the actual Oracle
+installation and configuration (which was a challenge itself!) and move straight to the moment I started
 typing SQL.
 </p>
 <p>
@@ -23,13 +23,13 @@ this time around but definitely will in the future!
 So to start out I installed Oracle (the only good installation guide was found on a non-Oracle backed
 <a href="https://www.codeproject.com/Articles/1027230/Oracle-c-Installation-on-Windows-Step-by-Step">
 blog post</a>) and connected to my database instance.  The first task I wanted to accomplish was
-create a user for my database schema.  In Oracle a user is an account for
+creating a user for my database schema.  In Oracle a user is an account for
 a schema of the same name<sup>1</sup>.
 </p>
 <p>
-I started by creating a tablespace called <code class="jarombek-inline-code">ANDY</code> that I would
-place all my tables in.  A tablespace in Oracle consists of physical storage units for the database's
-data<sup>2</sup>.  It is a way to group the database at a storage level.
+I started by creating a tablespace called <code class="jarombek-inline-code">ANDY</code> for all my
+tables.  A tablespace in Oracle consists of physical storage units for the database's
+data<sup>2</sup>.  It is a way to group the database at the storage level.
 </p>
 <CodeSnippet language="SQL">
 CREATE TABLESPACE ANDY;
@@ -38,7 +38,7 @@ CREATE USER C##ANDYUSR IDENTIFIED BY orac1et3st DEFAULT TABLESPACE ANDY;
 GRANT ALL PRIVILEGES TO C##ANDYUSR;
 </CodeSnippet>
 <p>
-Next I create my user <code class="jarombek-inline-code">C##ANDYUSR</code> and give it all privileges.
+Next I created my user <code class="jarombek-inline-code">C##ANDYUSR</code> and gave it all privileges.
 I also set its default tablespace to the one I just created.  You may be wondering what is up with the
 strange username?  The <code class="jarombek-inline-code">C##</code> prefix defines a common user
 (contrasted with a local user)<sup>3</sup>.  A common user can be used across all Oracle pluggable
@@ -77,9 +77,9 @@ Now let's move on to building the basic table structure of the database!
 </p>
 <h5>Table Creation</h5>
 <p>
-The database is going to store books that I have read.  These books also have a many-to-many relationship
+The database is going to store books that I have read.  These books have a many-to-many relationship
 to programming languages (since a book can be about many languages and a language can have many books
-describing it).  The first table I added was for languages.
+describing it).  The first table I added was <code class="jarombek-inline-code">languages</code>.
 </p>
 <CodeSnippet language="SQL">
 -- I was thinking of using a sequence to generate a primary key for this table.
@@ -249,7 +249,6 @@ SELECT * FROM book_languages;
 <p>
 I'll dive more into PL/SQL later.  Now the database is fully set up and ready to query (which I will do
 next time).  The full code for this discovery (with some nice comments!) is up on
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/02-Feb/
-2-12-Oracle-Start/Source">GitHub</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/02-Feb/2-12-Oracle-Start">GitHub</a>.
 </p>
 </div>
