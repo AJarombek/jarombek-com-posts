@@ -3,10 +3,9 @@
 Here in the third installment of my Oracle discoveries, I dig into analytic functions and some more
 advanced queries.  Nothing too out of this world crazy, but I definitely explored some SQL syntax that
 I had never seen before.  The
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/03-Mar/
-3-2-Oracle-Queries/View">first</a> discovery saw me create a new database and set up the basic tables.
-In the <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/
-02-Feb/2-12-Oracle-Start/View">second</a>
+<a href="https://jarombek.com/blog/feb-12-2018-oracle-start">first</a> discovery saw me create a new
+database and set up the basic tables.
+In the <a href="https://jarombek.com/blog/mar-2-2018-oracle-queries">second</a>
 I did some more intermediate level queries on the database.  Now I will continue building
 off this knowledge!  These are some more advanced queries that I found really cool!
 </p>
@@ -15,7 +14,7 @@ The database I built contains books I have read and different programming langua
 There is also a relationship between books and languages, since all the books are about programming!
 </p>
 <p>
-The first analytic function calculation I performed was a ranking of programming languages and the
+The first analytic function query is a ranking of programming languages and the
 time spent reading about them.  There are two main functions that you can use for ranking,
 <code class="jarombek-inline-code">RANK()</code> and <code class="jarombek-inline-code">
 DENSE_RANK()</code>.  The only difference between the two is the way that they handle ties in the
@@ -39,10 +38,10 @@ NAME         SUM(B.TIME_READING) RANK      DENSE_RANK
 Java         134                 1         1
 PL/SQL       26                  2         2
 SQL          26                  2         2
-JavaScript
+JavaScript                       4         3
 </span>
 <p>
-Another interesting piece to this query is the <code class="jarombek-inline-code">NULLS LAST</code>
+Another interesting piece of this query is the <code class="jarombek-inline-code">NULLS LAST</code>
 clause.  By default when ordering <code class="jarombek-inline-code">null</code> values come
 first.  In this case however null is equivalent to zero days spent reading, so we want them to come
 last.  The <code class="jarombek-inline-code">NULLS LAST</code>
@@ -99,8 +98,8 @@ YEAR    LANGUAGE       LINES           YEARLY_RANK     ALL_TIME_RANK
 ....    ....           ....            .               ..
 </span>
 <p>
-You can do other types of rankings such as percentile rankings.  From this we can see that the total
-lines for Java in 2015 was in the top 30% performances across all years.
+You can do other types of rankings such as percentile rankings.  From this we can see that Java in 2015
+was in the top 30% of performances across all years.
 </p>
 <CodeSnippet language="SQL">
 SELECT
@@ -159,8 +158,8 @@ XML                   1344
 <p>
 The next couple queries all utilize window functions.  Window functions apply an aggregate function
 such as <code class="jarombek-inline-code">AVG()</code> or
-<code class="jarombek-inline-code">SUM()</code> to a subset of rows from a result set<sup>3</sup>.
-This subset is known as the window.  Here is an example of
+<code class="jarombek-inline-code">SUM()</code> to a subset of rows in a result set<sup>3</sup>.
+This subset is known as the window.  Here is an example of a
 query using a window function that shows the cumulative sum of code lines written:
 </p>
 <CodeSnippet language="SQL">
@@ -183,8 +182,8 @@ YEAR     TOTAL_LINES CUMULATIVE_LINES
 </span>
 <p>
 The column aliased as <code class="jarombek-inline-code">cumulative_lines</code> is the really
-interesting one here.  It starts by saying compute the sum of all the
-rows in the window with the statement <code class="jarombek-inline-code">SUM(SUM(lines))</code>.  Now I
+interesting one here.  It starts by saying "compute the sum of all the
+rows in the window with the statement <code class="jarombek-inline-code">SUM(SUM(lines))</code>".  Now I
 have to define what rows are in the window.  I <code class="jarombek-inline-code">ORDER BY year</code>
 so that we accumulate the sum in yearly order.  This is enforced with <code class="jarombek-inline-code">
 ROWS BETWEEN UNBOUNDED PRECEDING
@@ -219,7 +218,7 @@ GROUP BY year;
 <p>
 If you want to get a certain value in a window, you can use the <code class="jarombek-inline-code">
 FIRST_VALUE()</code> function to get the first row in the
-window, <code class="jarombek-inline-code">LAST_VALUE</code> to get the last row, or
+window, <code class="jarombek-inline-code">LAST_VALUE()</code> to get the last row, or
 <code class="jarombek-inline-code">NTH_VALUE()</code> to get any other row.  When the first value in the
 window is predictable beforehand you can do really powerful things with this function.  For example,
 in the following query I know that <code class="jarombek-inline-code">FIRST_VALUE()</code> will return

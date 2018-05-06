@@ -1,8 +1,8 @@
 <div>
 <p>
 This is part II of my Oracle advanced query discovery.  You can check out
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/
-03-Mar/3-18-Oracle-Adv-I/View">part I</a> as well!  The two clauses I will look at in this
+<a href="https://jarombek.com/blog/mar-18-2018-oracle-adv-pt1">part I</a> as well!  The two clauses
+I will look at in this
 discovery are <code class="jarombek-inline-code">MODEL</code> and
 <code class="jarombek-inline-code">PIVOT</code>.  The table I am running queries against is
 called <code class="jarombek-inline-code">code_written</code>
@@ -10,21 +10,21 @@ and it stores data about how many lines of code I wrote in each language over th
 The data is real too, I actually wrote the amount of code listed!
 </p>
 <p>
-The <code class="jarombek-inline-code">MODEL</code> clause allows you to access columns in a row
-like a multidimensional array.  The calculations you can perform on
+The <code class="jarombek-inline-code">MODEL</code> clause allows you to access columns in
+a multidimensional array.  The calculations you can perform on
 this array are similar to those seen in a spreadsheet application such as Excel<sup>1</sup>.
 The reason for including the <code class="jarombek-inline-code">MODEL</code> clause in Oracle was that
 users would often copy and paste SQL query results into a spreadsheet and then manipulate
-the data from there.  Not you can perform these manipulations in native SQL.
+the data from there.  Now you can perform these manipulations in native SQL.
 </p>
 <p>
-The following query is a basic example using the <code class="jarombek-inline-code">MODEL</code>
-clause.  I have often figured these lines written statistics are not
-quite accurate representations of time spent writing code in each language.  For example, Java is
-very verbose and I could say I wrote 200 lines of code when all I did was create a simple POJO.
+The following query is a basic example of the <code class="jarombek-inline-code">MODEL</code>
+clause.  I figured that my lines written statistics were not
+quite an accurate representation of time I spent writing code in each language.  For example, Java is
+very verbose and 200 lines of code could have been for creating a simple POJO.  That would only take a minute to make!
 Meanwhile, Python has very concise syntax and I often make complex programs
-in less than 100 lines of code.  I use the <code class="jarombek-inline-code">MODEL</code> clause
-to adjust the lines written numbers for both Java and Python based on their verbosity.
+in less than 100 lines of code.  I used the <code class="jarombek-inline-code">MODEL</code> clause
+to adjust the lines written for both Java and Python based on their verbosity.
 </p>
 <CodeSnippet language="SQL">
 SELECT year, language, lines_written
@@ -71,7 +71,7 @@ in the array with the strings <code class="jarombek-inline-code">'Java'</code> a
 one dimension, but that doesn't have to be the case.
 </p>
 <p>
-<code class="jarombek-inline-code">MEASURES</code> defines what type will be located in each cell and
+<code class="jarombek-inline-code">MEASURES</code> defines what type will be located in each cell along with
 the name of the array<sup>3</sup>.  In the previous query, I
 said that each cell will contain a <code class="jarombek-inline-code">lines</code> element and the
 array will be named <code class="jarombek-inline-code">lines_written</code>.
@@ -81,7 +81,7 @@ Another really cool thing about the <code class="jarombek-inline-code">MODEL</co
 you can loop through the array of cells with a <code class="jarombek-inline-code">FOR</code>
 loop<sup>4</sup>.  You can then get the current value within the <code class="jarombek-inline-code">FOR</code>
 loop with the <code class="jarombek-inline-code">CURRENTV()</code> function.  The
-following queries get the monthly line totals for each language.  Although they all return the same
+following queries get the monthly line totals for each language.  Although the queries all return the same
 result, you can follow the comments to see how each optimizes the previous query.
 </p>
 <CodeSnippet language="SQL">
@@ -192,7 +192,7 @@ JSON                  32     820    1019   112
 Swift                               10726  103
 </span>
 <p>
-Now that is awesome!  This is exactly the layout for this data that I would want in an Excel
+Now that is awesome!  This is the exact layout I would want for this data in an Excel
 spreadsheet and it was generated in pure SQL!  I can improve this query result by displaying the total
 number of lines for each language with the <code class="jarombek-inline-code">GROUP BY ROLLUP</code>
 clause and <code class="jarombek-inline-code">GROUPING()</code> function.
@@ -267,7 +267,6 @@ Java           2014             4282
 <p>
 Next time I create an Oracle discovery I will look at some PL/SQL!  I'm sure I will come back to these
 discoveries when I need to use similar SQL queries in the future!  All the code is up on
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/03-Mar/
-3-19-Oracle-Adv-II/Source">GitHub</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/03-Mar/3-19-Oracle-Adv-II">GitHub</a>.
 </p>
 </div>

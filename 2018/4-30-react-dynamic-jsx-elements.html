@@ -1,35 +1,34 @@
 <div>
 <p>
-Recently I have spent a lot of time working in React.js for my upcoming website (which by the time
+Recently I've spent a lot of time working with React.js for my upcoming website (which by the time
 you are reading this is completed!).  One of the challenges I faced was dynamically deciding at
-runtime which JSX element to render.  It turns out there is a pretty nice solution to this problem with
-one major catch.
+runtime which JSX element to render.  It turns out there is a pretty nice solution to this problem.
 </p>
 <p>
-First however, if you have been following by posts you will know that this is the first time I have posted
+First off, if you have been following by posts you will know that this is the first time I have posted
 about React.js.  Therefore lets quickly review/initiate ourselves with the React library.
 </p>
 <p>
 React.js is a frontend library written in JavaScript for creating and maintaining views.  Unlike the
-Angular framework which I had been looking before React does not control any aspect of your project besides
+Angular framework which I was using before, React does not control any aspect of your project besides
 for the views.  This makes it quite lightweight and gives the developer a lot of flexibility and freedom.
 </p>
 <p>
 Let’s quickly run through some of the major selling points of React.  React creates a virtual layer on top
 of the DOM called the Virtual DOM.  React uses the virtual DOM to interact with the real DOM API, allowing
-the developer to not have to interact with the DOM itself<sup>1</sup>.  React also has an extremely
-effective diffing algorithm which makes updates to the DOM quick and effective by only changing necessary
+the developer to avoid interacting with the DOM itself<sup>1</sup>.  React also has an extremely
+effective diffing algorithm which makes updates to the DOM quick by only changing necessary
 pieces of the DOM on state changes<sup>2</sup>.
 </p>
 <p>
-React is also isomorphic (code that can be run on multiple platforms), meaning that it does not necessarily
-have to render its views on the DOM<sup>3</sup>.  It can also do so rending HTML on the server (server-side
+React is also isomorphic (can be run on multiple platforms), meaning that it does not necessarily
+have to render its views on the DOM<sup>3</sup>.  It can also render HTML on the server (server-side
 rendering) or on mobile apps!  I haven’t explored React Native for mobile apps yet but it sounds extremely
 cool!  My website takes advantage of server-side rendering, which I will cover in detail in a future discovery.
 </p>
 <p>
 Also importantly React tries to take advantage of JavaScripts functional aspects.  Much of my React code is
-functional, and working with React helps me to think functionally making my code more testable and
+functional, and working with React helps me to think functionally - making my code more testable and
 maintainable.  I went into detail on <a href="https://jarombek.com/blog/feb-8-2018-java8-functional">
 functional programming in Java</a> in a previous discovery and all
 the benefits that come with it.  These benefits also carry over to JavaScript.
@@ -48,7 +47,7 @@ Here is an example of a React component that I will use later on:
 import React from "react";
 
 const Link = ({ name, link }) =>
-React.createElement("a", {href: link}, name);
+    React.createElement("a", {href: link}, name);
 
 export default Link;
 </CodeSnippet>
@@ -81,15 +80,16 @@ As you can see, it is much more readable and will be easier to write (although y
 at first having to mix HTML syntax with JavaScript code).
 </p>
 <p>
-on some JSON that I received from my server.  For example, if the JSON had a property
+Now lets get to the issue I faced when building my website.  I wanted to dynamically choose the JSX element type
+at runtime based on some JSON that I received from my server.  For example, if the JSON had a property
 <code class="jarombek-inline-code">tag</code> with the value <code class="jarombek-inline-code">div</code>,
-I would want the JSX element to represent an HTML <code class="jarombek-inline-code">div</code>.  In doing
-this, I could store a JSON representation of some HTML and have my React code create and render it on the fly.
+I would want the JSX element to represent an HTML <code class="jarombek-inline-code">div</code>.  With this
+implemented, I could store a JSON representation of some HTML and have my React code create and render it on the fly.
 </p>
 <p>
-The code used by my website is a bit more involved but I’m going to go through the basic process.  First I
-import react and the <code class="jarombek-inline-code">Link</code> component I created.  I also get a
-JavaScript object representation of some HTML I want to display:
+The code used by my website is a bit more involved than what I will show you but I’m going to cover the
+basic process.  First I import react and the <code class="jarombek-inline-code">Link</code> component I created.
+I also get a JavaScript object representation of some HTML I want to display:
 </p>
 <CodeSnippet language="JavaScript">
 import React from "react";
@@ -147,15 +147,15 @@ const App = () =>
 render(&lt;App /&gt;, document.getElementById("root"));
 </CodeSnippet>
 <p>
-The important piece here is that we create a variable <code class="jarombek-inline-code">Tag</code> which
-represents the JSX element.  Remember that a JSX element is simply syntactic sugar for a React element which
-will be sent to the virtual DOM.
+The important piece here is that we create a variable <code class="jarombek-inline-code">Tag</code> on the
+third line which represents the JSX element.  Remember that a JSX element is simply syntactic sugar for a
+React element (which itself is a JavaScript object) that will be sent to the virtual DOM.
 </p>
 <p>
 Native HTML elements are passed to <code class="jarombek-inline-code">React.createElement()</code> as a
-string.  This is why the below code works for <code class="jarombek-inline-code">h1</code> and
-<code class="jarombek-inline-code">p</code> element names.  If you tried assigning the variable
-<code class="jarombek-inline-code">Tag</code> the string “Link” it would not render.  The reason is because
+string.  This is why the code above works for <code class="jarombek-inline-code">h1</code> and
+<code class="jarombek-inline-code">p</code> element names.  If you tried assigning the string “Link” to the variable
+<code class="jarombek-inline-code">Tag</code> it would not render.  The reason is because
 <code class="jarombek-inline-code">&lt;Link&gt;</code> is not a valid HTML element!  It is a React component
 that I created!  The <code class="jarombek-inline-code">React.createElement()</code> will take in React
 components as well, but you have to pass it the actual component module.  This is the reason for the
@@ -165,7 +165,7 @@ components as well, but you have to pass it the actual component module.  This i
 Here is the end result:
 </p>
 <figure>
-    <img src="dynamic-jsx.png">
+    <img class="jarombek-blog-image" src="./assets/dynamic-jsx.png">
 </figure>
 <p>
 I still have a lot of learning and work to do with React.  So far I have really enjoyed it despite a few
@@ -173,7 +173,7 @@ shortcomings that I miss from frameworks such as Angular.  But that is for anoth
 </p>
 <p>
 The full code for this discovery is up on
-<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/04-Apr/4-29-React-Dynamic-JSX-Tag">
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/04-Apr/4-30-React-Dynamic-JSX-Tag">
  Github</a> (as it is for all my posts!).
 </p>
 </div>
