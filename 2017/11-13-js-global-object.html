@@ -7,7 +7,7 @@ which represents the browser window.  Window exposes an API that allows interact
 Object Model (DOM), click listeners, and other information about the browser window<sup>1</sup>.
 </p>
 <p>
-In the past I have used with <code class="jarombek-inline-code">window</code> object to check the
+In the past I have used the <code class="jarombek-inline-code">window</code> object to check the
 current URL and previous page visited by the user (to create a ‘back’ button).  The most common
 use of <code class="jarombek-inline-code">window</code> however is to manipulate the DOM and set
 click listeners (I used frameworks such as JQuery to perform these tasks in the past).
@@ -47,7 +47,7 @@ new element to the DOM.
 </p>
 <CodeSnippet language="JavaScript">
 var newWindow = window.open();
-newWindow.document.write("<p>Hello</p>");
+newWindow.document.write("&lt;p&gt;Hello&lt;/p&gt;");
 </CodeSnippet>
 <p>
 In this code we open a new window and assign the newly created
@@ -123,7 +123,6 @@ node --inspect --debug-brk test.js
 </CodeSnippet>
 <p>
 All the code from this discovery can be found
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/
-11-Nov/11-13-JS-Global-Object/Source">HERE</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2017/11-Nov/11-13-JS-Global-Object">HERE</a>.
 </p>
 </div>

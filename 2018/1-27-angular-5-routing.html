@@ -3,10 +3,10 @@
 I have recently started work on my Angular 5 framework prototype.  The project will be a single
 page web application that displays cat pictures!  The page will have a number of tabs you can click
 on that will change the state of the application.  To start setting up the
-application, I first set up all the routes in Angular for when users click on the tabs.
+application, I first created all the routes which will be selected when users click on tabs.
 </p>
 <p>
-First I set up an Angular component that has an HTML template for all the tabs.
+First I made an Angular component that has an HTML template for all the tabs.
 </p>
 <CodeSnippet language="HTML">
 &lt;div&gt;
@@ -50,7 +50,7 @@ component as we will soon see.  When you click a route, its components template 
 <p>
 The Angular component for this template is called <code class="jarombek-inline-code">AppComponent</code>
 and is wrapped along with the router's components in a module called <code class="jarombek-inline-code">
-AppModule</code>.  The most important piece of this module is that it maps each route to the correct
+AppModule</code>.  The most important aspect of this module is that it maps each route to the correct
 component:
 </p>
 <CodeSnippet language="TypeScript">
@@ -90,7 +90,7 @@ export const routes: Routes = [
 export class AppModule { }
 </CodeSnippet>
 <p>
-You can see that each route is assigned a HTTP path and an Angular component.  This
+You can see that each route is assigned a HTTP path and an Angular component.  The
 <code class="jarombek-inline-code">routes</code> variable is then used in the
 <code class="jarombek-inline-code">@NgModule</code> annotation with the <code class="jarombek-inline-code">
 RouterModule</code>.  We use the <code class="jarombek-inline-code">RouterModule.forRoot()</code> method
@@ -103,9 +103,9 @@ component</code>.  This is because these components are lazily loaded<sup>1,2</s
 with the main application and are only loaded from the server when they need to be accessed.
 </p>
 <p>
-The prototype project has two modules: the root module we have looked at already and a
+The prototype project has two modules: the root module that we have viewed already and a
 <code class="jarombek-inline-code">ProfileModule</code> that contains components that are only accessible
-by signed in users.  If you look closely at the <code class="jarombek-inline-code">loadChildren</code>
+to signed in users.  If you look closely at the <code class="jarombek-inline-code">loadChildren</code>
 properties you can see that they specify the path to the <code class="jarombek-inline-code">ProfileModule</code>
 in the project.  This module will be lazily loaded when you follow either
 of these paths.  Here you can see the code for the <code class="jarombek-inline-code">ProfileModule</code>
@@ -168,6 +168,6 @@ for the <code class="jarombek-inline-code">ProfileModule</code> including the
 I have just begun my journey on this Angular 5 prototype but am excited to continue to learn!  It is all
 a bit overwhelming at the
 moment, but I know it will get easier from here.  You can check out the code from this discovery on
-<a href="https://github.com/AJarombek/angular-nodejs-mongodb-prototype/releases/tag/v0.1">GitHub</a>.
+<a href="https://github.com/AJarombek/mean-client-prototype/tree/v0.1">GitHub</a>.
 </p>
 </div>

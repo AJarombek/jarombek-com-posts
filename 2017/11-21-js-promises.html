@@ -3,7 +3,7 @@
 Today I am looking at Promises in JavaScript and how we can use them to write easier to
 follow and less error prone asynchronous code.  Before I talk about Promises lets make a
 async call in JavaScript the traditional way; with callbacks. I won't be using any fancy
-JavaScript framework tomato my async http request, just the simple on
+JavaScript framework to make my async http request, just the simple
 <code class="jarombek-inline-code">XMLHttpRequest</code> object (which is as poorly named
 as AJAX, it can be used for much more than XML!)<sup>1</sup>.
 </p>
@@ -20,7 +20,7 @@ var httpRequest = new XMLHttpRequest();
 httpRequest.open('GET', 'https://www.googleapis.com/customsearch/#', true);
 httpRequest.send();
 
-    httpRequest.onreadystatechange = function() {
+httpRequest.onreadystatechange = function() {
 
     if (httpRequest.status === 200 && httpRequest.readyState === 4) {
         var json = JSON.parse(httpRequest.response);
@@ -108,8 +108,7 @@ of the promise, just supply it the details of what to do on success and failure.
 </p>
 <p>
 The <code class="jarombek-inline-code">next()</code> function also has the benefit of returning a
-Promise<sup>4</sup>.  This means that we can chain promises, like
-that shown in the pseudocode below:
+Promise<sup>4</sup>.  This means that we can chain promises, as shown in the pseudocode below:
 </p>
 <CodeSnippet language="JavaScript">
 httpMeow()
@@ -123,7 +122,6 @@ You can imagine all the possibilities with chained promises (and escaping callba
 <code class="jarombek-inline-code">all()</code> and <code class="jarombek-inline-code">race()</code>,
 which resolve or reject the promised value after all promises are completed or the
 first completes respectively<sup>5</sup>.  You can look at all the code from this discovery
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/11-Nov/
-11-21-JS-Promises/Source">HERE</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2017/11-Nov/11-21-JS-Promises">HERE</a>.
 </p>
 </div>

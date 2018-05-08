@@ -59,11 +59,11 @@ One of the difficult operations to perform on strings in Swift is getting a subs
 its as simple as a <code>substring()</code> function with two integer arguments specifying the start and end
 indexes.  Swift also has a <code>substring()</code> function except it accepts a
 <code class="jarombek-inline-code">Range&lt;String.Index&gt;</code> structure.  This struct is constructed with
-two <code>String.Index</code> structures used together with a half-open range operator
+two <code class="jarombek-inline-code">String.Index</code> structures used together with a half-open range operator
 <code class="jarombek-inline-code">..&lt;</code><sup>2</sup>.
 </p>
 <p>
-Okay, that already sounds a bit complicated.  The question you might be asking now is how to be get these
+Okay, that already sounds a bit complicated.  The question you might be asking now is how to we get these
 <code class="jarombek-inline-code">String.Index</code> structures?  We can get them by calling
 <code class="jarombek-inline-code">index(String.Index, offsetBy: Int)</code> on our string<sup>3</sup>.
 The following code sample gets two <code class="jarombek-inline-code">String.Index</code> structs and then
@@ -158,7 +158,7 @@ let stats = """
 Although the verbose <code class="jarombek-inline-code">String.Index</code> struct is still necessary in
 Swift 4, changing <code class="jarombek-inline-code">String</code> into a collection and
 supporting multi-line strings are major upgrades that make switching to Swift 4 worth it!  The code in this
-discovery is up on my <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/
-2018/01-Jan/1-3-Swift-String/View/string-swift.html">GitHub</a>.
+discovery is up on my <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/01-Jan/
+1-3-Swift-String">GitHub</a>.
 </p>
 </div>

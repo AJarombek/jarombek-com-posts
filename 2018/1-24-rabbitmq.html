@@ -1,7 +1,7 @@
 <div>
 <p>
-Recently for work I've had to look into RabbitMQ, a message broker that you can use to communicate
-between different parts of your application.  An analogy that I really like is that RabbitMQ is like
+Recently for work I've looked into RabbitMQ, a message broker that you can use to communicate
+between different parts of your application.  An analogy I really liked is that RabbitMQ is like
 putting a post office in your application - you can have producers
 put messages in the post offices queue and have these messages routed to consumers<sup>1</sup>.
 </p>
@@ -14,14 +14,14 @@ while your consumers are written in JavaScript, Python, and PHP.  Imagine all th
 of sending RabbitMQ messages across applications!
 </p>
 <p>
-In order to get to know RabbitMQ better, I made an enhanced hello world type example where producers can
+In order to get to know RabbitMQ better, I made an enhanced hello world example where producers can
 send JSON representing running logs to different consumers.  All the code is in Python, since the RabbitMQ
 Python API is very short and sweet!  Let's take a look!
 </p>
 <h5>Producer</h5>
 <p>
 My producer starts by taking command line arguments and converting them to JSON.  This will be the body of
-the message sent across the RabbitMQ channel.  It will also take some of the arguments to form the routing
+the message sent across the RabbitMQ channel.  It will also take arguments to form the routing
 key, which in context of the post office analogy is like the mailing address.
 </p>
 <CodeSnippet language="Python">
@@ -131,8 +131,8 @@ off the messages to queues based on the routing keys we specified<sup>5</sup>.
 </p>
 <p>
 The following code declares the exchange and publishes a message to it with the JSON we created earlier.
-The full code for the producer is up on <a href="https://github.com/AJarombek/jarombek-com-submittions/
-blob/master/Discoveries/2018/01-Jan/1-24-RabbitMQ/Source/producer.py">GitHub</a>.
+The full code for the producer is up on <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/
+2018/01-Jan/1-24-RabbitMQ/producer.py">GitHub</a>.
 </p>
 <CodeSnippet language="Python">
 # Declare the running-log exchange
@@ -203,8 +203,8 @@ channel.start_consuming()
 </CodeSnippet>
 <p>
 If you would like to run both the producers and consumers to see messages in action, you can find
-the commands in <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/
-2018/01-Jan/1-24-RabbitMQ/Source/setup.sh">GitHub</a>.
+the commands in <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2018/01-Jan/
+1-24-RabbitMQ/setup.sh">GitHub</a>.
 </p>
 <h5>Moving Forward</h5>
 <p>

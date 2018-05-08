@@ -1,12 +1,11 @@
 <div>
 <p>
-    Today I will continue with my
-    <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
-    12-15-MongoDB-Pt1/View/mongodb1.html">first MongoDB discovery</a>
-    and look at documents in more depth.  To start, let's look at how we would
-    handle the purchase of a Christmas tree in our database.  The first thing we need to do is pick a tree
-    to buy!  We can search the database for a tree to our liking and use the <code>findOne()</code> function
-    to return a single tree.
+Today I will build on my
+<a href="https://jarombek.com/blog/dec-15-2017-mongodb-pt1">first MongoDB discovery</a>
+and look at documents in more depth.  To start, let's look at how we would
+handle the purchase of a Christmas tree in our database.  The first thing we need to do is pick a tree
+to buy!  We can search the database for a tree to our liking and use
+the <code class="jarombek-inline-code">findOne()</code> function to return a single tree.
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.findOne({type:"douglas", grade:"7-8ft", height:"7' 3\""})
@@ -34,18 +33,18 @@ db.customer.insert({
 })
 </CodeSnippet>
 <p>
-One thing you may have noticed is that each document has a field called <code>_id</code> with an
-<code>ObjectId(...)</code> containing a hex number.  You may think that the hex digits are just
-randomly generated but they actually hold organized information.  The first eight hex digits (four bytes)
-or the <code>ObjectId</code> are actually a timestamp of the time when the id was created.  The rest of
-the id is broken down into three pieces - the machine ID, process ID, and a counter which increments
-each time an <code>ObjectId</code> is generated in this particular process.  All these items
-together creates a very reliable unique key (you don't have to worry about collisions - the possibility
-of that is so small).
+One thing you may have noticed is that each document has a field called <code class="jarombek-inline-code">_id</code>
+with an <code class="jarombek-inline-code">ObjectId(...)</code> containing a hex number.  You may think that the hex
+digits are just randomly generated but they actually hold organized information.  The first eight hex digits
+(four bytes) of the <code class="jarombek-inline-code">ObjectId</code> are actually a timestamp of the time
+when the id was created.  The rest of the id is broken down into three pieces - the machine ID, process ID,
+and a counter which increments each time an <code class="jarombek-inline-code">ObjectId</code> is generated in
+this particular process.  All these items together create a very reliable unique key (you don't have to worry
+about collisions - the possibility of that is so small).
 </p>
 <p>
-So why am I going into the details of the <code>ObjectId</code> object?  That is because we can use
-these unique ids to link documents together by having a document property value containing the id of
+So why am I going into the details of the <code class="jarombek-inline-code">ObjectId</code> object?  We can
+actually use these unique ids to link documents together by having a document property value containing the id of
 another document.  In the case of our Christmas tree database, we want a collection for purchases.  In this
 collection, our documents will be linked to both the tree purchased and the customer.  To do this we can
 take the tree and customer documents ids and put them in the purchase document.
@@ -86,13 +85,14 @@ db.purchase.findOne()
 </CodeSnippet>
 <p>
 You will also notice some duplicated fields from other collections in the purchase document (such as
-the <code>username</code> property). This sort of duplication is frowned upon in a RDBMS, however with
-no JOINs in MongoDB this duplication is okay<sup>1</sup>.
+the <code class="jarombek-inline-code">username</code> property). This sort of duplication is frowned upon in a RDBMS,
+however with no JOINs in MongoDB this duplication is okay<sup>1</sup>.
 </p>
 <p>
 Now you have seen how we can link related documents in MongoDB which allows us to find a linked document
 without a JOIN operation.  Let's take a step back and look at the first query we made picking out a Christmas
-tree.  We can call the <code>explain()</code> function on our query to find useful information on its execution:
+tree.  We can call the <code class="jarombek-inline-code">explain()</code> function on our query to find useful
+information on its execution:
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.find({type:"douglas", grade:"7-8ft", height:"7' 3\""}).explain("executionStats")
@@ -122,7 +122,7 @@ db.tree.createIndex({height: 1})
 </CodeSnippet>
 <p>
 You may be wondering what the significance is of the <code class="jarombek-inline-code">1</code> value.
-This means that the index is stored in ascending order (an index is basically a map with keys and values),
+This means that the index is stored in ascending order,
 while a <code class="jarombek-inline-code">-1</code> would
 mean descending<sup>2</sup>.  Now if we do the same query
 and call <code class="jarombek-inline-code">explain()</code>, only the returned documents are examined.
@@ -143,6 +143,7 @@ property on our tree documents.  This date will be Christmas eve, since you won'
 tree anymore after this date.
 </p>
 <CodeSnippet language="JavaScript">
+
 db.tree.updateMany({}, {$set: {"availableUntil": new Date("2017-12-24")}})
 </CodeSnippet>
 <p>
@@ -152,12 +153,13 @@ options, and in this case we want to expire the document zero seconds after the 
 <code class="jarombek-inline-code">availableUntil</code> property<sup>4</sup>.
 </p>
 <CodeSnippet language="JavaScript">
+
 db.tree.createIndex({availableUntil: 1}, {expireAfterSeconds: 0})
 </CodeSnippet>
 <p>
 We added a lot of new MongoDB concepts to our tree database.  The power of linked documents and indexes
 in MongoDB are becoming apparent.  I will look at MongoDB even more in my next discovery.  The code for
-this discovery can be found <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/
-Discoveries/2017/12-Dec/12-16-MongoDB-Pt2/Source/dbscripts.js">HERE</a>.
+this discovery can be found <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/
+2017/12-Dec/12-16-MongoDB-Pt2/dbscrips.js">HERE</a>.
 </p>
 </div>

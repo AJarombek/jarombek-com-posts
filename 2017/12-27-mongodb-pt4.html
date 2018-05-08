@@ -6,10 +6,8 @@ framework creates a pipeline of operations to perform on documents<sup>1</sup>. 
 we can do operations such as sorting, filtering, and grouping documents similar to a SQL
 <code class="jarombek-inline-code">GROUP BY</code> clause.  You can even manipulate grouped data
 inside the pipeline, creating entirely new collections in the process.  Lets use our tree database used in the
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
-12-15-MongoDB-Pt1/View/mongodb1.html">first</a> and
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
-12-16-MongoDB-Pt2/View/mongodb2.html">second</a>
+<a href="https://jarombek.com/blog/dec-15-2017-mongodb-pt1">first</a> and
+<a href="https://jarombek.com/blog/dec-16-2017-mongodb-pt2">second</a>
 MongoDB discoveries to explore this framework.
 </p>
 <p>
@@ -40,8 +38,8 @@ db.tree.aggregate([
 <p>
 You can see that the <code class="jarombek-inline-code">aggregate()</code> function takes an array
 of pipeline steps.  So we first match on type frazier, group by the grade and get a count of documents
-in that group, and finally sort by the count with the <code class="jarombek-inline-code">$match</code>,
-<code class="jarombek-inline-code">$group</code>,
+in that group, and finally sort by the count.  These three steps are performed with the
+<code class="jarombek-inline-code">$match</code>, <code class="jarombek-inline-code">$group</code>,
 and <code class="jarombek-inline-code">$sort</code> operators respectively.
 </p>
 <p>
@@ -143,7 +141,6 @@ db.treestat.aggregate([
 Hopefully this has begun to show the power of the aggregation framework.  You can even use the framework
 to create a kind of pseudo <code class="jarombek-inline-code">JOIN</code>
 operation between collections<sup>3</sup>!  You can find the source code for this discovery
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/12-Dec/
-12-27-MongoDB-Pt4/Source/dbscripts.js">HERE</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2017/12-Dec/12-27-MongoDB-Pt4">HERE</a>.
 </p>
 </div>

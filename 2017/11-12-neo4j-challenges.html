@@ -1,8 +1,7 @@
 <div>
 <p>
 In my last discovery post on graph databases and Neo4j I
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/11-Nov/
-11-6-Neo4j-Create/View/neo4j-create.html">created a graph</a>
+<a href="https://jarombek.com/blog/nov-6-2017-neo4j-create">created a graph</a>
 that represented a map of Fairfield County Connecticut.  I created nodes
 for all the towns/cities and edges between the settlements that shared borders.  In
 this discovery I will add to this graph and show some of the
@@ -18,14 +17,14 @@ CREATE (aj:Person {name: 'Andy J.'}),
     (bf:Person {name: 'Ben F.'})
 </CodeSnippet>
 <p>
-    Now what if I wanted to undo this action of creating people.  The first option I have is to simply
-    delete all of the people from the graph:
+Now what if I wanted to undo this action of creating people?  The first option I have is to simply
+delete all of the people from the graph:
 </p>
 <CodeSnippet language="Cypher">
 MATCH (p:Person) DELETE p
 </CodeSnippet>
 <p>
-But maybe I only want to delete specific people from the graph.  The first thing that came to my head
+But maybe I only want to delete specific people from the graph.  The first thing that came into to my head
 was to simply match on a certain name such as
 <code class="jarombek-inline-code">MATCH (p:Person {name: ‘Andy J.’})</code>.  In this
 case I would delete all nodes with label people and where property name equals ‘Andy J.’.
@@ -47,7 +46,7 @@ delete its relationships, so <code class="jarombek-inline-code">DETACH DELETE</c
 of them<sup>2</sup>.
 </p>
 <p>
-Now if have all four of our people vertices back in the graph, we can create a relationship between them
+Now if we have all four people vertices back in the graph, we can create a relationship between them
 and the settlements they are citizens of:
 </p>
 <CodeSnippet language="Cypher">
@@ -67,7 +66,7 @@ CREATE (aj:Person {name: 'Andy J.'}),
 <p>
 We now have a populated map!  Fairfield County still seems a bit boring however.  Let’s populate it will
 some of the top rated pizza places in the county.  I want to create a vertex pizza and give it a
-<code>:LOCATED_IN</code> relationship to a settlement:
+<code class="jarombek-inline-code">:LOCATED_IN</code> relationship to a settlement:
 </p>
 <CodeSnippet language="Cypher">
 CREATE (stan:Pizza {name: 'Stanziato’s Wood Fired Pizza', price: 2, rating: 4.5}),
@@ -106,7 +105,7 @@ in SQL – Cypher has no explicit <code class="jarombek-inline-code">GROUP BY</c
 Now the line <code class="jarombek-inline-code">WHERE size(instances) > 1</code> filters our list
 for only settlement names that have more than one vertex.  After all the goal of this
 is to delete all the duplicates! The next line, <code class="jarombek-inline-code">UNWIND tail(instances)
-as dups</code> transforms our list back into rows in a table<sup>5</sup>.
+ as dups</code> transforms our list back into rows in a table<sup>5</sup>.
 This <code class="jarombek-inline-code">UNWIND</code> operation will happen for each
 <code class="jarombek-inline-code">instances</code> list we encounter.  Now we see if the row (which is
 a settlement) has a <code class="jarombek-inline-code">LOCATED_IN</code> relationship to a vertex with
@@ -148,8 +147,7 @@ CREATE INDEX ON :Settlement(name)
 CREATE INDEX ON :Pizza(name)
 </CodeSnippet>
 <p>
-Now we are fully ready to query the graph database (which I will have in another discovery soon!).  The
-code used for this discovery can be found <a href="https://github.com/AJarombek/jarombek-com-submittions/
-blob/master/Discoveries/2017/11-Nov/11-12-Neo4j-Challenges/Source/neo4j-additions.cql">HERE</a>.
+Now we are fully ready to query the graph database.  The code used for this discovery can be found <a href="https://
+github.com/AJarombek/jarombek-com-sources/blob/master/2017/11-Nov/11-12-Neo4j-Challenges/neo4j-additions.cql">HERE</a>.
 </p>
 </div>

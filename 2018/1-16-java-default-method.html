@@ -11,7 +11,7 @@ there were some issues that came with using interfaces for an API as well.
 </p>
 <p>
 Let's say you needed to change an API that uses an interface.  If you add a new method definition to an
-interface, this also means that all classes that implement this interface have to also implement the new
+interface, all classes that implement this interface also have to implement the new
 method.  If you have control over the implementing class this is an easy fix, but it is a very real possibility
 that someone else has a class that implements your interface.  This will break existing code!
 </p>
@@ -29,8 +29,8 @@ abstract classes can have instance variables while an interface still does not h
 this ability<sup>1</sup>.
 </p>
 <p>
-Okay so now that one concern is answered, but what about multiple inheritance?  Can't you now inherit methods
-with multiple implementations?  This is true, so now Java has added some rules to deal with situations where
+Okay so now that one concern is answered, what about multiple inheritance?  Now you can inherit methods
+with multiple implementations right?  This is true, but now Java has added some rules to deal with situations where
 a class has multiple method bodies to choose from.
 </p>
 <p>
@@ -41,7 +41,7 @@ these conditions are met, the class has to explicitly select which method body t
 </p>
 <p>
 Now lets look at an example that shows the new default methods and what occurs in a diamond problem scenario.
-The interface hierarchy represents animals:
+The interface hierarchy below represents animals:
 </p>
 <figure id="diamond-uml-image">
     <img class="jarombek-blog-image" src="./assets/diamond-uml.png">
@@ -172,7 +172,7 @@ Therefore no conflict exists!
 </p>
 <p>
 Working with API's got a lot easier to deal with in Java 8.  You can check out all the code for this discovery
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2018/01-Jan/
-1-15-Java-Default-Method/View/java-default-method.html">here</a>.
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/01-Jan/
+1-16-Java-Default-Method/defaultmethods">here</a>.
 </p>
 </div>

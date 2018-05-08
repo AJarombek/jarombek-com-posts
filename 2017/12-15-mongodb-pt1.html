@@ -1,7 +1,7 @@
 <div>
 <p>
-Continuing the trend of learning more about JavaScript, today I will be looking at getting
-started with MongoDB.  Mongo is a NoSQL database which stores data in documents.  Before we get
+Continuing the trend of learning more about JavaScript, today I will be looking at MongoDB.
+Mongo is a NoSQL database which stores data in documents.  Before we get
 into the code, it is important to question why to even use MongoDB in the first place.
 </p>
 <p>
@@ -15,8 +15,8 @@ and variables to perform complex queries and database updates!
 </p>
 <p>
 As far as negatives are concerned, MongoDB does not have transaction support (similarly to many
-NoSQL databases).  MongoDB does support atomic writes for a single document (JavaScript Object - Equivalent
-of a row in a table in a RDBMS)<sup>2</sup>.  In other words, while you are updating a document either
+NoSQL databases).  MongoDB does support atomic writes for a single document (JavaScript object equivalent
+of a row of a table in a RDBMS)<sup>2</sup>.  In other words, while you are updating a document either
 the entire update takes place, or no changes occur.  Other database connections will never see an
 update in progress, it will either have not started or be fully completed<sup>3</sup>.  This is however
 where MongoDB's ACID transaction properties end.  This can cause issues if you need true transactions
@@ -64,7 +64,7 @@ db.tree.find().pretty()
 </CodeSnippet>
 <p>
 This code sample also shows that we can chain functions.  The second function
-<code class="jarombek-inline-code">pretty</code> will format the JSON in an easily readable fashion.
+<code class="jarombek-inline-code">pretty()</code> will format the JSON in an easily readable fashion.
 </p>
 <p>
 Let's say we want to add more properties to our new tree document.  Since MongoDB collections have no
@@ -200,7 +200,7 @@ function bulkTreeInsert(number=1) {
 <p>
 We can pass <code class="jarombek-inline-code">1000</code> as a parameter to this function, effectively
 calling it one thousand times.  When we check to see how many trees are in our tree collection, we will
-get 1002 as expected.
+get 1003 as expected.
 </p>
 <CodeSnippet language="JavaScript">
 bd.tree.count() // 1003
@@ -215,7 +215,7 @@ db.tree.find({type:"frazier", grade:"6-7ft"}).count()
 <p>
 With knowledge of JavaScript and query languages, MongoDB can be an extremely powerful database.  I
 have only scratched the surface here, but there we will many more discoveries to come!  You can find
-all the code from this discovery <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/
-master/Discoveries/2017/12-Dec/12-14-MongoDB-Pt1/Source">HERE</a>.
+all the code from this discovery <a href="https://github.com/AJarombek/jarombek-com-sources/tree/
+master/2017/12-Dec/12-15-MongoDB-Pt1">HERE</a>.
 </p>
 </div>

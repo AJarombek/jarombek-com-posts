@@ -4,9 +4,8 @@ In this discovery I will look at sorting lists in different programming language
 non-trivial objects.  The languages I will look at are my core languages: Java, JavaScript,
 Swift, Python, PHP, and C.  I’ve used all these languages in larger projects and
 wish to stay proficient in them.  I will post snippets of the code in each language but
-you can also check out the <a href="https://github.com/AJarombek/jarombek-com-submittions/
-blob/master/Discoveries/2017/11-Nov/11-14-Sorting-Lists/Source">full examples</a>.
-Let’s get started!
+you can also check out the <a href="https://github.com/AJarombek/jarombek-com-sources/tree/
+master/2017/11-Nov/11-14-Sorting-Lists">full examples</a>. Let’s get started!
 </p>
 <h5>Java</h5>
 <CodeSnippet language="Java">
@@ -78,9 +77,8 @@ Swift (just a personal preference!), but in a simple case like this one a struct
 <p>
 If you don’t know much Swift the sorting operation may look a bit confusing.  The
 <code class="jarombek-inline-code">sort()</code> method of the Array type is passed a Swift
-closure (not to be confused with a <a href="https://github.com/AJarombek/jarombek-com-submittions/
-blob/master/Discoveries/2017/11-Nov/11-9-JS-Closure-Modules/View/closure-modules.html">closure in JavaScript</a>
-) which is basically a callback function.  Since the Swift compiler knows that the
+closure (not to be confused with a <a href="https://jarombek.com/blog/nov-9-2017-js-closure-modules">
+closure in JavaScript</a>) which is basically a callback function.  Since the Swift compiler knows that the
 <code class="jarombek-inline-code">sort()</code> function takes a closure you can use the parameter
 shorthand which are represented as <code class="jarombek-inline-code">$1</code> and
 <code class="jarombek-inline-code">$2</code>(<code class="jarombek-inline-code">$1</code> being the first
@@ -175,9 +173,8 @@ static int compare(const void *a, const void *b) {
 }
 </CodeSnippet>
 <p>
-As you also likely guessed, the C code is by far the most involved.  Not shown is how we
-implement People in C as type defined structs.  This makes the sorting much easier (I originally
-tried sorting lists of lists of lists, but the pointers got out of control and I couldn’t figure
+As you also likely guessed, the C code is by far the most involved.  The structs do make the sorting easier
+(I originally tried sorting lists of lists of lists, but the pointers got out of control and I couldn’t figure
 it out!).  I utilized the standard libraries <code class="jarombek-inline-code">qsort()</code>
 function and passed in a comparison function<sup>3</sup>.
 </p>

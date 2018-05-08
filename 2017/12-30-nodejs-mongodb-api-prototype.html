@@ -4,13 +4,11 @@ Most of my discoveries lately have been about JavaScript.   This includes learni
 syntax and features along with all the quirks that come with the JavaScript language.  Recently
 I have been exploring the MongoDB database and Node.js environment.  MongoDB is a NoSQL database
 that allows you to store JSON formatted documents in a schema-less model.  I wrote four discovery
-posts on MongoDB starting with the <a href="https://github.com/AJarombek/jarombek-com-submittions/
-blob/master/Discoveries/2017/12-Dec/12-15-MongoDB-Pt1/View">basic features of the database</a>
+posts on MongoDB starting with the <a href="https://jarombek.com/blog/dec-15-2017-mongodb-pt1">
+basic features of the database</a>
 .  While I haven't written any discoveries with Node.js as the main focus, I have experimented with
-it when testing out <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/
-Discoveries/2017/11-Nov/11-10-ES6-Modules-Babel/View">ES6 modules with Babel</a> and
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/
-11-Nov/11-26-JS-Async-Function/View">Async Functions</a>.
+it when testing out <a href="https://jarombek.com/blog/nov-10-2017-es6-modules-babel">ES6 modules with Babel</a> and
+<a href="https://jarombek.com/blog/nov-26-2017-js-async-function">Async Functions</a>.
 </p>
 <p>
 All of this knowledge buildup is for a personal website project that I have planned (and where this
@@ -143,8 +141,8 @@ ArtistSchema.index({name: 1});
 Mongoose allows you to perform any query, update, insert, or delete operation on a Schema.  By default
 however, Mongoose uses callbacks to perform these operations.  We want to avoid callbacks as they
 become ugly and hard to read once nested database calls need to be made (commonly known as callback hell).
-Luckily Mongoose allows us to use <a href="https://github.com/AJarombek/jarombek-com-submittions/tree/
-master/Discoveries/2017/11-Nov/11-21-JS-Promises">ES6 Promises</a> instead<sup>2</sup>.  One of the first
+Luckily Mongoose allows us to use <a href="https://jarombek.com/blog/nov-21-2017-js-promises">ES6 Promises</a>
+instead<sup>2</sup>.  One of the first
 things I did when creating my API calls was to replace all the callbacks I could with Promises.  Here
 is some code that performs a <code class="jarombek-inline-code">find</code> operation on the
 <code class="jarombek-inline-code">Song</code> schema and then returns it to as a HTTP response using a promise.

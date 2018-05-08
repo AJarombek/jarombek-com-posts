@@ -17,6 +17,8 @@ One tricky part is that declared variables in JavaScript get hoisted to the top 
 look at a quick code snippet.
 </p>
 <CodeSnippet language="JavaScript">
+console.info(x);  // Error??
+
 var x = 10;
 </CodeSnippet>
 <p>
@@ -67,9 +69,8 @@ defined function variables are local and safe.
 </p>
 <p>
 You can check out the code for these examples
-<a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/2017/11-Nov/
-11-8-JS-Scope-Hoisting/Source/scope.js">HERE</a> along with a look at how variables in for loops leak
-into the global scope in JavaScript (Yuck! – but there is a solution with
-<code class="jarombek-inline-code">let</code>).
+<a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2017/11-Nov/11-8-JS-Scope-Hoisting/
+scope.js">HERE</a> along with a look at how variables in for loops leak into the global scope in JavaScript
+(Yuck! – but there is a solution with <code class="jarombek-inline-code">let</code>).
 </p>
 </div>
