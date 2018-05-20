@@ -68,7 +68,7 @@ method performs a deep copy on the object.  If a class does not implement
 a <code class="jarombek-inline-code">CloneNotSupportedException</code>.  This should not be a legal Java
 implementation and it is very confusing.
 </p>
-<h5>Implementing <code class="jarombek-inline-code">Cloneable</code></h5>
+<h5>Implementing <code class="jarombek-header-code">Cloneable</code></h5>
 <p>
 Here is a simple class I made in Java which represents a programming language.  It contains three fields -
 name, creation date, and all the paradigms the language follows.  It also has getters and setters
@@ -130,6 +130,7 @@ Cloneable</code> interface does not follow the rules that the rest of Java enfor
 Now I will create a <code class="jarombek-inline-code">Language</code> instance and test out cloning it.
 </p>
 <CodeSnippet language="Java">
+
 Language language = new Language("Java", LocalDate.of(1995, Month.MAY, 23),
                             List.of(Language.Paradigm.Object_Oriented,
                                     Language.Paradigm.Imperative));
