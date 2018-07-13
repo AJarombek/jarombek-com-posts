@@ -19,7 +19,7 @@ language this year.
 </p>
 <p>
 On <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/07-jul/
-7-10-groovy-regex">GitHub</a> there are matching examples from Python, Swift, and PHP.
+7-11-groovy-regex">GitHub</a> there are matching examples from Python, Swift, and PHP.
 After working through examples in all the languages above, the most difficult one to implement
 regular expression matching in was Swift.  This may not come as much of a surprise
 considering the convoluted <a href="https://jarombek.com/blog/jan-3-2018-string-swift">nature of
@@ -171,8 +171,12 @@ Matcher</code> classes.  Groovy is actually unique in my experience with program
 regards to regular expressions.  Groovy uses three operators to help with building regular
 expression patterns, matching a pattern to a string, and finding all pattern matches in a string.
 </p>
-<h5>Regular Expression Operators</h5>
-<Definition word="Find Operator =~">
+<ComparisonTable title="Regular Expression Operators">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Find Operator <code class="jarombek-header-code">=~</code>
+</h5>
+<div className="jarombek-cte-body">
 <p>
 Checks to see if a pattern matches any substring within a string.  The value before the operand is
 the string to look for a match on.  The value after the operand is the regular expression to match
@@ -192,8 +196,13 @@ the regex is not cached for future use.  The find operator should be used if the
 is only compiled once in the project.  Otherwise, the compilation step should be separated out with
 the pattern operator for reuse.
 </p>
-</Definition>
-<Definition word="Match Operator ==~">
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Match Operator <code class="jarombek-header-code">==~</code>
+</h5>
+<div className="jarombek-cte-body">
 <p>
 Checks to see if a pattern matches an entire string.  The value before the operand is the
 string to look for a match on.  The value after the operand is the regular expression to match
@@ -209,8 +218,13 @@ execution into a single step.  A match operator should be used if a regular expr
 compiled once in the project.  Otherwise, the compilation step should be separated out with the
 pattern operator for reuse.
 </p>
-</Definition>
-<Definition word="Pattern Operator ~string">
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Pattern Operator <code class="jarombek-header-code">~string</code>
+</h5>
+<div className="jarombek-cte-body">
 <p>
 The pattern operator transforms a string it is applied to into an instance of
 <code class="jarombek-inline-code">Pattern</code><sup>6</sup>.  Patterns are a result of the
@@ -224,7 +238,9 @@ An example of the pattern operator is <code class="jarombek-inline-code">
 ~/([a-zA-Z]{5-10})/</code>.  The result is a <code class="jarombek-inline-code">
 Pattern</code> object of the regular expression.
 </p>
-</Definition>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
 <p>
 The following code displays how to use the find, match, and pattern operators in Groovy.  The
 functionality matches the Java regular expression code.
@@ -325,7 +341,7 @@ existence matches use the <code class="jarombek-inline-code">RegExp.test(string)
 I decided to put together some examples of looping through regular expression matches.  Code
 samples from Java, Groovy, and JavaScript are shown below.  Examples for Python, Swift, and PHP
 are on <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/07-jul/
-7-10-groovy-regex">GitHub</a>.
+7-11-groovy-regex">GitHub</a>.
 </p>
 <CodeSnippet language="Java">
 /* Looping through RegEx matches */
