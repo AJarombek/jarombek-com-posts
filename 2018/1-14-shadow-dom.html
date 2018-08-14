@@ -34,22 +34,22 @@ and I add to the shadow using <code class="jarombek-inline-code">innerHTML</code
             &lt;/style&gt;
         &lt;/div&gt;
         &lt;p&gt;I'm outside the shadow.&lt;/p&gt;
-        &lt;script&gt;
-            // Attach the shadow dom
-            const shadow = document.querySelector("#host").attachShadow({mode: 'open'});
-
-            // Create the shadow dom's contents
-            shadow.innerHTML = "&lt;p&gt;I'm in a Shadow!&lt;/p&gt;";
-            shadow.innerHTML += `&lt;style&gt;
-                                    p {
-                                        font-style: italic;
-                                        color: #999;
-                                        font-weight: bold;
-                                    }
-                                &lt;/style&gt;`
-        &lt;/script&gt;
     &lt;/body&gt;
 &lt;/html&gt;
+</CodeSnippet>
+<CodeSnippet language="JavaScript">
+// Attach the shadow dom
+const shadow = document.querySelector("#host").attachShadow({mode: 'open'});
+
+// Create the shadow dom's contents
+shadow.innerHTML = "&lt;p&gt;I'm in a Shadow!&lt;/p&gt;";
+shadow.innerHTML += `&lt;style&gt;
+                        p {
+                            font-style: italic;
+                            color: #999;
+                            font-weight: bold;
+                        }
+                    &lt;/style&gt;`
 </CodeSnippet>
 <p>
 The result:
@@ -66,7 +66,7 @@ specifies that a shadow DOM exists<sup>3</sup>.
     <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-14-18-html.png" align="middle">
 </figure>
 <p>
-The ability to modularize an HTML document is awesome!  I will utilize the shadow DOM in my Angular
+The ability to modularize a HTML document is awesome!  I will utilize the shadow DOM in my Angular
 code and look into more native HTML modularization techniques like reusable custom elements in the future!
 </p>
 </div>
