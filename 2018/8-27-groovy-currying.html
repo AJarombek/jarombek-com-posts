@@ -1,42 +1,41 @@
 <div>
 <p>
 Something I'm really interested in is incorporating functional programming practices into my
-code.  Although I don't work in any purely functional languages (although I am starting to look
+code.  Despite not working in any purely functional languages (although I am starting to look
 at Haskell), most imperative and object oriented languages support certain functional 
 operations.  In my recent exploration of Groovy, I noticed that closures support the
 currying technique.  Currying in Groovy takes an existing function and creates a new specialized
-function based on the existing one.  This post explains how to use currying to enhance Groovy
-closures.
+variant.  This post explains how to use currying to enhance Groovy closures.
 </p>
 <h5>What is Currying?</h5>
 <p>
-My exploration of Groovy isn't the first time I've crossed paths with currying.  Currying was
+My exploration of Groovy wasn't the first time I crossed paths with currying.  Currying was
 mentioned in my readings on Java 8 along with my brief research so far of Haskell (a functional
 programming language).  Currying is named after Haskell Curry, an American mathematician (the
 Haskell language is also named after Curry)<sup>1,2</sup>.  The goal of currying in Groovy is to
 make specialized versions of a function.  To accomplish this, pieces of a function are
-put in a fixed state before its invoked.
+put into a fixed state prior to invocation.
 </p>
 <p>
 Confusingly, Groovy's definition of currying does not match the purely functional definition of
-currying.  Currying in Groovy matches closer to the definition of a partial application.
+currying.  Currying in Groovy aligns closer to the definition of a partial application.
 </p>
 <Definition word="Currying">
 Curried functions are those that take in their arguments one at a time instead of all at
 once<sup>3</sup>.  A function takes in arguments one at a time by having a single argument and
 returning a function that also takes a single argument<sup>4</sup>.  Returning a function makes a
 curried function a higher order function - one that either takes in a function as an argument or
-results a function.  A basic example of a curried function is one that multiplies two numbers.
-This curried function is denoted as <code class="jarombek-inline-code">
-mult :: Int -> (Int -> Int)</code>, and is invoked with <code class="jarombek-inline-code">
-mult 2 3</code>, resulting in <code class="jarombek-inline-code">6</code> (note the syntax is in
+results in a function.  A basic example of a curried function is one that multiplies two numbers.
+Denoted as <code class="jarombek-inline-code">mult :: Int -> (Int -> Int)</code>, this curried
+function is invoked with the statement <code class="jarombek-inline-code">
+mult 2 3</code>, resulting in <code class="jarombek-inline-code">6</code> (note the syntax matches
 Haskell). <code class="jarombek-inline-code">mult</code> takes a single integer argument and 
 returns a function that also takes a single integer argument.  Curried functions are commonly used 
 to create partial applications.
 </Definition>
 <Definition word="Partial Application">
-A partial application is when some of a curried function's arguments are applied before its invoked.
-The resulting function is a specialized version of the curried function.
+A partial application is when some of a curried function's arguments are supplied a fixed value
+before invocation.  The resulting function is a specialized version of the curried function.
 </Definition>
 <h5>Haskell Currying and Partial Applications</h5>
 <p>
@@ -51,10 +50,10 @@ mult x y = x * y
 6
 </CodeSnippet>
 <p>
-Now that a curried function exists, partial implementations are easily defined.  Note that partial
-implementations fix one of the curried functions arguments to a value.  For example, 
-<code class="jarombek-inline-code">dub</code> fixes one of the integer arguments to 
-<code class="jarombek-inline-code">2</code>, so all function invocations will multiply the function 
+Now that a curried function exists, partial implementations are easily defined.  Note that the
+following partial implementations fix one of the curried functions arguments to a value.  For example,
+<code class="jarombek-inline-code">dub</code> fixes one of the integer arguments to
+<code class="jarombek-inline-code">2</code>, so all function invocations will multiply the functions
 argument by 2.
 </p>
 <CodeSnippet language="Haskell">
@@ -75,7 +74,7 @@ x10 3
 </CodeSnippet>
 <p>
 Haskell isn't the focus of the remaining article, so no more code from the language is shown.
-However, I think it's important to see how a functional language handles currying.  Keeping the
+However, I think it's important to see different ways a functional language handles currying.  Keeping the
 purely functional approach in the back of our minds will assist in understanding Groovy's approach.
 </p>
 <h5>Currying Groovy Closures</h5>
@@ -83,11 +82,12 @@ purely functional approach in the back of our minds will assist in understanding
 The closure object in Groovy has a <code class="jarombek-inline-code">curry()</code> method.
 Invoking <code class="jarombek-inline-code">curry()</code> creates a partial implementation of the
 closure.  It is important to remember that <code class="jarombek-inline-code">curry()</code> does
-not create a curried function like those we defined in Haskell (yes, this is confusing).  Currying
-in Groovy only creates specialized versions of a function.
+not create a curried function like those we defined in Haskell.  Currying
+in Groovy only creates specialized versions of a function (yes, this is confusing.  You may want to
+re-read this paragraph).
 </p>
 <p>
-The basic example of partial implementation in Groovy matches the multiplication methods we defined
+The basic example of partial implementations in Groovy match the multiplication methods we defined
 in Haskell:
 </p>
 <CodeSnippet language="Groovy">
@@ -204,7 +204,7 @@ assert minutesPerMileFor5K(trackTT).toString() == "Time: 5:22"
 <h5>Conclusions</h5>
 <p>
 I'm still unsure about specific use cases for currying and partial implementations outside of
-purely functional languages like Haskell.  However, like any programming concept it is another
+a purely functional language like Haskell.  However, like any programming concept it is another
 skill added to the resume.  I'll keep you updated if I use currying or partial implementations in
 any of my production applications.
 </p>
