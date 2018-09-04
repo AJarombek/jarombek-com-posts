@@ -1,15 +1,15 @@
 <div>
 <p>
-Ever since I first heard about infrastructure as code (IaC) and Terraform almost 9 months ago I’ve
-been really intrigued by what the fuss is all about.  I always developed software and nothing more.
+Ever since I first heard about infrastructure as code (IaC) and Terraform 9 months ago, I’ve
+been intrigued by what the fuss is all about.  I always developed software and nothing more.
 Digging through Linux or setting up email servers are things I have nightmares about.  When told
-that learning operations is important for developers and the eventual combination of developer and
-operations (DevOps) I’ve kindly said "no thank you, operations are not for me."
+that learning operations is important for developers and warned of the combination of developer and
+operations (DevOps), I kindly said "no thank you, operations are not for me."
 </p>
 <p>
-With my first website <a href="https://www.saintsxctf.com/">SaintsXCTF</a> I was exposed to the
-world of setting up a linux server to host my website.  I set up an Apache web server, set up DNS
-routing, and stumbled through a Postfix mail transferring agent.  I felt very accomplished by all
+With my first website <a href="https://www.saintsxctf.com/">SaintsXCTF</a>, I was exposed to the
+world of setting up linux servers to host websites.  I set up an Apache web server with DNS
+routing and stumbled through a Postfix mail transferring agent.  I felt very accomplished by all
 that, but quickly shifted my focus back to developing software.  After all, writing code is what
 I love to do!
 </p>
@@ -17,55 +17,53 @@ I love to do!
 With my second website (which you are currently viewing) I started working in the cloud with AWS.
 I didn't enjoy my time clicking through the AWS UI, picking EC2 instances to start up and configuring
 S3 buckets.  Clicking through a website to configure cloud infrastructure isn't fun, writing code is.
-If only I could configure all my infrastructure by writing code, and checking that code into a
-repository for future use.
+If only I could configure all my infrastructure by writing code!
 </p>
 <p>
 With Terraform writing code for cloud infrastructure is a reality.  I never thought I could have fun
-doing operations work, but finally I’ve found a product that allows me to do just that.  No longer
-will I have to stumble through a cloud UI to set up a website.  Infrastructure as code is not a
-completely new concept, however it is one that managed to evade me to this point.  This post is my
+doing operations work, but now Terraform allows me to!  No longer
+will I stumble through a cloud UI to set up a website.  Infrastructure as code is not a
+completely new concept, however it is one that managed to evade me until now.  This post is my
 first baby steps with IaC and Terraform.
 </p>
 <h5>What is Terraform?</h5>
 <p>
-Terraform is a part of the more general DevOps movement, which describes the combination of software
+Terraform is part of the DevOps movement, which describes the combination of software
 development and operations.  Terraform in particular allows developers to write infrastructure as code.
 </p>
 <Definition word="DevOps">
 Software developers create application software, while operations teams work on managing the hardware
-infrastructure that the application sits upon.  As new technologies such as cloud hosting and
+infrastructure that applications sit upon.  As new technologies such as cloud hosting and
 infrastructure as code emerged, the lines between developer and operations blurred.  Often these days
-the development and operations roles have merged, since in both cases the job involves writing code!
+the development and operations roles are merged, since in both cases the job involves writing code!
 </Definition>
 <Definition word="Infrastructure as Code (IaC)">
-Traditionally handling infrastructure meant setting up physical servers. With the cloud, servers
-that run software are part of a paid cloud subscription model.  One benefit of the cloud is not
-directly handling the hardware.  Imagine the nightmare of adjusting physical servers to fit the
-scaling needs of a company.  Another benefit is that we can define infrastructure in new ways - for
-example as code written in a programming language.  IaC enables building scripts that will run and
-provision cloud infrastructure instantly.  For example, a script that sets up a linux machine with
+Traditionally, managing infrastructure meant setting up physical servers. With the cloud, servers
+are part of a paid subscription model.  Companies no longer adjust physical servers to fit the
+scaling needs of a company.  Cloud infrastructure is declared in new ways - such as
+code written in a programming language.  IaC uses scripts to run and
+provision cloud infrastructure instantly.  For example, a script can set up a linux machine with
 a web server.
 </Definition>
 <p>
 Terraform is a server provisioning tool - meaning it enables servers, databases, load balancers,
 and more to be written as code<sup>1</sup>.  IaC can be fully documented and versioned.  Just
-looking at a Terraform script will declaratively outline an entire applications infrastructure needs.
-Reverting to a previous infrastructure simply requires pulling an old tag or a different branch from
-version control and executing the Terraform script again.  It is much more pleasant and fun compared
+looking at a Terraform script declaratively outlines an applications infrastructure needs.
+Reverting to a previous infrastructure simply requires pulling an old tag or different branch from
+version control and executing the Terraform script.  Terraform is pleasant and fun compared
 to navigating a cloud providers UI!
 </p>
 <h5>Creating a Hello World Web Server with Terraform</h5>
 <p>
 Terraform scripts are written in HCL (HashiCorp Configuration Language), which is a declarative
-language<sup>2</sup>.  When HashiCorp was creating Terraform, they thought of using JSON for IaC,
-however certain JSON limitations (such as the inability to write comments) caused them to create
+language<sup>2</sup>.  When HashiCorp created Terraform, they thought of using JSON for IaC.
+  However, certain JSON limitations (such as the inability to write comments) caused them to create
 their own configuration language<sup>3</sup>.
 </p>
 <p>
-To create a hello world web server in Terraform, I wrote one file with all the IaC configurations.
-The configuration file creates a new EC2 instance to host a web server.  Let’s spend the rest of
-this section breaking down the code in <a href="https://github.com/AJarombek/devops-prototypes/
+To create a "hello world" web server in Terraform, I wrote one file with all the IaC configuration.
+The configuration file creates a new EC2 instance to host a web server.  Let’s spend the following
+ sections breaking down the code in <a href="https://github.com/AJarombek/devops-prototypes/
 blob/master/terraform/helloworld/server.tf">server.tf</a>.
 </p>
 <h5>Input Variables</h5>
@@ -95,9 +93,9 @@ variable "server_port" {
 }
 </CodeSnippet>
 <p>
-Variables are used as inputs for terraform scripts.  They allow for more flexible and configurable
-scripts.  After the <code class="jarombek-inline-code">variable</code> keyword comes the variable
-name followed by a block of configuration items.
+Variables are used as inputs in terraform scripts for flexibility across executions.
+Variables are defined with the <code class="jarombek-inline-code">variable</code> keyword
+followed by a block of configuration items.
 </p>
 <p>
 The first variable <code class="jarombek-inline-code">region</code> defines the AWS region, which
@@ -107,12 +105,12 @@ region</code> has three pieces of configuration - <code class="jarombek-inline-c
 type</code>.
 </p>
 <p>
-<code class="jarombek-inline-code">description</code> documents an input variable both in the code
+<code class="jarombek-inline-code">description</code> documents an input variable both in code
 and when using the Terraform CLI<sup>5</sup>.  <code class="jarombek-inline-code">default</code>
-gives the input variable a value to fall back on if no value is provided.  There are a couple ways
+gives input variables a value to fall back on if one isn't provided.  There are a couple ways
 to provide input variables in Terraform, all which utilize command line flags or environment
-variables.  <code class="jarombek-inline-code">type</code> explicitly binds the variable to a type.
-If no type is specified in a variables configuration, HCL will implicitly guess what the type is.
+variables.  <code class="jarombek-inline-code">type</code> explicitly binds variables to a type.
+If type isn't specified in a variable configuration, HCL will implicitly guess what the type is.
 </p>
 <p>
 The other three variables also assist in making the Terraform configuration dynamic.
@@ -122,15 +120,15 @@ instance type has a different configuration of resources, such as CPU and memory
 <code class="jarombek-inline-code">t2.micro</code>, which exists on Amazon’s free tier of instances.
 </p>
 <p>
-<code class="jarombek-inline-code">ami</code> determines the Amazon Machine Image for the EC2
-instance. An AMI is a blueprint for the EC2 instance (virtual machine), and in the Terraform script
-I specified one of the official Ubuntu AMIs as the default<sup>6,7</sup>.  Finally
+<code class="jarombek-inline-code">ami</code> determines the Amazon Machine Image for an EC2
+instance. An AMI is a blueprint for EC2 instances (virtual machines), and in the Terraform script
+I specified one of the official Ubuntu AMIs as the default<sup>6,7</sup>.  Finally,
 <code class="jarombek-inline-code">server_port</code> determines the port to host the web server.
 </p>
 <h5>Providers</h5>
 <p>
 Once input variables are declared, a service provider for the script is specified.  My cloud
-provider is AWS, and the region to build infrastructure in AWS is determined by the input variable.
+provider is AWS, and the region to build infrastructure is determined by an input variable.
 </p>
 <CodeSnippet language="HCL">
 provider "aws" {
@@ -143,8 +141,8 @@ supports string interpolation, so the values of variables can be written inside 
 </p>
 <h5>Resources</h5>
 <p>
-Now we can pick apart the meat of a Terraform script - resources.  Resources are the pieces of
-infrastructure on your provider.  I created three resources - the EC2 instance, an elastic IP
+Now we can pick apart the meat of Terraform scripts - resources.  Resources are the pieces of
+infrastructure on your provider.  I created three resources - an EC2 instance, an elastic IP
 address, and an AWS security group.  First let’s look at the EC2 instance resource.
 </p>
 <CodeSnippet language="HCL">
@@ -166,7 +164,7 @@ resource "aws_instance" "tf-basic-instance" {
 }
 </CodeSnippet>
 <p>
-A resource follows a similar syntax to variables and providers:
+Resources follow a similar syntax to variables and providers:
 </p>
 <CodeSnippet language="HCL">
 resource "&lt;resource-type&gt;" "&lt;user-defined-resource-name&gt;" {
@@ -174,10 +172,11 @@ resource "&lt;resource-type&gt;" "&lt;user-defined-resource-name&gt;" {
 }
 </CodeSnippet>
 <p>
-Both the AMI and instance type of the instance are defined in input variables.  The tags code block
-will display a name for the instance in the AWS UI<sup>8</sup>.  <code class="jarombek-inline-code">
-user_data</code> config is interesting because any statements written in its body are executed when
-the instance starts up.  In my config, a batch script executes which starts a basic web server.
+The AMI and instance type of the EC2 instance are defined in input variables.  The
+<code class="jarombek-inline-code">tags</code> code block
+displays a name for the instance in the AWS UI<sup>8</sup>.  <code class="jarombek-inline-code">
+user_data</code> is interesting because any statements written in its body are executed when
+the instance starts up.  In my config, a batch script executes and starts a basic web server.
 </p>
 <p>
 In order for an EC2 instance to accept web traffic, a security group is specified to accept incoming
@@ -215,23 +214,23 @@ resource "aws_eip" "tf-instance-ip" {
 <p>
 Elastic IP addresses are static while EC2 IP addresses change when an instance is torn down.
 Instead of accessing an EC2 instance from the instances IP address, you can go through the elastic
-IP address instead.
+IP address.
 </p>
 <p>
-For example, an elastic IP is 60.0.0.1 and an EC2 instances IP is 60.0.0.2.  Both IPs are available
+For example, let's say an elastic IP is 60.0.0.1 and an EC2 instance IP is 60.0.0.2.  Both IPs are available
 to access the EC2 instance.  What would happen if the EC2 instance went down or was torn down by
 Terraform?  In this case the IP address would probably change.  Once the EC2 instance is back
 online, the IP is changed to 60.0.0.3.  If all your web server DNS entries were mapped to 60.0.0.2,
-you would now have to reconfigure them.  However, the elastic IP address never changed, so the new
+you would have to reconfigure them.  However, the elastic IP address never changed, so the new
 EC2 instance is still accessible through 60.0.0.1.  Elastic IPs mask failures of EC2 instances
 <sup>10</sup>.
 </p>
 <h5>Output Variables</h5>
 <p>
-The final piece of the Terraform script defines output variables.  Once a Terraform script is
-executed, output variables are displayed and stored for future access.  In general, output
-variables are important pieces of data that a script user needs access to - such as the generated
-EC2 instance IP address.
+The final piece of the Terraform script defines output variables.  Once a Terraform script
+executes, output variables are displayed and stored for future access.  In general, output
+variables are important pieces of data that script users need access to - such as the generated
+EC2 IP address.
 </p>
 <p>
 In my Terraform script I defined two output variables - the EC2 instance IP address and the elastic
@@ -248,7 +247,7 @@ output "elastic_ip" {
 </CodeSnippet>
 <p>
 The <a href="https://github.com/AJarombek/devops-prototypes/blob/master/terraform/helloworld/
-server.tf">Terraform script</a> is complete and AWS infrastructure is ready to be built.
+server.tf">Terraform script</a> is complete and the AWS infrastructure is ready to build.
 </p>
 <h5>Building Infrastructure</h5>
 <p>
@@ -293,7 +292,7 @@ With just a few simple commands, I created a web server on AWS!
 </p>
 <h5>Conclusions</h5>
 <p>
-Using Terraform and IaC makes building cloud infrastructure fun!  I am excited to learn more about
+Using Terraform and IaC makes building cloud infrastructure fun!  I'm excited to learn more about
 Terraform and different DevOps practices.  The code for this discovery post along with my other
 DevOps adventures is on <a href="https://github.com/AJarombek/devops-prototypes/tree/master/
 terraform/helloworld">GitHub</a>.
