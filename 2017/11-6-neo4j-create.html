@@ -67,25 +67,25 @@ settlements and the state of Connecticut:
 MATCH (ct:State), (s:Settlement) MERGE (ct)<-[:IN]-(s)
 </CodeSnippet>
 <p>
-As you likely guessed, the ASCII art for a relationship is <code class="jarombek-inline-code">{`<-[:IN]-`}</code>
-where the arrow shows the direction of the relationship. We also give the relationship a
-label, in this case
-<code class="jarombek-inline-code">:IN</code>
-. We could also give a relationship properties just like you would a vertex. This is what I
-meant by 'relationships are first class entities' - they are treated and can be queried just
-like a vertex! This is extremely powerful.
+As you likely guessed, the ASCII art for relationships is <code class="jarombek-inline-code">&lt;-[:IN]-</code>
+where the arrow shows the direction of the relationship. Relationships are given a
+label, in this case <code class="jarombek-inline-code">:IN</code>
+.  Relationships can also have properties just like a vertex. This is what I
+meant by 'relationships are first class entities' - they are treated and queried just
+like a vertex! First class relationships are extremely powerful.
 </p>
 <p>
-You may have noticed that in this query we match for multiple vertices. In this case, we
-want all the vertices where the label is State or Settlement. Then we create the
-relationship "settlement is in state". Since the only state in the database is
-Connecticut, this simple query will give us the intended result.
+You may have noticed in the query I matched multiple vertices. I looked for
+all vertices where the label is State or Settlement. Then I created the
+relationship "all settlements are in all the states". Since the only state in the database is
+Connecticut, all settlements are given a <code class="jarombek-inline-code">:IN</code> relationship
+to Connecticut.
 </p>
 <p>
-For the final step of this graph we want to create relationships between all the
-neighboring towns. This is a long query so I'll just show a snippet (the full code
-for this and the other snippets can be found <a href="https://github.com/AJarombek/jarombek-com-sources/blob/
-master/2017/11-Nov/11-6-Neo4j-Create/neo4j-create.cql">HERE</a>):
+For the final step I created relationships between all the
+neighboring towns. The query is long so I'll just show a snippet (the full code
+for all queries is on <a href="https://github.com/AJarombek/jarombek-com-sources/blob/
+master/2017/11-Nov/11-6-Neo4j-Create/neo4j-create.cql">GitHub</a>):
 </p>
 <CodeSnippet language="Cypher">
 MATCH (greenwich:Settlement {name: 'Greenwich'}),
@@ -99,13 +99,12 @@ CREATE (greenwich)-[:NEIGHBORS_OF]->(stamford),
   ...
 </CodeSnippet>
 <p>
-In this code we first want to give variables for all the settlement nodes by their name.
-Then we want to create neighbors relationships between towns that share borders. One thing
+This code creates neighbor relationships between towns that share borders. One thing
 that I questioned when writing this code is 'why cant there be bi-directional
-relationships?' It turns out at the time of this writing Neo4j does not support
-bi-directional relationships. This is because traversing a relationship takes the same
+relationships?' It turns out Neo4j does not support
+bi-directional relationships at this time. This is because traversing a relationship takes the same
 amount of time (O(1)) regardless of the direction it is pointing<sup>2</sup>. In a case like
-  this one where we will treat the relationships as bi-directional, you can
+this where the relationships should be bi-directional, you can
 just ignore the arrow in <code class="jarombek-inline-code">MATCH</code>
 queries. Below you can see the output of the settlements in the Neo4j user interface:
 </p>
@@ -113,7 +112,7 @@ queries. Below you can see the output of the settlements in the Neo4j user inter
 <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-6-17-FairfieldGraphImage.png"/>
 </figure>
 <p>
-I will look further at Neo4j and build off this graph in future discoveries. I hope this
-shows you just how simple it is to build a graph database!
+I will look further at Neo4j and build off this graph in future discoveries. I hope this post
+shows just how simple it is to build a graph database!
 </p>
 </div>

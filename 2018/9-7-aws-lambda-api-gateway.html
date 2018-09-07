@@ -1,29 +1,29 @@
 <div>
 <p>
 Traditionally when building a mobile app or website, the application is split into a few different
-layers.  Commonly a front-end, backend, and database comprises all the necessary layers.  In recent
-years the backend is often a <a href="https://jarombek.com/blog/aug-5-2018-graphql-pt1">REST API</a>
+layers.  The necessary layers commonly comprise a front-end, backend, and database.  In recent
+years, the backend is often a <a href="https://jarombek.com/blog/aug-5-2018-graphql-pt1">REST API</a>
 that makes requests to a database.  The front-end communicates with the REST API through HTTP
 requests.
 </p>
 <p>
-To set up a REST API, a server is needed to host backend code.  Having a backend server means app
+To set up a REST API, a server is needed to host backend code.  Using a backend server means app
 developers have to spend time managing infrastructure.  As I mentioned in my post on
 <a href="https://jarombek.com/blog/sep-3-2018-terraform">Terraform</a>, when cloud computing came
-along new techniques for handling infrastructure were introduced.  With AWS Lambda, we now have a
-new technique for handling code and infrastructure in our backend.  AWS Lambda brings containerized
-functions and serverless computing to the backend.
+along new techniques for handling infrastructure were introduced.  With AWS Lambda, we have a
+new technique for handling code and infrastructure in our backend.  AWS Lambda introduces containerized
+functions and serverless computing.
 </p>
 <h5>The Serverless Model</h5>
 <p>
 In a serverless model, each API endpoint corresponds to a containerized function<sup>1,2</sup>.
-While each container does run on a server, AWS abstracts the infrastructure away, leaving
-developers to solely focus on the function definition.  You only pay Amazon for the memory usage
-of the function.  If the function never executes, you never have to pay.
+While each container does run on a server, AWS abstracts the server infrastructure away, letting
+developers focus solely on the function definition.  Developers only pay Amazon for the memory usage
+of a function.  If a function never executes, you never have to pay.
 </p>
 <p>
 AWS Lambda is a service for defining functions that fit the serverless model.  APIs are defined with
-lambda functions and another AWS service called API Gateway.  API Gateway gives lambda functions a
+another AWS service called API Gateway.  API Gateway gives AWS Lambda functions a
 REST API endpoint mapping.
 </p>
 <figure>
@@ -36,11 +36,11 @@ With a serverless model, you don’t have to maintain an entire backend server.
 <p>
 AWS Lambda functions are just like any other programming language function - they take in arguments
 and return a value.  They are specified as synchronous or asynchronous.  A number of different
-runtimes are supported for lambda functions - Node.js, Java, and Python to name a few.
+runtimes are supported for lambda functions - such as Node.js, Java, and Python.
 </p>
 <p>
-I created a lambda function in JavaScript on the Node.js runtime.  The function takes an integer as
-an argument and returns the roman numeral equivalent.  The following code sets up the function:
+I created a lambda function in JavaScript on the Node.js runtime.  The function takes an integer
+argument and returns a roman numeral equivalent.  The following code sets up the function:
 </p>
 <CodeSnippet language="JavaScript">
 exports.handler = (event, context, callback) => {
@@ -54,9 +54,9 @@ exports.handler = (event, context, callback) => {
 The function definition takes three arguments and is given the name
 <code class="jarombek-inline-code">handler</code>.  <code class="jarombek-inline-code">callback
 </code> is a callback function used to return data back to whoever invoked the lambda function.  The
-first argument passed to <code class="jarombek-inline-code">callback</code> is an error.  If this
-argument is <code class="jarombek-inline-code">null</code>, that means the lambda function is
-returning successfully.  The seconds argument contains any data the lambda function should return.
+first argument passed to <code class="jarombek-inline-code">callback</code> is an error status.  If this
+argument is <code class="jarombek-inline-code">null</code>, the lambda function
+returned successfully.  The second argument contains any data the lambda function should return.
 My function always returns back the roman numeral.
 </p>
 <p>
@@ -64,12 +64,12 @@ The argument <code class="jarombek-inline-code">context</code> contains runtime 
 the lambda function.
 </p>
 <p>
-<code class="jarombek-inline-code">event</code> provides information about the AWS Lambda function
-request.  Inside <code class="jarombek-inline-code">event</code> you find data passed by whoever
+<code class="jarombek-inline-code">event</code> provides information about the lambda function
+request.  Inside <code class="jarombek-inline-code">event</code> exists data passed by whoever
 invoked the function.  In the code above I access the <code class="jarombek-inline-code">integer
 </code> property on <code class="jarombek-inline-code">event</code>.
-<code class="jarombek-inline-code">integer</code> contains a number that will convert to a roman
-numeral when <code class="jarombek-inline-code">toRomanNumeral()</code> is invoked.
+<code class="jarombek-inline-code">integer</code> contains a number that is passed to
+<code class="jarombek-inline-code">toRomanNumeral()</code>.
 </p>
 <CodeSnippet language="JavaScript">
 const toRomanNumeral = (int) => {
@@ -102,18 +102,18 @@ const toRomanNumeral = (int) => {
 </CodeSnippet>
 <h5>Deploying an AWS Lambda Function</h5>
 <p>
-One way to set up an AWS Lambda function is to go into the AWS Console UI and follow the steps on
+One way to set up a lambda function is to go into the AWS Console UI and follow the steps on
 the graphical display.  If you read my previous post on <a href="https://jarombek.com/blog/
 sep-3-2018-terraform">Infrastructure as Code</a> you know that there is a better option - Terraform!
 Terraform provisions cloud infrastructure with a script and CLI.  In my previous post I used
-Terraform to configure infrastructure for a web server, however you can also use it with AWS Lambda
+Terraform to configure infrastructure for a web server, however it also works with AWS Lambda
 and API Gateway.
 </p>
 <p>
 Terraform isn’t the main topic of this post, so I will quickly breeze through this section.  All
 the code is fully inline documented and is available on <a href="https://github.com/AJarombek/
-devops-prototypes/blob/master/terraform/awslambda/lambda.tf">GitHub</a>.  Terraform also has great
-documentation for using <a href="https://www.terraform.io/docs/providers/aws/r/lambda_function.html">
+devops-prototypes/blob/master/terraform/awslambda/lambda.tf">GitHub</a>.  Terraform has great
+documentation for <a href="https://www.terraform.io/docs/providers/aws/r/lambda_function.html">
 AWS Lambda</a> and <a href="https://www.terraform.io/docs/providers/aws/r/api_gateway_rest_api.html">
 API Gateway</a>.
 </p>
@@ -184,7 +184,7 @@ resource "aws_iam_role" "lambda-role" {
 With AWS Lambda set up, I created an API Gateway REST API.  I defined nested API Gateway resources
 so that the REST API forms the path <code class="jarombek-inline-code">/roman-numeral/{integer}
 </code>.  <code class="jarombek-inline-code">{integer}</code> is replaced with whatever number a user
-of the API wants converted to roman numerals.
+of the API wants converted to a roman numeral.
 </p>
 <CodeSnippet language="HCL">
 # Declare a new API Gateway REST API
@@ -306,8 +306,8 @@ Take note of the <code class="jarombek-inline-code">request_templates</code> and
 <code class="jarombek-inline-code">response_templates</code> configuration under
 <code class="jarombek-inline-code">aws_api_gateway_integration</code> and
 <code class="jarombek-inline-code">aws_api_gateway_integration_response</code> respectively.  For
-both HTTP requests and responses to API Gateway, templates are used to determine what is passed to
-an AWS Lambda function and returned back to whoever invoked the API.
+ HTTP requests and responses to API Gateway, templates are used to determine what is passed to
+AWS Lambda functions and returned back to the API invoker.
 </p>
 <p>
 Both <code class="jarombek-inline-code">request_templates</code> and
@@ -340,7 +340,7 @@ $integer</code> contains a value, its used as a JSON property.  Otherwise, an em
 The HTTP response template is also simple.  It takes whatever value is returned from the lambda
 function (represented as <code class="jarombek-inline-code">$input.path('$')</code>) and assigns
 it to the variable <code class="jarombek-inline-code">$response</code>.  If the response exists,
-it is returned with the JSON.  Otherwise the JSON property <code class="jarombek-inline-code">error
+it is returned with the JSON.  Otherwise, the JSON property <code class="jarombek-inline-code">error
 </code> is used to return an error message.
 </p>
 <CodeSnippet language="Velocity">
@@ -359,7 +359,7 @@ it is returned with the JSON.  Otherwise the JSON property <code class="jarombek
 With Terraform all configured, I ran <code class="jarombek-inline-code">terraform apply</code> and
 tested out the REST API which invokes my AWS Lambda function.
 </p>
-<CodeSnippet language="HCL">
+<CodeSnippet language="Bash">
 curl https://xyhzuzr8z2.execute-api.us-east-1.amazonaws.com/dev/roman-numeral/8
 # {"romanNumeral": "VIII"}
 
@@ -373,12 +373,12 @@ curl https://xyhzuzr8z2.execute-api.us-east-1.amazonaws.com/dev/roman-numeral/ye
 # {"error": "failed converting to roman numeral"}
 </CodeSnippet>
 <p>
-Although I only created one lambda function and REST endpoint, you can imagine how you could easily
-scale up a serverless backend with more lambda functions.
+Although I only created one lambda function and REST endpoint, you can imagine a
+scaled up serverless backend with more lambda functions.
 </p>
 <p>
-This is only the beginning of my development with serverless architecture.  I am actually using AWS
-Lambda and API Gateway to handle the subscription feature of this website, and it has worked great
+This is only the beginning of my development with serverless architecture.  I am actively using AWS
+Lambda and API Gateway to handle the subscription feature for this website, and it has worked great
 so far.  You can view the full code from this discovery post on <a  href="https://github.com/
 AJarombek/devops-prototypes/tree/master/terraform/awslambda">GitHub</a>.
 </p>
