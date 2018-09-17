@@ -2,17 +2,17 @@
 <p>
 In the past, I always associated dynamic programming languages to those with dynamic typing.
 In my discovery post on <a href="https://jarombek.com/blog/jul-15-2018-groovy-optional-typing">
-Groovy's type system</a> I discovered that dynamic typing and dynamic programming are two
+Groovy's type system</a> I learned that dynamic typing and dynamic programming are two
 completely different concepts.  Dynamic typing specifies a language that enforces types at
-runtime.  Dynamic programming allows a language to change attributes of a program at runtime
+runtime.  Dynamic programming languages allow attributes of a program to change at runtime
 that are typically kept static.  This post is my introduction to the features of a dynamic
-programming language and its use cases in a Groovy application.
+programming language and their use cases in Groovy applications.
 </p>
 <h5>Groovy as a Dynamic Language</h5>
 <p>
 Groovy builds upon Java which is statically typed and does not have dynamic language
 features.  While Groovy does use Java's type system, it enforces types at runtime only, making
-Groovy a dynamically typed.  Groovy also has dynamic language capabilities that Java does not.
+Groovy dynamically typed.  Groovy also has dynamic language capabilities that Java does not.
 </p>
 <ComparisonTable title="Dynamic Vs. Static Programming Language">
 <ComparisonTableEntry>
@@ -24,12 +24,12 @@ Dynamic Programming Language
 Dynamic languages enable certain attributes of a program to be changed at runtime.  In an object
 oriented language, these attributes include class fields and methods<sup>1</sup>.  For example, new
 fields can be added to the <code class="jarombek-inline-code">String</code> class at runtime or an
-existing methods behavior can be altered at runtime.  These manipulations don't affect the original
+existing methods behavior can be altered at runtime.  These manipulations don't effect the original
 class definition and can be applied per instance or across all instances<sup>2</sup>.
 </p>
 <p>
-Another powerful feature of dynamic programming languages is dynamic method dispatch<sup>3</sup>.
-This allows methods that don't exist to be called on an object.  As a developer you can implement
+Another powerful feature of a dynamic programming language is dynamic method dispatch<sup>3</sup>.
+This allows methods that don't exist to be invoked.  As a developer you can implement
 certain logic that will occur when a method is invoked but not found.
 </p>
 </div>
@@ -42,8 +42,8 @@ Static Programming Language
 <p>
 Static languages disallow certain attributes of a program from changing at runtime that dynamic
 languages are flexible with.  In the object oriented paradigm, a classes fields and methods are
-static and their definitions can't be changed at runtime.  Field and method definitions are
-finalized at compile time.  For example, the number of methods and fields on
+static and their definitions can't be changed at runtime (they are
+finalized at compile time).  For example, the number of methods and fields on
 <code class="jarombek-inline-code">String</code> can't change once a program compiles.  If a
 method is invoked that does not exist, the program will not even compile.
 </p>
@@ -52,9 +52,9 @@ method is invoked that does not exist, the program will not even compile.
 </ComparisonTable>
 <p>
 One of the challenges Groovy faced was allowing dynamic features for code that is compiled to Java
-byte code.  Java class definitions are immutable once compiled, so Groovy had to implement a layer
+byte code.  Java class definitions are immutable once compiled to byte code, so Groovy had to implement a layer
 of indirection to get dynamic language features to work<sup>4</sup>.  This layer of indirection
-occurs between a method/field lookup and method invocation/field access.
+occurs between the method or field lookup and the method invocation/field access.
 </p>
 <p>
 Groovy calls the layer of indirection the Meta Object Protocol (MOP).  One piece of the MOP is
@@ -81,13 +81,18 @@ assert mc.invokeMethod([1,2,3], "toListString", new Object[0]) == "[1, 2, 3]"
 assert mc.invokeMethod([1,2,3], "get", [2]) == 3
 </CodeSnippet>
 <p>
-Another piece of the MOP is handling method calls for methods that do not exist.  Groovy has special
-methods called hook methods for the MOP to invoke whenever a non-existent method is called.  As
+Whenever you invoke a method on a Groovy object, behind the scenes
+<code class="jarombek-inline-code">invokeMethod()</code> is called on the Groovy object's
+<code class="jarombek-inline-code">MetaClass</code>.
+</p>
+<p>
+Another piece of the MOP is handling calls for methods that don't exist.  Groovy has special
+hook methods for the MOP to invoke whenever a non-existent method is called.  As
 developers we can overwrite hook methods and add our own logic!
 </p>
 <p>
-The hook method the MOP uses when a method is missing is <code class="jarombek-inline-code">
-methodMissing()</code>.  Similar to missing methods, the hook method for missing properties is
+The hook method that the MOP uses when a method is missing is <code class="jarombek-inline-code">
+methodMissing()</code>.  Similarly, the hook method for missing properties is
 <code class="jarombek-inline-code">propertyMissing()</code>.
 </p>
 <p>
@@ -172,9 +177,9 @@ one of my existing applications.  I have a web, iOS, and Android application cal
 SaintsXCTF</a> which my college cross country and track & field teams use for exercise logging.
 Groovy In Action presents sample code that extends the <code class="jarombek-inline-code">Number
 </code> metaclass, adding additional functionality to convert between different metrics<sup>5</sup>.
-I decided to build on this sample code in a way that would fit the needs of SaintsXCTF.  The
+I decided to build upon this sample code in a way that would fit the needs of SaintsXCTF.  The
 following code dynamically adds new methods to the <code class="jarombek-inline-code">Number</code>
-class that assist conversions between miles, kilometers, and meters.
+class that assists conversions between miles, kilometers, and meters.
 </p>
 <CodeSnippet language="Groovy">
 Number.metaClass {
@@ -208,13 +213,13 @@ Groovy closures</a> you will remember that each closure has a <code class="jarom
 delegate</code> property.  <code class="jarombek-inline-code">delegate</code> determines how outer
 scope variables are resolved in a closure.  By default, <code class="jarombek-inline-code">
 delegate</code> is set to the owner of a closure, which is the closures lexical scope.  In the code
-above <code class="jarombek-inline-code">delegate</code> will resolve to the instance of
+above, <code class="jarombek-inline-code">delegate</code> will resolve to the instance of
 <code class="jarombek-inline-code">Number</code>.  Therefore, accessing the field
 <code class="jarombek-inline-code">5.kilometers</code> results in the calculation
 <code class="jarombek-inline-code">5 / 1.60934.miles</code>.
 </p>
 <p>
-Manipulating a class in a language library to accommodate an application is the greatest power of
+Manipulating classes in a languages standard library to accommodate an application is the greatest power of
 dynamic programming languages.  It removes restrictions that language developers set for the core APIs!
 </p>
 <h5>Conclusions</h5>
