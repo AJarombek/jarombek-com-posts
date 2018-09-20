@@ -6,10 +6,9 @@ I found the user interface very enjoyable for viewing graphs and executing queri
 I highly recommend it if you need a graph database solution.
 </p>
 <p>
-The largest draw for graph databases is storing
-relationships between data and the speed at which you can query related data points (or in
-graph terms nodes/vertices). Relationships are first class citizens, which enables
-related data querying by traversing the relationship entities themselves.  This is contrasted
+Graph databases largest draw is related data storage and the speed at which you can query related data points (or in
+graph terms, nodes/vertices). Relationships are first class citizens, which allows
+related data queries to be executed by traversing relationships themselves.  This is contrasted
 with a typical relational database where you have to find relationships through
 foreign keys or combine two tables with a very slow SQL <code class="jarombek-inline-code">
 JOIN</code> operation<sup>1</sup>. The same slow query in a RDBMS (Relational DataBase Management
@@ -46,17 +45,17 @@ CREATE (:Town {name: 'Bethel'}),
 </CodeSnippet>
 <p>
 Before I made any relationships, I wanted to simplify things and group together cities and
-towns under one common label. After all they are both considered settlements.
+towns under one common label. After all towns and cities are both considered settlements.
 </p>
 <CodeSnippet language="Cypher">
 MATCH (s) WHERE s:City OR s:Town SET s:Settlement
 </CodeSnippet>
 <p>
-I introduced some new keywords here. Most important of them is <code class="jarombek-inline-code">MATCH</code>,
+I introduced some new keywords here, most importantly <code class="jarombek-inline-code">MATCH</code>,
  which queries the database based on some ASCII Art I pass it. The
 <code class="jarombek-inline-code">(s)</code> token represents a node in the database that I assign
-to variable <code class="jarombek-inline-code">s</code>. This query says "for each vertex in the database
-that is a city or town, set a new label called Settlement". In Neo4j vertices can have multiple labels, so the
+to variable <code class="jarombek-inline-code">s</code>. This query can be read as "for each vertex in the database
+that is a city or town, give the vertex a new label called Settlement". In Neo4j vertices can have multiple labels, so the
 <code class="jarombek-inline-code">SET</code> operation will not override old labels.
 </p>
 <p>
@@ -75,10 +74,10 @@ meant by 'relationships are first class entities' - they are treated and queried
 like a vertex! First class relationships are extremely powerful.
 </p>
 <p>
-You may have noticed in the query I matched multiple vertices. I looked for
+You may have noticed the query matches multiple vertices. I looked for
 all vertices where the label is State or Settlement. Then I created the
 relationship "all settlements are in all the states". Since the only state in the database is
-Connecticut, all settlements are given a <code class="jarombek-inline-code">:IN</code> relationship
+Connecticut, all settlements are given an <code class="jarombek-inline-code">:IN</code> relationship
 to Connecticut.
 </p>
 <p>
@@ -113,6 +112,6 @@ queries. Below you can see the output of the settlements in the Neo4j user inter
 </figure>
 <p>
 I will look further at Neo4j and build off this graph in future discoveries. I hope this post
-shows just how simple it is to build a graph database!
+helps show how simple it is to build a graph database!
 </p>
 </div>
