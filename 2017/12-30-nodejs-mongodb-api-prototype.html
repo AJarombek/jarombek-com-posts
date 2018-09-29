@@ -24,7 +24,7 @@ or MERN (MongoDB, Express, <strong>React.js</strong>, Node.js).  You will notice
 technologies are present in both stacks - <strong>MongoDB, Express,</strong> and <strong>Node.js</strong>.
 We will be using all three to build the prototype today!
 </p>
-<h5>Prototype Structure</h5>
+<SectionTitle title="Prototype Structure">Prototype Structure</SectionTitle>
 <p>
 The prototype is a REST API that lets users look at songs and artists.  They can also comment on songs.
 MongoDB stores this information in a database called <code class="jarombek-inline-code">music_api</code>.
@@ -51,7 +51,7 @@ application these uses would be expanded.  This could include creating and updat
 user-to-user interactivity, etc.  Now let's look at some
 insteresting aspects of the prototype and certain challenges that I faced while creating it.
 </p>
-<h5>Using Mongoose</h5>
+<SectionTitle title="Using Mongoose">Using Mongoose</SectionTitle>
 <p>
 For interacting with the MongoDB database from Node.js I chose to use a module called Mongoose.  Mongoose
 allows you to model database JSON objects and perform all MongoDB queries, inserts, and updates.  With
@@ -136,7 +136,7 @@ in the artist schema.
 <CodeSnippet language="JavaScript">
 ArtistSchema.index({name: 1});
 </CodeSnippet>
-<h5>Switching to Promises</h5>
+<SectionTitle title="Switching to Promises">Switching to Promises</SectionTitle>
 <p>
 Mongoose allows you to perform any query, update, insert, or delete operation on a Schema.  By default
 however, Mongoose uses callbacks to perform these operations.  We want to avoid callbacks as they
@@ -164,7 +164,7 @@ Song.find().exec()
         res.status(500).send(err);
     });
 </CodeSnippet>
-<h5>Using EJS to Return XML</h5>
+<SectionTitle title="Using EJS to Return XML">Using EJS to Return XML</SectionTitle>
 <p>
 You may have noticed in the last code sample the <code class="jarombek-inline-code">res.format()</code>
 function which returns the song data as an HTTP response.  This function also returns either JSON or XML
@@ -248,7 +248,7 @@ settled for ES5 just to be safe.  Here you can see the XML result in postman:
 <figure id="xmlresponse-image">
     <img src="https://asset.jarombek.com/posts/12-30-17-xmlresponse.png">
 </figure>
-<h5>Text Search</h5>
+<SectionTitle title="Text Search">Text Search</SectionTitle>
 <p>
 Text searching is how search engines take user input and return a list of results.  The full picture
 of how it works is beyond the scope of this blog (although it would make for a fun discovery some day!)
@@ -318,7 +318,7 @@ matches a Mariah Carey song with a matching lyric:
 <figure id="xmlresponsetext-image">
     <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-xmlresponsetext.png">
 </figure>
-<h5>Basic Auth</h5>
+<SectionTitle title="Basic Auth">Basic Auth</SectionTitle>
 <p>
 I also found a really nice library to add basic auth to my endpoints.  Basic auth works by using the
 HTTP requests <code class="jarombek-inline-code">Authorization</code> header to check for a base64
@@ -335,7 +335,7 @@ app.use(basicAuth({
     users: {'a': 'j'}
 }));
 </CodeSnippet>
-<h5>Gulp</h5>
+<SectionTitle title="Gulp">Gulp</SectionTitle>
 <p>
 The final major piece of this prototype was the build automation tool - gulp.  Gulp allows you to build
 your project in stages using tasks defined as JavaScript functions<sup>11</sup>.  I am still trying
@@ -406,7 +406,7 @@ Gulp made my life a lot easier in this project.  Combining gulp which restarted 
 changes and the WebStorm IDE which automatically saves files, I never had to save a file or restart
 my server throughout development.  I could put 100% of my focus on developing!
 </p>
-<h5>Conclusions</h5>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 This MongoDB and Node.js prototype was very enjoyable to make and has really made the full JavaScript
 stack grow on me.  There are still many unexplored areas of Node.js development for me but it is clear

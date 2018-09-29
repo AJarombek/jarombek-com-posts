@@ -7,7 +7,7 @@ wish to stay proficient in them.  I will post snippets of the code in each langu
 you can also check out the <a href="https://github.com/AJarombek/jarombek-com-sources/tree/
 master/2017/11-Nov/11-14-Sorting-Lists">full examples</a>. Let’s get started!
 </p>
-<h5>Java</h5>
+<SectionTitle title="Java">Java</SectionTitle>
 <CodeSnippet language="Java">
 List&lt;Person&gt; list = Arrays.asList(new Person("Andrew", "Jar."),
                                         new Person("Thomas", "Cau."),
@@ -26,7 +26,7 @@ write <code class="jarombek-inline-code">Person::getLast</code> instead of
 <code class="jarombek-inline-code">(p) -> p.getLast()</code>.  Most of the Java code in the full
 example is for creating the Person POJO.
 </p>
-<h5>JavaScript</h5>
+<SectionTitle title="JavaScript">JavaScript</SectionTitle>
 <CodeSnippet language="JavaScript">
 let people = [
     {first: "Andrew", last: "Jar."},
@@ -54,7 +54,7 @@ console.info()</code> calls produced the sorted array even though the first
 is because depending on the environment console calls can be asynchronous. Therefore we may not get the
 results at the time we expect.  You can’t always trust <code class="jarombek-inline-code">console</code>!
 </p>
-<h5>Swift</h5>
+<SectionTitle title="Swift">Swift</SectionTitle>
 <CodeSnippet language="Swift">
 struct Person {
     let first: String
@@ -88,7 +88,7 @@ trailing closure syntax allows us to do is remove the functions parenthesis, and
 you can see <code class="jarombek-inline-code">sort()</code> uses no parenthesis<sup>2</sup>!  All these
 tricks are fun to look into and allow for very concise Swift code.
 </p>
-<h5>PHP</h5>
+<SectionTitle title="PHP">PHP</SectionTitle>
 <CodeSnippet language="PHP">
 $array = array(new Person('Andrew', 'Jar.'), new Person("Thomas", "Cau."),
 new Person("Joe", "Smi."), new Person("Ben", "Fis."));
@@ -107,7 +107,7 @@ one is the array and argument two is the string name of the comparison function 
 we treat our comparison function as a first class citizen and pass it as a variable to the second
 <code class="jarombek-inline-code">uasort()</code> argument?  Ugly.
 </p>
-<h5>Python</h5>
+<SectionTitle title="Python">Python</SectionTitle>
 <CodeSnippet language="Python">
 people = [{"first":"Andrew", "last":"Jar."},
     {"first":"Thomas", "last":"Cau."},
@@ -124,7 +124,7 @@ people.sort(key=last, reverse=False)
 As you probably guessed, the winner for most concise comparison sort goes to Python.  Thanks to
 optional arguments, the <code class="jarombek-inline-code">sort()</code> function is really sleek!
 </p>
-<h5>C</h5>
+<SectionTitle title="C">C</SectionTitle>
 <CodeSnippet language="C">
 typedef struct {
     char first[20];

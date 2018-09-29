@@ -1,0 +1,173 @@
+<div>
+<p>
+I have recently started work on my Angular 5 framework prototype.  The project will be a single
+page web application that displays cat pictures!  The page will have a number of tabs you can click
+on that will change the state of the application.  To start setting up the
+application, I first created all the routes which will be selected when users click on tabs.
+</p>
+<p>
+First I made an Angular component that has an HTML template for all the tabs.
+</p>
+<CodeSnippet language="HTML">
+&lt;div&gt;
+&lt;header&gt;
+    &lt;div&gt;
+        &lt;a [routerLink]="['/']"&gt;MeowPics&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;nav&gt;
+        &lt;ul&gt;
+            &lt;li&gt;
+                &lt;a [routerLink]="['/profile']"&gt;Profile&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;a [routerLink]="['/profile/post']"&gt;Post&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;a [routerLink]="['/about']"&gt;About&lt;/a&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+    &lt;div&gt;
+        &lt;div&gt;
+            &lt;a [routerLink]="['/login']"&gt;Login&lt;/a&gt;
+        &lt;/div&gt;
+        &lt;span&gt;  &lt;/span&gt;
+        &lt;div&gt;
+            &lt;a [routerLink]="['/signup']"&gt;Sign Up&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/header&gt;
+&lt;!-- Router Outlet is where the router will render the component --&gt;
+&lt;router-outlet&gt;&lt;/router-outlet&gt;
+&lt;/div&gt;
+</CodeSnippet>
+<p>
+The code sets up <code class="jarombek-inline-code">[routerLink]</code> properties that specify
+which path to route to.  Each of these routes is assigned an Angular
+component as we will soon see.  When you click a route, its components template will be placed inside the
+<code class="jarombek-inline-code">&lt;router-outlet&gt;</code> element.
+</p>
+<p>
+The Angular component for this template is called <code class="jarombek-inline-code">AppComponent</code>
+and is wrapped along with the router's components in a module called <code class="jarombek-inline-code">
+AppModule</code>.  The most important aspect of this module is that it maps each route to the correct
+component:
+</p>
+<CodeSnippet language="TypeScript">
+export const routes: Routes = [
+    {path: '', component: HomeComponent},
+    {path: 'profile', loadChildren: './profile/profile.module#ProfileModule'},
+    {path: 'about', component: AboutComponent},
+    {path: 'profile/post', loadChildren: './profile/profile.module#ProfileModule'},
+    {path: 'login', component: LoginComponent},
+    {path: 'signup', component: SignupComponent}
+];
+
+/**
+* @NgModule configures an Angular module, helping to organize the application into components
+* In Angular 5 NgModules allow for Ahead-Of-Time Compilation, where the JavaScript and HTML
+* is compiled before the code is sent to the client
+* declarations - items used in templates (ex. components, directives)
+* imports - import other modules
+* providers - services used in the module
+* bootstrap - specifies the root component of the application as a bootstrap entry point
+*/
+@NgModule({
+    declarations: [
+        AppComponent,
+        HomeComponent,
+        AboutComponent,
+        LoginComponent,
+        SignupComponent
+    ],
+    imports: [
+        BrowserModule,
+        RouterModule.forRoot(routes)
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
+})
+export class AppModule { }
+</CodeSnippet>
+<p>
+You can see that each route is assigned a HTTP path and an Angular component.  The
+<code class="jarombek-inline-code">routes</code> variable is then used in the
+<code class="jarombek-inline-code">@NgModule</code> annotation with the <code class="jarombek-inline-code">
+RouterModule</code>.  We use the <code class="jarombek-inline-code">RouterModule.forRoot()</code> method
+because <code class="jarombek-inline-code">AppModule</code> is the root module.
+</p>
+<p>
+Most of the components assigned to routes are very simple.  However, you will notice that some have a
+<code class="jarombek-inline-code">loadChildren</code> property instead of <code class="jarombek-inline-code">
+component</code>.  This is because these components are lazily loaded<sup>1,2</sup>.  They are not shipped
+with the main application and are only loaded from the server when they need to be accessed.
+</p>
+<p>
+The prototype project has two modules: the root module that we have viewed already and a
+<code class="jarombek-inline-code">ProfileModule</code> that contains components that are only accessible
+to signed in users.  If you look closely at the <code class="jarombek-inline-code">loadChildren</code>
+properties you can see that they specify the path to the <code class="jarombek-inline-code">ProfileModule</code>
+in the project.  This module will be lazily loaded when you follow either
+of these paths.  Here you can see the code for the <code class="jarombek-inline-code">ProfileModule</code>
+(and that it specifies its own sub-paths):
+</p>
+<CodeSnippet language="TypeScript">
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ProfileComponent } from './profile.component';
+import { PostComponent } from './post/post.component';
+import { RouterModule } from "@angular/router";
+
+// Define routing within the feature module
+export const routes = [
+    {path: '', component: ProfileComponent},
+    {path: 'post', component: PostComponent}
+];
+
+// Export both the ProfileComponent and PostComponent to outside the module
+@NgModule({
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes)
+    ],
+    declarations: [ProfileComponent, PostComponent],
+    exports: [ProfileComponent, PostComponent]
+})
+export class ProfileModule { }
+</CodeSnippet>
+<p>
+You may be wondering what these components consist of.  Right now they are just placeholders that specify
+a simple template that displays some text.  For example, here is the text for the
+<code class="jarombek-inline-code">ProfileComponent</code>:
+</p>
+<CodeSnippet language="HTML">
+&lt;p&gt;
+    Profile Component!
+&lt;/p&gt;
+</CodeSnippet>
+<SectionTitle title="Lazy Loading In Action">Lazy Loading In Action</SectionTitle>
+<p>
+Let's make sure that lazy loading is actually working.  When we first load the page, the
+<code class="jarombek-inline-code">HomeComponent</code> is displayed as
+expected and we can see in the developer tools all the files that were loaded with our application.
+</p>
+<figure id="prelazy-image">
+    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-27-17-prelazy.png">
+</figure>
+<p>
+Now if I click on the Profile tab, we will load the <code class="jarombek-inline-code">ProfileComponent</code>.
+This component is lazily loaded.  As expected the webpage displays ‘Profile Component!' and if we look at
+the developer tools, another file has been loaded!  This contains all the code
+for the <code class="jarombek-inline-code">ProfileModule</code> including the
+<code class="jarombek-inline-code">ProfileComponent</code>.  Lazy loading confirmed!
+</p>
+<figure id="postlazy-image">
+    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-27-17-postlazy.png">
+</figure>
+<p>
+I have just begun my journey on this Angular 5 prototype but am excited to continue to learn!  It is all
+a bit overwhelming at the
+moment, but I know it will get easier from here.  You can check out the code from this discovery on
+<a href="https://github.com/AJarombek/mean-client-prototype/tree/v0.1">GitHub</a>.
+</p>
+</div>
