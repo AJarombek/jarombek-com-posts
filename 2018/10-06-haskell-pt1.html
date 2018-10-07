@@ -13,7 +13,7 @@ language.  This post covers some of the functional concepts I explored in my fir
 </p>
 <SectionTitle title="Guarded Equations">Guarded Equations</SectionTitle>
 <p>
-Often when writing a programming with branching outcomes, a conditional expression is used.  Haskell
+Often when writing a program with branching outcomes, a conditional expression is used.  Haskell
 also supports <code class="jarombek-inline-code">if...else</code> conditional expressions, which are
 used like so:
 </p>
@@ -43,14 +43,16 @@ older' n | n > 23 = 1
          | otherwise = -1
 </CodeSnippet>
 <p>
-Guarded equations follow a more mathematical design, with the <code class="jarombek-inline-code">
-| condition = outcome</code> syntax read as "Such that condition, an outcome<sup>1</sup>."  Guarded
-equations are easily translated to a mathematical equation<sup>2</sup>.  The following equation
+Guarded equations follow a more mathematical design, using a <code class="jarombek-inline-code">
+| condition = outcome</code> syntax which is read "Such that a condition is met, return an outcome<sup>1</sup>."  Guarded
+equations are easily translated into mathematical equations<sup>2</sup>.  The following equation
 represents the <code class="jarombek-inline-code">older'</code> function:
 </p>
-<MathNotation></MathNotation>
+<MathNotation tex="﻿older'(x) = \begin{cases} 1 & x > 23 \\ 0 & x = 23 \\ -1 & otherwise \end{cases}"></MathNotation>
 <p>
-For a more advanced example of a guarded equation, the following function returns a sub-list from a list.
+The following function demonstrates a more advanced example of guarded equations.  It returns a
+sub-list from a list using recursion and the cons operator (<code class="jarombek-inline-code">:</code>),
+which constructs a list.
 </p>
 <CodeSnippet language="Haskell">
 subList :: Int -> Int -> [a] -> [a]
@@ -63,26 +65,26 @@ subList s e (x:xs) | s <= 0 && e > 0 = x : subList s (e - 1) xs
 <SectionTitle title="Lambda Expressions">Lambda Expressions</SectionTitle>
 <p>
 I use lambda functions (also known as arrow functions in some languages) all the time in my code.
-In many languages lambda functions are tacked on features, but in Haskell they are an integral part
+In many languages, lambda functions are tacked on features, but in Haskell they are an integral part
 of the language.  The following two functions demonstrate lambda expressions in Haskell.
 </p>
 <CodeSnippet language="Haskell">
 {-|
   Multiply two numbers together.  Curried functions are easier to understand
-  when a lambda function syntax is used.
+  when the lambda function syntax is used.
 -}
 mult :: Int -> (Int -> Int)
 mult = \x -> (\y -> x * y)
 
 {-|
-  An age function which returns a constant value of my age can be written to utilize lambda functions.
+  An age function which returns a constant value of my age.  Written to utilize lambda functions.
 -}
 age' :: a -> Int
 age' = \_ -> 23
 </CodeSnippet>
 <p>
-If you are curious about curried functions, I devoted an entire article to them and have a sub-section
-that applies strictly to <a href="https://jarombek.com/blog/aug-27-2018-groovy-currying#currying">
+If you are curious about curried functions, I devoted an entire article to them with a sub-section
+applying strictly to <a href="https://jarombek.com/blog/aug-27-2018-groovy-currying#currying">
 currying in Haskell</a>.
 </p>
 <SectionTitle title="List Comprehensions">List Comprehensions</SectionTitle>
@@ -93,7 +95,7 @@ or maps it to match certain criteria, resulting in a new set.
 </p>
 <p>
 In Haskell, comprehensions are used to construct lists from existing lists<sup>4</sup>.  The following
-function uses a list comprehension to square all the items in a list and then calculates the sum of the
+function uses a list comprehension to square all items in a list and then calculate the sum of the
 new list.
 </p>
 <CodeSnippet language="Haskell">
@@ -102,14 +104,16 @@ sumListSq xs = sum [x^2 | x <- xs]
 </CodeSnippet>
 <p>
 The list comprehension notation <code class="jarombek-inline-code">[x^2 | x <- xs]</code> is read as
-"item x drawn from list xs such that x^2".  When <code class="jarombek-inline-code">sumListSq [2,3,4]</code>
-is invoked, the list is mapped to <code class="jarombek-inline-code">[4,9,16]</code>.  Then the sum of
+"item <code class="jarombek-inline-code">x</code> drawn from list
+<code class="jarombek-inline-code">xs</code> such that <code class="jarombek-inline-code">x^2</code>".
+When <code class="jarombek-inline-code">sumListSq [2,3,4]</code>
+is invoked, the list is mapped to <code class="jarombek-inline-code">[4,9,16]</code> first.  Then the sum of
 the list is calculated, which is <code class="jarombek-inline-code">29</code>.
 </p>
 <p>
 Like many constructs in Haskell, list comprehensions are easily translated into mathematical notation:
 </p>
-<MathNotation></MathNotation>
+<MathNotation tex="\{x^2 \: | \: x \in xs\}"></MathNotation>
 <p>
 More advanced list comprehensions can work with multiple lists:
 </p>
@@ -126,11 +130,11 @@ grid x y = [(a, b) | a <- [0..x], b <- [0..y]]
 > grid 0 0
 [(0,0)]
 </CodeSnippet>
-<MathNotation></MathNotation>
+<MathNotation tex="﻿﻿\{(x', y') \: | \: x' \in \{0..x\}, \: y' \in \{0..y\}\}"></MathNotation>
 <p>
-The last two list comprehensions shown mapped each item in a list to a new value.  List comprehensions
+These list comprehensions mapped each item in a list to a new value.  List comprehensions
 can also use filters to only operate on and return certain items from a list.  A list comprehension
-filter is called a guard, and is placed in a list comprehension following a comma after the source list.
+filter is called a guard, and is placed in a list comprehension following the source list and a comma.
 </p>
 <CodeSnippet language="Haskell">
 {-|
@@ -146,17 +150,21 @@ vowels :: String -> String
 vowels str = [s | s <- str, elem s "aeiouAEIOU"]
 </CodeSnippet>
 <CodeSnippet>
+> square 1
+[(0,0),(0,1),(1,0),(1,1)]
+> square 2
+[(0,0),(0,1),(0,2),(1,0),(1,2),(2,0),(2,1),(2,2)]
+
 > vowels "Andy Jarombek"
 "Aaoe"
 > vowels "Greenwich,CT"
 "eei"
 </CodeSnippet>
-<MathNotation></MathNotation>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Haskell is a challenging language to get accustomed to, but I am really enjoying it.  I am also
-learning about many new functional programming concepts and how they closely relate to mathematical
-concepts.  All the code from this discovery and more is on <a href="https://github.com/AJarombek/
+Haskell is a challenging language to get accustomed to, but I am really enjoying it.  I'm also
+learning many new functional programming concepts and how they closely relate to mathematical
+concepts.  All the Haskell code from this discovery and more is on <a href="https://github.com/AJarombek/
 jarombek-com-sources/tree/master/2018/10-Oct/10-06-haskell-pt1">GitHub</a>.
 </p>
 </div>
