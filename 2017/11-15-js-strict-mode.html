@@ -1,14 +1,14 @@
 <div>
 <p>
-One JavaScript feature I have used before but never fully known the details of is strict mode.
-Strict mode restricts certain features and leniencies in the language<sup>1</sup>.  In a way
-it protects the developer from things that happen implicitly in JavaScript (that only an
+One JavaScript feature I've used before but never fully understood is strict mode.
+Strict mode restricts certain features and leniencies in the language<sup>1</sup>.
+It protects the developer from things that happen implicitly in JavaScript (that only an
 experienced dev would be aware of).  In a <a href="https://jarombek.com/blog/nov-11-2017-js-this">
 previous discovery</a> I looked at how strict mode disallows <code class="jarombek-inline-code">this</code>
-to be set to the global scope when invoking a function.  What else does strict mode have to offer?
+from containing the global scope variable.  What else does strict mode have to offer?
 </p>
 <p>
-Certain things that silently fail in JavaScript will now throw errors under strict mode.  This
+Certain things that silently fail in JavaScript throw errors when executed in strict mode.  This
 includes setting properties to primitives and assigning values to keywords.
 </p>
 <CodeSnippet language="JavaScript">
@@ -16,20 +16,17 @@ try {
     undefined = "defined!";
 } catch(e) {
     console.error('Strict mode disallows assigning values to keywords');
-    console.error(e);
 }
 
 try {
     false.not = true;
 } catch(e) {
     console.error('Strict mode disallows setting properties for primitive values');
-    console.error(e);
 }
 </CodeSnippet>
 <p>
-Strict mode also disallows duplicate parameter names for functions.  It also used to restrict
-duplicate property names on an object, but this restriction has been lifted as of ES6 (either a
-bug or poor design choice).
+Strict mode also disallows duplicate parameter names for functions.  In previous JavaScript versions it restricted
+duplicate property names on objects, but this restriction was lifted in ES6 (either a bug or poor design choice).
 </p>
 <CodeSnippet language="JavaScript">
 // Strict mode does not throw an error for duplicate property names
@@ -43,8 +40,8 @@ var andy = {
 };
 </CodeSnippet>
 <p>
-One final feature we will look at is the restriction of creating a new variable when assigning a
-value to a variable without the <code class="jarombek-inline-code">var</code>,
+Strict mode also stops variable creation when assigning a
+value to an undeclared variable without a <code class="jarombek-inline-code">var</code>,
 <code class="jarombek-inline-code">let</code>, or <code class="jarombek-inline-code">const</code> keyword.
 </p>
 <CodeSnippet language="JavaScript">
@@ -57,15 +54,15 @@ try {
 </CodeSnippet>
 <p>
 Without strict mode forgetting the <code class="jarombek-inline-code">var</code> or
-<code class="jarombek-inline-code">let</code> variable is “forgiving.”  If
-the variable has not yet been defined, JavaScript creates a new global variable with the name provided.
+<code class="jarombek-inline-code">let</code> variable is "forgiving."  If
+the variable is not defined, JavaScript creates a new global variable with the name provided.
 In my opinion this should be considered a syntax mistake by the developer
 and throw an error.  That is exactly what happens in strict mode.
 </p>
 <p>
-Strict mode has other features as well that can come in useful (such as throwing errors when trying
+Strict mode includes other features that can come in useful (such as throwing errors when trying
 to assign values to immutable properties) but the ones I went over have the largest impact on my code.
-You can find the code used in this discovery <a href="https://github.com/AJarombek/jarombek-com-sources/
-blob/master/2017/11-Nov/11-15-JS-Strict-Mode/strict-mode.js">HERE</a>.
+You can find the code used in this discovery on <a href="https://github.com/AJarombek/jarombek-com-sources/
+blob/master/2017/11-Nov/11-15-JS-Strict-Mode/strict-mode.js">GitHub</a>.
 </p>
 </div>
