@@ -1,74 +1,71 @@
 <div>
 <p>
-Continuing the trend of learning more about JavaScript, today I will be looking at MongoDB.
-Mongo is a NoSQL database which stores data in documents.  Before we get
-into the code, it is important to question why to even use MongoDB in the first place.
+Continuing the trend of learning more about JavaScript, today I'm looking at MongoDB.
+Mongo is a NoSQL database that stores data in documents.  Before getting
+into the code, its important to question why MongoDB is used in the first place.
 </p>
 <p>
-First lets look at some of the positive aspects of MongoDB.  The database stores its data as JSON
+First lets look at some positive aspects of MongoDB.  MongoDB stores its data as JSON
 (and internally as BSON - short for Binary JSON) which in my personal opinion is the best structure
-for transferring data.  In MongoDB the BSON implementation makes this data extremely lightweight<sup>1</sup>.
-If you are using a JavaScript web stack, MongoDB allows you to even use JavaScript in your
-database instead of SQL.  The query language of MongoDB is also JavaScript, which means if you have
-knowledge in JavaScript using MongoDB will be an easy transition.  You can even use JavaScript functions
-and variables to perform complex queries and database updates!
+for transferable data.  BSON causes the stored data to be extremely lightweight<sup>1</sup>.
+MongoDB is great for a full JavaScript web stack, since MongoDB uses JavaScript as its query language
+instead of SQL.  Having simple JavaScript knowledge helps make MongoDB an easy transition.  You can
+even use JavaScript functions and variables to perform complex queries and database updates!
 </p>
 <p>
-As far as negatives are concerned, MongoDB does not have transaction support (similarly to many
-NoSQL databases).  MongoDB does support atomic writes for a single document (JavaScript object equivalent
-of a row of a table in a RDBMS)<sup>2</sup>.  In other words, while you are updating a document either
-the entire update takes place, or no changes occur.  Other database connections will never see an
-update in progress, it will either have not started or be fully completed<sup>3</sup>.  This is however
+As far as negatives are concerned, MongoDB does not have transaction support (similar to many
+NoSQL databases).  MongoDB does support atomic writes for a single document (the equivalent
+of a row in a RDBMS table)<sup>2</sup>.  In other words, while you are updating a document either
+the entire update takes place, or no change occurs.  Other database connections will never see an
+update in progress<sup>3</sup>.  Unfortunately this is
 where MongoDB's ACID transaction properties end.  This can cause issues if you need true transactions
 in your database.  Another drawback (in my opinion) for MongoDB is the lack of SQL.  Using JavaScript for
-querying is nice, but SQL is at the top for query languages.  Luckily if you know SQL and
+querying is nice, but SQL is the de facto standard of query languages.  Luckily if you know SQL and
 JavaScript the learning curve for querying MongoDB is small.
 </p>
 <p>
 One thing about MongoDB that can be seen as a positive or negative is its schema-less design.  This
-allows you to have a variable number of properties in a document and to add and remove properties whenever
-you like.  This allows for a lot of flexibility with changing requirements and evolving object state.  It
-also debatably makes it harder to create a well structured database.  With more power comes
-more responsibility!
+allows for a variable number of properties in a document and the ability to add or remove properties at any time.
+A schema-less design provides a lot of flexibility for changing requirements and evolving object state.  However it
+can make it harder to create a well structured database.  With more power comes more responsibility!
 </p>
 <p>
 Now let's get started creating a MongoDB database that represents different Christmas trees.  Once you
 have MongoDB installed, you can run the <code class="jarombek-inline-code">mongo</code> command in bash
-to start up the database and CLI.  It is important to know that in MongoDB there are three main logical
+to start up the database and CLI.  It is important to know that MongoDB has three logical
 groupings; databases, collections, and documents.  Databases are not the same as a traditional RDBMS
 database connection - they are simply groupings (namespaces) for collections and documents<sup>4</sup>.
-Collections are the way we group documents together in MongoDB, similar to tables in an RDBMS.
+Collections are a way to group documents together in MongoDB, similar to tables in an RDBMS.
 </p>
 <p>
-To start, let's make a new database for our Christmas trees.  To change databases we can use the
-<code class="jarombek-inline-code">use &lt;database&gt;</code> command.
+To start, I made a new database for Christmas trees.  The
+<code class="jarombek-inline-code">use &lt;database&gt;</code> command changes the current database.
 </p>
 <CodeSnippet language="Bash">
 use xmas
 </CodeSnippet>
 <p>
-This command does not actually create the database yet, first we need to add some collections and documents.
-Let's add a document to a collection we will call tree:
+This command does not create a database yet.  To do that I need to add some collections and documents.
+I added a document to a collection called <code class="jarombek-inline-code">tree</code>:
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.insert({type: "balsam"})
 </CodeSnippet>
 <p>
-You can see the document JSON is passed into the <code class="jarombek-inline-code">insert()</code> function
-on the <code class="jarombek-inline-code">tree</code> collection object.  If we want to view
-all the documents in the tree collection, we can use the collections
-<code class="jarombek-inline-code">find()</code> function.
+The document JSON is passed as an argument to the <code class="jarombek-inline-code">insert()</code> function
+on the <code class="jarombek-inline-code">tree</code> collection object.  The <code class="jarombek-inline-code">find()</code> function
+can be used to view all the documents in the tree collection.
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.find().pretty()
 </CodeSnippet>
 <p>
-This code sample also shows that we can chain functions.  The second function
+This code sample shows the ability to chain functions.  The second function
 <code class="jarombek-inline-code">pretty()</code> will format the JSON in an easily readable fashion.
 </p>
 <p>
-Let's say we want to add more properties to our new tree document.  Since MongoDB collections have no
-schema, we can add any properties that we want!
+Let's say I want to add more properties to the tree document.  Since MongoDB collections have no
+schema, any properties can be added!
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.update({type: "balsam"}, {
@@ -81,39 +78,39 @@ db.tree.update({type: "balsam"}, {
 })
 </CodeSnippet>
 <p>
-We use the <code class="jarombek-inline-code">update()</code> function on the collection to edit a
-document.  The first parameter will query the collection and match with a document, and the second
-parameter defines what to update.  The <code class="jarombek-inline-code">$set</code> property will
-set the specified properties in the document to the given values<sup>5</sup>.
+I used the <code class="jarombek-inline-code">update()</code> function on the collection to edit a
+document.  The first parameter queries the collection and matches with a document.  The second
+parameter defines what to update.  The <code class="jarombek-inline-code">$set</code> property
+binds the specified properties in the document to the given values<sup>5</sup>.
 </p>
 <p>
-With these code samples you can start to imagine the possibilities for using JavaScript to query MongoDB.
-However performing complex JavaScript code in the CLI gets quite difficult.  Thankfully MongoDB allows us
-to edit any variable or function in our favorite text editor.  In my case I will be using Vim.  To get this
-to work we first have to change the <code class="jarombek-inline-code">EDITOR</code> variable to
+These simple queries are easily written in the MongoDB CLI.
+However performing complex JavaScript code in the CLI gets quite difficult.  Thankfully MongoDB allows
+any variable or function to be edited in a text editor.  In my case I used Vim.  To get Vim
+to work I had to change the <code class="jarombek-inline-code">EDITOR</code> variable to
 <code class="jarombek-inline-code">vim</code> in bash.
 </p>
 <CodeSnippet language="Bash">
 export EDITOR=vim
 </CodeSnippet>
 <p>
-Now in the MongoDB shell we can define a function that we will edit in vim:
+Now in the MongoDB shell I defined a function to edit in Vim:
 </p>
 <CodeSnippet language="JavaScript">
 function createTree() {}
 </CodeSnippet>
 <p>
-Using the name of this function, we can begin editing it in vim with the
+Using the name of this function, I began editing in Vim with the
 <code class="jarombek-inline-code">edit</code> command:
 </p>
 <CodeSnippet language="Bash">
 edit createTree
 </CodeSnippet>
 <p>
-Since MongoDB queries use JavaScript, we can use everything in the JavaScript language (even ES6+
-features!) in our function.  I will edit the <code class="jarombek-inline-code">createTree</code> function
-so that it inserts another document into the tree collection.  When the function is edited to
-our liking, write and quit vim.
+Since MongoDB queries use JavaScript, anything in the JavaScript language (even ES6+
+features!) can be used in a function.  I edited the <code class="jarombek-inline-code">createTree</code> function
+so that it inserts another document into the tree collection.  Once the function was finalized,
+I saved the file and quit vim.
 </p>
 <CodeSnippet language="JavaScript">
 function createTree() {
@@ -130,16 +127,16 @@ function createTree() {
 :wq
 </CodeSnippet>
 <p>
-Now back in the MongoDB CLI we can view the functions contents by typing
-<code class="jarombek-inline-code">createTree</code> and run the code in the function
+Back in the MongoDB CLI the functions contents can be viewed by typing
+<code class="jarombek-inline-code">createTree</code>.  The function is executed
 by typing <code class="jarombek-inline-code">createTree()</code>.
 </p>
 <p>
-Now our tree collection contains two documents.  Let's say we want to add two properties to our
-existing documents, <code class="jarombek-inline-code">sold</code> and <code class="jarombek-inline-code">
-buyer_id</code>.  We could use the <code class="jarombek-inline-code">update()</code> function, however
-this function only matches with the first document it finds.  To match all the documents that fit the
-query conditions, we must use <code class="jarombek-inline-code">updateMany()</code>.
+Now the tree collection contains two documents.  What if I wanted to add the properties
+<code class="jarombek-inline-code">sold</code> and <code class="jarombek-inline-code">buyer_id</code> to the
+existing documents?  I could use the <code class="jarombek-inline-code">update()</code> function, however
+it only matches with the first document it finds.  To match all documents that fit certain
+query conditions, the <code class="jarombek-inline-code">updateMany()</code> function is used.
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.updateMany({}, {
@@ -150,8 +147,8 @@ db.tree.updateMany({}, {
 })
 </CodeSnippet>
 <p>
-Finally to show the power of using JavaScript functions in MongoDB, I will create a function that bulk
-inserts random trees into our database.
+Finally to show the power of using JavaScript functions in MongoDB, I created a function that bulk
+inserts random trees into the database.
 </p>
 <CodeSnippet language="JavaScript">
 function bulkTreeInsert(number=1) {
@@ -198,15 +195,14 @@ function bulkTreeInsert(number=1) {
 }
 </CodeSnippet>
 <p>
-We can pass <code class="jarombek-inline-code">1000</code> as a parameter to this function, effectively
-calling it one thousand times.  When we check to see how many trees are in our tree collection, we will
-get 1003 as expected.
+I passed <code class="jarombek-inline-code">1000</code> as a parameter to this function, invoking it one
+thousand times.  When I checked to see the number of trees in tree collection, I got 1003 as expected.
 </p>
 <CodeSnippet language="JavaScript">
 bd.tree.count() // 1003
 </CodeSnippet>
 <p>
-Since the <code>find()</code> function also accepts JSON, we can count all trees of type Frazier and
+Since the <code class="jarombek-inline-code">find()</code> function also accepts JSON, it is easy to count all the trees of type Frazier with a
 height between 6-7 feet:
 </p>
 <CodeSnippet language="JavaScript">
@@ -214,8 +210,7 @@ db.tree.find({type:"frazier", grade:"6-7ft"}).count()
 </CodeSnippet>
 <p>
 With knowledge of JavaScript and query languages, MongoDB can be an extremely powerful database.  I
-have only scratched the surface here, but there we will many more discoveries to come!  You can find
-all the code from this discovery <a href="https://github.com/AJarombek/jarombek-com-sources/tree/
-master/2017/12-Dec/12-15-MongoDB-Pt1">HERE</a>.
+only scratched the surface here, but there will be many more discoveries to come!  You can find
+all the code from this discovery on <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2017/12-Dec/12-15-MongoDB-Pt1">GitHub</a>.
 </p>
 </div>
