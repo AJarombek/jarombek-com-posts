@@ -1,19 +1,19 @@
 <div>
 <p>
-Since starting to learn Java 8 features, much of my lambda code has come using the stream API or the
-new <code class="jarombek-inline-code">Iterable.forEach()</code> function.  While this is all great, I
-have really been looking for ways to integrate Java 8 lambdas with other programming patterns.  While
+Since I started learning Java 8, much of my lambda code is from the stream API or the
+new <code class="jarombek-inline-code">Iterable.forEach()</code> function.  While both are great, I've
+been looking for ways to integrate Java 8 lambdas with other programming patterns.  While
 reading a book on Java 8 today I saw one pattern with a lot of potential: the strategy pattern<sup>1</sup>.
 </p>
 <p>
-The strategy design pattern allows you to define a group of algorithms.  One of the algorithms in this group
-can be selected for use at runtime<sup>2</sup>.  With a functional interface, we can pass a lambda function
-(algorithm) to the strategy pattern.  The functional interface will specify the general algorithm structure
+The strategy design pattern defines a group of algorithms.  One of the algorithms in this group
+is selected for use at runtime<sup>2</sup>.  With a functional interface, a lambda function
+(algorithm) is passed to the strategy pattern.  The functional interface specifies the general algorithm structure
 while the lambda function implements the details at runtime.
 </p>
 <p>
-First I need to specify a functional interface that takes a variable number of
-<code class="jarombek-inline-code">double[]</code> arrays and returns a double.
+First I created a functional interface that takes a variable number of
+<code class="jarombek-inline-code">double[]</code> arrays and returns a <code class="jarombek-inline-code">double</code>.
 </p>
 <CodeSnippet language="Java">
 @FunctionalInterface
@@ -22,7 +22,7 @@ public interface CalculateStrategy {
 }
 </CodeSnippet>
 <p>
-Next I implement the strategy pattern<sup>3</sup>.  The constructor takes a lambda expression that specifies
+Next I implemented the strategy pattern<sup>3</sup>.  The constructor takes a lambda expression that specifies
 the algorithm strategy.  Then the <code class="jarombek-inline-code">exec()</code> function executes the
 strategy with given inputs.
 </p>
@@ -42,8 +42,8 @@ public class Calculate {
 }
 </CodeSnippet>
 <p>
-Finally we can execute the strategy pattern with multiple different lambda expressions.  If we needed to
-execute a strategy on multiple different data sets, this pattern would help a lot with code reuse!
+Finally I executed the strategy pattern with multiple different lambda expressions.  If I ever need to
+execute a strategy on multiple data sets, this pattern will help a lot with code reuse!
 </p>
 <CodeSnippet language="Java">
 public static void main(String[] args) {
@@ -73,8 +73,7 @@ public static void main(String[] args) {
 }
 </CodeSnippet>
 <p>
-You can check out the full code for this example
-<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/01-Jan/
-1-15-Java8-Strategy-Pattern">here</a>.
+You can check out the full code for this example on
+<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/01-Jan/1-15-Java8-Strategy-Pattern">GitHub</a>.
 </p>
 </div>

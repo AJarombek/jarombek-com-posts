@@ -1,24 +1,23 @@
 <div>
 <p>
-Yesterday I began to fix some bugs in my website
-<a href="https://github.com/AJarombek/saints-xctf">saintsxctf.com</a>
+Yesterday I began to fix some bugs in my website <a href="https://github.com/AJarombek/saints-xctf">saintsxctf.com</a>
 and its corresponding native iOS and Android apps (because as we know a
 codebase is never complete).  I was looking at the Swift code for my iOS app and found a bug where
 I incorrectly selected a substring from a base64 encoded image.  Luckily the fix was easy to implement,
-but viewing the code made me remember just how confusing the String structure was in Swift.
+but viewing the code made me remember just how confusing the String structure is in Swift.
 </p>
 <p>
-You would think something as simple as a string would be straightforward, but in Swift there were a
-few quirks.  I wrote the code in Xcode 8 and Swift 3 this fall.  Since then Xcode 9 and Swift 4 have
-released, making <code class="jarombek-inline-code">String</code> a bit less confusing.  I will dive
-into strings in Swift 3 and then look at how the code has changed with Swift 4.
+You would think something as simple as a string would be straightforward, but in Swift there are a
+few quirks.  I wrote the code for my iOS app in Xcode 8 and Swift 3 this fall.  Since then Xcode 9 and Swift 4 were
+released, making <code class="jarombek-inline-code">String</code> a bit less confusing.  I dive
+into strings in Swift 3 first and then look at what changed in Swift 4.
 </p>
 <SectionTitle title="Swift 3">Swift 3</SectionTitle>
 <p>
 The first quirk of strings in Swift 3 is obvious when you try to get the length of a string.  There is
 no length or count variable on the <code class="jarombek-inline-code">String</code> structure.  Instead
 each <code class="jarombek-inline-code">String</code> has a <code class="jarombek-inline-code">characters</code>
-variable of type <code class="jarombek-inline-code">CharacterView</code>
+property of type <code class="jarombek-inline-code">CharacterView</code>,
 which is a collection of all the characters in the string<sup>1</sup>.  You can use the
 <code class="jarombek-inline-code">characters</code> object to get the strings size or iterate
 over all the characters.
@@ -39,8 +38,8 @@ chars.forEach {
 }
 </CodeSnippet>
 <p>
-    Like any other collection, you can also perform functions such as filter, map, or sort on
-    <code class="jarombek-inline-code">characters</code>.  Of course array operators are also possible.
+Like any other collection, you can perform functions such as filter, map, and sort on
+<code class="jarombek-inline-code">characters</code>.  Array operations are also possible.
 </p>
 <CodeSnippet language="Swift">
 // Filter out all 'a' characters
@@ -56,21 +55,21 @@ String(filtered[6...7]) // returns 'my'
 </CodeSnippet>
 <p>
 One of the difficult operations to perform on strings in Swift is getting a substring.  In other languages
-its as simple as a <code>substring()</code> function with two integer arguments specifying the start and end
-indexes.  Swift also has a <code>substring()</code> function except it accepts a
+its as simple as a <code class="jarombek-inline-code">substring()</code> function with two integer arguments specifying the start and end
+indices.  Swift also has a <code class="jarombek-inline-code">substring()</code> function but it accepts a
 <code class="jarombek-inline-code">Range&lt;String.Index&gt;</code> structure.  This struct is constructed with
 two <code class="jarombek-inline-code">String.Index</code> structures used together with a half-open range operator
 <code class="jarombek-inline-code">..&lt;</code><sup>2</sup>.
 </p>
 <p>
-Okay, that already sounds a bit complicated.  The question you might be asking now is how to we get these
+Okay, that already sounds a bit complicated.  The question is how do we get these
 <code class="jarombek-inline-code">String.Index</code> structures?  We can get them by calling
-<code class="jarombek-inline-code">index(String.Index, offsetBy: Int)</code> on our string<sup>3</sup>.
+<code class="jarombek-inline-code">index(String.Index, offsetBy: Int)</code> on a string<sup>3</sup>.
 The following code sample gets two <code class="jarombek-inline-code">String.Index</code> structs and then
-use them to get a substring.  You will notice that since the first parameter
+uses them to get a substring.  Since the first argument
 of <code class="jarombek-inline-code">index()</code> is a <code class="jarombek-inline-code">
-String.Index</code> structure we can use the strings built in <code class="jarombek-inline-code">
-startIndex</code> variable, which is zero.
+String.Index</code> structure, I used the strings built in <code class="jarombek-inline-code">
+startIndex</code> property, which is the zero index of a string.
 </p>
 <CodeSnippet language="Swift">
 var runDescription = "I ran 2.12 miles at 6:47 pace on January 3rd, 2018"
@@ -85,7 +84,7 @@ runDescription.substring(with: range) // 2.12
 <p>
 So why is this <code class="jarombek-inline-code">String.Index</code> madness even necessary?  The
 answer has to do with the way Swift characters are stored, and in particular the possible complexities
-of using unicode scalars.  Characters in Swift are unicode scalars which are characters defined in
+of using <a href="https://jarombek.com/blog/oct-9-2018-unicode">Unicode</a> scalars.  Characters in Swift are Unicode scalars which are characters defined in
 Unicode<sup>4</sup>.  The problem is that some of these scalars are complex and can be combined into one
 visible character.  The following code shows two equivalent characters, except one uses two unicode scalars
 and the other uses one<sup>5</sup>.
@@ -103,15 +102,15 @@ if e1.characters.count == e2.characters.count {
 }
 </CodeSnippet>
 <p>
-This means that an index in the internal character structure may actually hold only a piece of a
+The consequence of this is an index in the internal character structure may only hold a piece of a
 visible character<sup>6</sup>.  Because of this, Swift makes this complexity obvious by implementing
 the <code class="jarombek-inline-code">String.Index</code> struct.  Annoying sure, but it makes sense so
-that no newcomers to Swift will be tricked by the character implementation.
+that newcomers to Swift won't be tricked by the character implementation.
 </p>
 <SectionTitle title="Swift 4">Swift 4</SectionTitle>
 <p>
-In Swift 4 the <code class="jarombek-inline-code">characters</code> collection is deprecated and the
-<code class="jarombek-inline-code">String</code> struct has become a collection.  This makes
+In Swift 4 the <code class="jarombek-inline-code">characters</code> collection was deprecated and the
+<code class="jarombek-inline-code">String</code> struct became a collection.  This makes
 strings easier since you can perform all collection operations directly on the string object.
 </p>
 <CodeSnippet language="Swift">
@@ -133,7 +132,7 @@ filtered.removeLast() // '😺'
 <p>
 We still have to use the <code class="jarombek-inline-code">String.Index</code> structure in Swift 4
 (unfortunately for those who know the internal structure). However, we can
-avoid the <code class="jarombek-inline-code">Range</code> structure since our string is a collection!
+avoid the <code class="jarombek-inline-code">Range</code> structure since strings are collections!
 </p>
 <CodeSnippet language="Swift">
 var runDescription = "I ran 2.12 miles at 6:47 pace on January 3rd, 2018"

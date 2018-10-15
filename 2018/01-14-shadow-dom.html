@@ -5,18 +5,17 @@ I was recently reading a book on Angular 2 and came across an HTML concept I had
 also use the shadow DOM API in native JavaScript<sup>1</sup>.
 </p>
 <p>
-A shadow DOM results in modularization by removing its contents from the main document object model.
-You have to attach the shadow DOM onto an existing HTML element using the <code class="jarombek-inline-code">
+A shadow DOM results in modularization by removing its contents from the main Document Object Model.
+The shadow DOM is attached onto an existing HTML element using the <code class="jarombek-inline-code">
 Element.attachShadow()</code> function<sup>2</sup>.  You can then add new HTML code or
 <code class="jarombek-inline-code">&lt;style&gt;</code> elements containing CSS to the shadow DOM.  All of the
-styles and HTML specified in the shadow DOM will be hidden from the outer HTML implementation.  You can
-utilize shadow DOM to avoid CSS style conflicts, HTML <code class="jarombek-inline-code">id</code> overlap, and
-more!
+styles and HTML specified in the shadow DOM are hidden from the outer HTML implementation.  Shadow DOM helps
+avoid CSS style conflicts, HTML <code class="jarombek-inline-code">id</code> overlaps, and more!
 </p>
 <p>
 Here is an example of some HTML code that creates a shadow DOM (notice that the
 <code class="jarombek-inline-code">shadow</code> variable is a new shadow DOM element
-and I add to the shadow using <code class="jarombek-inline-code">innerHTML</code>).
+and I add elements to the shadow using <code class="jarombek-inline-code">innerHTML</code>).
 </p>
 <CodeSnippet language="HTML">
 &lt;!DOCTYPE html&gt;
@@ -58,7 +57,7 @@ The result:
     <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-14-18-webresult.png">
 </figure>
 <p>
-When we look at our browsers developer tools and inspect the HTML, you can see that our
+Upon inspecting the HTML in the browsers developer tools, you will notice that the
 shadow DOM is wrapped in a <code class="jarombek-inline-code">#shadow-root</code> item, which simply
 specifies that a shadow DOM exists<sup>3</sup>.
 </p>
@@ -67,6 +66,6 @@ specifies that a shadow DOM exists<sup>3</sup>.
 </figure>
 <p>
 The ability to modularize a HTML document is awesome!  I will utilize the shadow DOM in my Angular
-code and look into more native HTML modularization techniques like reusable custom elements in the future!
+code and look into other native HTML modularization techniques like reusable custom elements in the future!
 </p>
 </div>
