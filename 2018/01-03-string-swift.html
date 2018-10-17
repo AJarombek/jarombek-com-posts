@@ -107,6 +107,12 @@ visible character<sup>6</sup>.  Because of this, Swift makes this complexity obv
 the <code class="jarombek-inline-code">String.Index</code> struct.  Annoying sure, but it makes sense so
 that newcomers to Swift won't be tricked by the character implementation.
 </p>
+<UpdateInfo date="October 15th, 2018">
+Many languages handle <a href="https://jarombek.com/blog/oct-9-2018-unicode">Unicode characters</a> in a different way.
+Languages such as Python, JavaScript, Java, etc. have a simpler string implementation at the expense of string
+lengths potentially not matching the number of visible characters.  This problem is remedied with
+<a href="https://jarombek.com/blog/oct-9-2018-unicode#normalization">normalization</a>.
+</UpdateInfo>
 <SectionTitle title="Swift 4">Swift 4</SectionTitle>
 <p>
 In Swift 4 the <code class="jarombek-inline-code">characters</code> collection was deprecated and the
