@@ -7,24 +7,24 @@ in the interface had no body and had to be created in the implementing class.
 </p>
 <p>
 This design helped avoid multiple inheritance issues, such as the diamond problem.  However,
-using interfaces for APIs was far from perfect.
+using interfaces for APIs is far from perfect.
 </p>
 <p>
 Let's say you need to change an API that uses an interface.  When adding a new method definition to an
 interface, all classes that implement this interface must also implement the new
-method.  If all the implementing classes of this interface belong to you this is an easy fix. Unfortunately in the case of public APIs
-it is likely that someone else has a class that implements your interface.  Adding a new method to the interface breaks their code!
+method.  If all the implementing classes of this interface belong to you its is an easy fix. Unfortunately in the case of public APIs
+its likely that someone else has a class that implements your interface.  Adding a new method to the interface breaks their code!
 </p>
 <p>
 Java 8 has a fix for this issue called default methods.  With default methods, interface methods with
-the <code class="jarombek-inline-code">default</code> keyword can contain bodies.  If an interface method isn't implemented in the
-concrete class and a default method exists, the default method in the interface is invoked!  With default methods existing code doesn't break on interface changes!
+the <code class="jarombek-inline-code">default</code> keyword contain bodies.  If an interface method isn't implemented in the
+concrete class and a default method exists, the default method in the interface is invoked!  With default methods existing code doesn't break on interface changes.
 </p>
 <p>
 But wait!  What's the difference between an abstract class and an interface with default methods?  Although
 both can have method bodies now, there are still differences between the two.  First off a class can
 still only extend one abstract class but can implement multiple interfaces.  Second,
-abstract classes can have instance variables while an interface still can't<sup>1</sup>.
+abstract classes can have instance variables while interfaces can't<sup>1</sup>.
 </p>
 <p>
 What about multiple inheritance now that you can inherit methods with implementations from different interfaces?

@@ -1,11 +1,11 @@
 <div>
 <p>
-For anyone who has ever written code in Java (or most imperative and object oriented languages)
-you know the pain of dealing with <code class="jarombek-inline-code">null</code> values.
-These <code class="jarombek-inline-code">null</code> values are especially painful in Java since
-they throw a <code class="jarombek-inline-code">NullPointerException</code> whenever we want to
-perform operations on them.  When we see a <code class="jarombek-inline-code">NullPointerException</code> in
-our code, the usual fix is to perform a null check similar to the following code snippet:
+Everyone who has written code in Java (or most imperative and object oriented languages)
+knows the pain of dealing with <code class="jarombek-inline-code">null</code> values.
+<code class="jarombek-inline-code">null</code> values are especially painful in Java since
+they throw a <code class="jarombek-inline-code">NullPointerException</code> whenever operations are
+performed on them.  When a <code class="jarombek-inline-code">NullPointerException</code> is encountered,
+the usual fix is to perform a null check similar to the following code snippet:
 </p>
 <CodeSnippet language="Java">
 String str = "Hello";
@@ -15,31 +15,24 @@ if (str != null) {
 }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">null</code> has some other issues besides uglifying our code by
-littering it with null checks.  As explained in a book
-I was reading recently on Java 8, <code class="jarombek-inline-code">null</code> actually doesn't
-follow the statically typed system that Java uses<sup>1</sup>.  It
-is the wrong way of representing the absence of a value.
+<code class="jarombek-inline-code">null</code> has other issues besides littering code with null checks.
+As explained in a book I read on Java 8, <code class="jarombek-inline-code">null</code> doesn't follow the
+statically typed system that Java uses<sup>1</sup>.  It is an incorrect way to represent the absence of a value.
 </p>
 <p>
-Upgrades in Java 8 allow you to implement missing values in a statically typed manner with the
-<code class="jarombek-inline-code">Optional&lt;T&gt;</code> class.
-The <code class="jarombek-inline-code">Optional</code> object wraps a value, which can be either
-present or absent (an absent value is simply <code class="jarombek-inline-code">null</code>).  Now instead
-of performing null checks, you can simply interact with the <code class="jarombek-inline-code">
-Optional</code> class.
+Java 8 added the <code class="jarombek-inline-code">Optional&lt;T&gt;</code> class, which implements missing values in a statically typed manner.
+The <code class="jarombek-inline-code">Optional</code> object wraps a value, which can either be
+present or absent (an absent value is simply <code class="jarombek-inline-code">null</code>).  Instead
+of using null checks, methods are invoked on the <code class="jarombek-inline-code">Optional</code> class.
 </p>
 <p>
-In this discovery I am going to build an API for athletes in Java using the
-<code class="jarombek-inline-code">Optional</code> class for null values.  There are a
-couple of methods in the <code class="jarombek-inline-code">Optional</code> class that we need to be
-familiar with before getting started:
+For this discovery I built an API in Java which utilizes optionals.  There are a couple methods in the
+<code class="jarombek-inline-code">Optional</code> class to go over before getting started:
 </p>
 <SectionTitle title="empty" isCode="true">static Optional&lt;T&gt; empty()</SectionTitle>
 <p>
-The <code class="jarombek-inline-code">empty()</code> static method returns an empty
-<code class="jarombek-inline-code">Optional</code> instance.  This is the equivalent of a
-<code class="jarombek-inline-code">null</code> value in a strictly typed setting.
+Returns an empty <code class="jarombek-inline-code">Optional</code> instance.  Equivalent to a
+<code class="jarombek-inline-code">null</code> value in a statically typed setting.
 </p>
 <CodeSnippet language="Java">
 // Represent an Optional with an absent value
@@ -48,11 +41,10 @@ System.out.println(empty); // Optional.empty
 </CodeSnippet>
 <SectionTitle title="of" isCode="true">static Optional&lt;T&gt; of(T value)</SectionTitle>
 <p>
-Wraps the argument value in the <code class="jarombek-inline-code">Optional</code> object.  However, if
-you pass <code class="jarombek-inline-code">null</code> to the <code class="jarombek-inline-code">of()</code>
-static method it will throw a <code class="jarombek-inline-code">NullPointerException</code>.  Only
-use <code class="jarombek-inline-code">of()</code> if you know that the value being passed is not
-<code class="jarombek-inline-code">null</code>.
+Wraps the <code class="jarombek-inline-code">value</code> argument in an <code class="jarombek-inline-code">Optional</code> object.  However, if
+<code class="jarombek-inline-code">null</code> is passed as an argument to <code class="jarombek-inline-code">of()</code>,
+a <code class="jarombek-inline-code">NullPointerException</code> is thrown.  Only
+use <code class="jarombek-inline-code">of()</code> if the <code class="jarombek-inline-code">value</code> argument is guaranteed to exist.
 </p>
 <CodeSnippet language="Java">
 // If the Optional value is present, perform the Consumer method reference
@@ -61,43 +53,42 @@ present.ifPresent(System.out::println); // I am not null!
 </CodeSnippet>
 <SectionTitle title="ofNullable" isCode="true">static Optional&lt;T&gt; ofNullable(T value)</SectionTitle>
 <p>
-Performs the same operation as <code class="jarombek-inline-code">of()</code> except if the value is absent
-no error will be thrown and an empty <code class="jarombek-inline-code">Optional</code>
-object will be returned.
+Performs the same operation as <code class="jarombek-inline-code">of()</code> except no error is thrown on an empty
+<code class="jarombek-inline-code">value</code> argument.  In that case an empty <code class="jarombek-inline-code">Optional</code>
+object is returned.
 </p>
 <SectionTitle title="ifPresent" isCode="true">void ifPresent(Consumer&lt;T&gt; consumer)</SectionTitle>
 <p>
-If an optional's value is present, this method will perform the actions specified by the consumer argument.
-This can be a lambda function or method reference.
+If an optional's value is present, perform the actions specified by the consumer argument.
+The consumer argument can be a lambda function or method reference.
 </p>
 <SectionTitle title="isPresent" isCode="true">boolean isPresent()</SectionTitle>
 <p>
-Returns whether the optional's value is present.
+Returns whether the optional's value exists.
 </p>
 <SectionTitle title="orElse" isCode="true">T orElse(T other)</SectionTitle>
 <p>
-If the optional's value is present, return its value.  Otherwise, return the value specified as an argument.
+If the optional's value exists, its value is returned.  Otherwise, the <code class="jarombek-inline-code">other</code> argument is returned.
 </p>
 <SectionTitle title="athlete api">Athlete API</SectionTitle>
 <p>
-Now let's take a quick look at the API.  If you want the full code it is available on
+Now let's take a quick look at the API I built.  The full code is available on
 <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/01-Jan/1-30-Java8-Optionals/
 optionals">GitHub</a>.
 </p>
 <SectionTitle title="Required class"><code class="jarombek-header-code">Required</code> class</SectionTitle>
 <p>
-The first thing I created for this API was a helper class for dealing with values that should not be
+The first thing I created was a helper class for handling values that should never be
 <code class="jarombek-inline-code">null</code>.  When calling a getter or setter on a POJO, there is
-nothing really stopping users from entering an empty value by default.  You can however add some
-validation logic to make sure that the value passed is not empty.  If it is equal to
-<code class="jarombek-inline-code">null</code> you can either throw an error or
-assign that variable some default value.  This code would probably contain some null checks like
-discussed earlier.  We don't want our API littered with these checks!
+nothing stopping users from entering an empty value by default.  Validation logic can easily be added
+to ensure argument values exist.  If arguments are equal to <code class="jarombek-inline-code">null</code>,
+an error can be thrown or a default value can be used.  Prior to Java 8 validation logic would likely contain
+null checks.  I don't want to litter the API with those!
 </p>
 <p>
-Instead we will use optionals to check for value existence.  The following class is used in my
-getters and setters to check for value existence.  You can see that if the value entered is
-<code class="jarombek-inline-code">null</code> we throw an error using a variation of the
+Instead I used optionals to check for existence.  The following helper class is used by my POJOs
+getters and setters.  These helper functions take input values as an argument.  If the input value is
+<code class="jarombek-inline-code">null</code> an error is thrown using a variation of the
 <code class="jarombek-inline-code">orElse()</code>
 method called <code class="jarombek-inline-code">orElseThrow()</code>:
 </p>
@@ -128,9 +119,8 @@ public class Required&lt;T&gt; {
 </CodeSnippet>
 <SectionTitle title="Athlete class"><code class="jarombek-header-code">Athlete</code> class</SectionTitle>
 <p>
-The athlete class is the heart of the API.  It holds information such as the athletes name, age,
-team, personal records, and exercise
-history.  All of this information is contained in instance variables, some of which are optional.
+The athlete class is the heart of the API.  It holds information such as an athletes name, age, team, personal
+records, and exercise history.  All of this information is contained in instance variables, some of which are optional.
 </p>
 <CodeSnippet language="Java">
 public class Athlete {
@@ -148,13 +138,12 @@ public class Athlete {
 }
 </CodeSnippet>
 <p>
-If you had this code in an IDE you would probably get a complaint on the
-<code class="jarombek-inline-code">Optional</code> instance variables.  This is because the
-new <code class="jarombek-inline-code">Optional</code> class was not meant to be used as a field type.
-It also does not implement the <code class="jarombek-inline-code">Serializable</code>
-interface, which could cause issues in some applications<sup>3</sup>.  In most cases however I fall
-among the group of developers that think using the <code class="jarombek-inline-code">Optional</code>
-class with instance variables can greatly increase the readability of an API.  Just be aware of
+My Intellij IDE complains about using <code class="jarombek-inline-code">Optional</code> for instance variables.
+This is because <code class="jarombek-inline-code">Optional</code> was not designed to be used as a field type.
+<code class="jarombek-inline-code">Optional</code> also does not implement the <code class="jarombek-inline-code">Serializable</code>
+interface, which could cause issues in some applications<sup>3</sup>.  However, I fall
+among the group of developers that think using <code class="jarombek-inline-code">Optional</code>
+ with instance variables can greatly increase the readability of an API.  Just be aware of
 its limitations!
 </p>
 <p>
@@ -173,18 +162,17 @@ public Athlete(String firstName, String lastName, Integer age) {
 }
 </CodeSnippet>
 <p>
-For the <code class="jarombek-inline-code">age</code> parameter I simply wrap it in an
+I wrapped the <code class="jarombek-inline-code">age</code> parameter in an
 <code class="jarombek-inline-code">Optional</code> because it's instance variable is of type
-<code class="jarombek-inline-code">Optional&lt;Integer&gt;</code>.  For the other two parameters I am
-assigning them to concrete types.  Therefore I want to check if
-their value is empty, and if it is give the instance variable a default value.  This is where the
-<code class="jarombek-inline-code">orElse()</code> methods come in.
+<code class="jarombek-inline-code">Optional&lt;Integer&gt;</code>.  I assigned the other two parameters
+to concrete types.  First I checked if their values were empty, and if so provided default values.  This is where the
+<code class="jarombek-inline-code">orElse()</code> method is utilized.
 </p>
 <p>
-After the constructors I have getters and setters for the instance variables.  Most of them are not
-interesting, but here are a few that utilize the <code class="jarombek-inline-code">Required</code>
-class that I showed off earlier.  These setters check for the existance of a variable, and if it is
-empty throw an error.
+After the constructors I have getters and setters for the instance variables.  Most of them are boring,
+but there are a few that utilize the <code class="jarombek-inline-code">Required</code>
+class I showed off earlier.  These setters check for argument value existence and throw an error
+if no value is found.
 </p>
 <CodeSnippet language="Java">
 private Required&lt;String&gt; requiredString = new Required&lt;&gt;();
@@ -208,10 +196,10 @@ public void setPrs(HashMap&lt;String, String&gt; prs) {
 }
 </CodeSnippet>
 <p>
-I also have a method that allows you to add a personal record to the
+I also have a method for adding a personal record to the
 <code class="jarombek-inline-code">prs</code> hash map.  It utilizes short circuiting and the
-<code class="jarombek-inline-code">isPresent()</code> method to add the new PR if both of the functions
-arguments exist and returns whether or not the value was added successfully.
+<code class="jarombek-inline-code">isPresent()</code> method to add the a PR if both the
+arguments exist.  Finally it returns a boolean indicating if the value was added successfully.
 </p>
 <CodeSnippet language="Java">
 /**
@@ -230,9 +218,8 @@ public boolean addPr(String event, String time) {
 </CodeSnippet>
 <SectionTitle title="Main Class"><code class="jarombek-header-code">Main</code> class</SectionTitle>
 <p>
-The main class executes our API.  The only new piece here is the
-<code class="jarombek-inline-code">ifPresent()</code> method which I use to print out the value if
-it exists (and avoid a null check!).
+The main class executes the API.  I used the <code class="jarombek-inline-code">ifPresent()</code>
+method to print out the athletes 5000m PR if it exists.
 </p>
 <CodeSnippet language="Java">
 public static void main(String... args) {
@@ -268,7 +255,7 @@ Athlete(firstName=andrew, lastName=jarombek, age=Optional[22], prs={5000m=15:27}
 Athlete(firstName=Foo, lastName=Bar, age=null, prs={}, ...)
 </CodeSnippet>
 <p>
-I really am liking the new <code class="jarombek-inline-code">Optional</code> class in Java.  I have
-already started using it in some of my Java code!
+I really like the new <code class="jarombek-inline-code">Optional</code> class in Java.  I'm
+already using it in some of my Java code!
 </p>
 </div>
