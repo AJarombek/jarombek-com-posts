@@ -1,20 +1,20 @@
 <div>
 <p>
 In the client side code for my <a href="https://github.com/AJarombek/mean-client-prototype">
-MEAN stack prototype</a> I used Sass for my stylesheets over CSS.  I had experimented with Sass
+MEAN stack prototype</a> I used Sass for stylesheets instead of CSS.  I experimented with Sass
 before, but this was my first time using it in a full project.  Until native CSS adds the features
 that Sass provides, I will continue using Sass for stylesheets in the future.
 </p>
 <p>
-Sass is a CSS preprocessor with Ruby style syntax.  It is a superset of CSS so any CSS document is
-also valid Sass<sup>1</sup>.  Sass adds lots of new features including variable definitions, mixins,
-and other syntax that helps create reusable components in your styling.  The biggest problem I had
+Sass is a CSS preprocessor with Ruby style syntax.  Its a superset of CSS, so any CSS document is
+valid Sass<sup>1</sup>.  Sass adds lots of new features including variable definitions, mixins,
+and other syntax to help create reusable components in stylesheets.  The biggest problem I had
 with CSS is that it ends up looking like a jumbled mess with many repeated styles.  With Sass,
-we now have reusable styles!
+I can create reusable styles!
 </p>
 <p>
-In the past I had played around with basic Sass features like inline comments and variables.  For
-example, you can define variables for a bunch of colors you use throughout the application.
+In the past I played around with basic Sass features like inline comments and variables.  For
+example, a variable can be defined for a color used throughout the application.
 </p>
 <CodeSnippet language="Sass">
 $baby-blue: #8bb3f4;
@@ -23,7 +23,7 @@ $light-gray: #aaa;
 $off-white: #eee;
 </CodeSnippet>
 <p>
-Now when you have a CSS declaration you can reference this variable:
+Variables can be referenced inside a CSS declaration:
 </p>
 <CodeSnippet language="Sass">
 button {
@@ -35,10 +35,10 @@ This time around I experimented with more complex Sass features.  I will discuss
 </p>
 <SectionTitle title="Mixins">Mixins</SectionTitle>
 <p>
-Mixins are an extremely powerful Sass property that allows you to create reusable style blocks.
-You can create a mixin with the <code class="jarombek-inline-code">@mixin</code> directive and can use
-it in a style declaration with the <code class="jarombek-inline-code">@include</code>
-directive<sup>2</sup>.  For example, in my application I created a mixin for each of my font styles:
+Mixins are an extremely powerful Sass property that create reusable style blocks.
+Mixins are created with the <code class="jarombek-inline-code">@mixin</code> directive and are used
+in a style declaration with the <code class="jarombek-inline-code">@include</code>
+directive<sup>2</sup>.  For example, in my application I created a mixin for each of my fonts:
 </p>
 <CodeSnippet language="Sass">
 @mixin dyslexie {
@@ -49,7 +49,7 @@ directive<sup>2</sup>.  For example, in my application I created a mixin for eac
 }
 </CodeSnippet>
 <p>
-Then I could apply the styles in the mixin to a style declaration:
+Then I included the mixin in a declaration:
 </p>
 <CodeSnippet language="Sass">
 body {
@@ -57,9 +57,9 @@ body {
 }
 </CodeSnippet>
 <p>
-Every element in the website that needed that specific font would simply include the mixin!  I also
+Every element in the website that needed a specific font used its mixin!  I also
 used mixins to perform more complex operations like transformations.  Another powerful feature of
-mixins is the ability to pass it arguments.  These arguments can even have default values!  Here is a
+mixins is the ability to pass in arguments.  These arguments can also have default values!  Here is a
 mixin that I created to apply a transition to a property:
 </p>
 <CodeSnippet language="Sass">
@@ -79,14 +79,13 @@ mixin that I created to apply a transition to a property:
 }
 </CodeSnippet>
 <p>
-This mixin creates a transition style on the property parameter.  Also if no time is specified as a
-parameter, the default argument of 0.3 seconds is used.
+This mixin creates a transition style for the <code class="jarombek-inline-code">$property</code> parameter.  If no
+<code class="jarombek-inline-code">$time</code> argument is passed to the mixin, the default 0.3 seconds is used.
 </p>
 <p>
 Another cool piece of this code is the ampersand (<code class="jarombek-inline-code">&amp;</code>)
-placeholder.  This placeholder will be a reference to the parent selector once
-Sass is converted to native CSS<sup>3</sup>.  The <code class="jarombek-inline-code">:hover</code>
-pseudo-class in the above example will be applied to the parent
+placeholder.  This placeholder is a reference to the parent selector<sup>3</sup>.  The
+<code class="jarombek-inline-code">:hover</code> pseudo-class is applied to the parent
 selector that the mixin is included in!
 </p>
 <p>
@@ -102,7 +101,7 @@ Mixins allow for reduced code and less repetition in Sass files!
 </p>
 <SectionTitle title="Extends">Extends</SectionTitle>
 <p>
-If you have multiple selectors that use the same styles, you can extend these matching styles from a class.
+When there are multiple selectors that use the same styles, each selector can extend a single class.
 Here is an example:
 </p>
 <CodeSnippet language="Sass">
@@ -117,13 +116,13 @@ span {
 }
 </CodeSnippet>
 <p>
-Now all the styles in the <code class="jarombek-inline-code">.span-style</code> class will be used in
+Now all the styles in the <code class="jarombek-inline-code">.span-style</code> class are used in
 the <code class="jarombek-inline-code">span</code> element.  The best part is that this class can be
-extended into other CSS selectors as well!  It is yet another great way to reuse components in CSS.
+extended into other CSS selectors as well!  It is yet another great way to create reusable styling.
 </p>
 <p>
-I am having a ton of fun exploring Sass and all the exciting possibilities it offers.  While I hope
-these features eventually make it into the native CSS spec, for now Sass is a nice alternative.  I am
+I'm having a ton of fun exploring Sass and all the exciting possibilities it offers.  While I hope
+these features eventually make it into the native CSS spec, for now Sass is a nice alternative.  I'm
 sure this won't be my last discovery on the matter!
 </p>
 </div>
