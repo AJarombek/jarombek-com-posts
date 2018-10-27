@@ -4,12 +4,12 @@ A common problem when programming is performing a deep copy of an object or data
 languages this is a complex problem, especially when the object gets large.  In Java there are many
 different ways to perform a deep copy on an object.  The original language implementation for copying
 was the <code class="jarombek-inline-code">Cloneable</code> interface.  Since <code class="jarombek-inline-code">
-Cloneable</code> was the first method of copying an object in Java, it is important to understand how it works
+Cloneable</code> was the first method for copying objects in Java, it is important to understand how it works
 along with all its shortcomings.  This is my journey to understand Java’s <code class="jarombek-inline-code">
 Cloneable</code> interface in all its complexity.
 </p>
 <p>
-If you have ever heard or read about Java’s <code class="jarombek-inline-code">Cloneable</code> interface
+If you've ever heard or read about Java’s <code class="jarombek-inline-code">Cloneable</code> interface
 you likely were told the following three words: <strong>Don’t Use It</strong>.  This is good advice, as there
 are many simpler ways to implement deep copying.  Unfortunately there is a lot of code in existence that
 already uses <code class="jarombek-inline-code">Cloneable</code>.  To understand how it works, first let’s
@@ -23,7 +23,7 @@ Yes that is it.  <code class="jarombek-inline-code">Cloneable</code> is an empty
 methods.  While it may seem based off the interface definition that <code class="jarombek-inline-code">
 Cloneable</code> does nothing, it actually does quite a lot.  <code class="jarombek-inline-code">Cloneable</code>
 determines the implementation details of one of the methods on the <code class="jarombek-inline-code">Object</code>
-class.  This method in question is <code class="jarombek-inline-code">clone()</code>, a
+class.  This method I'm referring to is <code class="jarombek-inline-code">clone()</code>, a
 <code class="jarombek-inline-code">protected</code> method as shown below<sup>1</sup>:
 </p>
 <CodeSnippet language="Java">
@@ -34,14 +34,14 @@ protected native Object clone() throws CloneNotSupportedException;
 There are a couple of interesting things to note about <code class="jarombek-inline-code">clone()</code>.
 First off it has no method body and is defined with the keyword <code class="jarombek-inline-code">
 native</code>.  The <code class="jarombek-inline-code">native</code> keyword means that the method is
-implemented using the Java Native Interface (JNI).  This means that the code is actually not written in
-Java, instead it is implemented in another language such as C, C++, or Assembly<sup>2</sup>.  The
-basic idea here is that writing the code in a low level machine specific language will increase performance.
+implemented using the Java Native Interface (JNI).  This means the method body is not written in
+Java, instead implemented in another language such as C, C++, or Assembly<sup>2</sup>.  The
+reason for this is writing code in a low level, machine specific language increases performance.
 </p>
 <p>
-Another important piece is the <code class="jarombek-inline-code">@HotSpotIntrinsicCandidate</code> annotation.
+Another important piece of <code class="jarombek-inline-code">clone()</code> is the <code class="jarombek-inline-code">@HotSpotIntrinsicCandidate</code> annotation.
 This annotation allows the HotSpot VM (an implementation of the Java Virtual Machine) know that the
-implementation of this method may be an intrinsic function<sup>3</sup>.
+method implementation may be an intrinsic function<sup>3</sup>.
 </p>
 <Definition word="Intrinsic Function">
 A function that a programming language uses which is handled by the compiler instead of the programming languages
@@ -66,14 +66,14 @@ However <code class="jarombek-inline-code">Cloneable</code> does just that.  If 
 method performs a deep copy on the object.  If a class does not implement
 <code class="jarombek-inline-code">Cloneable</code>, <code class="jarombek-inline-code">clone()</code> throws
 a <code class="jarombek-inline-code">CloneNotSupportedException</code>.  This should not be a legal Java
-implementation and it is very confusing.
+operation and is downright confusing.
 </p>
 <SectionTitle title="Implementing Cloneable">Implementing <code class="jarombek-header-code">Cloneable</code></SectionTitle>
 <p>
-Here is a simple class I made in Java which represents a programming language.  It contains three fields -
-name, creation date, and all the paradigms the language follows.  It also has getters and setters
-along with a method <code class="jarombek-inline-code">addParadigm()</code> which will mutate the list of
-paradigms by adding a new paradigm.
+Here is a simple class I made in Java representing a programming language.  It contains three fields -
+<code class="jarombek-inline-code">name</code>, <code class="jarombek-inline-code">inception</code>, and
+<code class="jarombek-inline-code">paradigms</code>.  It also has getters and setters along with a method
+<code class="jarombek-inline-code">addParadigm()</code> which mutates the list of paradigms by adding a new paradigm.
 </p>
 <CodeSnippet language="Java">
 public class Language implements Cloneable {
@@ -106,7 +106,7 @@ public class Language implements Cloneable {
 }
 </CodeSnippet>
 <p>
-Now here is my first attempt at overriding the <code class="jarombek-inline-code">clone()</code> method:
+Here is my first attempt at overriding the <code class="jarombek-inline-code">clone()</code> method:
 </p>
 <CodeSnippet language="Java">
 @Override
@@ -119,15 +119,15 @@ protected Language clone() {
 }
 </CodeSnippet>
 <p>
-Interestingly, the cast to <code class="jarombek-inline-code">(Language)</code> here will always succeed.
-The catch clause will also never be reached since we implemented <code class="jarombek-inline-code">
-Cloneable</code>, however we need to include it since <code class="jarombek-inline-code">clone()</code>
+Interestingly, the cast to <code class="jarombek-inline-code">(Language)</code> always succeeds.
+On the other hand, the catch clause is never reached since we implemented <code class="jarombek-inline-code">
+Cloneable</code>, however it must be included since <code class="jarombek-inline-code">clone()</code>
 throws a <code class="jarombek-inline-code">CloneNotSupportedException</code>.  If you are thinking to
 yourself this doesn’t make much sense I agree wholeheartedly.  The <code class="jarombek-inline-code">
 Cloneable</code> interface does not follow the rules that the rest of Java enforces.
 </p>
 <p>
-Now I will create a <code class="jarombek-inline-code">Language</code> instance and test out cloning it.
+I created a <code class="jarombek-inline-code">Language</code> instance to try cloning.
 </p>
 <CodeSnippet language="Java">
 
@@ -161,18 +161,18 @@ System.out.println(language2);
 [Prolog, 1970-01-01, [Object_Oriented, Imperative, Declarative]]
 </CodeSnippet>
 <p>
-Upon studying the output you will see that adding an item to the paradigm list in the first
+Adding an item to the paradigm list in the first
 <code class="jarombek-inline-code">Language</code> instance actually impacts the cloned instance.  This is
 because <code class="jarombek-inline-code">clone()</code> does not make a deep copy of each field in
-an object.  It simply copies the value assigned to the field to the new clone.  In the case of an object, the
-copied value is a reference to the object.  Altering the object the reference points to will change the value
-in both the original and cloned instances.  Of course this would never be an issue if the type of your fields
-were immutable objects (which both <code class="jarombek-inline-code">String</code> and
+an object.  It simply copies the value assigned to the field into the clone.  In the case of an object, the
+copied value is a reference to the object.  Altering the object the reference points to changes the value
+in both the original and cloned instances.  Of course this is never an issue if object fields
+are immutable objects (which both <code class="jarombek-inline-code">String</code> and
 <code class="jarombek-inline-code">LocalDate</code> are).
 </p>
 <p>
-To fix this we need to add another line to the clone method.  This time we will make a new instance of the
-<code class="jarombek-inline-code">ArrayList</code> in the clone.
+To prevent mutations I added another line to the clone method.  This time a new instance of the
+<code class="jarombek-inline-code">ArrayList</code> is created in each clone.
 </p>
 <CodeSnippet language="Java">
 @Override
@@ -202,15 +202,15 @@ Now the clone is not modified:
 The <code class="jarombek-inline-code">Cloneable</code> interface is very confusing and does not follow the
 rules of Java.  Therefore it is encouraged to avoid implementing it in your classes.  To make matters worse,
 if an extendable class implements <code class="jarombek-inline-code">Cloneable</code> all its subclasses have
-to as well<sup>6</sup>.  If the extendable class is client facing, other developers may have to endure
-implementing <code class="jarombek-inline-code">Cloneable</code> too.
+to implement it as well<sup>6</sup>.  If the extendable class is client facing, other developers may have to endure
+implementing <code class="jarombek-inline-code">Cloneable</code>.
 </p>
 <SectionTitle title="Alternatives to Cloneable">Alternatives to <code class="jarombek-header-code">Cloneable</code></SectionTitle>
 <p>
 Since we know that implementing <code class="jarombek-inline-code">Cloneable</code> is a bad idea, what
-are the alternatives?  The two best choices for copying an object are copy constructors or copy static
-factories.  Both of these take an existing object as an argument and return a copy of that object.  Both of
-these can be used together, as shown below:
+are the alternatives?  The two best choices for copying an object are copy constructors and copy static
+factories.  Both take an existing object as an argument and return a copy of that object.
+They can be used together, as shown below:
 </p>
 <CodeSnippet language="Java">
 /* Copy Constructor */
@@ -226,7 +226,7 @@ public static Language create(Language language) {
 }
 </CodeSnippet>
 <p>
-Copy constructors or copy static factories are within the bounds of the Java language, making them excellent
+Copy constructors and copy static factories are within the bounds of the Java language, making them excellent
 alternatives.  Use them!
 </p>
 <SectionTitle title="Valid uses of clone">Valid uses of <code class="jarombek-header-code">clone()</code></SectionTitle>
@@ -245,9 +245,9 @@ strings[1] = "Up";
 String[] stringsCopy = strings.clone();
 </CodeSnippet>
 <p>
-I’ll remind you that <code class="jarombek-inline-code">clone()</code> does not perform a deep copy on the
+Remember that <code class="jarombek-inline-code">clone()</code> does not perform a deep copy on
 objects within a class or array.  If you mutate an object within a class or array that was cloned, the mutation
-'will be observed in both the original and the copy.
+occurs in both the original and the copy.
 </p>
 <CodeSnippet language="Java">
 Language[] languages = new Language[2];
