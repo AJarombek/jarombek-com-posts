@@ -9,15 +9,15 @@ frustration eases over time.
 Nonetheless, Webpack is important to know in the current state of web programming.  I used Webpack for the first time
 to bundle my React prototype application (and went on to use it on the website you are currently viewing!).  My
 previous discovery post went over the <a href="https://jarombek.com/blog/may-31-2018-react-seed">React portion</a>
-of my prototype application.  In this post will look at the Webpack portion and some of the interesting
-configuration pieces.  This post isn't a tutorial on how to build a Webpack config - instead it focuses on things
-I’ve learned about the bundler and my initial observations.
+of my prototype application.  This post looks at the Webpack portion and some of the interesting
+configuration pieces.  I'm not giving a tutorial on how to build a Webpack config - instead focusing on things
+I've learned about the bundler and my initial observations.
 </p>
 <SectionTitle title="What is Webpack">What is Webpack?</SectionTitle>
 <p>
 As I mentioned in my discovery post on the <a href="https://jarombek.com/blog/mar-17-2018-mean-stack-prototype">
-MEAN stack</a>, Webpack is a module bundler commonly used with JavaScript projects, especially those used client
-side.  Webpack builds a dependency graph of your projects modules and bundles them into a few larger files (or
+MEAN stack</a>, Webpack is a module bundler commonly used with JavaScript projects, especially those on the client
+side.  Webpack builds a dependency graph of a projects modules and bundles them into a few larger files (or
 just one file if you want).  The reason for bundling JavaScript files is that HTTP requests from the web browser
 to the server are expensive.  Bundling JavaScript modules into a few files reduces the number of HTTP requests,
 speeding up the web application.
@@ -32,7 +32,7 @@ work in the bundling pipeline is beyond the scope of this post, but is something
 better understand Webpack.
 </p>
 <p>
-In order to work with Webpack you need to create a configuration file (although with Webpack 4 you don’t necessarily
+In order to work with Webpack you need to create a configuration file (although with Webpack 4 you don't necessarily
 need it for extremely simple applications).  Here is the basic layout:
 </p>
 <CodeSnippet language="JavaScript">
@@ -84,7 +84,7 @@ This configuration can be broken down into a few important concepts: entries, ou
 </p>
 <Definition word="Webpack Entry">
 <p>
-An entry point in a Webpack configuration is a path to a module.  This module is the root module in Webpack’s
+An entry point in a Webpack configuration is a path to a module.  This module is the root module in Webpack's
 internal dependency graph.  From this module Webpack will find all other referenced modules, adding them to the
 graph<sup>3</sup>.
 </p>
@@ -123,16 +123,16 @@ dist/bundle.js</code>.
 </p>
 <p>
 Two loaders are specified.  The first transpiles all JavaScript files from ES2017 to ES5 using Babel, allowing for
-greater cross browser compatibility (since some users still use old browsers that don’t support the latest JavaScript
+greater cross browser compatibility (since some users still use old browsers that don't support the latest JavaScript
 features).  The second loader allows Webpack to handle HTML files.
 </p>
 <p>
 The only plugin in the configuration, <code class="jarombek-inline-code">HtmlWebPackPlugin</code>, creates a root
 HTML file for a client side project.  This HTML file includes <code class="jarombek-inline-code">&lt;script&gt;</code>
 elements for the JavaScript files that Webpack bundles.  The <code class="jarombek-inline-code">
-HtmlWebPackPlugin()</code> constructor function specifies the name of the created HTML file (
-<code class="jarombek-inline-code">index.html</code>) and a template file to base the created HTML file off of
-(located at <code class="jarombek-inline-code">/src/index.html</code>).  The created index.html file will be located
+HtmlWebPackPlugin()</code> constructor function specifies the name of the created HTML file
+(<code class="jarombek-inline-code">index.html</code>) and a template file to base the created HTML file off of
+(located at <code class="jarombek-inline-code">/src/index.html</code>).  The created index.html file is located
 in the output directory (<code class="jarombek-inline-code">dist</code>) after Webpack runs.
 </p>
 <p>
@@ -140,15 +140,15 @@ I find that many Webpack configurations look complex at first sight.  However, i
 remember they simply boil down to entries, outputs, loaders, and plugins.
 </p>
 <p>
-Now I will analyze some cool things the Webpack configuration does in my prototype.
+Now let's analyze some cool things the Webpack configuration does in my prototype.
 </p>
 <SectionTitle title="Handling CSS">Handling CSS</SectionTitle>
 <p>
 Since stylesheets aren't JavaScript, Webpack needs the help of loaders and plugins to handle them.  The React
 prototype uses Sass for its stylesheets.  Sass is a CSS preprocessor that adds additional functionality on top of CSS.
 I used Sass in my <a href="https://jarombek.com/blog/mar-17-2018-mean-stack-prototype">MEAN stack prototype</a> and
-dedicated a discovery post to the <a href="https://jarombek.com/blog/mar-10-2018-sass">styling language</a>.  I
-really enjoy writing Sass, but using it means the additional effort of converting Sass to CSS before using it on the
+dedicated a <a href="https://jarombek.com/blog/mar-10-2018-sass">discovery post</a> to it.  I
+really enjoy writing Sass, but using it includes the additional effort of converting Sass to CSS before using it on the
 web.  Luckily Webpack loaders make this process extremely simple.
 </p>
 <CodeSnippet language="JavaScript">
@@ -166,12 +166,12 @@ web.  Luckily Webpack loaders make this process extremely simple.
 <p>
 This configuration specifies three loaders - <code class="jarombek-inline-code">style-loader</code>,
 <code class="jarombek-inline-code">css-loader</code>, and <code class="jarombek-inline-code">sass-loader</code>.
-Confusingly Webpack executes loaders from right to left - so in this case <code class="jarombek-inline-code">
+Confusingly Webpack executes loaders from right to left - so <code class="jarombek-inline-code">
 sass-loader</code> is executed first.  <code class="jarombek-inline-code">sass-loader</code> compiles Sass to
-CSS, and then <code class="jarombek-inline-code">css-loader</code> creates a dependency graph in CSS files by
+CSS, and then <code class="jarombek-inline-code">css-loader</code> creates a dependency graph of CSS files by
 linking <code class="jarombek-inline-code">@import</code> statements and <code class="jarombek-inline-code">
 url()</code> blocks as dependencies<sup>6</sup>.  These styles are then inlined in the projects HTML file inside
-a <code class="jarombek-inline-code">&lt;style&gt;</code> tag.  When viewing the webpage elements will now appear
+a <code class="jarombek-inline-code">&lt;style&gt;</code> tag.  When viewing the website, elements appear
 styled according to the projects stylesheets.
 </p>
 <p>
@@ -207,10 +207,10 @@ In this code snippet I extract the CSS styling into a bundle.  The bundle has a 
 </p>
 <SectionTitle title="Handling Images">Handling Images</SectionTitle>
 <p>
-In order to reduce the number of server calls a client has to make to load a web page, Webpack helps inline images
+To reduce the number of server calls a client makes to load a web page, Webpack helps inline images
 in the JavaScript bundle.  These images are represented as base64 encoded strings<sup>8</sup>.  In a development
-environment it is fine to inline all of the images.  However, in an effort to keep Webpack’s output bundle relatively
-small, images beyond a certain size will not be inlined for production.  Here is the config to inline any images less
+environment it is fine to inline all of the images.  However, in an effort to keep Webpack's output bundle relatively
+small, images beyond a certain size are not inlined for production.  Here is the config to inline any images less
 than 15kB in size.
 </p>
 <CodeSnippet language="JavaScript">
@@ -234,15 +234,14 @@ than 15kB in size.
 </CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-These are a few of many really cool things you can do with Webpack.  These configurations along with development
-servers and hot module replacement helped make development work and deploying code a breeze.
+There are many cool things you can do with Webpack.  These configurations along with development
+servers and hot module replacement helped make development work and code deployment a breeze.
 </p>
 <p>
-Once Webpack is all set up and working it really is an amazing tool that goes far beyond bundling JavaScript.  I
-will be using Webpack and learning more of its intricacies for the foreseeable future.
+Once Webpack is all set up and working it really is an amazing tool that goes far beyond bundling JavaScript.  I'll
+be using Webpack and learning more of its intricacies for the foreseeable future.
 </p>
 <p>
-You can check out my Webpack config and React prototype on <a href="https://github.com/AJarombek/react-webpack-seed">
-GitHub</a>.
+You can check out my Webpack config and React prototype on <a href="https://github.com/AJarombek/react-webpack-seed">GitHub</a>.
 </p>
 </div>

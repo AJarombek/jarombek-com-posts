@@ -1,19 +1,19 @@
 <div>
 <p>
 Recently while working on my website I made a command line tool in Node.js.  The tool took in an
-HTML file and tokenized its contents into a JSON file.  Writing command line tools with Node.js sounded
-complicated at first but is actually incredibly simple!  This discovery post will introduce a simple command
+HTML file and tokenized its contents into a JSON file.  Writing command line tools with Node.js sounds 
+complicated at first but is actually incredibly simple!  This discovery post introduces a simple command
 line tool for generating random numbers - written in Node.js.
 </p>
 <p>
-One of the great things about the Node.js and the npm ecosystem is all the community built npm modules at a developers
-disposal.  For command line tools there are many different modules to choose from.  In this
-discovery post I will be using <a href=“https://github.com/tj/commander.js/”>commander.js</a>.  The reason I
-chose this module over all the others it is has no dependencies!  Less dependencies generally means more
+One of the great things about the Node.js and the npm ecosystem is all the community built npm modules.  
+For command line tools there are many different modules to choose from.  In this
+discovery post I use <a href="https://github.com/tj/commander.js/">commander.js</a>.  I
+chose this module over all the others because it has no dependencies!  Less dependencies generally means more
 reliable code and less unused code.
 </p>
 <p>
-The first step for building the application is initializing the projects package.json file and setting up the
+The first step for building the application is initializing the projects package.json file and setting up a 
 <code class="jarombek-inline-code">bin</code> field.
 </p>
 <CodeSnippet language="Bash">
@@ -33,57 +33,57 @@ yarn init
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">bin</code> field is an object of key value pairs.  The key is the
-name of a command and the value is the file that will be executed when the command is called.  Npm takes the
+<code class="jarombek-inline-code">bin</code> is an object of key value pairs.  The key is the
+name of a command and the value is the file that executes when the command is called.  Npm takes the
 key value pairs in <code class="jarombek-inline-code">bin</code> and adds the executable files (the values) to
-the systems <code class="jarombek-inline-code">PATH</code> variable<sup>1</sup>.  The
-<code class="jarombek-inline-code">PATH</code> variable in Unix systems declares a list of directories for
-executable programs<sup>2</sup>.  In order to install this executable globally the following command must be run:
+the systems <code class="jarombek-inline-code">PATH</code> variable<sup>1</sup>.  In Unix systems
+<code class="jarombek-inline-code">PATH</code> declares a list of directories for
+executable programs<sup>2</sup>.  In order to install this executable globally the following command is run:
 </p>
 <CodeSnippet language="Bash">
 npm install -g
 </CodeSnippet>
 <p>
-Now the executable can be referenced globally throughout the filesystem by running
+Now the executable is referenced globally throughout the filesystem by running
 <code class="jarombek-inline-code">random</code> in Bash.  Finally the commander.js
-dependency is added and the JavaScript development can start!
+dependency is added. Now JavaScript development can start!
 </p>
 <CodeSnippet language="Bash">
 yarn add commander
 </CodeSnippet>
 <p>
-Commander.js introduces a really nice API for building command line apps.  The API allows you to chain together
-methods to declare the applications functionality.  Let’s go through the Node.js application piece by piece before
+Commander.js introduces a really nice API for building command line apps.  The API uses chained 
+methods to declare the applications functionality.  Let's go through the Node.js application piece by piece before
 displaying the entire application in full.
 </p>
 <p>
-The first line of the script must be a shebang line in order for the command line application to work.
+The first line of the script must be a shebang line, otherwise the command line application won't work.
 </p>
 <CodeSnippet language="JavaScript">
 #!/usr/bin/env node --harmony
 </CodeSnippet>
 <Definition word="Shebang Line">
 <p>
-A shebang line is written to determine which interpreter will be used on an executable file<sup>3</sup>.  The syntax
-is the <code class="jarombek-inline-code">#!</code> symbols followed by the path to the interpreter script.  The shebang
+A shebang line is written to determine which interpreter is used on an executable file<sup>3</sup>.  The syntax
+consists of the <code class="jarombek-inline-code">#!</code> symbols followed by a path to an interpreter script.  The shebang
 line is used on Unix operating systems, but in different OS environments other methods are used.  For example, on
 Windows the interpreter is simply implied by the file name extension.
 </p>
 <p>
 Shebang lines are commonly used with the format <code class="jarombek-inline-code">#!/usr/bin/env</code> followed by
-the interpreter name.  This sequence will use the Unix <code class="jarombek-inline-code">env</code> command to look
+the interpreter name.  This sequence uses the Unix <code class="jarombek-inline-code">env</code> command to look
 for the interpreter name in the systems <code class="jarombek-inline-code">PATH</code> variable<sup>4</sup>.
 </p>
 </Definition>
 <p>
-While the shebang line is only needed for unix systems, it will always be included for cross compatibility.
-Windows OS will simply ignore the line<sup>5</sup>.  Also, note that this line isn’t actually valid JavaScript -
-<code class="jarombek-inline-code">#</code> are not comments in JavaScript.  The JavaScript interpreter will
-actually ignore this line when executing the program.
+While the shebang line is only needed for Unix systems, its always included for cross compatibility.
+Windows OS simply ignores it<sup>5</sup>.  Also note the shebang line isn't valid JavaScript -
+<code class="jarombek-inline-code">#</code> is not a comment in JavaScript.  The JavaScript interpreter
+actually ignores this line when executing the program.
 </p>
 <p>
-Also note that I used the <code class="jarombek-inline-code">--harmony</code> flag when specifying the
-<code class="jarombek-inline-code">node</code> interpreter.  This will enable the use of ES6+ features.
+I also used the <code class="jarombek-inline-code">--harmony</code> flag when specifying the
+<code class="jarombek-inline-code">node</code> interpreter.  This flag enables the use of ES6+ features.
 </p>
 <p>
 Now comes the main body of the application.  I import the commander.js module and declare the command line program:
@@ -116,7 +116,7 @@ program
 </CodeSnippet>
 <p>
 The application is broken down into pieces - each piece being a chained method call.  The first method call is
-to <code class="jarombek-inline-code">version()</code>, which specifies a version number that will be displayed
+to <code class="jarombek-inline-code">version()</code>, which specifies a version number that is displayed
 when using the <code class="jarombek-inline-code">random --version</code> command.
 </p>
 <p>
@@ -124,34 +124,34 @@ The seconds method call is to <code class="jarombek-inline-code">arguments()</co
 arguments users must enter when writing a command.  Two arguments are specified here -
 <code class="jarombek-inline-code">&lt;start&gt;</code> and <code class="jarombek-inline-code">&lt;end&gt;</code>.
 Remember that the command line app is for generating random numbers.  The <code class="jarombek-inline-code">
-start</code> argument specifies the smallest number that the random number can be, and
-<code class="jarombek-inline-code">end</code> specifies the largest number it can be.  Later in the method chain we
-can access these two arguments with the <code class="jarombek-inline-code">start</code> and
+start</code> argument specifies a lower bound the random number, and
+<code class="jarombek-inline-code">end</code> specifies an upper bound.  Later in the method chain I
+accessed these two arguments with the <code class="jarombek-inline-code">start</code> and
 <code class="jarombek-inline-code">end</code> variables respectively.
 </p>
 <p>
 Unlike <code class="jarombek-inline-code">arguments()</code> which specifies mandatory parameters,
-<code class="jarombek-inline-code">option()</code> specifies an optional flag and value that can be added to the
-command.  This will provide additional functionality to the application.  The code above specifies an option
-that can be declared with either the <code class="jarombek-inline-code">-t</code> or
-<code class="jarombek-inline-code">--type</code> flags followed by a
-<code class="jarombek-inline-code">&lt;type&gt;</code> argument.  This option can be sued to specify if the random
-number should be an integer or a floating point number.
+<code class="jarombek-inline-code">option()</code> specifies optional flags for the
+command.  Optional flags provides additional functionality for an application.  The code above specifies a flag
+declared with either <code class="jarombek-inline-code">-t</code> or
+<code class="jarombek-inline-code">--type</code> followed by a
+<code class="jarombek-inline-code">&lt;type&gt;</code> argument.  Its used to specify whether the random
+number is an integer or a floating point number.
 </p>
 <p>
-Options can also be accessed later on as variables in the <code class="jarombek-inline-code">action()</code>
-method call.  The <code class="jarombek-inline-code">&lt;type&gt;</code> option is stored in the
+Optional flags are also accessed as variables in the <code class="jarombek-inline-code">action()</code>
+method.  The <code class="jarombek-inline-code">&lt;type&gt;</code> argument is stored in the
 <code class="jarombek-inline-code">program.type</code> variable.
 I will go over <code class="jarombek-inline-code">action()</code> in just a bit.
 </p>
 <p>
-The final two methods in the chain specify what text to display when calling <code class="jarombek-inline-code">
-random --help</code> along with the fact that the programs arguments are coming from the command line arguments
+The methods <code class="jarombek-inline-code">on()</code> and <code class="jarombek-inline-code">parse()</code> specify text to display when calling <code class="jarombek-inline-code">
+random --help</code> and to explicitly bind the programs arguments to the command line arguments
 (<code class="jarombek-inline-code">process.argv</code>).
 </p>
 <p>
-The final piece is the core of the application - what logic to perform based on the command line arguments.  This
-business logic is executed in the <code class="jarombek-inline-code">action()</code> method.
+<code class="jarombek-inline-code">action()</code> contains logic to perform based on the
+command line arguments.  This is the meat of the application.
 </p>
 <CodeSnippet language="JavaScript">
 .action((start, end) => {
@@ -180,11 +180,11 @@ business logic is executed in the <code class="jarombek-inline-code">action()</c
 })
 </CodeSnippet>
 <p>
-The code here is straightforward.  Return either an integer or floating point random number within the bounds
+The code here is straightforward.  Return a random integer or floating point number within the bounds
 specified in the command line arguments.  That is all!
 </p>
 <p>
-Now the program can be executed like so:
+The program is executed like so:
 </p>
 <CodeSnippet language="Bash">
 random --help
@@ -205,11 +205,11 @@ random 1 10 -t int
 </CodeSnippet>
 <p>
 Easy!  The command line application I built for my website has a bit more complexity, but even that is simple
-and easy to understand.  You can check out the code for that app on
+and easy to understand.  You can check out the code for my app on
 <a href="https://github.com/AJarombek/html-tokenizer">GitHub</a>.
 </p>
 <p>
-There are many different languages you can build simple command line applications in.  Now you know that
+There are many different languages command line applications can be built in.
 JavaScript running in the Node.js environment is one of them! Here is the full code for the application:
 </p>
 <CodeSnippet language="JavaScript">
