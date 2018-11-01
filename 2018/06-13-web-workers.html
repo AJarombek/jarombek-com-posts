@@ -1,33 +1,33 @@
 <div>
 <p>
-When developers think of the JavaScript engines execution of code in the browser, thoughts of a
-single threaded event loop come to mind.  You often hear people say that JavaScript does not
+When developers think of the JavaScript engine executing code in the browser, thoughts of a
+single threaded event loop come to mind.  You often hear people say that JavaScript doesn't
 support multithreaded programming and that only one piece of code can run at a time.  What they
 are referring to is the event loop, which delegates browser events for execution one at a time.
-But is JavaScript really single threaded?  The answer to that question used to be "it is hard to
-tell" unless you had access to how exactly different browsers were executing the JavaScript code.
-Now with the Web Workers API the answer is without a doubt "no".
+But is JavaScript really single threaded?  The answer used to be "its hard to
+tell," unless you had access to how exactly different browsers executed JavaScript code.
+With the addition of Web Workers, the answer is "no, JavaScript can run on multiple threads".
 </p>
 <p>
-Web Workers allow multithreaded JavaScript programming in the browser.  This discovery post will
-discuss the basics of what Web Workers are and give some sample code of their basic functionality.
+Web Workers enable multithreaded JavaScript programming in the browser.  This discovery post
+discusses the basics of what Web Workers are and gives sample code of their basic functionality.
 </p>
 <SectionTitle title="How the Browser Executes JavaScript">How the Browser Executes JavaScript</SectionTitle>
 <p>
-JavaScript code in the browser is executed in two different phases.  The first phase occurs when a
+JavaScript browser code is executed in two different phases.  The first phase occurs when a
 webpage is first loaded.  At this phase the DOM is built from the HTML template and all the
-associated JavaScript code either inlined or in the <code class="jarombek-inline-code">
-&lt;script&gt;</code> tags is executed<sup>1</sup>.  The <code class="jarombek-inline-code">
+associated JavaScript code - either inlined or in <code class="jarombek-inline-code">
+&lt;script&gt;</code> tags - is executed<sup>1</sup>.  <code class="jarombek-inline-code">
 &lt;script&gt;</code> tags are executed sequentially unless specified with the
 <code class="jarombek-inline-code">async</code> or <code class="jarombek-inline-code">defer</code>
-attributes<sup>2</sup>.  My guess is this JavaScript code is executed in a single thread since order
-must not be violated, although it is hard to say without seeing how the browsers work behind the
+attributes<sup>2</sup>.  I'd guess this JavaScript code is executed in a single thread since order
+must not be violated, although its hard to say without seeing how the browsers work behind the
 scenes.  Either way, from the programmers view <code class="jarombek-inline-code">
 &lt;script&gt;</code> tags are executed synchronously.
 </p>
 <p>
-At this stage all event handlers are set up.  These event handlers use the
-<code class="jarombek-inline-code">addEventListener()</code> function from the DOM API to respond
+During the first stage all event handlers are set up.  These event handlers use
+<code class="jarombek-inline-code">addEventListener()</code> from the DOM API to respond
 to DOM events<sup>3</sup>.  This is where JavaScripts asynchronous nature comes into play - you
 never know when an event such as a mouse click or scroll will occur.  Responding to these events
 is what the second execution phase is for.
@@ -37,37 +37,37 @@ The second JavaScript execution phase is all about responding to asynchronous ev
 that occurs in the browser can be assigned one or many
 event handler functions<sup>4</sup>. Event handler functions are implemented with
 JavaScript and the DOM API.  Whenever an event occurs in the browser the event handler function is
-invoked.  The event is added to a FIFO event queue which JavaScript will handle one at a time.
-This is where the single threaded loop idea comes into play - JavaScript will only dispatch one
+invoked.  The event is added to a FIFO event queue which JavaScript handles one at a time.
+This is where the single threaded loop idea comes into play - JavaScript only dispatches one
 event handler to be executed at a time.
 </p>
 <p>
-I have read conflicting articles about whether or not JavaScript has multithreading when handling
-the event loop.  Some articles say that the JavaScript code that handles events is actually in
-multiple threads<sup>5</sup>.  Once again, even if there is some multithreaded JavaScript happening
-behind the scenes it is abstracted away from the developers view.  Everything must still pass
-through the single threaded event loop.
+I've read conflicting articles about whether JavaScript has multithreading when handling
+the event loop.  Some articles say the JavaScript code that handles events is actually in
+multiple threads<sup>5</sup>.  Once again, even if there is multithreading happening
+behind the scenes it is abstracted away from the developers view.  Everything still passes
+through a single threaded event loop.
 </p>
 <SectionTitle title="Introducing Web Workers">Introducing Web Workers</SectionTitle>
 <p>
 So why are Web Workers a big deal?  Web Workers allow us to dispatch messages to a separate
-JavaScript thread for execution.  This means that the Web Worker isn't on the main thread and
-won't clog up the event queue.  Imagine you had a very long expensive computation occurring on
-the main thread. In this case most of the event queue would be filled with the resource
-intensive operation instead of focusing on responding to browser events.  This would make
+JavaScript thread for execution.  This means a Web Worker isn't on the main thread and
+doesn't clog up the event queue.  Imagine you had a very long expensive computation occurring on
+the main thread. In this case the event queue would be filled with the expensive
+computation instead of focusing on responding to browser events.  That would make
 performance sluggish.  Imagine if it took a long time for the browser to respond to a button
 click or if animations on the webpage were lagging?  End users would not be happy.
 </p>
 <p>
 When using Web Workers you no longer have to worry about an operation using too much of the
-event queues capacity.  The Web Worker functions in an entirely separate thread.  The code for
-a web worker is in a separate file from the main threads JavaScript code.  In order to use the
+event queues capacity.  Web Workers function in an entirely separate thread.  The code for
+a web worker exists in a separate file from the main threads JavaScript code.  In order to use a
 Web Worker, a new <code class="jarombek-inline-code">Worker</code> instance is created and the
 main thread passes messages to the worker thread.
 </p>
 <p>
-Web Workers wait for messages to come from the main thread and handle them once they arrive.
-The worker code performs some logic of its own and then passes a message back to the client.
+Web Workers wait for a message to come from the main thread and handles it once it arrive.
+The worker code performs some logic and then passes the message back to the client.
 </p>
 <SectionTitle title="Web Worker Implementation">Web Worker Implementation</SectionTitle>
 <p>
@@ -94,8 +94,7 @@ if (window.Worker) {
 </CodeSnippet>
 <p>
 The first thing I do in this code is access two DOM elements - the note input and the output.
-The input is where a user will enter a new note and the output will display the note with a
-timestamp.
+The input is where users enter a new note and the output displays the note with a timestamp.
 </p>
 <p>
 Next the code checks if the global <code class="jarombek-inline-code">window</code> object has
@@ -105,10 +104,10 @@ current browser supports Web Workers.  Almost all major browsers
 the user is using an old browser this check should pass.
 </p>
 <p>
-Inside the <code class="jarombek-inline-code">window</code> object check, I first created a web
+Inside the <code class="jarombek-inline-code">window</code> object check, I created a web
 worker by invoking the <code class="jarombek-inline-code">Worker(path)</code> constructor function.
-The path parameter is passed a URL argument with the location of the worker code<sup>6</sup>.
-In this case I am just using the local <a href="https://github.com/AJarombek/
+The path parameter contains the location of the worker code<sup>6</sup>.
+In this case I use a local <a href="https://github.com/AJarombek/
 jarombek-com-sources/blob/master/2018/06-Jun/6-13-Web-Workers/worker.js">worker.js</a> file.
 </p>
 <p>
@@ -153,13 +152,13 @@ triggered.
 <p>
 The event handler function is implemented to check if the key pressed has the code
 <code class="jarombek-inline-code">13</code>, which corresponds to the enter key.  If the enter
-key is pressed, I get the input value (and clear its value from the DOM).  The input value is
+key is pressed, I get the input value and clear the value from the DOM.  The input value is
 then sent as a message body to the Web Worker.  Messages are sent to the worker via the
 <code class="jarombek-inline-code">postMessage()</code> method on the Web Worker object.
 </p>
 <p>
-The second event listener waits for messages back from the Web Worker.  This listener can be
-implemented as a function on the Web Worker objects <code class="jarombek-inline-code">
+The second event listener waits for messages back from the Web Worker.  This listener is
+implemented as a function on the Web Worker <code class="jarombek-inline-code">
 onmessage</code> property.  My implementation takes the message contents and adds them into the
 output portion of the webpage.
 </p>
@@ -186,9 +185,9 @@ postMessage()</code> and <code class="jarombek-inline-code">onmessage</code> are
 object variable directly<sup>7</sup>.
 </p>
 <p>
-Just a quick reminder before moving forward, this would be an awful use case of a Web Worker!
-Workers are supposed to be used for extremely expensive tasks that clog the main threads
-event queue.  This implementation just demonstrates how they work in an educational sense.
+Just a quick reminder before moving forward - this is an awful use case of a Web Worker!
+Workers are supposed to help relieve the event queue from extremely expensive tasks.
+This implementation just demonstrates how they work in an educational sense.
 </p>
 <SectionTitle title="Running the Web Workers">Running the Web Workers</SectionTitle>
 <p>
@@ -199,7 +198,7 @@ AJarombek/jarombek-com-sources/blob/master/2018/06-Jun/6-13-Web-Workers/index.cs
 for the styling.
 </p>
 <p>
-In order to get Web Workers to running a web server must be deployed.  An easy way to start a
+For Web Workers to function a web server must be deployed.  An easy way to start a
 web server locally is to use the npm module "serve."  Deploying a server with the serve module
 only takes one command<sup>8</sup>:
 </p>

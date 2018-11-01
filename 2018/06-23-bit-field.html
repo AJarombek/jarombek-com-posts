@@ -7,7 +7,7 @@ bitwise operators), so I figured I would take some time to look at Bit Fields in
 <Definition word="Bit Field">
 A data structure that consists of one or many memory locations (bits).  Each of these bits has a
 unique meaning defined by the programmer<sup>1</sup>.  It is common practice to use an unsigned
-integer data type of a specified length for a bit field.  For example, in C you could define a
+integer data type of a specified length for a bit field.  For example, in C you can define a
 bit field as <code class="jarombek-inline-code">unsigned int bitField : 2</code>.  This bit field
 consists of two bits which can be turned on or off - each of which has a unique meaning defined
 by the programmer.
@@ -37,25 +37,23 @@ typedef struct {
 <p>
 The preprocessor definitions for this code are three bit masks which can be applied to the bit
 field.  Every time a macro such as <code class="jarombek-inline-code">VALIDATED</code> is used
-in the code, its occurance will be replaced with the definitions replacement text (ex.
-<code class="jarombek-inline-code">VALIDATED</code> will be replaced by
+in the code, its occurrence is replaced with the definitions replacement text (ex.
+<code class="jarombek-inline-code">VALIDATED</code> is replaced with
 <code class="jarombek-inline-code">01</code>)<sup>2</sup>.
 </p>
 <Definition word="Bit Mask">
-A bit mask is a series of bits which can be used to perform operations on another series of bits.
-A mask can be used to check for the existence of certain bits or remove/add certain bits to a
+A bit mask is a series of bits used to perform operations on another series of bits.
+A mask is commonly used to check for the existence of certain bits or remove/add certain bits to a
 value<sup>3, 4</sup>.  For example, let’s say we have a series of bits
 <code class="jarombek-inline-code">010</code>.  If we wanted to toggle on the first bit in the
 previous sequence, we can use the bit mask <code class="jarombek-inline-code">001</code> and
 perform a bitwise OR operation.   The result of <code class="jarombek-inline-code">010 | 001</code>
-is <code class="jarombek-inline-code">011</code>, so the first bit was successfully toggled on by
-the bit mask.
+is <code class="jarombek-inline-code">011</code>, so the first bit was successfully toggled on by the bit mask.
 </Definition>
 <p>
 The <code class="jarombek-inline-code">typedef struct</code> code defines a new data type that
 has multiple fields - a users first and last name along with a bit field containing their
-status<sup>5</sup>.  You can think of the bit field as a representation for a users
-privileges/status on an online website.
+status<sup>5</sup>.  The bit field represents a users privileges/status on an online website.
 </p>
 <p>
 Next I wrote some code to declare a new user type and set its bit field to
@@ -109,21 +107,21 @@ int containsStatus(unsigned int bitField, unsigned int mask) {
 </CodeSnippet>
 <p>
 To turn on bits in a bit field, the bitwise OR operation is performed between the bit field and
-the mask.  For example, <code class="jarombek-inline-code">000 | 010</code> will result in the
+the mask.  For example, <code class="jarombek-inline-code">000 | 010</code> results in the
 middle bit being turned on - <code class="jarombek-inline-code">010</code>.
 </p>
 <p>
 To turn off bits in the bit field, the bitwise AND and NOT operators are used.  For example,
-<code class="jarombek-inline-code">011 & ~010</code> will turn off the middle bit, resulting
+<code class="jarombek-inline-code">011 & ~010</code> turns off the middle bit, resulting
 in <code class="jarombek-inline-code">001</code>.
 </p>
 <p>
 To check if a bit is turned on in a bit field, a simple bitwise AND is used between the bit field
-and the mask.  If the value resulting from the bitwise AND is greater than 0, the bit was turned
-on in the field.  Otherwise, it was turned off.  For example,
-<code class="jarombek-inline-code">011 & 010</code> will check if the middle bit is turned on.
+and the mask.  If the value resulting from the bitwise AND is greater than 0, the bit is turned
+on in the field.  Otherwise, its turned off.  For example,
+<code class="jarombek-inline-code">011 & 010</code> checks if the middle bit is turned on.
 Since the result is <code class="jarombek-inline-code">010</code> or
-<code class="jarombek-inline-code">2</code>, we know that the bit was turned on in the bit field.
+<code class="jarombek-inline-code">2</code>, we know that the bit is turned on in the bit field.
 </p>
 <p>
 The bit masks are the preprocessor macros <code class="jarombek-inline-code">VALIDATED</code>,
@@ -191,8 +189,7 @@ jarombek-com-sources/blob/master/2018/06-Jun/6-23-Bit-Field/C/bitfield.c">here</
 <p>
 Bit fields can also be used in Java.  The following code for a <code class="jarombek-inline-code">
 User</code> class defines static final variables for the bit masks.  Note that in Java all
-integers are signed and 32 bits long, so you have 31 bits to play with in a bit field data
-structure.
+integers are signed and 32 bits long, so you have 31 bits to play with in a bit field data structure.
 </p>
 <CodeSnippet language="Java">
 public final class User {
@@ -247,8 +244,7 @@ public final class User {
 }
 </CodeSnippet>
 <p>
-The next code performs operations on the user class, resulting in the same bit field changes as
-the C code.
+The following code performs operations on the user class, similar to the C implementation.
 </p>
 <CodeSnippet language="Java">
 // Base user has a bit field of value 000
@@ -306,7 +302,7 @@ is not type safe - which is often a crucial requirement for a Java data structur
 Luckily there is a type safe approach for bit fields in Java.  This approach uses the
 <code class="jarombek-inline-code">EnumSet</code> collection to store the fields.  The fields
 themselves are represented as enums.  This approach is not only type safe and more readable, but
-it also has the same performance as the non-safe integer approach.
+also has the same performance as the non-safe integer approach.
 </p>
 <p>
 The code for the <code class="jarombek-inline-code">EnumSet</code> approach is on GitHub in the

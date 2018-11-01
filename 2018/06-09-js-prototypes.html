@@ -1,8 +1,8 @@
 <div>
 <p>
 For developers new to JavaScript understanding how prototypes work is quite confusing (myself included).  The construct
-itself is quite simple, however those of us used to class based object oriented programming have difficulty
-grasping JavaScripts object model.  This discovery post will attempt to clear up some of the confusing pieces
+itself is quite simple, however those of us accustomed to class based object oriented programming have difficulty
+grasping JavaScripts object model.  This discovery post attempts to clear up some confusing pieces
 of JavaScript prototypes and inheritance.
 </p>
 <SectionTitle title="What is a Prototype">What is a Prototype</SectionTitle>
@@ -27,7 +27,7 @@ argument just like any other object.  They can also have properties and methods 
 all the rights of other citizens in the programming language.
 </Definition>
 <p>
-So almost everything in JavaScript is an object with first class abilities.  Every object also has an internal
+Almost everything in JavaScript is an object with first class abilities.  Every object in JavaScript has an internal
 property called <code class="jarombek-inline-code">[[Prototype]]</code>.  While the prototype property seemed
 mysterious when I first learned JavaScript it is actually very simple.  A prototype is a reference to another object.
 </p>
@@ -189,7 +189,7 @@ All <code class="jarombek-inline-code">Exercise()</code> does is bind some prope
 <a href="https://jarombek.com/blog/nov-11-2017-js-this">discovery post</a> on
 <code class="jarombek-inline-code">this</code> in JavaScript since it can get quite confusing.  Calling
 <code class="jarombek-inline-code">Exercise()</code> without a <code class="jarombek-inline-code">new</code>
-keyword does nothing, since it binds this to the function scope which no longer exists after the call is
+keyword does nothing, since it binds <code class="jarombek-inline-code">this</code> to the function scope which no longer exists after the call is
 completed.  However, when <code class="jarombek-inline-code">new Exercise()</code> is invoked an object is
 created as a side effect.  This object contains all elements in the function scope, so the object created from
 <code class="jarombek-inline-code">new Exercise()</code> contains the properties
@@ -203,15 +203,15 @@ prototype</code> property.  In the code above the prototypes <code class="jaromb
 are defined.
 </p>
 <p>
-The final line of the code accesses two of the properties on the prototype - <code class="jarombek-inline-code">
-minutes</code> and <code class="jarombek-inline-code">seconds</code> - and prints them out.  You can see that the
+The final line of the code accesses two properties on the prototype - <code class="jarombek-inline-code">
+minutes</code> and <code class="jarombek-inline-code">seconds</code> - and prints them out.  The
 notation for accessing a prototype property is the same as accessing a base object property.  What is
-JavaScript doing behind the scenes to resolve variables on the prototype accessed through the base object
+JavaScript doing behind the scenes to resolve variables on the prototype that are searched for on the base object
 instance?
 </p>
 <p>
 When searching for a property or method in a JavaScript object, the first thing JavaScript does is search
-through the base object that the access is called upon.  If the method or property is not found on the base
+through the base object.  If the method or property is not found on the base
 object, the search continues up the prototype chain.  The following diagram demonstrates a search JavaScript performs
 for the <code class="jarombek-inline-code">minutes</code> property.
 </p>
@@ -248,13 +248,13 @@ access to the <code class="jarombek-inline-code">
 type</code> and <code class="jarombek-inline-code">date</code> properties in the <code class="jarombek-inline-code">
 Exercise()</code> function.  Right now the <code class="jarombek-inline-code">Exercise()</code> constructor
 function is set as the prototype of <code class="jarombek-inline-code">firstRun</code>.  However there is still an
-issue which becomes apparent in the last call to <code class="jarombek-inline-code">console.log()</code>.  The
+issue which becomes apparent in the last call to <code class="jarombek-inline-code">console.info()</code>.  The
 prototype of <code class="jarombek-inline-code">Exercise</code> is still not in the prototype chain of
 <code class="jarombek-inline-code">firstRun</code>!  Because of this the properties <code class="jarombek-inline-code">
 minutes</code> and <code class="jarombek-inline-code">seconds</code> are not found.
 </p>
 <p>
-To fix the problem we can call the <code class="jarombek-inline-code">Object.setPrototypeOf()</code> function to add
+To fix the problem I called <code class="jarombek-inline-code">Object.setPrototypeOf()</code> to add
 <code class="jarombek-inline-code">Exercise.prototype</code>
 into the prototype chain.  The following code sets the prototype of <code class="jarombek-inline-code">Run.prototype
 </code> (the constructor function of <code class="jarombek-inline-code">Exercise</code>) to
@@ -269,10 +269,10 @@ variables are in the prototype chain.
 </p>
 <p>
 In the examples so far every property was defined once in the prototype chain.  What would happen if a property or
-method was defined in multiple levels of the prototype chain?  Looking back at the diagram searching for the
+method was defined in multiple levels of the prototype chain?  Looking back at the diagram that searched for the
 <code class="jarombek-inline-code">minutes</code> property, the search began at the base object and worked its way
 up the prototype chain.  If there are multiple instances of a property on a chain, the first time the search finds
-that property it will return its value, ignoring any property further up the chain.  This process is known as
+that property it returns its value, ignoring any properties further up the chain.  This process is known as
 shadowing, since any properties further up the prototype chain are covered up by matching properties lower on the
 chain<sup>3</sup>.
 </p>
@@ -318,8 +318,9 @@ let secondRun = Object.create(Exercise, {
 secondRun.print();
 </CodeSnippet>
 <CodeSnippet language="Bash">
-Run {type: "Run", date: 1528548053295, surface: "Grass"}
-undefined:undefined on Grass
+Run 3.46 Miles in 20:33
+{print: ƒ}
+Run 4.11 Miles in 29:57
 </CodeSnippet>
 <p>
 Another way to use <code class="jarombek-inline-code">Object.create()</code> is to create an
