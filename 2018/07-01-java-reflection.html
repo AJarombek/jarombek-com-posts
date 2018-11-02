@@ -3,7 +3,7 @@
 Reflection in Java was always a technique clouded in mystery for me.  There aren't many practical
 applications for reflection, so my personal code never really needed to use it.  It also didn't
 help that people often describe reflection as "hard to learn" and only for "experienced
-developers."  It turns out reflection isn’t that complicated, although questions still remain of
+developers."  It turns out reflection isn't that complicated, although questions still remain of
 its usefulness in building applications.
 </p>
 <p>
@@ -51,18 +51,17 @@ java.lang.Class</code> class.
 Reflection is a programming language implementation and technique for inspecting and modifying the
 runtime structure of an application.  In Java, this runtime structure is the objects that make up
 a program.  To perform reflection in Java, <code class="jarombek-inline-code">java.lang.Class</code>
-is used to inspect objects and classes that make up the <code class="jarombek-inline-code">
+is used to inspect objects.  Classes that make up the <code class="jarombek-inline-code">
 java.lang.reflect</code> package are used to modify and interact with these objects at runtime.
 </Definition>
 <p>
-Now that type introspection and reflection are clearly defined, I will demonstrate some of the
-basic building blocks for using reflection in Java.
+Now that type introspection and reflection are clearly defined, I will demonstrate the 
+basic building blocks of reflection in Java.
 </p>
 <SectionTitle title="Java Reflection">Java Reflection</SectionTitle>
 <p>
-Let’s say we created an object in Java that is the string <code class="jarombek-inline-code">
-"1995"</code>.  For starters we can perform type introspection on this object with the help of
-<code class="jarombek-inline-code">Class</code>
+Let's say we created the string <code class="jarombek-inline-code">"1995"</code> as an object in Java.
+For starters we can perform type introspection on this object with the help of <code class="jarombek-inline-code">Class</code>.
 </p>
 <CodeSnippet language="Java">
 var string = "1995";
@@ -85,29 +84,27 @@ class java.lang.Object
 <p>
 This is a very simple example of type introspection, but you can see the power (yet relative
 simplicity) of <code class="jarombek-inline-code">java.lang.Class</code>.  First the method
-<code class="jarombek-inline-code">getClass()</code> is called on our object.
+<code class="jarombek-inline-code">getClass()</code> is called on the object.
 <code class="jarombek-inline-code">getClass()</code> is defined on
 <code class="jarombek-inline-code">Object</code>, allowing access to the runtime class of any
-object.  This call is what gives us a <code class="jarombek-inline-code">Class</code> instance,
-allowing for type introspection.
+object.  It provides a <code class="jarombek-inline-code">Class</code> instance, allowing for type introspection.
 </p>
 <p>
-Once we have an instance of <code class="jarombek-inline-code">Class</code>,
-<code class="jarombek-inline-code">getModifiers()</code> is called on the class instance.  Here
-we can see what modifiers are defined on the class.  <code class="jarombek-inline-code">
+Once I have an instance of <code class="jarombek-inline-code">Class</code>,
+<code class="jarombek-inline-code">getModifiers()</code> is called on the class instance.  <code class="jarombek-inline-code">getModifiers()</code> provides
+the modifiers defined on the class.  <code class="jarombek-inline-code">
 String</code> is defined as <code class="jarombek-inline-code">public</code> and
-<code class="jarombek-inline-code">final</code> as shown here.
+<code class="jarombek-inline-code">final</code> as shown in the output above.
 </p>
 <p>
-We also get the superclass of <code class="jarombek-inline-code">String</code> by calling
+I also get the superclass of <code class="jarombek-inline-code">String</code> by calling
 <code class="jarombek-inline-code">getSuperclass()</code>.  The superclass of
-<code class="jarombek-inline-code">String</code> is simply
-<code class="jarombek-inline-code">Object</code>.
+<code class="jarombek-inline-code">String</code> is simply <code class="jarombek-inline-code">Object</code>.
 </p>
 <p>
-What if we wanted to do something a bit more involved.  For example, let’s say we want to perform
+What if I wanted to do something a bit more involved.  For example, let's say I want to perform
 type introspection on a method of <code class="jarombek-inline-code">String</code> and then
-reflectively invoke it.  This can be done through Java’s reflective API.  The following code
+reflectively invoke it.  This can be done through Java's reflective API.  The following code
 searches for the <code class="jarombek-inline-code">length()</code> method on the
 <code class="jarombek-inline-code">String</code> class through type introspection and then invokes
 it reflectively:
@@ -153,18 +150,17 @@ Result of length() invocation: 4
 <code class="jarombek-inline-code">length()</code> from the class
 <code class="jarombek-inline-code">String</code>.  <code class="jarombek-inline-code">
 getMethod()</code> returns an instance of <code class="jarombek-inline-code">Method</code>, a class
-in Java’s reflect API.  From the official Java documentation, <code class="jarombek-inline-code">
+in Java's reflection API.  From the official Java documentation, <code class="jarombek-inline-code">
 Method</code> "provides information about, and access to, a single method on a class or interface
 <sup>3</sup>."  Per the documentation, a call to the <code class="jarombek-inline-code">
-invoke()</code> method on <code class="jarombek-inline-code">java.lang.reflect.Method</code> will
-call the method reflectively.  In the code above <code class="jarombek-inline-code">length()</code>
-is invoked reflectively, returning the expected value of
-<code class="jarombek-inline-code">4</code>.
+invoke()</code> method on <code class="jarombek-inline-code">java.lang.reflect.Method</code>
+calls the method reflectively.  In the code above <code class="jarombek-inline-code">length()</code>
+is invoked reflectively, returning the expected value of <code class="jarombek-inline-code">4</code>.
 </p>
 <p>
-Another thing you can do with type introspection is list all the methods in a class.  Then if you
-wanted, you could call these <code class="jarombek-inline-code">java.lang.reflect.Method</code>
-instances reflectively.  The following code lists all the methods of the
+Another thing you can do with type introspection is list all the methods in a class.  Then
+you could call these <code class="jarombek-inline-code">java.lang.reflect.Method</code>
+instances reflectively.  The following code lists all the methods in the
 <code class="jarombek-inline-code">String</code> class.
 </p>
 <CodeSnippet language="Java">
@@ -189,9 +185,9 @@ public int java.lang.String.hashCode()
 <p>
 When given an instance of <code class="jarombek-inline-code">java.lang.Class</code> you can
 construct a new object reflectively.  The following code attempts to construct objects and
-primitives, returning an empty <code class="jarombek-inline-code">Optional</code> if the
+primitives, returning an empty <code class="jarombek-inline-code">Optional</code> if
 construction failed or an <code class="jarombek-inline-code">Optional</code> containing the
-instance if it succeeds.
+instance if construction succeeded.
 </p>
 <CodeSnippet language="Java">
 /**
@@ -246,7 +242,7 @@ private static &lt;T&gt; Optional&lt;T&gt; getInstance(Constructor&lt;T&gt; cons
 }
 </CodeSnippet>
 <p>
-Invoking the constructor will fail for primitives, since they are not objects and don’t have
+Invoking the constructor fails for primitives, since they are not objects and don't have
 constructors.  The following code calls the <code class="jarombek-inline-code">
 constructReflectively()</code> method for different objects and primitives.  The instance of
 <code class="jarombek-inline-code">ArrayList</code> shows that an object constructed
@@ -287,12 +283,12 @@ Constructing an Object
 <p>
 So what use case does reflection even have?  The truth is there are very few.  Some examples of
 programs that use reflection are unit testing frameworks like JUnit and dependency injection
-frameworks<sup>4</sup>.  While it is good to know reflection techniques are at your disposal,
+frameworks<sup>4</sup>.  While its good to have reflection techniques at your disposal,
 reflection in Java has many drawbacks that make it an unnecessary and poor practice in most cases.
 </p>
 <p>
-Method invocation through reflection is much slower than methods which are handled normally.  This
-is because the JVM can’t perform certain optimizations on types that are dynamically resolved
+Method invocation through reflection is much slower than methods handled normally.  This
+is because the JVM can't perform certain optimizations on types that are dynamically resolved
 like those from the reflection API<sup>5</sup>.  Also reflection can break encapsulation (the
 protection of private abstracted data), giving access to fields that are private to a class.
 </p>
