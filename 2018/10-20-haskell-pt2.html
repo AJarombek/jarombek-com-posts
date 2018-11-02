@@ -14,11 +14,11 @@ The two main fold functions in Haskell are <code class="jarombek-inline-code">fo
 <code class="jarombek-inline-code">foldl</code>, both of which are found in the standard
 <code class="jarombek-inline-code">Prelude</code> module.  <code class="jarombek-inline-code">foldr</code>
 and <code class="jarombek-inline-code">foldl</code> take three arguments.  The first argument is
-a list (<code class="jarombek-inline-code">xs</code>) which the single returned value is reduced
-from.  The second argument is a base value (<code class="jarombek-inline-code">v</code>).
+a list (<code class="jarombek-inline-code">xs</code>) from which the single returned value is reduced.  
+The second argument is a base value (<code class="jarombek-inline-code">v</code>).
 <code class="jarombek-inline-code">v</code> is the result of a fold function with an empty list argument.
 If a populated list is passed as an argument, <code class="jarombek-inline-code">v</code> assists in
-building a reduced value.  How a reduced value is created depends on the third argument to fold, a function.
+building a reduced value.  How a reduced value is created depends on the third argument which is a function.
 </p>
 <p>
 This function (<code class="jarombek-inline-code">f</code>) takes in two arguments - the base value
@@ -55,12 +55,12 @@ foldr (+) 0 [1..10] -- 55
 To begin, <code class="jarombek-inline-code">foldr</code> invokes function <code class="jarombek-inline-code">
 f</code> on the first list item <code class="jarombek-inline-code">x</code> and the recursive case
 <code class="jarombek-inline-code">(foldr f v xs)</code>.  Finally once <code class="jarombek-inline-code">
-foldr</code> has been recursively called enough times to exhaust the list, the base case is returned.
-This type of fold function is known as a ‘right fold’ since the computed result folds over from the
-right<sup>1</sup>.  Visually this is hard to picture, I’ll show you an example in a bit.
+foldr</code> is recursively called enough times to exhaust the list, the base case is returned.
+This type of fold function is known as a 'right fold' since the computed result folds over from the
+right<sup>1</sup>.  Visually this is hard to picture so I'll show you an example in a bit.
 </p>
 <p>
-The other type of fold is a ‘left fold’ which Haskell implements with the <code class="jarombek-inline-code">
+The other type of fold is a ‘left fold' which Haskell implements with the <code class="jarombek-inline-code">
 foldl</code> function.  I recreated <code class="jarombek-inline-code">foldl</code> below:
 </p>
 <CodeSnippet language="Haskell">
@@ -160,13 +160,13 @@ this the call stack grows until a reducible expression is encountered.
 <Definition word="Reducible Expression">
 In programming languages any expression that can be reduced or altered into a simpler or different
 value.  For example, a function invocation that requires work to be done is a reducible expression,
-while a constant value that doesn’t change is not<sup>4</sup>.    Reducible expressions are commonly
+while a constant value that doesn't change is not<sup>4</sup>.    Reducible expressions are commonly
 referred to as 'redexes<sup>5</sup>.'
 </Definition>
 <p>
-The execution of <code class="jarombek-inline-code">foldr (+) 0 [0..100000000]</code> doesn’t encounter
+The execution of <code class="jarombek-inline-code">foldr (+) 0 [0..100000000]</code> doesn't encounter
 a reducible expression until <code class="jarombek-inline-code">100000000+0</code>, and before the recursion
-reaches that point the stack was already out of memory on my machine.
+reaches that point the stack is already out of memory on my machine.
 </p>
 <p>
 <code class="jarombek-inline-code">foldl</code> is different because it has a reducible expression in each
@@ -190,8 +190,8 @@ Luckily there is a fold function implementation that works with large lists.
 </p>
 <SectionTitle title="foldl and foldr"><code class="jarombek-header-code">foldl'</code></SectionTitle>
 <p>
-<code class="jarombek-inline-code">foldl’</code> is a left folding function located in the
-<code class="jarombek-inline-code">Data.List</code> module.  It is implemented using a native
+<code class="jarombek-inline-code">foldl'</code> is a left folding function located in the
+<code class="jarombek-inline-code">Data.List</code> module.  Its implemented using a native
 <code class="jarombek-inline-code">seq</code> function to remove the lazy behavior of redexes<sup>6,7</sup>.
 </p>
 <CodeSnippet language="Haskell">
@@ -219,12 +219,11 @@ main = do
 </CodeSnippet>
 <SectionTitle title="Use Cases">Use Cases</SectionTitle>
 <p>
-In the example code so far I’ve used <code class="jarombek-inline-code">foldr</code> and
+In the example code so far I've used <code class="jarombek-inline-code">foldr</code> and
 <code class="jarombek-inline-code">foldl</code> to add up the contents of a list.  The following two use
-cases count the number of odd numbers in a list and divide the items in a list.  I wrote the examples
-using standard recursion first and then altered them to use the fold functions.
+cases count the odd numbers in a list and divide the items in a list.  I wrote these examples
+using standard recursion first and then altered them to use fold functions.
 </p>
-<SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <CodeSnippet language="Haskell">
 {-|
   Count the number of odd numbers in a list using recursion
@@ -298,7 +297,7 @@ main = do
 </CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Working with fold functions in Haskell helped show me the origin of the higher-order reduction functions
+Working with fold functions in Haskell showed me the origins of higher-order reduction functions
 found in many mainstream languages today.  The full code from this discovery post is on
 <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/10-Oct/10-20-haskell-pt2">GitHub</a>.
 </p>
