@@ -1,8 +1,8 @@
 <div>
 <p>
 <a href="https://jarombek.com/blog?query=haskell&page=1">Haskell</a> provides multiple ways to declare
-a type.  Some types are simply aliases for existing types, but some are completely new.  This post
-explains the difference between the three mechanisms for creating types in Haskell.
+types.  Some types are simply aliases for existing types, while some are completely new.  This post
+explains the differences between the three mechanisms for creating types in Haskell.
 </p>
 <SectionTitle title="type" isCode="true">type</SectionTitle>
 <p>
@@ -47,7 +47,7 @@ main = do
 ["Taylor Swift"]
 </CodeSnippet>
 <p>
-Type aliases cas also include type variables.  Type variables are represented by a lowercase letter
+Type aliases can also include type variables.  Type variables are represented by a lowercase letter
 or word and declare a type to be polymorphic<sup>2</sup>.  A polymorphic type can take many different
 forms.  The following type <code class="jarombek-inline-code">Week</code> creates an alias for a
 polymorphic tuple containing seven elements.
@@ -57,7 +57,7 @@ type Week a = (a,a,a,a,a,a,a)
 </CodeSnippet>
 <p>
 Any seven element tuple is a <code class="jarombek-inline-code">Week</code> as long as all the
-elements are of the same type.  The next code sample contains three tuples.  The first two are valid
+elements are of the same type.  The next code sample's <code class="jarombek-inline-code">main</code> function contains three tuples.  The first two are valid
 <code class="jarombek-inline-code">Week</code> types, while the third is not.  When invoking a function
 that takes in a <code class="jarombek-inline-code">Week</code> as an argument, the final tuple fails.
 </p>
@@ -93,10 +93,10 @@ example, the following data type represents different exercises:
 data ExerciseType = Run | Swim | Bike
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">ExerciseType</code> is read as “ExerciseType equals Run or Swim or
-Bike.”  <code class="jarombek-inline-code">Run</code>, <code class="jarombek-inline-code">Swim</code>,
+<code class="jarombek-inline-code">ExerciseType</code> is read as "ExerciseType equals Run or Swim or
+Bike."  <code class="jarombek-inline-code">Run</code>, <code class="jarombek-inline-code">Swim</code>,
 and <code class="jarombek-inline-code">Bike</code> are called constructors.  Constructor names must
-be unique across all types, so the following code would be illegal<sup>3</sup>:
+be unique across all types, so the following code is illegal<sup>3</sup>:
 </p>
 <CodeSnippet language="Haskell">
 data Pets = Cat | Dog
@@ -105,14 +105,14 @@ data Pets = Cat | Dog
 data Animal = Cat | Deer
 </CodeSnippet>
 <p>
-Constructors have no meaning when declared.  However, as developers we can give them meaning through
+Constructors have no meaning when declared.  However, as developers we give them meaning through
 the way they interact with existing types.
 </p>
 <p>
-Constructors can also have arguments.  The type of the arguments can be either concrete types or type
+Constructors can also have arguments.  The type of the arguments can be concrete types or type
 aliases.  When creating a value that matches a type, the arguments are mandatory.  Constructors that
 take arguments are known as constructor functions, which are the same as regular functions except
-with no body<sup>4</sup>.  Constructor functions simply collect data and define it as a type.
+with no body<sup>4</sup>.  Constructor functions simply collect data and enforce the data type.
 </p>
 <CodeSnippet language="Haskell">
 data Distance = Miles Float | Kilometers Float | Meters Float
@@ -132,12 +132,12 @@ ghci
 # Kilometers :: Float -> Distance
 </CodeSnippet>
 <p>
-Types created with the <code class="jarombek-inline-code">data</code> keyword can become an instance
-of multiple classes.  Each class contains operations that can be performed on a value of a type, such
+Types created with the <code class="jarombek-inline-code">data</code> keyword can become instances
+of multiple classes.  Each class contains operations for use on instances, such
 as checking for equality between two values or converting a value to a string<sup>5</sup>.
 </p>
 <p>
-Haskell classes are beyond the scope of this post, but there is a shortcut for making types an instance
+Haskell classes are beyond the scope of this post, but there is a shortcut for making instances
 of common classes in the <code class="jarombek-inline-code">Prelude</code> module.  The
 <code class="jarombek-inline-code">deriving</code> keyword makes a type an instance of common classes
 such as <code class="jarombek-inline-code">Eq</code>, <code class="jarombek-inline-code">Ord</code>,
@@ -146,8 +146,8 @@ such as <code class="jarombek-inline-code">Eq</code>, <code class="jarombek-inli
 <p>
 I revised <code class="jarombek-inline-code">ExerciseType</code> so that its an instance of both
 <code class="jarombek-inline-code">Show</code> and <code class="jarombek-inline-code">Read</code>.
-<code class="jarombek-inline-code">Show</code> allows types to be converted into a string while
-<code class="jarombek-inline-code">Read</code> allows strings to be converted into a type.
+<code class="jarombek-inline-code">Show</code> allows <code class="jarombek-inline-code">ExerciseType</code> to be converted into a string while
+<code class="jarombek-inline-code">Read</code> allows strings to be converted into an <code class="jarombek-inline-code">ExerciseType</code>.
 </p>
 <CodeSnippet language="Haskell">
 data ExerciseType = Run | Swim | Bike
