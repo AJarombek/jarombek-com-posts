@@ -336,9 +336,27 @@ assert garden.in_garden(lily)
 assert not garden.in_garden(Animal("momma rabbit", AnimalSpecies.RABBIT))
 </CodeSnippet>
 <p>
-Method overloading in Python is just like that in JavaScript<sup>6</sup>.  All the logic to handle
+Method overloading in Python is just like JavaScript<sup>6</sup>.  All the logic to handle
 different method arguments is handled in one method definition.
 </p>
+<UpdateInfo date="November 27th, 2018">
+<p>
+There are a few things incorrect about the above Python code and explanation.  Function
+overloading is possible in Python outside of a class with the <code class="jarombek-inline-code">@singledispatch</code>
+decorator.  <code class="jarombek-inline-code">@singledispatch</code> creates a generic function that has different
+bodies depending on the argument types<sup>7</sup>.  I refactored the garden example above to use
+<code class="jarombek-inline-code">@singledispatch</code>.  That code exists in the <a href="https://bit.ly/2PaGVZK">garden2.py</a>
+and <a href="https://bit.ly/2DNzPrP">main2.py</a> files on GitHub.
+</p>
+<p>
+The second problem is in the <code class="jarombek-inline-code">Garden</code> constructor.  In Python default arguments for
+should never be mutable<sup>8</sup>.  The problem is default arguments are bound to the function
+object when the module is loaded<sup>9</sup>.  After that, if the value is mutated, it affects
+all further invocations of the function.  This exploit is shown in <a href="https://bit.ly/2KF93Ua">mainI.py</a>.  I fixed the
+<code class="jarombek-inline-code">Garden</code> class in <a href="https://bit.ly/2KDWS9T">GardenII.py</a>
+and <a href="https://bit.ly/2SiQlV0">mainII.py</a>.
+</p>
+</UpdateInfo>
 <SectionTitle title="Swift">Swift</SectionTitle>
 <p>
   Garden.swift
@@ -386,7 +404,7 @@ assert(!garden.inGarden("Squirrel"))
 </CodeSnippet>
 <p>
 Swift is interesting because it is a statically typed language with optional type annotations
-that can be applied to variables<sup>7</sup>.  The most generic type in Swift is
+that can be applied to variables<sup>10</sup>.  The most generic type in Swift is
 <code class="jarombek-inline-code">Any</code> - meaning an instance of any type.  If you define a
 variable with <code class="jarombek-inline-code">Any</code> as the type annotation such as
 <code class="jarombek-inline-code">let otherDoe: Any = doe</code>, the generic overloaded method
