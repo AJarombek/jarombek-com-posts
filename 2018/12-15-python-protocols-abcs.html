@@ -7,11 +7,11 @@ discovery post explores different options for creating interfaces in Python.
 </p>
 <SectionTitle title="Protocols & Duck Typing">Protocols & Duck Typing</SectionTitle>
 <Definition word="Protocol">
-In Python a protocol is an informal interface known as an accepted truth or defined only in
+In Python a protocol is an informal interface.  Protocols are either known as an accepted truth or defined in
 documentation and not strictly in code<sup>1</sup>.  For example, any class that implements the
 <code class="jarombek-inline-code">__container__()</code> special method is said to follow the "container
 protocol."  While this is an accepted truth, there is no syntax in the Python language that declares
-a class as following the container protocol.  Python classes can implement multiple protocols.
+a class as following a protocol.  Python classes can also implement multiple protocols.
 </Definition>
 <p>
 <a href="https://jarombek.com/blog/jul-15-2018-groovy-optional-typing#duck-typing">Duck typing</a> is
@@ -19,6 +19,8 @@ used to determine if a class follows a protocol.  Duck typing is when you assume
 certain protocol based on the existence of certain methods or properties.
 </p>
 <CodeSnippet language="Python">
+# TrailMap.py
+
 class TrailMap:
 
   def __init__(self, trails):
@@ -83,6 +85,8 @@ in separate files with the <strong>.pyi</strong> extension.  I created one of th
 <code class="jarombek-inline-code">TrailMap</code> class.  Its named <strong>TrailMap.pyi</strong>.
 </p>
 <CodeSnippet language="Python">
+# TrailMap.pyi
+
 class TrailMap:
 
   # TrailMap constructor
@@ -102,13 +106,13 @@ Take note that none of these methods contain bodies.  They simply declare the ty
 </p>
 <SectionTitle title="ABCs">ABCs</SectionTitle>
 <p>
-Abstract Base Classes (ABCs) are formal interfaces in Python.  ABCs can contain both abstract and
-concrete methods.  In general its recommended to inherit from an ABC instead of a concrete class<sup>2</sup>.
+Abstract Base Classes (ABCs) are formal interfaces in Python.  ABCs can contain abstract and
+concrete methods.  In general its recommended for a class to inherit from an ABC instead of a concrete class<sup>2</sup>.
 ABCs in Python are comparable to abstract classes in Java, although Python ABCs support multiple
 inheritance while Java abstract classes do not.
 </p>
 <p>
-It’s recommended to only subclass ABCs defined in the Python standard library<sup>3</sup>.  Using
+It's recommended to only subclass ABCs defined in the Python standard library<sup>3</sup>.  Using
 the existing Python ABCs follows the practice of using existing language features instead of creating
 your own.  For example, to find the length of an object you should simply invoke the built-in
 <code class="jarombek-inline-code">len()</code> function instead of a custom implementation.
@@ -128,12 +132,14 @@ class Exercise(abc.ABC):
 <p>
 Inside an ABC, abstract methods are declared with the <code class="jarombek-inline-code">
 @abc.abstractmethod</code> decorator.  The <code class="jarombek-inline-code">Exercise</code> ABC
-declares three abstract methods, <code class="jarombek-inline-code">miles()</code> for the miles
+declares three abstract methods: <code class="jarombek-inline-code">miles()</code> for the miles
 exercised, <code class="jarombek-inline-code">time</code> for the length of the exercise, and
-<code class="jarombek-inline-code">date</code> for when the exercise occurs.  Abstract method bodies
+<code class="jarombek-inline-code">date</code> for when the exercise occurred.  Abstract method bodies
 are implemented in classes that extend the ABC.
 </p>
 <CodeSnippet language="Python">
+# Exercise.py
+  
 @property
 @abc.abstractmethod
 def miles(self) -> numbers.Real:
@@ -156,10 +162,12 @@ def date(self) -> date:
   """
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">Exercise</code> also contains one concrete method which calculates
+<code class="jarombek-inline-code">Exercise</code> also contains one concrete method which calculates
 the mile pace of the exercise.
 </p>
 <CodeSnippet language="Python">
+# Exercise.py
+  
 def pace(self) -> tuple:
   """
   Calculate the pace of the exercise in minutes and seconds
@@ -233,8 +241,8 @@ class Run(Exercise):
                                                         self.date, self.surface)
 </CodeSnippet>
 <p>
-When looking at the metadata of <code class="jarombek-inline-code">Run</code> the class is a subclass
-of <code class="jarombek-inline-code">Exercise</code> and object instances are also instances of
+Looking at the metadata of <code class="jarombek-inline-code">Run</code> confirms that it's a subclass
+of <code class="jarombek-inline-code">Exercise</code> and its object instances are instances of
 <code class="jarombek-inline-code">Exercise</code>.
 </p>
 <CodeSnippet language="Python">
@@ -249,8 +257,8 @@ assert issubclass(Run, Exercise)
 <p>
 Directly subclassing an ABC like I did with <code class="jarombek-inline-code">Run</code> is only
 one of the subclassing options that Python offers.  Python also allows for classes to be registered
-as virtual subclasses of an ABC<sup>4</sup>.  Virtual subclasses don’t need to implement the methods
-of the parent class.  Instead, Python will trust that the subclass maintains an is-a relationship
+as virtual subclasses of an ABC<sup>4</sup>.  Virtual subclasses don't need to implement the methods
+of the parent class.  Instead, Python trusts that the subclass maintains an is-a relationship
 with the parent class.  The following <code class="jarombek-inline-code">Elliptical</code> class is
 a virtual subclass of <code class="jarombek-inline-code">Exercise</code>.
 </p>
@@ -269,10 +277,10 @@ class Elliptical:
 Virtual subclasses are registered with the ABCs <code class="jarombek-inline-code">register()</code>
 class method.  <code class="jarombek-inline-code">register()</code> is commonly used as a decorator
 on the subclass.  The above example used the <code class="jarombek-inline-code">@Exercise.register</code>
-annotation on the <code class="jarombek-inline-code">Elliptical</code> class.
+decorator on the <code class="jarombek-inline-code">Elliptical</code> class.
 </p>
 <p>
-It’s important to note that <code class="jarombek-inline-code">Elliptical</code> does not implement the
+It's important to note that <code class="jarombek-inline-code">Elliptical</code> does not implement the
 <code class="jarombek-inline-code">date()</code> and <code class="jarombek-inline-code">miles()</code>
 abstract methods in the <code class="jarombek-inline-code">Exercise</code> ABC.  Despite this discrepancy,
 <code class="jarombek-inline-code">Elliptical</code> is still a subclass of <code class="jarombek-inline-code">
@@ -286,26 +294,28 @@ assert isinstance(elliptical, Exercise)
 assert issubclass(Elliptical, Exercise)
 </CodeSnippet>
 <p>
-Virtual subclasses give ABCs more flexibility.  This flexibility even further differentiates the strict
+Virtual subclasses give ABCs more flexibility.  This flexibility further differentiates the strict
 abstract classes of Java from ABCs in Python.
 </p>
 <p>
-While more flexible than abstract classes in Java, ABCs in Python are still much stricter than protocols
-which utilize duck typing.  However, Python does also allow for ABCs to use duck typing when determining
-subclasses.  ABCs implement duck typing with the special method <code class="jarombek-inline-code">
+While more flexible than abstract classes in Java, ABCs in Python are still stricter than protocols
+ utilizing duck typing.  However, Python does allow for ABCs to use duck typing when determining
+subclasses as well.  ABCs implement duck typing with the special method <code class="jarombek-inline-code">
 __subclasshook__()</code>.  This method helps a class determine if another class is a subclass.  Behind
-the scenes <code class="jarombek-inline-code">__subclasshook__()</code> is invoked when
+the scenes, <code class="jarombek-inline-code">__subclasshook__()</code> is called when
 <code class="jarombek-inline-code">isinstance()</code> is invoked with an object or
-<code class="jarombek-inline-code">issubclass</code> is invoked with a class.
+<code class="jarombek-inline-code">issubclass()</code> is invoked with a class.
 </p>
 <p>
 I added <code class="jarombek-inline-code">__subclasshook__()</code> to the <code class="jarombek-inline-code">
 Exercise</code> ABC.  <code class="jarombek-inline-code">__subclasshook__()</code> in
 <code class="jarombek-inline-code">Exercise</code> declares that if a method <code class="jarombek-inline-code">
-is_exercise()</code> is found anywhere in a class or its parent hierarchy, it’s considered a subclass
+is_exercise()</code> exists anywhere in a class or its parent hierarchy, it's considered a subclass
 of <code class="jarombek-inline-code">Exercise</code>.
 </p>
 <CodeSnippet language="Python">
+# Exercise.py
+
 @classmethod
 def __subclasshook__(cls, c):
   """
@@ -354,11 +364,11 @@ if __name__ == '__main__':
 </CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Python provides very flexible means of utilizing inheritance an object oriented design.  Outside of
+Python provides very flexible ways to utilize inheritance in object oriented design.  Outside of
 concrete classes, ABCs are the most strict use of inheritance.  However, developers can make them
 less strict with the use of virtual subclassing and duck typing with <code class="jarombek-inline-code">
 __subclasshook__()</code>.  If you want an extremely informal inheritance design, protocols can be
-used to follow common patterns.
+used for classes following common patterns.
 </p>
 <p>
 The code for this discovery post is up on <a href="https://bit.ly/2PBRipv">GitHub</a>.
