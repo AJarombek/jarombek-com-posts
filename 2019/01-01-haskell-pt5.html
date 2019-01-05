@@ -1,23 +1,23 @@
 <div>
 <p>
-In this article, I’m exploring classes in Haskell.  Coming from object oriented languages, the
+In this article, I'm exploring classes in Haskell.  Coming from object oriented languages, the
 concept of Haskell classes was a bit confusing for me.  Haskell is a <a href="https://jarombek.com/blog/
-oct-6-2018-haskell-pt1">functional programming language</a>, so its class functionality doesn’t
+oct-6-2018-haskell-pt1">functional programming language</a>, so its class functionality doesn't
 match classes in object oriented languages such as Java or Python.  The closest comparison for
-Haskell classes I can think of in the object oriented world is Java interfaces with default methods
-<sup>1</sup>.  This article clears more the confusion of Haskell classes.
+Haskell classes in the object oriented world is Java interfaces with default methods<sup>1</sup>.
+This article helps clear the confusion of Haskell classes.
 </p>
 <SectionTitle title="Type Classes">Type Classes</SectionTitle>
 <p>
-My previous Haskell post looked at declaring custom types.  Custom types and existing types can be
-made instances of classes, which give functionality to a type.  Type classes are created with a
+My previous Haskell post looked at declaring custom types.  Custom types and existing types can become
+instances of classes, giving them functionality.  Type classes are created with a
 <code class="jarombek-inline-code">class</code> declaration and instances are created with an
 <code class="jarombek-inline-code">instance</code> declaration.
 </p>
 <p>
-As I mentioned earlier, a class is similar to an interface.  Therefore it provides operator and function
-declarations without bodies.  For example, the following class matches the one in the
-<code class="jarombek-inline-code">Prelude</code> module which checks for equality.
+As I mentioned earlier, a class is similar to a Java interface.  Therefore it provides operator and function
+declarations without bodies.  For example, the following <code class="jarombek-inline-code">Eq</code> class matches the one in the
+<code class="jarombek-inline-code">Prelude</code> module that checks for equality.
 </p>
 <CodeSnippet language="Haskell">
 class Eq a where
@@ -30,11 +30,11 @@ The class <code class="jarombek-inline-code">Eq</code> defines two operators, <c
 ==</code> and <code class="jarombek-inline-code">/=</code>.  It also creates a default definition
 for the <code class="jarombek-inline-code">/=</code> operator (which is simply the opposite of
 <code class="jarombek-inline-code">==</code>).  If an instance of <code class="jarombek-inline-code">
-Eq</code> does not implement the <code class="jarombek-inline-code">/=</code> operator, it will fall
+Eq</code> does not implement the <code class="jarombek-inline-code">/=</code> operator, its functionality falls
 back to the default definition<sup>2</sup>.
 </p>
 <p>
-A type can be defined as an instance of a class using an <code class="jarombek-inline-code">instance</code>
+A type is defined as an instance of a class using an <code class="jarombek-inline-code">instance</code>
 declaration.  The following code declares <code class="jarombek-inline-code">Int</code> as an instance
 of <code class="jarombek-inline-code">Eq</code>.
 </p>
@@ -44,13 +44,13 @@ instance Eq Int where
   (/=) = neInt
 </CodeSnippet>
 <p>
-While I didn’t have to implement <code class="jarombek-inline-code">(/=)</code> due to the default
+While I didn't have to implement <code class="jarombek-inline-code">(/=)</code> due to the default
 definition, there is no harm in implementing it anyway.  <code class="jarombek-inline-code">eqInt</code>
 and <code class="jarombek-inline-code">neInt</code> are internal Haskell functions used to determine
 integer equality.
 </p>
 <p>
-Thanks to the <code class="jarombek-inline-code">Eq</code> class and instance declaration, any two
+Thanks to the <code class="jarombek-inline-code">Eq</code> class and corresponding instance declaration, any two
 <code class="jarombek-inline-code">Int</code> types can be used with the <code class="jarombek-inline-code">
 ==</code> and <code class="jarombek-inline-code">/=</code> operators.
 </p>
@@ -61,16 +61,17 @@ main = do
   print $ (2 :: Int) == (1 :: Int) -- False
 </CodeSnippet>
 <p>
-Just like with built-in types, instances can be created with custom types.  The following code creates
+Just like built-in types, instances can be created with custom types.  The following code creates
 a custom <code class="jarombek-inline-code">FirTree</code> type and declares it as an instance of
 <code class="jarombek-inline-code">Eq</code>.
 </p>
 <CodeSnippet language="Haskell">
+
 -- Create a type for fir trees of different species.  A tree needs to be provided a height in feet and inches
 data FirTree = FrasierFir Int Int | BalsamFir Int Int | DouglasFir Int Int
 
 {-|
- - Make FirTree an instance of Eq as well.  In order to be equal, the species of tree must be the same
+ - Make FirTree an instance of Eq.  In order to be equal, the species of tree must be the same
  - and the trees must have the same height.
  -}
 instance Eq FirTree where
@@ -80,7 +81,7 @@ instance Eq FirTree where
   _ == _ = False
 </CodeSnippet>
 <p>
-I can now test out the <code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">
+I tested the <code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">
 /=</code> operators with <code class="jarombek-inline-code">FirTree</code> types.
 </p>
 <CodeSnippet language="Haskell">
@@ -127,15 +128,15 @@ class (Eq a) => Ord a where
 </CodeSnippet>
 <p>
 One of the major misconceptions I had about class extensions was a result of my object oriented
-background.  I figured types that are instances of <code class="jarombek-inline-code">Ord</code> would
+background.  I figured that instances of <code class="jarombek-inline-code">Ord</code> would
 inherit the operators and functions from <code class="jarombek-inline-code">Eq</code>, but that is not
-the case.  When a class extension actually means is that for a type to be an instance of
+the case.  What a class extension actually means is that for a type to be an instance of
 <code class="jarombek-inline-code">Ord</code> it must also be an instance of <code class="jarombek-inline-code">Eq</code><sup>3</sup>.
 This is much different than object oriented class inheritance.
 </p>
 <p>
 I created a full <a href="https://jarombek.com/blog/jan-16-2018-java-default-method">diamond problem</a> of
-class extensions which is similar to my object oriented <a href="https://jarombek.com/blog/dec-22-2018-multiple-inheritance">multiple inheritance</a> example.
+Haskell class extensions, similar to my object oriented <a href="https://jarombek.com/blog/dec-22-2018-multiple-inheritance">multiple inheritance</a> example.
 </p>
 <CodeSnippet language="Haskell">
 -- Types of fir trees
@@ -194,7 +195,7 @@ class (ChristmasTree a, EvergreenTree a) => FirTree a where
 <p>
 To make the <code class="jarombek-inline-code">FrasierFir</code>, <code class="jarombek-inline-code">BalsamFir</code>,
 and <code class="jarombek-inline-code">DouglasFir</code> types instances of <code class="jarombek-inline-code">
-FirTree</code>, they first must be made instances of <code class="jarombek-inline-code">Tree</code>,
+FirTree</code>, they first must be instances of <code class="jarombek-inline-code">Tree</code>,
 <code class="jarombek-inline-code">ChristmasTree</code>, and <code class="jarombek-inline-code">EvergreenTree</code>.
 </p>
 <CodeSnippet language="Haskell">
@@ -244,7 +245,7 @@ instance Tree BalsamFir where
   height (BalsamFir x y) = (x * 12) + y
 </CodeSnippet>
 <p>
-These types can be tested with the functionality provided by the type classes.
+Next I tested the functionality provided by the type classes.
 </p>
 <CodeSnippet language="Haskell">
 main :: IO ()
@@ -274,13 +275,13 @@ main = do
   print $ needle_retention douglas -- Excellent
 </CodeSnippet>
 <p>
-As this example demonstrates, you could say that Haskell provides multiple inheritance of classes.
-However they are more like interfaces, and instances of subclasses must also explicitly be instances
+As this example demonstrates, Haskell provides multiple inheritance of classes.
+However, Haskell classes are more like interfaces, and instances of subclasses must explicitly be instances
 of all parent classes in the inheritance hierarchy.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Type classes in Haskell are much different than the ones found in object oriented languages.  I’m
+Type classes in Haskell are much different than the ones found in object oriented languages.  I'm
 excited to learn how to use them in more complex Haskell programs.
 </p>
 </div>
