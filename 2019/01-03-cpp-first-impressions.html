@@ -1,20 +1,20 @@
 <div>
 <p>
-C++ is a language I’ve always wanted to learn.  So many modern languages are influenced by C++ and
+C++ is a language I've always wanted to learn.  So many modern languages are influenced by C++ and
 their designs are often predicated upon the strengths and weaknesses of C++.  For example, I recently
 wrote about how interfaces and the lack of multiple inheritance in Java is <a href="https://jarombek.com/
 blog/dec-22-2018-multiple-inheritance#c++">due to C++</a>.
 </p>
 <p>
-C++ is a low level language which is closely related to the C programming language.  Originally called
+C++ is a low level language closely related to the C programming language.  Originally called
 "C with Classes," C++ added object oriented concepts on top of C<sup>1</sup>.  In most cases C++ is
 still a true superset of C.  One of the main design philosophies of C++ was to make it so low level that
 no language would be needed below it<sup>2</sup>.  Because of this philosophy, C++ is commonly used for
-low-level tasks such as system programming.  However, being low-level causes C++ to contain increased complexity.
+low-level tasks such as system programming.  However, being low-level causes C++ to contain some complexities.
 </p>
 <p>
-This post is my first impressions of C++.  I compare it to other languages such as C and Java, which
-influenced and is influenced by C++, respectively.  I also mention all the basic C++ features that I
+This post is my first impressions of C++.  I compare it to other languages such as C and Java, since
+C influenced C++ and Java was influenced by C++.  I also mention all the basic C++ features that I
 find interesting.
 </p>
 <SectionTitle title="Interesting Basic Features">Interesting Basic Features</SectionTitle>
@@ -29,10 +29,11 @@ int age = 23;
 double programming_experience {2.5};
 </CodeSnippet>
 <p>
-C++ has more modern syntax as well.  For example, types don’t need to be explicitly declared using
+C++ has some modern syntax as well.  For example, types don't need to be explicitly declared with the help of
 the <code class="jarombek-inline-code">auto</code> keyword.  <code class="jarombek-inline-code">auto</code>
 is similar to <code class="jarombek-inline-code">var</code> in Java and C# (note: all these languages
-are still statically typed).
+are still <a href="https://jarombek.com/blog/jul-15-2018-groovy-optional-typing#dynamic-&-static-typing">
+statically typed</a>).
 </p>
 <CodeSnippet language="C++">
 // 'auto' is used to not explicitly state the type of a variable (like 'var' in C# and Java)
@@ -71,9 +72,9 @@ programming.  Creating compile time functions is also possible in Haskell, a
 jarombek-com-sources/tree/master/2019/01-Jan/01-03-cpp-first-impressions/haskell">GitHub</a>.
 </p>
 <p>
-Compile time functions are commonly used as a performance strategy.  We can prove that the
-<code class="jarombek-inline-code">pace()</code> function executes at compile time by using a
-static assertions.  Static assertions are just like regular expressions except executed at compile
+Compile time functions are commonly used as a performance strategy.  We can prove
+<code class="jarombek-inline-code">pace()</code> executes at compile time by using
+static assertions.  Static assertions are just like regular assertions except executed at compile
 time instead of runtime.
 </p>
 <CodeSnippet language="C++">
@@ -84,12 +85,12 @@ static_assert(sizeof(float) == 4);
 static_assert(sizeof(double) == 8);
 </CodeSnippet>
 <p>
-Static assertions are a really cool language feature that I’ve never seen before.  The greatest
-thing about them is an IDE will check if these assertions pass in the code itself.
+Static assertions are a really cool language feature that I've never seen before.  The greatest
+thing about them is how IDEs check if they pass in the code itself.
 </p>
 <p>
 C++ also adds additional pointer functionality to the C model.  While you can still use pointers
-just like in C, there is an additional “references to” operator specified with the unary suffix
+just like in C, there is an additional "references to" operator specified with the unary suffix
 <code class="jarombek-inline-code">&</code>.
 </p>
 <CodeSnippet language="C++">
@@ -99,7 +100,7 @@ int* minp = &minutes[5];
 
 assert(*minp == 105);
 
-// C++ also supplies a unary suffix '&'.  It is similar to a pointer as it 'references to' a memory location.
+// C++ also supplies a unary suffix '&'.  It is similar to a pointer as it "references to" a memory location.
 // '&' differs from a pointer because it doesn't need to be prefixed with '*' to get its value.
 int& minr = minutes[6];
 
@@ -107,7 +108,7 @@ assert(minr == -1);
 </CodeSnippet>
 <SectionTitle title="C with Classes">C with Classes</SectionTitle>
 <p>
-Anyone who has heard of C++ but never programmed with it usually think of it as an object oriented
+Anyone who's heard of C++ but never used it usually thinks its an object oriented
 version of C.  This assumption is true, as C++ provides an enhanced custom type system with classes.
 I decided to create an API for a running exercise in both C++ and C.  This example demonstrates some
 differences between the two languages.
@@ -238,7 +239,7 @@ int main()
 </CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-I’m really excited to continue learning C++ and see how it influenced all the languages I use on
+I'm really excited to continue learning C++ and see how it influenced all the languages I use on
 a daily basis.  All the code from this article is available on <a href="https://github.com/
 AJarombek/jarombek-com-sources/tree/master/2019/01-Jan/01-03-cpp-first-impressions">GitHub</a>.
 </p>

@@ -1,10 +1,10 @@
 <div>
 <p>
 I was recently told that my next project at work would be a .NET application using C# in the backend.
-C# has been a language on my radar for a while now, with wide ranging applications such as .NET apps
+C# has been on my radar for a while now, since it supports wide ranging applications such as .NET apps
 and Xamarin.  While C# supports multiple programming paradigms, its mostly used for object oriented
 programming.  C# is commonly referred to as a descendant of Java and C++<sup>1</sup>, which is great
-for me since Java is my strongest language and I’m <a href="https://jarombek.com/blog/
+for me since Java is my strongest language and I'm <a href="https://jarombek.com/blog/
 jan-3-2019-cpp-first-impressions">learning C++</a> in parallel with C#.
 </p>
 <p>
@@ -57,7 +57,7 @@ overrides the <code class="jarombek-inline-code">ToString()</code> method from t
 superclass, which is the same as Java besides for some letter case differences.
 </p>
 <p>
-The main method also looks just like Java.
+The main method also looks like Java.
 </p>
 <CodeSnippet language="C#">
 using System;
@@ -79,7 +79,7 @@ namespace Application
 </CodeSnippet>
 <p>
 While you can write C# code just like Java, there are a bunch of unique features to the language as
-well.  One of those differences I noticed early on was the shortened getter/setter syntax, which is
+well.  One of the differences I noticed early on was the shortened getter/setter syntax, which is
 much more elegant than Java.
 </p>
 <CodeSnippet language="C#">
@@ -107,8 +107,8 @@ blog/dec-7-2017-native-getter-setter">native solution</a> is preferred.
 </p>
 <SectionTitle title="Interesting Features">Interesting Features</SectionTitle>
 <p>
-One of the newer features in C# are tuples, which are a great way to represent an arbitrary amount
-of data.  Tuples are one of my favorite Python features, so I’m glad to see other languages using them.
+One of the newer features in C# is tuples, which are a great way to represent an arbitrary amount
+of data.  Tuples are one of my favorite Python features, so I'm glad to see other languages using them.
 </p>
 <CodeSnippet language="C#">
 // C# has support for tuples
@@ -122,8 +122,8 @@ Assert(name.Item1 == "Andrew" && name.Item2 == "Jarombek");
 Assert(info.name == "Andy" && info.age == 23);
 </CodeSnippet>
 <p>
-You can actually create variable identifiers with the same name as a reserved keyword.  I’m not aware
-of another language I use that has this feature.
+In C# you can create variable identifiers with the same name as a reserved keyword.  I don't think any 
+other languages I use have this feature.
 </p>
 <CodeSnippet language="C#">
 // You can create an identifier with a keyword if its prefixed with '@'
@@ -132,14 +132,15 @@ var @int = 5;
 Assert(@int == 5);
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">@</code> keyword isn’t part of the identifier, and can be
-removed if the name isn’t a reserved keyword<sup>3</sup>.
+The <code class="jarombek-inline-code">@</code> token isn't part of the identifier, and can be
+removed if the name isn't a reserved keyword<sup>3</sup>.
 </p>
 <p>
 C# also provides two different behaviors for numeric overflows.  Depending on whether the code block
 is checked or unchecked, numeric overflows throw an exception or wrap the value, respectively.
 </p>
 <CodeSnippet language="C#">
+
 // My C# execution config throws an OverflowException by default for number overflows.  Use an 'unchecked'
 // block to change this behavior.
 Assert(unchecked(int.MaxValue + 1) == int.MinValue);
@@ -162,7 +163,7 @@ unchecked
 </CodeSnippet>
 <p>
 C# provides string interpolation syntax and multi-line strings, both of which are common in modern
-languages such as JavaScript, Swift, and Groovy.  These features are notable absent in Java and C++.
+languages such as JavaScript, Swift, and Groovy.  These features are notably absent in Java and C++.
 </p>
 <CodeSnippet language="C#">
 // Strings prefixed with '@' do not have escape sequences
@@ -185,8 +186,8 @@ var multiLine = @"
 </CodeSnippet>
 <p>
 C# adds more features to arrays from C++ and Java.  For example, C# provides two types of multi-dimensional
-arrays: rectangular and jagged.  Rectangular arrays must be the same length in each direction, while
-jagged can be a variable length in the inner dimension.  While C# has explicit syntax to enforce
+arrays: rectangular and jagged.  Rectangular arrays must be the same length in each dimension, while
+jagged arrays can be different lengths in the inner dimension.  While C# has explicit syntax to enforce
 rectangular arrays, <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/01-Jan/
 01-02-csharp-first-impressions/basics/MultiArrays.java">Java has no such enforcement</a>.
 </p>
@@ -211,19 +212,19 @@ Assert(rectangularArray[1,1] == jaggedArray[1][1]);
 Assert(jaggedArray[1][2] == 5);
 </CodeSnippet>
 <p>
-By default variables are passed to functions by value in C# such that value-types are passed as a copy
+By default, variables are passed to functions by value in C# such that value-types are passed as a copy
 of the value and reference-types are passed as a copy of the reference.  Pass by value behavior can be
 changed to pass by reference with the <code class="jarombek-inline-code">ref</code> keyword.  In C++
 this behavior requires the use of pointers.
 </p>
 <CodeSnippet language="C#">
-/// Increment an integer (pass by value).
+// Increment an integer (pass by value).
 static int Inc(int num)
 {
   return num++;
 }
 
-/// Increment an integer (pass by reference).
+// Increment an integer (pass by reference).
 static int IncRef(ref int num)
 {
   return num++;
@@ -250,10 +251,11 @@ public static void Main(params string[] args)
 Function parameters can also use the <code class="jarombek-inline-code">out</code> keyword to
 declare an output parameter.  Output parameters are used to return multiple values from a function.
 Although I think tuples are a more elegant solution, output variables are also a viable option.
-The only other language I can think of that uses output parameters is <a href="">PL/SQL</a>.
+The only other language I can think of that uses output parameters is <a href="https://github.com/AJarombek/
+jarombek-com-sources/blob/master/2019/01-Jan/01-02-csharp-first-impressions/basics/output-parameter.sql">PL/SQL</a>.
 </p>
 <CodeSnippet language="C#">
-/// Information about the class using output parameters
+// Information about the class using output parameters
 static void Info(out string author, out DateTime date)
 {
   author = "Andrew Jarombek";
@@ -299,7 +301,7 @@ Assert(upperUsername == null);
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 While C# is influenced by Java and C++, it also includes many modern operations that I appreciate
-about languages such as Python, Swift, and Groovy.  I’m excited to learn more about about what C# has
+about languages such as Python, Swift, and Groovy.  I'm excited to learn more of what C# has
 to offer in the future.  All the code from this post is available on
 <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/01-Jan/01-02-csharp-first-impressions">GitHub</a>.
 </p>
