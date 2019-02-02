@@ -44,6 +44,11 @@ neither supertypes or subtypes of one another.  That means <code class="jarombek
 List&lt;Integer&gt;</code> is not a subtype of <code class="jarombek-inline-code">List&lt;Number&gt;</code>,
 they are simply not equal.  Therefore, the above assignment statement is invalid.
 </p>
+<UpdateInfo date="February 3rd, 2019">
+While generics are invariant by default in C#, they can also be covariant and contravariant.  I wrote
+an article about <a href="https://jarombek.com/blog/feb-3-2019-variance-csharp-generics">Variance
+with C# Generics</a> if you want to learn more.
+</UpdateInfo>
 <p>
 It is important to note that object assignments still enable polymorphism when using generics.  In the
 example above an <code class="jarombek-inline-code">ArrayList</code> was still assigned to a
