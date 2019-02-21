@@ -1,0 +1,199 @@
+<div>
+<p>
+Back in the summer I wrote an article about <a href="https://jarombek.com/blog/jul-31-2018-batch-scripting">
+Batch scripting</a> on Windows.  In today's article, I’m looking at Bash scripting.  I’ve been using Bash
+quite a bit recently.  At work I’ve used Bash to automate the conversion of Subversion repositories to Git.
+In my personal work I’ve used Bash scripts to assist setting up AWS infrastructure.  The rest of the article
+looks at basic features of Bash and how it compares to Batch.
+</p>
+<SectionTitle title="What is a Bash Script">What is a Bash Script?</SectionTitle>
+<p>
+Bash stands for Bourne-Again SHell, derived from the original Bourne shell<sup>1</sup>.  The Bourne
+shell was distributed with Unix operating systems starting in 1979, written by Stephen Bourne in Bell
+Labs<sup>2</sup>.  Bash began replacing the original Bourne shell in 1989<sup>3</sup>.
+</p>
+<p>
+Bash is a command line scripting language originally used on Unix-like operating systems.  Nowadays, Bash is
+nowadays found on most major operating systems, including Linux distributions, MacOS, and Windows 10.
+Bash commands can be written from a terminal or collected into a script.  This article explores using
+Bash scripts.
+</p>
+<SectionTitle title="Bash File Basics">Bash File Basics</SectionTitle>
+<p>
+Bash scripts have the file extension <strong>.sh</strong>.  A typical bash file begins with a
+<a href="https://jarombek.com/blog/may-26-2018-nodejs-command-line#shebang-line">shebang line</a> pointing
+to the bash interpreter.  You can also handle any input arguments to the script with the
+<code class="jarombek-inline-code">$&lt;argument-number&gt;</code> syntax.
+</p>
+<CodeSnippet language="Bash">
+#!/usr/bin/env bash
+
+echo "The first argument passed: $1"
+</CodeSnippet>
+<p>
+Assigning variables to values is very simple in Bash.  It’s equally simple to use these variables in
+future commands.
+</p>
+<CodeSnippet language="Bash">
+Name="Andrew Jarombek"
+echo ${Name}
+</CodeSnippet>
+<p>
+The <code class="jarombek-inline-code">${...}</code> syntax is called a parameter expansion.  Parameter
+expansions are used to substitute variables or expressions with their values.  Therefore
+<code class="jarombek-inline-code">echo ${Name}</code> is substituted with <code class="jarombek-inline-code">
+echo "Andrew Jarombek"</code>.
+</p>
+<p>
+Interestingly Bash variables are untyped (unlike most programming languages I use).  This has interesting
+consequences which I will likely explore in a future post.  Bash variables contain character strings
+which are used in different ways depending on the context<sup>4</sup>.
+</p>
+<p>
+Parameter expansions can manipulate existing variables.  The following examples alter the <code class="jarombek-inline-code">
+Name</code> variable.  In this context <code class="jarombek-inline-code">Name</code> is a string.
+</p>
+<CodeSnippet language="Bash">
+# Extract the characters after index 7
+LastName=${Name:7}
+echo ${LastName}
+
+# Extract the characters from index 0 to index 6
+FirstName=${Name:0:6}
+echo ${FirstName}
+
+# Replace Jarombek with Jarbek
+AltName=${Name/Jarombek/Jarbek}
+echo ${AltName}
+</CodeSnippet>
+<p>
+In some contexts, variables can represent integers.  In the following example, an arithmetic substitution
+is used to create an integer context.
+</p>
+<CodeSnippet language="Bash">
+Age=23
+AgeInTenYears=$(($Age + 10))
+echo ${AgeInTenYears}
+</CodeSnippet>
+<p>
+The <code class="jarombek-inline-code">$((...))</code> syntax creates an arithmetic substitution<sup>5</sup>.
+There are other ways to create a context where character strings are converted to integers for performing
+arithmetic.  These include using backticks and the <code class="jarombek-inline-code">let</code>
+construct<sup>6</sup>.
+</p>
+<p>
+Bash also has an easy construct for creating functions.  This is much improved from the hacky labeling
+and <code class="jarombek-inline-code">call</code> statements in Batch.
+</p>
+<CodeSnippet language="Bash">
+Age=23
+
+func() {
+  Age=24
+  echo ${Age}
+}
+
+# Prints: 24
+func
+</CodeSnippet>
+<p>
+One interesting aspect of Bash functions is that variables defined in the function leak into the global
+scope.  Luckily if this is not what you intend, there are keywords which alter this default behavior.
+The <code class="jarombek-inline-code">local</code> keyword defines a variable scoped to the function.
+</p>
+<CodeSnippet language="Bash">
+func2() {
+  Global="Global Variable"
+  local Local="Local Variable"
+
+  # Both global and local print
+  echo "${Global}, ${Local}"
+}
+
+func2
+
+# Only global prints
+echo "${Global}, ${Local}"
+</CodeSnippet>
+<CodeSnippet>
+Global Variable, Local Variable
+Global Variable,
+</CodeSnippet>
+<p>
+As you can see, <code class="jarombek-inline-code">Local</code> is not accessible outside the function.
+</p>
+<p>
+Arrays are also available in Bash.  They are simpler than their Batch equivalents, as complicated
+delayed expansion logic isn’t needed.  Bash also provides associative arrays in newer versions.
+</p>
+<CodeSnippet language="Bash">
+# Create an array and assign values to indices
+Towns=()
+Towns[0]=Greenwich
+Towns[1]="New Canaan"
+Towns[2]=Darien
+Towns[3]=Wilton
+Towns[4]=Ridgefield
+
+echo ${Towns[0]}
+
+# Bash also has associative arrays (These only work in Bash Version 4)
+declare -A SkiLocations=([sat]="Catamount" [sun]="Jiminy Peak")
+echo ${SkiLocations[sat]}
+
+# Create an array of integers
+NumberList=(1 2 3 4 5)
+
+# Get all the items from NumberList
+echo ${NumberList[*]}
+</CodeSnippet>
+<CodeSnippet>
+Greenwich
+Catamount
+1 2 3 4 5
+</CodeSnippet>
+<p>
+Bash also has simple <code class="jarombek-inline-code">for</code> and
+<code class="jarombek-inline-code">if</code> statements:
+</p>
+<CodeSnippet language="Bash">
+for i in ${NumberList[*]}
+do
+  AllTowns="${AllTowns} ${Towns[$((i - 1))]}"
+done
+
+echo ${AllTowns}
+
+# Accumulate some of the strings in the town list
+for i in 2 4
+do
+  SomeTowns="${SomeTowns} ${Towns[$((i - 1))]}"
+done
+
+echo ${SomeTowns}
+
+# Create a unix timestamp of a date on MacOS
+DateWritten=$(date -j -f "%F" 2019-01-28 +"%s")
+MonthsEnd=$(date -j -f "%F" 2019-01-31 +"%s")
+
+if [ ${DateWritten} -lt ${MonthsEnd} ]
+then
+  echo "Date is before Jan. 31st, 2019"
+else
+  echo "Date is equal to or after Jan. 31st, 2019"
+fi
+</CodeSnippet>
+<CodeSnippet>
+Greenwich New Canaan Darien Wilton Ridgefield
+New Canaan Wilton
+Date is before Jan. 31st, 2019
+</CodeSnippet>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+I really enjoy working with Bash due to its simplicity.  It’s commands are short and easy to use,
+with common utilities such as <code class="jarombek-inline-code">echo</code>, <code class="jarombek-inline-code">
+cat</code>, <code class="jarombek-inline-code">grep</code>, <code>head</code>, and
+<code class="jarombek-inline-code">tail</code> being good examples.  I much prefer it over Batch
+scripting.  You can check out more Bash code on <a href="">GitHub</a>.
+</p>
+</div>
