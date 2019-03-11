@@ -4,11 +4,11 @@ In a previous article I looked at <a href="https://jarombek.com/blog/nov-24-2018
 lifecycles in the Angular framework</a>.  This post looks at lifecycles in
 <a href="https://jarombek.com/blog?query=react&page=1">React</a>, a front-end library first released
 in 2013 by Facebook (after AngularJS and before <a href="https://jarombek.com/blog?query=angular&page=1">Angular</a>).
-If you want to learn more about React, I’ve written multiple posts about it in the past (including an
+If you want to learn more about React, I've written multiple posts about it in the past (including an
 <a href="https://jarombek.com/blog/may-31-2018-react-seed">introduction to the basics</a>).
 </p>
 <p>
-In general I enjoy working in React more than Angular nowadays.  React feels simpler to me for developing
+I enjoy working in React more than Angular nowadays.  React feels simpler for developing
 website components.  As this post reveals, the lifecycles of React components are equally simple.
 </p>
 <SectionTitle title="Differences between React and Angular Lifecycles">Differences between React and Angular Lifecycles</SectionTitle>
@@ -16,26 +16,26 @@ website components.  As this post reveals, the lifecycles of React components ar
 While Angular has <a href="https://jarombek.com/blog/jan-6-2018-angular-5-first-impressions#directives">
 directives</a> and <a href="https://jarombek.com/blog/jan-6-2018-angular-5-first-impressions#modules-components">
 components</a>, <a href="https://jarombek.com/blog/may-31-2018-react-seed#react-component">React
-only has components</a>.  Therefore you don’t have to worry about directive lifecycles in React.
+only has components</a>.  Therefore you don't have to worry about directive lifecycles in React.
 </p>
 <p>
 React and Angular handle state differently.  The state of a React application is usually held in a
-single root component.  The state lives in a property called <code class="jarombek-inline-code">state</code>
+single root component.  State lives in a property called <code class="jarombek-inline-code">state</code>
 and is updated from the components <code class="jarombek-inline-code">setState()</code> method.  Many
 components are called <a href="https://jarombek.com/blog/may-31-2018-react-seed#technologylist-component">
-functional components</a> because they don’t hold state.  If functional components need to change
-application state, they delegate the task to the root component.  Functional components don’t have
+functional components</a> because they don't hold state.  If functional components need to change
+application state, they delegate the task to the root component.  Functional components don't have
 lifecycles, so lifecycle methods are only used in root components holding application state.
 </p>
 <p>
 The state in an Angular application is often distributed amongst many components.  This is due to
-differences in change management and data binding compared to React.  While React uses one-way data
+different mechanisms of change management and data binding in Angular.  While React uses one-way data
 binding, Angular uses two-way data binding.
 </p>
 <p>
-One-way data binding is when changes to application state can only occur in the components code.  Application
+One-way data binding is when changes to application state only occur in a components code.  Application
 state does not change when DOM events occur, however DOM events can trigger code that changes application
-state.  In React, functional components are passed callback functions to change state in the root component.
+state.  In React, functional components can be provided callback functions to change state in the root component.
 These functions often respond to DOM events such as <code class="jarombek-inline-code">onInput</code>
 or <code class="jarombek-inline-code">onClick</code>.
 </p>
@@ -43,28 +43,28 @@ or <code class="jarombek-inline-code">onClick</code>.
 Two-way data binding is when both component code and DOM events cause application state to change.
 In Angular, DOM events often change state in the component, causing more than one component to hold
 application state.  Despite differences with two-way data binding, its possible to write stateless
-components similar to React in Angular<sup>1</sup>. Writing stateless Angular components sounds like a
-fun thing to try out in the future.  I’ll also cover the full differences between one and two way data
+components in Angular as well<sup>1</sup>. Writing stateless Angular components sounds like a
+fun thing to try out in the future.  I'll also cover more differences between one and two way data
 binding in a future article.
 </p>
 <SectionTitle title="React Lifecycles">React Lifecycles</SectionTitle>
 <p>
 React lifecycles are grouped into two distinct categories.  Some lifecycles are invoked during the
 component mounting process, while others are invoked as the component updates.  These groupings of
-lifecycles are also present in Angular, although the change detection mechanism is different in Angular
-for the updating lifecycles (as previously discussed).
+lifecycles are also present in Angular, although the change detection mechanism is different for Angular
+updating lifecycles.
 </p>
 <SectionTitle title="Mounting Lifecycles">Mounting Lifecycles</SectionTitle>
 <p>
 The mounting process is when a React component is added to the DOM.  As we make changes to the virtual
-DOM held in memory, React makes sure that the real DOM reflects those changes.  The mounting lifecycle
-provides hook methods that occur during the process of React altering the DOM.
+DOM held in memory, React makes sure that the real DOM reflects those changes.  The mounting lifecycles
+provide hook methods that occur while React alters the DOM.
 </p>
 <SectionTitle title="constructor" isCode="true">constructor(props)</SectionTitle>
 <p>
-The ES6 class constructor for a React component isn’t a lifecycle hook method.  However, I included it
-in this discussion because it’s the first method invoked while a component is mounted<sup>2</sup>.
-The main uses of the constructor are to interact with the props provided by the parent and most importantly
+The ES6 class constructor for a React component isn't a lifecycle hook method.  However, I included it
+in this discussion because it's the first method invoked while a component is mounted<sup>2</sup>.
+The main uses of the constructor are to interact with props provided by the parent component and
 set the initial component state.  The constructor is the only time a components
 <code class="jarombek-inline-code">state</code> property should be modified directly.  All other mutations
 should go through the components <code class="jarombek-inline-code">setState()</code> method.
@@ -74,7 +74,7 @@ When using server-side rendering, the <code class="jarombek-inline-code">state</
 already be initialized when the components constructor is invoked on the client side.  This is due
 to the components <code class="jarombek-inline-code">componentWillMount()</code> lifecycle hook already
 executing on the server.  For my website, I simply wrapped my <code class="jarombek-inline-code">state</code>
-initializer in a conditional.  This makes sure any state populated during server-side rendering isn’t
+initializer in a conditional.  This makes sure any state populated during server-side rendering isn't
 wiped out by the client.
 </p>
 <CodeSnippet language="JavaScript">
@@ -83,7 +83,7 @@ class Blog extends React.Component {
   constructor(props) {
     super(props);
 
-    // Only set an empty state if it does not already exist -
+    // Only set the state to an empty object if the state doesn't already exist -
     // it may have been set on the server side render
     if (!this.state) {
       this.state = {};
@@ -97,25 +97,25 @@ class Blog extends React.Component {
 <code class="jarombek-header-code">getDefaultProps()</code> and <code class="jarombek-header-code">getInitialState()</code>
 </SectionTitle>
 <p>
-While React components using an ES6 class have a constructor, pre-ES6 code must make due without the
-syntactic sugar that comes with classes.  The alternative to an ES6 class is the
-<code class="jarombek-inline-code">createReactClass()</code> method from the
-<code class="jarombek-inline-code">create-react-class</code> npm module.  Prior to React 15.5.0, the
-<code class="jarombek-inline-code">React.createClass()</code> method served this purpose.  Nowadays
+While React components using ES6 classes have constructors, pre-ES6 code can't utilize this syntax feature.
+The alternative to an ES6 class is the <code class="jarombek-inline-code">createReactClass()</code> method from the
+<code class="jarombek-inline-code">create-react-class</code> npm module.  Prior to React 15.5.0,
+<code class="jarombek-inline-code">React.createClass()</code> served the same purpose as <code class="jarombek-inline-code">createReactClass()</code>.  Nowadays
 <code class="jarombek-inline-code">React.createClass()</code> is deprecated and pending removal.
 </p>
 <p>
-Since <code class="jarombek-inline-code">createReactClass()</code> can’t contain a constructor, the
+Since <code class="jarombek-inline-code">createReactClass()</code> can't contain a constructor, the
 methods <code class="jarombek-inline-code">getDefaultProps()</code> and <code class="jarombek-inline-code">
 getInitialState()</code> are used as replacements.  <code class="jarombek-inline-code">getDefaultProps()</code>
-defines the default property values for the component (if properties aren’t passed in).
+defines the default property values for the component (if properties aren't passed in).
 <code class="jarombek-inline-code">getInitialState()</code> serves the main purpose of the constructor -
 setting the components initial state.
 </p>
 <p>
 The following code snippet demonstrates <code class="jarombek-inline-code">getDefaultProps()</code> and
 <code class="jarombek-inline-code">getInitialState()</code> inside <code class="jarombek-inline-code">
-createReactClass()</code>.  The full component code is on <a href="">GitHub</a>.
+createReactClass()</code>.  The full component code is on <a href="https://github.com/AJarombek/jarombek-com-sources/
+blob/master/2019/01-Jan/01-19-react-lifecycles/react/lifecycle-demo/src/Lifecycle2.js">GitHub</a>.
 </p>
 <CodeSnippet language="JavaScript">
 const Lifecycle = createReactClass({
@@ -132,29 +132,29 @@ const Lifecycle = createReactClass({
 </CodeSnippet>
 <SectionTitle title="componentWillMount" isCode="true">componentWillMount()</SectionTitle>
 <p>
-Once the constructor finishes executing, <code class="jarombek-inline-code">componentWillMount</code> is
+Once the constructor finishes executing, <code class="jarombek-inline-code">componentWillMount()</code> is
 invoked.  This occurs when the component is about to mount onto the DOM.  <code class="jarombek-inline-code">
 componentWillMount()</code> is a good place to perform additional setup for the component (such as
-background tasks).  This lifecycle hook is also invoked on the server when using server-side rendering.
-This means that any component state initialized in <code class="jarombek-inline-code">componentWillMount()
-</code> on the server will be passed to the client when the webpage loads.
+background tasks).  <code class="jarombek-inline-code">componentWillMount()</code> is also invoked on the server when using server-side rendering.
+Therefore any component state initialized in <code class="jarombek-inline-code">componentWillMount()
+</code> on the server is passed to the client when the webpage loads.
 </p>
 <SectionTitle title="render" isCode="true">render()</SectionTitle>
 <p>
 <code class="jarombek-inline-code">render()</code> is the most important method of a React component.
 In fact, functional components are basically a single <code class="jarombek-inline-code">render()</code>
 method.  The purpose of <code class="jarombek-inline-code">render()</code> is to render React elements
-that make up the component onto the DOM.  In most cases React elements are represented with JSX.
+that make up a component onto the DOM.  In most cases React elements are represented with JSX.
 </p>
 <SectionTitle title="componentDidMount" isCode="true">componentDidMount()</SectionTitle>
 <p>
 <code class="jarombek-inline-code">componentDidMount()</code> is invoked right after the component is
 rendered on the DOM.  This is a good place to make API calls or interact with JavaScript global objects
-specific to the webpage, such as <code class="jarombek-inline-code">window</code>.  It’s also an ideal
+specific to the webpage (such as <code class="jarombek-inline-code">window</code>).  It's also an ideal
 location to use third-party libraries that need access to the DOM, such as <a href="https://jarombek.com/
 blog/nov-7-2018-react-d3-pt1">D3 for data visualizations</a>.  Since <code class="jarombek-inline-code">
-componentDidMount()</code> occurs after the component lives in the DOM, it can’t be invoked on the
-server when using server-side rendering.  <code class="jarombek-inline-code">componentDidMount()</code>
+componentDidMount()</code> occurs after the component exists in the DOM, it can't be invoked on the
+server with server-side rendering.  <code class="jarombek-inline-code">componentDidMount()</code>
 is a safe location to hold client specific code.
 </p>
 <SectionTitle title="componentWillUnmount" isCode="true">componentWillUnmount()</SectionTitle>
@@ -173,26 +173,27 @@ the parent component change<sup>3</sup>.  State changes occur when the component
 <SectionTitle title="componentWillReceiveProps" isCode="true">componentWillReceiveProps(nextProps)</SectionTitle>
 <p>
 Invoked if new properties are passed to a component.  Its okay to call <code class="jarombek-inline-code">
-setState()</code> from this lifecycle hook method.  This makes <code class="jarombek-inline-code">
-componentWillReceiveProps()</code> unique amongst updating lifecycle methods.  The others can’t invoke
-<code class="jarombek-inline-code">setState()</code> because it will result in an infinite loop.
+setState()</code> from <code class="jarombek-inline-code">componentWillReceiveProps()</code>, making
+it unique amongst updating lifecycle methods.  Invoking <code class="jarombek-inline-code">setState()</code>
+in the other updating lifecycles results in an infinite loop.
 </p>
 <SectionTitle title="shouldComponentUpdate" isCode="true">shouldComponentUpdate(nextProps, nextState)</SectionTitle>
 <p>
 <code class="jarombek-inline-code">shouldComponentUpdate()</code> determines whether a component update
-should occur.  If it returns <code class="jarombek-inline-code">true</code> the component will update
-in the DOM.  If it returns <code class="jarombek-inline-code">false</code> the update will be called
+should occur.  When it returns <code class="jarombek-inline-code">true</code> the component updates
+in the DOM.  When it returns <code class="jarombek-inline-code">false</code> the update is called
 off, avoiding an expensive DOM alteration.  This makes <code class="jarombek-inline-code">
-shouldComponentUpdate()</code> a good optimization technique which avoids unnecessary component updates.
+shouldComponentUpdate()</code> a good optimization technique to avoid unnecessary component updates.
 </p>
 <p>
 While Angular has no direct equivalent to <code class="jarombek-inline-code">shouldComponentUpdate()</code>,
-you can change its change detection mechanism.  By default Angular checks if any DOM events occur or
+you can change its change detection mechanism.  By default, Angular checks if any DOM events occur or
 values used in the component template are mutated<sup>4</sup>.  This behavior is changed with the
 <code class="jarombek-inline-code">OnPush</code> change detection mechanism.
 <code class="jarombek-inline-code">OnPush</code> checks if object references to template values are
-changed, resulting in simple mutations to not trigger the change detection mechanism<sup>5</sup>.
-You can check out the differences between Angulars two change detection mechanisms on <a href="">GitHub</a>.
+changed (among other differences), resulting in simple mutations not triggering the change detection mechanism<sup>5</sup>.
+You can learn more about the differences between Angulars two change detection mechanisms in my
+<a href="https://jarombek.com/blog/mar-12-2019-angular-onpush">discovery post</a>.
 </p>
 <SectionTitle title="componentWillUpdate" isCode="true">componentWillUpdate(nextProps, nextState)</SectionTitle>
 <p>
@@ -206,7 +207,7 @@ and state to the ones currently in the component.
 </p>
 <SectionTitle title="Lifecycle Project">Lifecycle Project</SectionTitle>
 <p>
-I created a project which React which displays on the screen each time an App lifecycle is invoked.
+I created a project in React which displays a new component each time an App lifecycle is invoked.
 It also demonstrates how <code class="jarombek-inline-code">shouldComponentUpdate()</code> can avoid
 unnecessary DOM alterations.  The code is available on <a href="https://github.com/AJarombek/jarombek-com-sources/
 tree/master/2019/01-Jan/01-19-react-lifecycles/react">GitHub</a>.
@@ -216,9 +217,8 @@ tree/master/2019/01-Jan/01-19-react-lifecycles/react">GitHub</a>.
 </figure>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-I really enjoy comparing the frontend React library and Angular framework.  While most of my development
-these days is in React, it's still a good practice to compare it to other major techniques used in
-front-end development!  Understanding how lifecycle events work in Angular and React is important for
-developing good applications.
+I really enjoy comparing React and Angular.  While most of my development
+these days is in React, comparing it to other major front-end libraries/frameworks is a good practice!
+  Understanding how lifecycle events work in Angular and React is important for developing good applications.
 </p>
 </div>
