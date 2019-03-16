@@ -2,8 +2,8 @@
 <p>
 Over the summer I wrote an article about <a href="https://jarombek.com/blog/jul-31-2018-batch-scripting">
 Batch scripting</a> and just a few weeks ago wrote a follow up on <a href="https://jarombek.com/blog/
-feb-20-2019-bash-scripting">Bash scripting</a>.  Today I’m exploring PowerShell scripting on Windows.
-I’ve used PowerShell at work recently for automating the deployment of .NET applications.  The rest of
+feb-22-2019-bash-scripting">Bash scripting</a>.  Today I'm exploring PowerShell scripting on Windows.
+I've used PowerShell at work recently for automating the deployment of .NET applications.  The rest of
 this article looks at basic features of PowerShell and how it compares to Bash and Batch.
 </p>
 <SectionTitle title="What is a PowerShell Script">What is a PowerShell Script?</SectionTitle>
@@ -19,12 +19,12 @@ modern functionality.  PowerShell aimed to improve upon these shortcomings.
 PowerShell scripts are files with the <strong>.ps1</strong> extension.  The PowerShell language is
 <a href="https://jarombek.com/blog/jul-15-2018-groovy-optional-typing#dynamic-&-static-typing">
   dynamically typed</a> and contains basic programming constructs familiar to software developers<sup>2</sup>.
-Powershell types are objects, which can be explicitly or implicitly declared on variables<sup>3</sup>.  This
-is much different than Bash, which doesn’t have types.  In Bash everything is plain text, which is
-interpreted differently depending on its context in a script.
+Powershell types are objects, and type definitions can be explicitly or implicitly declared on variables<sup>3</sup>.  This
+is much different than Bash, which doesn't have types.  In Bash everything is plain text which is
+interpreted differently depending on the context.
 </p>
 <p>
-Let’s look at a basic example.  PowerShell has very clean syntax for handling script arguments (similar
+Let's look at a basic example.  PowerShell has very clean syntax for handling script arguments (similar
 to <a href="https://jarombek.com/blog/may-26-2018-nodejs-command-line">JavaScript command line programs</a>).
 In the script parameter definition, I explicitly declare the type of the single parameter as a string.
 </p>
@@ -33,13 +33,13 @@ In the script parameter definition, I explicitly declare the type of the single 
 
 # Handle script arguments
 param (
-[string]$author = "Andrew Jarombek"
+  [string]$author = "Andrew Jarombek"
 )
 </CodeSnippet>
 <p>
 This code declares a single parameter for the <strong>basics.ps1</strong> script.  It creates a new
 variable <code class="jarombek-inline-code">$author</code> of type string (<code class="jarombek-inline-code">
-[string]</code>).  If not argument is supplied to <strong>basics.ps1</strong>, the default value
+[string]</code>).  If no argument is supplied to <strong>basics.ps1</strong>, the default value
 <code class="jarombek-inline-code">"Andrew Jarombek"</code> is used.
 </p>
 <p>
@@ -55,8 +55,8 @@ basics.ps1 "Andy J"
 </CodeSnippet>
 <p>
 Variables are written to stdout with the <code class="jarombek-inline-code">Write-Host</code> command,
-which admittedly is a bit more verbose than its <code class="jarombek-inline-code">echo</code> bash
-counterpart.  This is a common gripe from those used to writing scripts in Bash.  The following command
+which is admittedly a bit more verbose than its <code class="jarombek-inline-code">echo</code> bash
+counterpart.  The verbosity of commands is a common PowerShell gripe from developers accustomed to using Bash.  The following command
 prints out the <code class="jarombek-inline-code">$author</code> parameter.
 </p>
 <CodeSnippet language="PowerShell">
@@ -82,8 +82,8 @@ Set-ExecutionPolicy RemoteSigned
 </CodeSnippet>
 <p>
 You can also check the current execution policy with <code class="jarombek-inline-code">Get-ExecutionPolicy</code>.
-You can explore all the different execution policy options on <a href="https://docs.microsoft.com/en-us/
-powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-6">Microsoft’s website</a>.
+All the different execution policies are explained on <a href="https://docs.microsoft.com/en-us/
+powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-6">Microsoft's website</a>.
 </p>
 <SectionTitle title="Working with Objects">Working with Objects</SectionTitle>
 <p>
@@ -99,7 +99,7 @@ Replace()</code>.
 $lastname = $author.Substring(7)
 Write-Host $lastname
 
-# ...this -match operator checks if author contains "Jarombek"
+# the -match operator checks if author contains "Jarombek"
 $lastname2 = $author -match "Jarombek"
 Write-Host $lastname2
 
@@ -117,13 +117,13 @@ I also utilized a PowerShell operator <code class="jarombek-inline-code">-match<
 regular expression to the <code class="jarombek-inline-code">$author</code> string.
 </p>
 <p>
-If you are coming from Batch or Bash, the fact that PowerShell has objects similar to an enterprise
-application programming language is surprising.  However PowerShell objects are very helpful in
+If you are coming from Batch or Bash, the fact that PowerShell has objects similar to an Object-oriented
+programming language is surprising.  PowerShell objects are very helpful in
 creating concise scripts and integrate well with IDEs.
 </p>
 <p>
 Because PowerShell has object types, performing arithmetic is simpler than Bash (and much simpler than
-Batch).  PowerShell doesn’t need an integer context to perform operations like simple addition.
+Batch).  PowerShell doesn't need an integer context to perform operations like simple addition.
 </p>
 <CodeSnippet language="PowerShell">
 $age = 23
@@ -134,8 +134,8 @@ Write-Host $ageInTenYears
 33
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">$age</code> is implicitly typed in this example.  I can explicitly
-type its definition as <code class="jarombek-inline-code">[int]$age = 23</code>.
+<code class="jarombek-inline-code">$age</code> is implicitly typed in this example.  It can be explicitly
+typed as <code class="jarombek-inline-code">[int]$age = 23</code>.
 </p>
 <p>
 PowerShells object based type system really shines when dealing with more complex types.  For example,
@@ -232,7 +232,7 @@ Tom
 <SectionTitle title="Writing Functions">Writing Functions</SectionTitle>
 <p>
 PowerShell has pretty clean syntax for writing functions.  By default variables defined in functions
-are scoped locally to the function and don’t leak into the global scope.  This is the opposite of Bash
+are scoped locally to the function and don't leak into the global scope.  This is the opposite of Bash
 which leaks variables globally by default.
 </p>
 <CodeSnippet language="PowerShell">
@@ -281,16 +281,17 @@ Local count: , Script count: 0, Global count: 0
 Function parameters and return values are a bit funky in PowerShell.  Parameters are defined similar
 to script parameters with a <code class="jarombek-inline-code">param()</code> block.  Return values
 are captured at the end of a function or when a <code class="jarombek-inline-code">return</code> keyword
-is encountered.  Therefore a <code class="jarombek-inline-code">return</code> keyword isn’t needed for
+is encountered.  Therefore a <code class="jarombek-inline-code">return</code> keyword isn't needed for
 functions to return a value!  They simply declare a function exit point<sup>5</sup>.
 </p>
 <p>
 I think the easiest way to demonstrate this behavior is with an example.  The following three functions
-all multiply a string a number of times and returns a new string.  They all behave the same way despite
+multiply a string a number of times and return a new string.  They all behave the same way despite
 the <code class="jarombek-inline-code">return</code> keyword used differently (or missing entirely) in each.
 </p>
 <CodeSnippet language="PowerShell">
-# Output of functions is captured and returned.  There is a return keyword, but it just specifies an exit point.
+# Output of functions are captured and returned.
+# There is a return keyword, but it just specifies an exit point.
 function Mult() {
   param([string]$str, [int]$count)
   $str * $count
@@ -329,7 +330,7 @@ Besides for return values, PowerShell functions behave as you likely expect.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-One of the things that fascinates me is the different design decisions across programming languages.
+One thing that fascinates me is the different design decisions across programming languages.
 I really enjoyed comparing the biggest three scripting languages - Bash, PowerShell, and Batch.  I
 plan to use all three throughout the rest of my career, and will write more discovery posts about
 them as I learn more.  All the code from this article is available on <a href="https://github.com/AJarombek/
