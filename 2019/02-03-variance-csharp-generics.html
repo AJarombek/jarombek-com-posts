@@ -3,9 +3,9 @@
 Variance amongst generics in programming languages is a topic that interests me.
 <a href="https://jarombek.com/blog/may-13-2018-generics-arrays-complexities-java">Generics in Java</a>
 are always <a href="https://jarombek.com/blog/may-13-2018-generics-arrays-complexities-java#invariant">
-invariant</a>, however C# isn’t as restrictive which makes it fun to explore.  Since variance is an
-advanced topic, this article starts with the basic concepts to understand variance.  Once the basics
-are understood, I demonstrate variance in C# generics.
+invariant</a>, however C# isn't as restrictive, making it fun to explore.  Since variance is an
+advanced topic, this article starts with the basic concepts of variance.  Once the basics
+are understood, I'll explain variance in C# generics.
 </p>
 <SectionTitle title="Concepts">Concepts</SectionTitle>
 <p>
@@ -20,7 +20,7 @@ for a value, the same way a class is a blueprint for an object<sup>2</sup>.
 <p>
 Polymorphism comes in many different forms.  When Christopher Strachey first defined polymorphism
 in a Computer Science context, he said there were two main forms of polymorphism: ad-hoc and
-parametric<sup>3</sup>.  Nowadays its said that the two main forms of polymorphism are ad-hoc and
+parametric<sup>3</sup>.  Nowadays its agreed upon that the two main forms of polymorphism are ad-hoc and
 universal, with parametric falling under universal<sup>4</sup>.
 </p>
 <ComparisonTable title="Main Polymorphism Forms">
@@ -28,7 +28,7 @@ universal, with parametric falling under universal<sup>4</sup>.
 <h5 className="jarombek-cte-title">Ad-hoc Polymorphism</h5>
 <div className="jarombek-cte-body">
 <p>
-Ad-hoc Polymorphism is when a function or method works with multiple different types as arguments.
+Ad-hoc Polymorphism is when a function or method works with arguments of multiple different types.
 Therefore it can be said that the function arguments are polymorphic.  Depending on the argument types,
 the behavior of the function can be completely different<sup>5</sup>.  The most common forms of
 Ad-hoc polymorphism are <a href="https://jarombek.com/blog/jul-29-2018-overloading">function
@@ -40,7 +40,7 @@ overloading</a> and <strong>operator overloading</strong>.
 <h5 className="jarombek-cte-title">Universal Polymorphism</h5>
 <div className="jarombek-cte-body">
 <p>
-Universal polymorphism consists of symbols that can accept an infinite number of different types<sup>6</sup>.
+Universal polymorphism consists of symbols that accept an infinite number of different types<sup>6</sup>.
 Acceptable types can exist within a certain range or encompass the entire languages type system.
 The most common forms of universal polymorphism are <strong>inclusion polymorphism</strong> and
 <strong>parametric polymorphism</strong>.  A synonym for inclusion polymorphism is <strong>variance
@@ -130,19 +130,19 @@ public interface ICovariant&lt;in TK, out TV&gt;
 <p>
 The <code class="jarombek-inline-code">TK</code> type parameter is contravariant and the
 <code class="jarombek-inline-code">TV</code> type parameter is covariant.  Contravariant types with the
-<code class="jarombek-inline-code">in</code> modifier can only be passed in to a method and can’t be
+<code class="jarombek-inline-code">in</code> modifier can only be passed in to a method and can't be
 returned by a method.  Covariant types with the <code class="jarombek-inline-code">out</code> modifier
-can only be returned by a method and can’t be used as a method argument.
+can only be returned by a method and can't be used as a method argument.
 </p>
 <p>
-With the <code class="jarombek-inline-code">ICovariant</code> defined, I created a class
+With <code class="jarombek-inline-code">ICovariant</code> defined, I created a class
 <code class="jarombek-inline-code">VariantMap</code> which implements <code class="jarombek-inline-code">ICovariant</code>.
 </p>
 <CodeSnippet language="C#">
 public class VariantMap&lt;TK, TV&gt; : ICovariant&lt;TK, TV&gt; {}
 </CodeSnippet>
 <p>
-Finally we can prove that <code class="jarombek-inline-code">TK</code> is contravariant and
+Finally I proved that <code class="jarombek-inline-code">TK</code> is contravariant and
 <code class="jarombek-inline-code">TV</code> is covariant.
 </p>
 <CodeSnippet language="C#">
@@ -166,12 +166,12 @@ Assert(variantMap2.Get("Andy").Equals(23));
 You can check out the full <code class="jarombek-inline-code">VariantMap</code>,
 <code class="jarombek-inline-code">ICovariant</code> and <code class="jarombek-inline-code">Program</code>
 code on <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/02-Feb/02-03-variance-csharp-generics">GitHub</a>.
-In my repository there is also a <code class="jarombek-inline-code">InvariantMap</code> class which
+In my repository there is also an <code class="jarombek-inline-code">InvariantMap</code> class which
 uses invariant generic type parameters.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Variance may seem like a complex topic, but it’s a fundamental piece of the programming languages
+Variance may seem like a complex topic, but it's a fundamental piece of the programming languages
 we interact with every day.  For more information on variance make sure to check out my article about
 <a href="https://jarombek.com/blog/may-13-2018-generics-arrays-complexities-java">Generics and Variance in Java</a>.
 </p>
