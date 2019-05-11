@@ -1,8 +1,8 @@
 <div>
 <p>
 In my <a href="https://jarombek.com/blog/apr-1-2019-docker-pt1">previous</a> <a href="https://jarombek.com/blog/
-apr-8-2019-docker-pt2">two</a> Docker articles, I explored the container environment basics and created
-a playground to run Docker on AWS.  In this article, I’m creating a containerized application that
+apr-8-2019-docker-pt2">two</a> Docker articles, I explored container environment basics and created
+a playground to run Docker on AWS.  In this article, I'm creating a containerized application that
 is publicly accessible from the internet.
 </p>
 <SectionTitle title="Containerizing a Node.js Application">Containerizing a Node.js Application</SectionTitle>
@@ -75,7 +75,7 @@ dependencies.  Finally I declare the <code class="jarombek-inline-code">node</co
 runs on the container in the <code class="jarombek-inline-code">ENTRYPOINT</code> instruction.
 </p>
 <p>
-Now it’s time to containerize the application in the <a href="https://jarombek.com/blog/apr-8-2019-docker-pt2">
+Now it's time to containerize the application in the <a href="https://jarombek.com/blog/apr-8-2019-docker-pt2">
 Docker playground</a> I built in my previous post.  The first steps are connecting to the playground EC2
 instance and cloning the Git repository which contains the Node.js application.
 </p>
@@ -87,7 +87,7 @@ git clone https://github.com/AJarombek/devops-prototypes.git
 cd devops-prototypes/docker/nodejs-docker-app/
 </CodeSnippet>
 <p>
-With the Node.js application on the EC2 instance, it’s time to containerize the application using Docker.
+With the Node.js application on the EC2 instance, it's time to containerize the application using Docker.
 The following command does the trick:
 </p>
 <CodeSnippet language="Bash">
@@ -117,7 +117,7 @@ docker container run -d --name nodejs-app -p 80:3000 nodejs-docker-app:latest
 </CodeSnippet>
 <p>
 Confirm the container is running by listing the containers with <code class="jarombek-inline-code">docker
-container ls</code>.  The application is now running in a container on port 3000 and accessible from the
+ container ls</code>.  The application is now running in a container on port 3000 and accessible from the
 Docker playground EC2 instance on port 80.  Using the public DNS name of the EC2 instance, the application
 is viewable from a web browser.
 </p>
@@ -126,9 +126,10 @@ is viewable from a web browser.
 </figure>
 <p>
 While this is a very basic application, the same containerizing process can be used for complex pieces
-of software.  In a production system, you won’t just run a single container.  Replicas will be created
+of software.  In a production system, you won't just run a single container.  Replicas will be created
 through a container orchestrator such as Kubernetes or Docker Swarm.  Kubernetes will be the topic of
-future articles since I’ve been using it extensively lately.  All the code from this article is available
+ <a href="https://jarombek.com/blog/may-13-2019-kubernetes-pt1">future articles</a> since I've been using it
+ extensively lately.  All the code from this article is available
 on <a href="https://github.com/AJarombek/devops-prototypes/tree/master/docker/nodejs-docker-app">GitHub</a>.
 </p>
 </div>
