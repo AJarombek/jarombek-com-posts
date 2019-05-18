@@ -88,8 +88,8 @@ static void Main(string[] args)
 }
 </CodeSnippet>
 <p>
-So far, nothing I’ve shown you about delegates differentiates them from Java lambda functions and
-functional interfaces.  Delegates and functional interfaces only know how to call a single function
+So far, nothing I've shown you about delegates differentiates them from Java lambda functions and
+functional interfaces.  Both delegates and functional interfaces know how to call a function
 with a certain return value and parameter types.  For example, the following Java code maps values
 in a list with a <code class="jarombek-inline-code">Transformer</code> functional interface just
 like the last example.
@@ -123,9 +123,9 @@ public class Delegates {
 }
 </CodeSnippet>
 <p>
-If you weren’t already aware, functional interfaces in Java are just interfaces with a single method.
-Java functional interfaces expose what the C# delegate pattern truly is - interfaces that know how
-to call a method.  Delegates are a shortened single method interface syntax.  You can easily write
+If you weren't already aware, functional interfaces in Java are just interfaces with a single method.
+Java functional interfaces expose what the C# delegate pattern truly is - an interface that knows how
+to call a method.  Delegates are a shortened syntax for a single method interface.  You can easily write
 an interface in C# to perform the same logic as a delegate<sup>2</sup>.
 </p>
 <p>
@@ -136,7 +136,7 @@ breaks down in regards to multicasting.
 <p>
 Multicasting is one of the most interesting aspects of Delegates in C#.  Multicasting is a form of
 <a href="https://jarombek.com/blog/nov-6-2018-haskell-pt3">function composition</a> where the delegate
-invokes multiple functions with the delegate arguments.  Think of multicasting as a way of combining
+invokes multiple functions.  Think of multicasting as a way of combining
 delegate instances together.  This pattern makes more sense with an example.
 </p>
 <p>
@@ -169,11 +169,12 @@ static void Main(string[] args)
 </CodeSnippet>
 <p>
 These functions use <code class="jarombek-inline-code">ref</code> return types and arguments so that
-the integer value is modified in place (at a single location in memory) instead of creating new
-integers.  Both can be made instances of the delegate <code class="jarombek-inline-code">TransformerRef</code>.
+the integer value is modified in place (at a single location in memory) instead of creating a new
+integer.  Both can be made instances of the <code class="jarombek-inline-code">TransformerRef</code>
+  delegate type.
 </p>
 <p>
-Now let’s make a delegate instance with multicasting.  The following delegate instance combines
+Now let's make a delegate instance with multicasting.  The following delegate instance combines
 <code class="jarombek-inline-code">Increment</code> and <code class="jarombek-inline-code">Triple</code>.
 </p>
 <CodeSnippet language="C#">
@@ -191,7 +192,7 @@ Assert(i == 18);
 The above code proved that the value <strong>5</strong> is first increment and then tripled.
 </p>
 <p>
-Delegate instances with multicasting can easily be modified after they are created.  Let’s say I
+Delegate instances with multicasting are easily modified after creation.  Let's say I
 want the <code class="jarombek-inline-code">transformer</code> delegate instance to only triple the
 value.  To do this, I simply remove the <code class="jarombek-inline-code">Increment</code> function.
 </p>
@@ -206,12 +207,12 @@ transformer(ref j);
 Assert(j == 30);
 </CodeSnippet>
 <p>
-Multicasting is a very powerful aspect of delegates in C#.  It helps separate them from other patterns
+Multicasting is a very powerful aspect of delegates in C#.  It helps separate them from patterns
 found in comparable languages like Java.
 </p>
 <SectionTitle title="Built-In Delegate Types">Built-In Delegate Types</SectionTitle>
 <p>
-Similarly to how the Java standard library exposes multiple functional interfaces for use, C# provides
+Similar to how the Java standard library exposes multiple functional interfaces for use, C# provides
 delegate types in the <code class="jarombek-inline-code">System</code> namespace.  These types can
 often be used instead of a custom type.  I recreated the commonly used <code class="jarombek-inline-code">
 Filter</code> and <code class="jarombek-inline-code">Reduce</code> functions for the
@@ -222,12 +223,12 @@ jarombek-com-sources/blob/master/2019/05-May/05-12-csharp-delegates/csharp/Util.
 <SectionTitle title="Similar C# Patterns">Similar C# Patterns</SectionTitle>
 <p>
 One confusing thing about the C# language is the two arrow functions at a developers disposal.
-Without background knowledge, it’s hard to decide which pattern to use in which context, and at worst
+Without background knowledge, it's hard to decide which pattern to use in which context, and at worst
 it feels like feature bloat. Along with delegates, C# also offers lambda functions and local methods.
-It’s important to understand the differences between these three options.
+It's important to understand the differences between these three options.
 </p>
 <p>
-As we’ve discussed, a delegate knows how to call one or many method(s).  It doesn’t matter if this
+As we've discussed, a delegate knows how to call one or many method(s).  It doesn't matter if this
 method is a standard function, lambda function, or local method.  They all work with delegates!
 </p>
 <p>
@@ -236,19 +237,19 @@ It can take the place of a standard function in a delegate instance.  One of the
 lambda functions is that they must be assigned to a delegate type<sup>3</sup>.
 </p>
 <p>
-With C# 7.0 (released in 2017) local methods were added.  Local methods are only visible in their
+With C# 7.0 (released in 2017), local methods were added.  Local methods are only visible in their
 <a href="https://jarombek.com/blog/nov-9-2017-js-closure-modules">lexical scope</a>.  Unlike lambda
-functions, local methods do not need to be assigned to a delegate type.  This gives them greater
+functions, local methods don't need to be assigned to a delegate type.  This gives them greater
 flexibility.  Otherwise, they use the same fat arrow syntax as lambda functions.
 </p>
 <p>
-In many cases local methods are the easiest approach since you don’t have to define a delegate
+In many cases local methods are the easiest approach since you don't have to define a delegate
 type.  However, in some cases delegate types are needed.  For example, only lambda functions can
-be passed as arguments to functions.
+be passed as arguments to other functions.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Delegates are a very interesting design pattern in C#.  I think they are a very elegant simplification
+Delegates are a very interesting design pattern in C#.  I think they're an elegant simplification
 for the single method interface pattern.  I look forward to learning more about C# in the coming
 months.  All the code from this article is available on <a href="https://github.com/AJarombek/jarombek-com-sources/
 blob/master/2019/05-May/05-12-csharp-delegates">GitHub</a>.
