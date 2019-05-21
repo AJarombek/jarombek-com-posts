@@ -2,19 +2,19 @@
 <p>
 In my previous <a href="https://jarombek.com/blog/may-13-2019-kubernetes-pt1">Kubernetes article</a>, I
 went over the concepts of container orchestration and the architecture of a Kubernetes cluster.  In this
-article, I'm building a single node Kubernetes cluster running a Node.js application.
+article, I'm building a single node Kubernetes cluster that runs a Node.js application.
 </p>
 <SectionTitle title="Overview">Overview</SectionTitle>
 <p>
 The Node.js application is the same one I used in my <a href="https://jarombek.com/blog/apr-28-2019-docker-pt3">
-Dockerized application</a>.  The Kubernetes cluster environment is very similar to my <a href="https://jarombek.com/
-blog/apr-8-2019-docker-pt2">Docker playground</a> as well.  The single node Kubernetes cluster is created
-by a CloudFormation template wrapped in Terraform.  It installs Docker, kubeadm, kubectl, kubelet, and
-kubernetes-cni. You can check out the code on <a href="https://github.com/AJarombek/devops-prototypes/
+article on Containerization</a>.  The Kubernetes cluster environment is very similar to my <a href="https://jarombek.com/
+blog/apr-8-2019-docker-pt2">Docker playground</a>.  The single node Kubernetes cluster is created
+with a CloudFormation template wrapped in Terraform.  It installs Docker, kubeadm, kubectl, kubelet, and
+kubernetes-cni. You can check out the infrastructure code on <a href="https://github.com/AJarombek/devops-prototypes/
 tree/master/playgrounds/kubernetes">GitHub</a>.
 </p>
 <p>
-Let's quickly go over the installed components.  <strong>Docker</strong> is the <a href="https://jarombek.com/
+Let's quickly go over the installed components.  <strong>Docker</strong> is a <a href="https://jarombek.com/
 blog/may-13-2019-kubernetes-pt1#worker-nodes">container runtime</a> used by the Kubernetes cluster.  My
 single node cluster only runs Docker containers, although it can be configured to use different runtimes.
 <strong>kubeadm</strong> bootstraps and initializes the Kubernetes cluster via an easy to use CLI.
@@ -23,11 +23,11 @@ on the clusters master node after bootstrapping is completed.  My single node cl
 a master node (there are no worker nodes).
 </p>
 <p>
-Every worker node runs an instance of the <strong>kubelet</strong>.   The kubelet watches the Kubernetes
+Every worker node runs a <strong>kubelet</strong> instance.   The kubelet watches the Kubernetes
 API and waits for Pods to be scheduled to its node.  Pods are the simplest object in Kubernetes - they run
 one or more containers.  Once a Pod is scheduled, the kubelet tells the container runtime (Docker) to start
-a container in the Pod.  Since my cluster has no worker nodes, the kubelet will run on the master node.
-All Pods will be scheduled to run on the master node.
+a container in the Pod.  Since my cluster has no worker nodes, the kubelet runs on the master node.
+All my Pods are scheduled to run on the master node.
 </p>
 <p>
 Finally, the <strong>kubernetes-cni</strong> is used for cluster networking.
@@ -48,7 +48,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 </CodeSnippet>
 <p>
 With the cluster initialized, we can try running kubectl commands.  One simple test is to check the
-status of all the nodes in the cluster.  Only one node should be returned.
+status of all the nodes in the cluster.  Only one master node should be returned.
 </p>
 <CodeSnippet language="Bash">
 kubectl get nodes
@@ -66,7 +66,7 @@ networking.
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 </CodeSnippet>
 <p>
-After waiting a few seconds, the node will be in a <code class="jarombek-inline-code">Ready</code> state.
+After waiting a few seconds, the master node will be in a <code class="jarombek-inline-code">Ready</code> state.
 </p>
 <CodeSnippet language="Bash">
 kubectl get nodes
@@ -126,13 +126,13 @@ More often than not, a Pod holds a single container.  In the YAML configuration 
 is hosted on <a href="https://hub.docker.com/r/ajarombek/nodejs-docker-app">DockerHub</a>.
 </p>
 <p>
-The Pod definition exposes port <code class="jarombek-inline-code">3000</code> on the container for
+The Pod definition exposes port <code class="jarombek-inline-code">3000</code> on the container as an entry point to
 the application.  However, the Pod doesn't provide a way to access the container from outside the
 Kubernetes cluster.  Networking configuration for Pods is performed by another object called a Service.
 </p>
 <p>
 <strong>Services</strong> provide networking capabilities and a stable IP address for Pods.  The following
-service object provides an entrypoint to the Pod from the internet.
+service object provides an entry point to the Pod from the internet.
 </p>
 <CodeSnippet language="YAML">
 apiVersion: v1
@@ -214,7 +214,7 @@ spec:
 </CodeSnippet>
 <p>
 Let's try deploying these objects onto the Kubernetes cluster.  The following Bash commands
-clone the repository containing <strong>all-in-one.yml</strong> and then attempt to create the
+clone the repository containing <strong>all-in-one.yml</strong> and attempt to create the
 Kubernetes objects.
 </p>
 <CodeSnippet language="Bash">
@@ -230,7 +230,7 @@ pod/nodejs-app created
 </CodeSnippet>
 <p>
 The Pod and Service objects were successfully sent to the Kubernetes API.  Now let's confirm that the
-Service and Pod are running successfully.
+ Pod and Service are running successfully.
 </p>
 <CodeSnippet language="Bash">
 kubectl get service
@@ -253,7 +253,7 @@ the nodes public IP address at port <code class="jarombek-inline-code">30001</co
 </p>
 <p>
 The second command is a bit more concerning.  The status of the Pod is <code class="jarombek-inline-code">
-Pending</code>, meaning it has not yet been scheduled to run on a node.  To debug this issue, we can
+Pending</code>, meaning it hasn't been scheduled to run on a node.  To debug this issue, we can
 execute the <code class="jarombek-inline-code">kubectl describe pod
 </code> command.  While it returns a lot of info, the relevant piece is the following:
 </p>
@@ -264,8 +264,8 @@ Type     Reason           From               Message
 Warning  FailedScheduling default-scheduler  0/1 nodes are available: 1 node(s) had taints that the pod didn't tolerate.
 </CodeSnippet>
 <p>
-This error message says that the Scheduler failed because it didn't find any nodes for the Pod to
-run on.  This issue occurs because the Kubernetes cluster I configured only contains a single master node.
+This error message says the Scheduler failed because it didn't find any nodes for the Pod to
+run on.  This issue occurred because my Kubernetes cluster only contains a single master node.
 By default, user Pods are only scheduled to worker nodes.  However, my cluster doesn't have any worker
 nodes.  In a production environment its good to keep all the application Pods on worker nodes, however
 in my demo application we want the Pod to run on the master node.  This default behavior can be changed
@@ -274,12 +274,12 @@ with a configuration object called a <strong>taint</strong>.
 <p>
 In Kubernetes, taints repel Pods from being scheduled to certain nodes<sup>7</sup>.  By default, the
 master node has a taint called <code class="jarombek-inline-code">NoSchedule</code>.  Unless you specify
-in the Pod YAML configuration that it tolerates the <code class="jarombek-inline-code">NoSchedule</code>
-taint, the Pod will not be scheduled to the master node.  Since I did not specify this toleration,
+in the YAML configuration that a Pod tolerates the <code class="jarombek-inline-code">NoSchedule</code>
+taint, Pods are not be scheduled to the master node.  Since I did not specify this toleration,
 the Pod failed to be scheduled.
 </p>
 <p>
-A workaround to this issue is to remove the <code class="jarombek-inline-code">NoSchedule</code> taint
+A workaround for this issue is to remove the <code class="jarombek-inline-code">NoSchedule</code> taint
 from the master node.  The following command achieves this (note that the name of your node will be different):
 </p>
 <CodeSnippet language="Bash">
@@ -289,7 +289,7 @@ kubectl taint node ip-10-0-1-154 node-role.kubernetes.io/master:NoSchedule-
 Now if you check the status of the Pod again with <code class="jarombek-inline-code">kubectl get pod</code>,
 you will see that its status changed to <code class="jarombek-inline-code">Ready</code>!  The Pod
 was successfully scheduled to the master node.  The application setup is complete and the application
-is accessible on the master nodes public IP.
+is accessible on the master nodes public IP address.
 </p>
 <figure>
 <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-19-aws-console.png"/>
@@ -302,10 +302,10 @@ is accessible on the master nodes public IP.
 While a single node cluster is nice for playing around and learning Kubernetes, it has a number of
 limitations and should never be used in a production environment.  Most importantly, a single node is
 a single point of failure.  If the master node goes down, so does the entire cluster.  In a production
-environment you would want a cluster with multiple worker nodes and a highly available master node.
+environment you want a cluster with multiple worker nodes and a highly available master node.
 With this setup, the cluster will not go down if nodes fail.  Most cloud providers offer highly available
 clusters.  For example, AWS provides EKS (Elastic Container Service for Kubernetes) and Google Cloud
-offers GKS (Google Kubernetes Engine).  I'm currently creating a Kubernetes prototype which uses EKS.
+offers GKE (Google Kubernetes Engine).  I'm currently creating a Kubernetes prototype which uses EKS.
 Look forward to articles on that soon!
 </p>
 <SectionTitle title="Application Limitations">Application Limitations</SectionTitle>
@@ -319,14 +319,14 @@ cover these objects in the future.
 <p>
 Another drawback is the NodePort service object.  As you likely noticed, the application wasn't accessible
 through the default HTTP or HTTPS ports (<strong>80</strong> and <strong>443</strong>, respectively).
-This is a limitation of the NodePort service, which can only use IP addresses ranging from <strong>30000</strong>
--<strong>32767</strong>.  In a production application, either a LoadBalancer service or an Ingress object will
+This is a limitation of the NodePort service, which can only use IP addresses ranging from <strong>30000</strong>-<strong>32767</strong>.
+  In a production application, either a LoadBalancer service or an Ingress object will
 be used for networking.  I will also cover these objects in the future.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 In this article I created a barebones application in a single node Kubernetes cluster.  Although the
-application is far from production ready with the current configuration, it is a good step forward in
+application is far from production ready with the current configuration, its a good step forward in
 learning Kubernetes!  All the code from this article is available on <a href="https://github.com/AJarombek/
 devops-prototypes/tree/master/docker/nodejs-docker-app/k8s">GitHub</a>.
 </p>
