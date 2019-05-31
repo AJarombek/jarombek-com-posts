@@ -1,22 +1,22 @@
 <div>
 <p>
-This year I’ve been learning <a href="https://jarombek.com/blog?query=haskell&page=1">Haskell</a>, a
-functional programming language.  In my last few Haskell articles I’ve discussed basic aspects of the
-language.  Now I’ve begun digging into advanced functional programming concepts.  This article discusses
+Right now I'm learning <a href="https://jarombek.com/blog?query=haskell&page=1">Haskell</a>, a
+functional programming language.  In my last few Haskell articles I've discussed basic aspects of the
+language.  Now I've begun digging into advanced functional programming concepts.  This article discusses
 functors, a generic way to map functions over objects.
 </p>
 <SectionTitle title="Functor Basics">Functor Basics</SectionTitle>
 <p>
 A common pattern in programming is looping through a collection of values and applying a transformation
 to each.  For example, a programmer might loop through a list of integers and increment each value.  The
-imperative approach to perform this transformation is to set up a for loop and iterate over each list
-index.  The functional approach is to use the <code class="jarombek-inline-code">map</code> higher-order
+imperative approach to this transformation sets up a for loop and iterates over each list
+index.  The functional approach uses the <code class="jarombek-inline-code">map</code> higher-order
 function.  <code class="jarombek-inline-code">map</code> accepts two arguments - a collection to iterate
-over and a function.  The function is invoked for each item in the collection.
+over and a function.  The function is applied to each item in the collection.
 </p>
 <p>
 Haskell has a <code class="jarombek-inline-code">map</code> function defined in the GHC Prelude
-module<sup>1</sup>.  Its defined to accept a list and a function as arguments.
+module<sup>1</sup>.  It accepts a list and a function as arguments.
 </p>
 <CodeSnippet language="Haskell">
 map :: (a -> b) -> [a] -> [b]
@@ -33,7 +33,7 @@ main = do
   print $ map (+1) [1,2,3] -- [2,3,4]
 </CodeSnippet>
 <p>
-Haskell’s <code class="jarombek-inline-code">map</code> function is useful, however its restricted to
+Haskell's <code class="jarombek-inline-code">map</code> function is useful, however its restricted to
 just a list data structure.  The concept of applying a function across all items in a data structure
 can be generalized even more than the <code class="jarombek-inline-code">map</code> function.  This
 is where functors come into play.
@@ -127,16 +127,16 @@ main = do
 is parameterized and it has a type constructor.  You can think of <code class="jarombek-inline-code">Distance</code>
 as a container type, since it holds a value such as a floating point number.  Lists and the
 <code class="jarombek-inline-code">Maybe</code> type have similar structures.  Types without a parameterized
-data definition are not valid functors because they don’t contain another type<sup>4</sup>.
+data definition are not valid functors because they don't contain another type<sup>4</sup>.
 </p>
 <SectionTitle title="Working with Functors">Working with Functors</SectionTitle>
 <p>
-Functors are useful for mapping functions across all items contained in a type.  They become even more
+Functors are useful for mapping functions across all items contained in an object.  They become even more
 useful in regards to Applicatives and Monads, which I will discuss in upcoming articles.
 </p>
 <p>
-For now, one last useful implementation of Functors is creating a generic function for all instances of
-<code class="jarombek-inline-code">Functor</code> to utilize.  Using a <code class="jarombek-inline-code">
+For now, one last useful functor implementation is a generic function for all instances of
+<code class="jarombek-inline-code">Functor</code> to utilize.  With the help of a <code class="jarombek-inline-code">
 Functor</code> class constant, a function is easily created to increment the items in any
 <code class="jarombek-inline-code">Functor</code> instance<sup>5</sup>.
 </p>
@@ -152,13 +152,13 @@ main = do
   print $ inc (Miles 3) -- Miles 4
 </CodeSnippet>
 <p>
-Any type which is made into an instance of <code class="jarombek-inline-code">Functor</code> can utilize
+Any type that is an instance of <code class="jarombek-inline-code">Functor</code> can utilize
 the <code class="jarombek-inline-code">inc</code> function!  This is a really powerful design pattern for
 function reuse.
 </p>
 <SectionTitle title="Functors in Java">Functors in Java</SectionTitle>
 <p>
-The concept of functors isn’t limited to Haskell or functional programming.  In Java, the
+The concept of functors isn't limited to Haskell or functional programming.  In Java, the
 <code class="jarombek-inline-code">Functor</code> type class is represented as an interface<sup>6</sup>.
 </p>
 <CodeSnippet language="Java">
@@ -174,7 +174,7 @@ public interface Functor&lt;T> {
 }
 </CodeSnippet>
 <p>
-You can then create classes that implement the <code class="jarombek-inline-code">Functor</code> interface.
+Classes can implement the <code class="jarombek-inline-code">Functor</code> interface.
 This is comparable to creating an instance of the <code class="jarombek-inline-code">Functor</code> type
 class in Haskell.  The following class creates a list that is also a functor.
 </p>
@@ -307,14 +307,14 @@ public static void main(String... args) {
 }
 </CodeSnippet>
 <p>
-The same functor patterns work in many different languages!
+The same functor pattern works in many different languages!
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Working with functional programming languages forces the brain to think about common problems differently.
+Working with a functional programming language forces the brain to think about common problems differently.
 While initially difficult to reason about, functors simply provide a mechanism for mapping a function
-across different items.  Functors also promote generic code which works for many different types.  In
-my next article I’ll build on this knowledge and explore applicatives.  All the code from this article
+across different items.  Functors also promote the creation of generic code which works for many different types.  In
+my next article I'll build on this knowledge and explore applicatives.  All the code from this article
 is available on <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/05-May/
 05-28-haskell-pt6">GitHub</a>.
 </p>
