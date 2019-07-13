@@ -1,13 +1,13 @@
 <div>
 <p>
-When writing <a href="https://jarombek.com/blog/sep-3-2018-terraform#what-is-terraform?">Terraform</a>
-configuration, I often find myself writing the same code again and again.  In order to maintain the DRY
-principal with Terraform configuration, modules are used to encapsulate and design a layer of abstraction
+When programming with <a href="https://jarombek.com/blog/sep-3-2018-terraform#what-is-terraform?">Terraform</a>,
+  I often find myself writing the same code again and again.  In order to maintain the DRY
+principal in Terraform configuration, modules are used to encapsulate logic and design a layer of abstraction
 for infrastructure code.  This article explains how I created Terraform modules that are reused throughout
 my AWS Infrastructure as Code.
 </p>
 <Definition word="DRY Principal">
-DRY stands for "Do not Repeat Yourself."  It's the design philosophy that the same code shouldn't exist in
+DRY stands for "Do not Repeat Yourself."  It's the design philosophy that similar code shouldn't exist in
 multiple locations.  Instead, repeated code segments should be combined into a single component or function.
 </Definition>
 <SectionTitle title="Terraform Module Design Choices">Terraform Module Design Choices</SectionTitle>
@@ -15,28 +15,28 @@ multiple locations.  Instead, repeated code segments should be combined into a s
 As I write Terraform code, I notice there are certain AWS resource configurations repeated across my
 repositories.  For example, my AWS infrastructure has multiple VPCs which are all configured in a similar
 manner.  Eventually I got unhappy with all this duplicate code.  I started creating reusable modules
-that can be used across all my Terraform repositories.
+that are used across all my Terraform repositories.
 </p>
 <p>
-My current AWS architecture is split across multiple git repositories.  I have a repository with global
+My current AWS architecture is split across multiple git repositories.  I have a single repository with global
 infrastructure such as VPCs and multiple other repositories with application specific infrastructure such
-as EC2 instances.  Then I have one final repository containing reusable modules.
+as EC2 instances.  Additionally, I have one final repository containing reusable modules.
 </p>
 <figure>
 <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-17-19-repos.png"/>
 </figure>
 <p>
-All my repositories have the ability to use the Terraform modules defined in <strong>terraform-modules</strong>.
-In fact, anyone can use these modules since the repository is public.
+All my repositories are able to use Terraform modules defined in <strong>terraform-modules</strong>.
+In fact, anyone can use these modules because the repository is public.
 </p>
 <p>
-Now that I've explained my Terraform modules from the repository standpoint, what does the code look like?
+Now that I've explained my Terraform modules from the repository standpoint, let's look at the code.
 </p>
 <SectionTitle title="Terraform Module Structure">Terraform Module Structure</SectionTitle>
 <p>
 Terraform defines a module as a series of <code class="jarombek-inline-code">.tf</code> files in a
 directory<sup>1</sup>.  Therefore, anytime you write Terraform code you are creating one or more modules.
-A common approach is to have three Terraform files in a module.  The first file contains resource and data
+A common approach is to have three Terraform files in a module.  The first file contains resources and data
 blocks, the second file contains input variables, and the final file contains output variables<sup>2</sup>.
 For example, a VPC module would have the following folder structure:
 </p>
@@ -182,8 +182,8 @@ module "security-group" {
 <p>
 The module is located in the <strong>security-group</strong> subdirectory.  I tag my repository whenever
 I alter the modules.  In the example above, I'm pulling the module from the v0.1.7 tag.  This is helpful
-because I don't want a potentially breaking change to affect existing codebases.  You can also not specify
-a tag, in which case the latest commit is pulled.
+because I don't want a potentially breaking change to impact existing codebases.  You can also omit
+ the tag reference, in which case the latest commit is pulled.
 </p>
 <p>
 The rest of the <code class="jarombek-inline-code">module</code> code block assigns values to the input
@@ -225,8 +225,8 @@ module "security-group" {
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 Creating generic Terraform modules promotes code reuse and cuts down on bugs that commonly plague developers 
-who copy and paste their code.  I've also found that I have a much better understanding of Terraform 
-and HCL syntax because I designed reusable modules.  All the code from this article is available on 
+who copy and paste their code.  I have a much better understanding of Terraform
+and HCL syntax because I spent time designing reusable modules.  All the code from this article is available on
 <a href="https://github.com/AJarombek/terraform-modules">GitHub</a>.
 </p>
 </div>
