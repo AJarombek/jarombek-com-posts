@@ -22,13 +22,13 @@ console.info(captures); // ["02/26/1995", "02", "26", "1995"]
 console.info(`Month: ${captures[1]}, Day: ${captures[2]}, Year: ${captures[3]}`);
 </CodeSnippet>
 <p>
-The grouping syntax <code class="jarombek-inline-code">(...)</code> is used to define a capture.  The
-value matched to a capture is saved to an array when the <code class="jarombek-inline-code">match()</code>
+The grouping syntax <code className="jarombek-inline-code">(...)</code> is used to define a capture.  The
+value matched to a capture is saved to an array when the <code className="jarombek-inline-code">match()</code>
 function is called.
 </p>
 <p>
 If I want to use grouping but don't need to capture pieces of a regular expression, the syntax
-<code class="jarombek-inline-code">(?: ...)</code> specifies that a group shouldn't create a capture.
+<code className="jarombek-inline-code">(?: ...)</code> specifies that a group shouldn't create a capture.
 This results in less work for the languages engine to perform<sup>1</sup>.
 </p>
 <CodeSnippet language="JavaScript">
@@ -39,8 +39,8 @@ console.info(captures2); // ["02/26/1995"]
 <p>
 One final thing to explore with captures is backreferences.  Backreferences refer to previous captures
 created in the same regular expression<sup>2</sup>.  In the following code I used backreferences to check if the month and
-day in a date are equal.  The <code class="jarombek-inline-code">\1</code> token refers to the contents of
-the first capture (the month).  The contents of <code class="jarombek-inline-code">\1</code> is defined at runtime.  Backreferences
+day in a date are equal.  The <code className="jarombek-inline-code">\1</code> token refers to the contents of
+the first capture (the month).  The contents of <code className="jarombek-inline-code">\1</code> is defined at runtime.  Backreferences
 make regular expressions even more dynamic!
 </p>
 <CodeSnippet language="JavaScript">

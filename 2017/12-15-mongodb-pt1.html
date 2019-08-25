@@ -31,7 +31,7 @@ can make it harder to create a well structured database.  With more power comes 
 </p>
 <p>
 Now let's get started creating a MongoDB database that represents different Christmas trees.  Once you
-have MongoDB installed, you can run the <code class="jarombek-inline-code">mongo</code> command in bash
+have MongoDB installed, you can run the <code className="jarombek-inline-code">mongo</code> command in bash
 to start up the database and CLI.  It is important to know that MongoDB has three logical
 groupings; databases, collections, and documents.  Databases are not the same as a traditional RDBMS
 database connection - they are simply groupings (namespaces) for collections and documents<sup>4</sup>.
@@ -39,21 +39,21 @@ Collections are a way to group documents together in MongoDB, similar to tables 
 </p>
 <p>
 To start, I made a new database for Christmas trees.  The
-<code class="jarombek-inline-code">use &lt;database&gt;</code> command changes the current database.
+<code className="jarombek-inline-code">use &lt;database&gt;</code> command changes the current database.
 </p>
 <CodeSnippet language="Bash">
 use xmas
 </CodeSnippet>
 <p>
 This command does not create a database yet.  To do that I need to add some collections and documents.
-I added a document to a collection called <code class="jarombek-inline-code">tree</code>:
+I added a document to a collection called <code className="jarombek-inline-code">tree</code>:
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.insert({type: "balsam"})
 </CodeSnippet>
 <p>
-The document JSON is passed as an argument to the <code class="jarombek-inline-code">insert()</code> function
-on the <code class="jarombek-inline-code">tree</code> collection object.  The <code class="jarombek-inline-code">find()</code> function
+The document JSON is passed as an argument to the <code className="jarombek-inline-code">insert()</code> function
+on the <code className="jarombek-inline-code">tree</code> collection object.  The <code className="jarombek-inline-code">find()</code> function
 can be used to view all the documents in the tree collection.
 </p>
 <CodeSnippet language="JavaScript">
@@ -61,7 +61,7 @@ db.tree.find().pretty()
 </CodeSnippet>
 <p>
 This code sample shows the ability to chain functions.  The second function
-<code class="jarombek-inline-code">pretty()</code> will format the JSON in an easily readable fashion.
+<code className="jarombek-inline-code">pretty()</code> will format the JSON in an easily readable fashion.
 </p>
 <p>
 Let's say I want to add more properties to the tree document.  Since MongoDB collections have no
@@ -78,17 +78,17 @@ db.tree.update({type: "balsam"}, {
 })
 </CodeSnippet>
 <p>
-I used the <code class="jarombek-inline-code">update()</code> function on the collection to edit a
+I used the <code className="jarombek-inline-code">update()</code> function on the collection to edit a
 document.  The first parameter queries the collection and matches with a document.  The second
-parameter defines what to update.  The <code class="jarombek-inline-code">$set</code> property
+parameter defines what to update.  The <code className="jarombek-inline-code">$set</code> property
 binds the specified properties in the document to the given values<sup>5</sup>.
 </p>
 <p>
 These simple queries are easily written in the MongoDB CLI.
 However performing complex JavaScript code in the CLI gets quite difficult.  Thankfully MongoDB allows
 any variable or function to be edited in a text editor.  In my case I used Vim.  To get Vim
-to work I had to change the <code class="jarombek-inline-code">EDITOR</code> variable to
-<code class="jarombek-inline-code">vim</code> in bash.
+to work I had to change the <code className="jarombek-inline-code">EDITOR</code> variable to
+<code className="jarombek-inline-code">vim</code> in bash.
 </p>
 <CodeSnippet language="Bash">
 export EDITOR=vim
@@ -101,14 +101,14 @@ function createTree() {}
 </CodeSnippet>
 <p>
 Using the name of this function, I began editing in Vim with the
-<code class="jarombek-inline-code">edit</code> command:
+<code className="jarombek-inline-code">edit</code> command:
 </p>
 <CodeSnippet language="Bash">
 edit createTree
 </CodeSnippet>
 <p>
 Since MongoDB queries use JavaScript, anything in the JavaScript language (even ES6+
-features!) can be used in a function.  I edited the <code class="jarombek-inline-code">createTree</code> function
+features!) can be used in a function.  I edited the <code className="jarombek-inline-code">createTree</code> function
 so that it inserts another document into the tree collection.  Once the function was finalized,
 I saved the file and quit vim.
 </p>
@@ -128,15 +128,15 @@ function createTree() {
 </CodeSnippet>
 <p>
 Back in the MongoDB CLI the functions contents can be viewed by typing
-<code class="jarombek-inline-code">createTree</code>.  The function is executed
-by typing <code class="jarombek-inline-code">createTree()</code>.
+<code className="jarombek-inline-code">createTree</code>.  The function is executed
+by typing <code className="jarombek-inline-code">createTree()</code>.
 </p>
 <p>
 Now the tree collection contains two documents.  What if I wanted to add the properties
-<code class="jarombek-inline-code">sold</code> and <code class="jarombek-inline-code">buyer_id</code> to the
-existing documents?  I could use the <code class="jarombek-inline-code">update()</code> function, however
+<code className="jarombek-inline-code">sold</code> and <code className="jarombek-inline-code">buyer_id</code> to the
+existing documents?  I could use the <code className="jarombek-inline-code">update()</code> function, however
 it only matches with the first document it finds.  To match all documents that fit certain
-query conditions, the <code class="jarombek-inline-code">updateMany()</code> function is used.
+query conditions, the <code className="jarombek-inline-code">updateMany()</code> function is used.
 </p>
 <CodeSnippet language="JavaScript">
 db.tree.updateMany({}, {
@@ -195,14 +195,14 @@ function bulkTreeInsert(number=1) {
 }
 </CodeSnippet>
 <p>
-I passed <code class="jarombek-inline-code">1000</code> as a parameter to this function, invoking it one
+I passed <code className="jarombek-inline-code">1000</code> as a parameter to this function, invoking it one
 thousand times.  When I checked to see the number of trees in tree collection, I got 1003 as expected.
 </p>
 <CodeSnippet language="JavaScript">
 bd.tree.count() // 1003
 </CodeSnippet>
 <p>
-Since the <code class="jarombek-inline-code">find()</code> function also accepts JSON, it is easy to count all the trees of type Frazier with a
+Since the <code className="jarombek-inline-code">find()</code> function also accepts JSON, it is easy to count all the trees of type Frazier with a
 height between 6-7 feet:
 </p>
 <CodeSnippet language="JavaScript">

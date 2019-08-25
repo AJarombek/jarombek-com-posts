@@ -26,23 +26,23 @@ var lyric = {
 }
 </CodeSnippet>
 <p>
-The only change to the API is the <code class="jarombek-inline-code">export</code> keyword.
-<code class="jarombek-inline-code">export</code> is a new keyword in ES6 that reveals the function
-<code class="jarombek-inline-code">lyrics</code> to other JavaScript code.  Any JavaScript file can
+The only change to the API is the <code className="jarombek-inline-code">export</code> keyword.
+<code className="jarombek-inline-code">export</code> is a new keyword in ES6 that reveals the function
+<code className="jarombek-inline-code">lyrics</code> to other JavaScript code.  Any JavaScript file can
 be a module if it exports functions/variables.
 Only one module can exist per file, and each module can export multiple items.  Since one file
 is one and only one module, the name of a module is the filename. Code to import a module
-uses the <code class="jarombek-inline-code">import</code> keyword:
+uses the <code className="jarombek-inline-code">import</code> keyword:
 </p>
 <CodeSnippet language="JavaScript">
 import * as ts from './taylorSwift';
 </CodeSnippet>
 <p>
-All variables/functions in the <code class="jarombek-inline-code">taylorSwift</code> module are
-imported with the <code class="jarombek-inline-code">import *</code> syntax.
+All variables/functions in the <code className="jarombek-inline-code">taylorSwift</code> module are
+imported with the <code className="jarombek-inline-code">import *</code> syntax.
 The imported module is then given the alias
-<code class="jarombek-inline-code">ts</code>. With the Taylor Swift API imported, I invoked the
-<code class="jarombek-inline-code">lyrics()</code> function.
+<code className="jarombek-inline-code">ts</code>. With the Taylor Swift API imported, I invoked the
+<code className="jarombek-inline-code">lyrics()</code> function.
 </p>
 <CodeSnippet language="JavaScript">
 ts.lyrics("Sparks Fly");
@@ -78,7 +78,7 @@ npm install babel-preset-env --save-dev
 </CodeSnippet>
 <p>
 I then configured Babel by creating a .babelrc file.  In this JSON file I set
-<code class="jarombek-inline-code">presets</code> to <code class="jarombek-inline-code">"env"</code>,
+<code className="jarombek-inline-code">presets</code> to <code className="jarombek-inline-code">"env"</code>,
 which helps Babel determine the Babel plugins I need to perform a transpilation based on
 my environment<sup>2</sup>.
 </p>
@@ -96,8 +96,8 @@ npx babel main.js --out-file es5/main.js
 </CodeSnippet>
 <p>
 This command tells Babel to take main.js and transpile it to a file of the same name in a folder named es5
-(note: <code class="jarombek-inline-code">npx</code> is not a typo – install
-it with <code class="jarombek-inline-code">npm install –g npx</code> to simplify Babel commands).
+(note: <code className="jarombek-inline-code">npx</code> is not a typo – install
+it with <code className="jarombek-inline-code">npm install –g npx</code> to simplify Babel commands).
 </p>
 <p>
 There is however a better way of doing this.  Babel has the ability to watch ES6 files for changes.

@@ -34,8 +34,8 @@ var taylorSwiftApi = function() {
 </CodeSnippet>
 <p>
 This module provides lyrics for Taylor Swift songs (because who doesn't
-enjoy some T-Swift!)  The <code class="jarombek-inline-code">return</code> statement is the public API for the module.  All
-interior details, such as the <code class="jarombek-inline-code">lyric</code> variable, are hidden.
+enjoy some T-Swift!)  The <code className="jarombek-inline-code">return</code> statement is the public API for the module.  All
+interior details, such as the <code className="jarombek-inline-code">lyric</code> variable, are hidden.
 This pattern harnesses the power of closure in JavaScript!
 </p>
 <p>
@@ -43,8 +43,8 @@ Closure is defined "when a function is able to remember and access its lexical s
 even when that function is executing outside its lexical scope<sup>1</sup>."
 </p>
 <p>
-Okay cool, so when <code class="jarombek-inline-code">taylorSwiftApi.lyrics()</code> is invoked later
-on, it will remember the modules interior <code class="jarombek-inline-code">lyric</code> variable!
+Okay cool, so when <code className="jarombek-inline-code">taylorSwiftApi.lyrics()</code> is invoked later
+on, it will remember the modules interior <code className="jarombek-inline-code">lyric</code> variable!
 But what is this 'lexical scope' the definition refers to?
 </p>
 <Definition word="Lexical Scope">
@@ -64,13 +64,13 @@ let result = taylorSwiftApi.lyrics("Sparks Fly");
 console.info(result); // I see sparks fly whenever you smile
 </CodeSnippet>
 <p>
-In the global scope I defined a second <code class="jarombek-inline-code">lyric</code> variable with a different (and
+In the global scope I defined a second <code className="jarombek-inline-code">lyric</code> variable with a different (and
 as T-Swift fans know – incorrect) value.  The question now is which
-<code class="jarombek-inline-code">lyric.sparks</code> variable will the API find
-when invoking <code class="jarombek-inline-code">taylorSwiftApi.lyrics()</code>?  In this case, it
-will be the one defined in the <code class="jarombek-inline-code">taylorSwiftApi</code> module.  This is because of a
+<code className="jarombek-inline-code">lyric.sparks</code> variable will the API find
+when invoking <code className="jarombek-inline-code">taylorSwiftApi.lyrics()</code>?  In this case, it
+will be the one defined in the <code className="jarombek-inline-code">taylorSwiftApi</code> module.  This is because of a
 closure that was created over the lexical scope of the API.
-<code class="jarombek-inline-code">taylorSwiftApi.lyrics()</code> was defined in the API's lexical
+<code className="jarombek-inline-code">taylorSwiftApi.lyrics()</code> was defined in the API's lexical
 scope, so that scope can’t change!
 </p>
 <p>

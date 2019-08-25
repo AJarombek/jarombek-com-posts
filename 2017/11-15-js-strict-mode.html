@@ -4,7 +4,7 @@ One JavaScript feature I've used before but never fully understood is strict mod
 Strict mode restricts certain features and leniencies in the language<sup>1</sup>.
 It protects the developer from things that happen implicitly in JavaScript (that only an
 experienced dev would be aware of).  In a <a href="https://jarombek.com/blog/nov-11-2017-js-this">
-previous discovery</a> I looked at how strict mode disallows <code class="jarombek-inline-code">this</code>
+previous discovery</a> I looked at how strict mode disallows <code className="jarombek-inline-code">this</code>
 from containing the global scope variable.  What else does strict mode have to offer?
 </p>
 <p>
@@ -41,8 +41,8 @@ var andy = {
 </CodeSnippet>
 <p>
 Strict mode also stops variable creation when assigning a
-value to an undeclared variable without a <code class="jarombek-inline-code">var</code>,
-<code class="jarombek-inline-code">let</code>, or <code class="jarombek-inline-code">const</code> keyword.
+value to an undeclared variable without a <code className="jarombek-inline-code">var</code>,
+<code className="jarombek-inline-code">let</code>, or <code className="jarombek-inline-code">const</code> keyword.
 </p>
 <CodeSnippet language="JavaScript">
 try {
@@ -53,8 +53,8 @@ try {
 }
 </CodeSnippet>
 <p>
-Without strict mode forgetting the <code class="jarombek-inline-code">var</code> or
-<code class="jarombek-inline-code">let</code> variable is "forgiving."  If
+Without strict mode forgetting the <code className="jarombek-inline-code">var</code> or
+<code className="jarombek-inline-code">let</code> variable is "forgiving."  If
 the variable is not defined, JavaScript creates a new global variable with the name provided.
 In my opinion this should be considered a syntax mistake by the developer
 and throw an error.  That is exactly what happens in strict mode.

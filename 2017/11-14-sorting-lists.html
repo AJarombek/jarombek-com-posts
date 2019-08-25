@@ -22,8 +22,8 @@ list = list.stream()
 You may have expected the Java code to be messy and verbose with iterators and complex
 comparison functions.  With Java 8 it is short and concise thanks to streams and the comparator API.
 Also using the short-hand lambda syntax (method reference) I was able to
-write <code class="jarombek-inline-code">Person::getLast</code> instead of
-<code class="jarombek-inline-code">(p) -> p.getLast()</code>.  Most of the code in the full
+write <code className="jarombek-inline-code">Person::getLast</code> instead of
+<code className="jarombek-inline-code">(p) -> p.getLast()</code>.  Most of the code in the full
 example is for creating the Person POJO.
 </p>
 <SectionTitle title="JavaScript">JavaScript</SectionTitle>
@@ -45,14 +45,14 @@ console.info(people);
 </CodeSnippet>
 <p>
 The JavaScript version is even simpler.  I just passed a call back function to
-<code class="jarombek-inline-code">sort()</code> and it uses the callback when making comparisons.
+<code className="jarombek-inline-code">sort()</code> and it uses the callback when making comparisons.
 </p>
 <p>
-One thing that was strange when executing this code is that both <code class="jarombek-inline-code">
+One thing that was strange when executing this code is that both <code className="jarombek-inline-code">
 console.info()</code> invocations produced the sorted array even though the first
-<code class="jarombek-inline-code">console.info()</code> occurs before people is sorted.  This
+<code className="jarombek-inline-code">console.info()</code> occurs before people is sorted.  This
 is because console functions are asynchronous in some environments. Therefore we may not get the
-results at the time we expect.  You can't always trust <code class="jarombek-inline-code">console</code>!
+results at the time we expect.  You can't always trust <code className="jarombek-inline-code">console</code>!
 </p>
 <SectionTitle title="Swift">Swift</SectionTitle>
 <CodeSnippet language="Swift">
@@ -76,16 +76,16 @@ Swift (just a personal preference!), but in a simple case like this one a struct
 </p>
 <p>
 If you don't know much Swift the sorting operation may look a bit confusing.  The
-<code class="jarombek-inline-code">sort()</code> method on the Array type is passed a Swift
+<code className="jarombek-inline-code">sort()</code> method on the Array type is passed a Swift
 closure (not to be confused with a <a href="https://jarombek.com/blog/nov-9-2017-js-closure-modules">
 closure in JavaScript</a>), which is basically a callback function.  Since the Swift compiler knows that the
-<code class="jarombek-inline-code">sort()</code> function takes a closure you can use parameter
-shorthands which are represented as <code class="jarombek-inline-code">$1</code> and
-<code class="jarombek-inline-code">$2</code> (<code class="jarombek-inline-code">$1</code> being the first
-parameter, <code class="jarombek-inline-code">$2</code> being the second, etc.)<sup>1</sup>.  I also utilized
+<code className="jarombek-inline-code">sort()</code> function takes a closure you can use parameter
+shorthands which are represented as <code className="jarombek-inline-code">$1</code> and
+<code className="jarombek-inline-code">$2</code> (<code className="jarombek-inline-code">$1</code> being the first
+parameter, <code className="jarombek-inline-code">$2</code> being the second, etc.)<sup>1</sup>.  I also utilized
 trailing closure syntax which can be used when the closure is the last parameter of a function.
 Trailing closure syntax enables the removal of a function invocations parenthesis, and
-you can see <code class="jarombek-inline-code">sort()</code> uses no parenthesis<sup>2</sup>!  All these
+you can see <code className="jarombek-inline-code">sort()</code> uses no parenthesis<sup>2</sup>!  All these
 tricks are fun to look into and allow for very concise Swift code.
 </p>
 <SectionTitle title="PHP">PHP</SectionTitle>
@@ -100,12 +100,12 @@ function comparator($a, $b) {
 uasort($array, 'comparator');
 </CodeSnippet>
 <p>
-The PHP solution may be my least favorite.  I created the <code class="jarombek-inline-code">People</code>
-object and an array of <code class="jarombek-inline-code">People</code>.
-<code class="jarombek-inline-code">uasort()</code> is used for user defined comparisons where argument
+The PHP solution may be my least favorite.  I created the <code className="jarombek-inline-code">People</code>
+object and an array of <code className="jarombek-inline-code">People</code>.
+<code className="jarombek-inline-code">uasort()</code> is used for user defined comparisons where argument
 one is the array and argument two is the string name of the comparison function.  Why can't
 I treat the comparison function as a first class citizen and pass it as the second
-<code class="jarombek-inline-code">uasort()</code> argument?  This code feels ugly.
+<code className="jarombek-inline-code">uasort()</code> argument?  This code feels ugly.
 </p>
 <SectionTitle title="Python">Python</SectionTitle>
 <CodeSnippet language="Python">
@@ -122,7 +122,7 @@ people.sort(key=last, reverse=False)
 </CodeSnippet>
 <p>
 As you probably guessed, the winner for most concise comparison sort goes to Python.  Thanks to
-optional arguments, the <code class="jarombek-inline-code">sort()</code> function is really sleek!
+optional arguments, the <code className="jarombek-inline-code">sort()</code> function is really sleek!
 </p>
 <SectionTitle title="C">C</SectionTitle>
 <CodeSnippet language="C">
@@ -175,7 +175,7 @@ static int compare(const void *a, const void *b) {
 <p>
 As you also likely guessed, the C code is by far the most involved.  The structs do make the sorting easier
 (I originally tried sorting lists of lists of lists, but the pointers got out of control and I couldn't figure
-it out!).  I utilized the standard libraries <code class="jarombek-inline-code">qsort()</code>
+it out!).  I utilized the standard libraries <code className="jarombek-inline-code">qsort()</code>
 function and passed in a comparison function<sup>3</sup>.
 </p>
 </div>

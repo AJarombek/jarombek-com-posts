@@ -15,7 +15,7 @@ CREATE (aj:Person {name: 'Andy J.'}),
     (bf:Person {name: 'Ben F.'})
 </CodeSnippet>
 <p>
-If I want to undo this <code class="jarombek-inline-code">CREATE</code> statement, one
+If I want to undo this <code className="jarombek-inline-code">CREATE</code> statement, one
 option is to simply delete all the people from the graph:
 </p>
 <CodeSnippet language="Cypher">
@@ -23,21 +23,21 @@ MATCH (p:Person) DELETE p
 </CodeSnippet>
 <p>
 However, maybe I just want specific people removed from the graph.  The first idea that came into to my head
-was to match on a certain name such as <code class="jarombek-inline-code">MATCH (p:Person {name: 'Andy J.'})</code>.
-In this case I would delete all nodes with label <code class="jarombek-inline-code">:Person</code> where the property <code class="jarombek-inline-code">name</code> equals 'Andy J.'.
+was to match on a certain name such as <code className="jarombek-inline-code">MATCH (p:Person {name: 'Andy J.'})</code>.
+In this case I would delete all nodes with label <code className="jarombek-inline-code">:Person</code> where the property <code className="jarombek-inline-code">name</code> equals 'Andy J.'.
 You may see the potential issue here.  What if there are two people with the name 'Andy J'?  In that case
 Cypher deletes both of the vertices!  In a large graph that scenario is very likely.
 What I can do instead is delete a vertex by looking up its node id.  Each vertex and
 edge has a unique id, so if I delete a vertex by its id I know only one vertex will be removed.  Node
-ids are accessed with the Cypher <code class="jarombek-inline-code">id()</code> function<sup>1</sup>.
+ids are accessed with the Cypher <code className="jarombek-inline-code">id()</code> function<sup>1</sup>.
 </p>
 <CodeSnippet language="Cypher">
 MATCH (p:Person) WHERE id(p) = 62 DETACH DELETE p
 </CodeSnippet>
 <p>
 This example searches for a node where the id equals 62 and deletes it.  The pair of keywords
-I haven't used before are <code class="jarombek-inline-code">DETACH DELETE</code>.  In order to delete
-a node in Cypher you also have to delete its relationships, so <code class="jarombek-inline-code">
+I haven't used before are <code className="jarombek-inline-code">DETACH DELETE</code>.  In order to delete
+a node in Cypher you also have to delete its relationships, so <code className="jarombek-inline-code">
 DETACH DELETE</code> removes both<sup>2</sup>.
 </p>
 <p>
@@ -61,7 +61,7 @@ CREATE (aj:Person {name: 'Andy J.'}),
 <p>
 The settlements are now populated with people!  However, Fairfield County still seems a bit boring.  Let's populate it
 with the top rated pizza places in the county.  I created pizza vertices and gave them a
-<code class="jarombek-inline-code">:LOCATED_IN</code> relationship to a settlement:
+<code className="jarombek-inline-code">:LOCATED_IN</code> relationship to a settlement:
 </p>
 <CodeSnippet language="Cypher">
 CREATE (stan:Pizza {name: 'Stanziatos Wood Fired Pizza', price: 2, rating: 4.5}),
@@ -87,21 +87,21 @@ DELETE r, dups, pizza
 Let's walk through this.  First I queried the graph for all settlements.  Then I
 set up a table with two columns.  The first column contains the name of a
 settlement and the second column contains a list of all settlement vertices with that name.
-The first column is created with the statement <code class="jarombek-inline-code">WITH s.name as name</code>.
-The <code class="jarombek-inline-code">WITH</code> clause is used to manipulate data (in this case
+The first column is created with the statement <code className="jarombek-inline-code">WITH s.name as name</code>.
+The <code className="jarombek-inline-code">WITH</code> clause is used to manipulate data (in this case
 the settlement vertices) before its passed to the next line in the query<sup>4</sup>.
-The <code class="jarombek-inline-code">AS</code> keyword creates an alias for a column.
+The <code className="jarombek-inline-code">AS</code> keyword creates an alias for a column.
 I created a list of all the settlement vertices with a given name with Cypher's
-<code class="jarombek-inline-code">collect()</code> function.  The entire second line
-of code in the sample above is basically an implicit <code class="jarombek-inline-code">GROUP BY</code> statement (like those
-in SQL).  Cypher has no explicit <code class="jarombek-inline-code">GROUP BY</code> syntax.
+<code className="jarombek-inline-code">collect()</code> function.  The entire second line
+of code in the sample above is basically an implicit <code className="jarombek-inline-code">GROUP BY</code> statement (like those
+in SQL).  Cypher has no explicit <code className="jarombek-inline-code">GROUP BY</code> syntax.
 </p>
 <p>
-Next, the line <code class="jarombek-inline-code">WHERE size(instances) > 1</code> filters the
-<code class="jarombek-inline-code">instances</code> list down to those with multiple vertices.  The following line, <code class="jarombek-inline-code">
+Next, the line <code className="jarombek-inline-code">WHERE size(instances) > 1</code> filters the
+<code className="jarombek-inline-code">instances</code> list down to those with multiple vertices.  The following line, <code className="jarombek-inline-code">
 UNWIND tail(instances) as dups</code> transforms the list back into table rows<sup>5</sup>. Finally we see if
-a table row (which is a settlement) has a <code class="jarombek-inline-code">LOCATED_IN</code> relationship to a vertex with
-label <code class="jarombek-inline-code">:Pizza</code>.  If so the settlement is duplicated data.  In the final
+a table row (which is a settlement) has a <code className="jarombek-inline-code">LOCATED_IN</code> relationship to a vertex with
+label <code className="jarombek-inline-code">:Pizza</code>.  If so the settlement is duplicated data.  In the final
 line, I deleted the settlement, relationship, and pizza place from the graph.  The graph is successfully
 cleaned up!
 </p>
@@ -115,14 +115,14 @@ MATCH (s1:Settlement {name: 'Danbury'})
 MERGE (p1)-[:LOCATED_IN]->(s1)
 </CodeSnippet>
 <p>
-First I created a pizza place and passed it to the <code class="jarombek-inline-code">MATCH</code>
-statement via the <code class="jarombek-inline-code">WITH</code> clause.  This sequence uses
-<code class="jarombek-inline-code">WITH</code> for variable passing without performing any
-manipulations.  Instead of creating a new settlement I used <code class="jarombek-inline-code">MATCH</code>
-to find an existing one.  I then used <code class="jarombek-inline-code">MERGE</code> to create a <code class="jarombek-inline-code">
-LOCATED_IN</code> relationship between the settlement and the pizza place. <code class="jarombek-inline-code">MERGE</code> only creates a new
+First I created a pizza place and passed it to the <code className="jarombek-inline-code">MATCH</code>
+statement via the <code className="jarombek-inline-code">WITH</code> clause.  This sequence uses
+<code className="jarombek-inline-code">WITH</code> for variable passing without performing any
+manipulations.  Instead of creating a new settlement I used <code className="jarombek-inline-code">MATCH</code>
+to find an existing one.  I then used <code className="jarombek-inline-code">MERGE</code> to create a <code className="jarombek-inline-code">
+LOCATED_IN</code> relationship between the settlement and the pizza place. <code className="jarombek-inline-code">MERGE</code> only creates a new
 relationship if one does not already exist.  If a relationship does not exist,
-<code class="jarombek-inline-code">MERGE</code> acts the same as <code class="jarombek-inline-code">CREATE</code>.
+<code className="jarombek-inline-code">MERGE</code> acts the same as <code className="jarombek-inline-code">CREATE</code>.
 </p>
 <p>
 Now the graph is complete with settlements, people, and places to eat.  One last important thing to mention

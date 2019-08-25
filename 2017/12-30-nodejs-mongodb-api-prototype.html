@@ -26,7 +26,7 @@ or MERN (MongoDB, Express, <strong>React.js</strong>, Node.js).  Both of these w
 <SectionTitle title="Prototype Structure">Prototype Structure</SectionTitle>
 <p>
 The prototype is a REST API that lets users look at songs and artists.  They can also comment on songs.
-MongoDB stores this information in a database called <code class="jarombek-inline-code">music_api</code>.
+MongoDB stores this information in a database called <code className="jarombek-inline-code">music_api</code>.
 Databases in MongoDB are simply namespaces, which is much different than their Relational Database
 equivalents.  In a RDBMS you need a username and password among other items to connect to a certain
 database.  MongoDB does not have this requirement.
@@ -35,14 +35,14 @@ database.  MongoDB does not have this requirement.
 The data is then stored in collections of documents including songs, artists, and end users.
 </p>
 <figure id="mongo-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-mongodb.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-mongodb.png">
 </figure>
 <p>
 The Node.js run-time environment and Express web application framework then expose a REST API to users so
 they can query, create, update, and delete items in the database (all CRUD operations).
 </p>
 <figure id="restapi-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-restapi.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-restapi.png">
 </figure>
 <p>
 For the prototype most of the functionality surrounds viewing and manipulating songs, however in a full
@@ -98,17 +98,17 @@ const SongSchema = new Schema({
 }, {usePushEach: true});
 </CodeSnippet>
 <p>
-Each <code class="jarombek-inline-code">Schema()</code> constructor function takes
+Each <code className="jarombek-inline-code">Schema()</code> constructor function takes
 a JSON object that represents all the properties of the MongoDB document.  You can also add
-additional validations, such as making certain fields required (<code class="jarombek-inline-code">
-required: true</code>) or having a default value (<code class="jarombek-inline-code">default: Date.now()
+additional validations, such as making certain fields required (<code className="jarombek-inline-code">
+required: true</code>) or having a default value (<code className="jarombek-inline-code">default: Date.now()
 </code>)<sup>1</sup>.  When a user uploads a JSON object to a schema and tries updating the
 database, only the properties seen in the schema will be persisted to MongoDB.
 </p>
 <p>
-Also there is a comments property which takes an array of type <code class="jarombek-inline-code">
-CommentSchema</code>.  This <code class="jarombek-inline-code">CommentSchema</code> can
-be defined similarly to how I implemented <code class="jarombek-inline-code">SongSchema</code>.
+Also there is a comments property which takes an array of type <code className="jarombek-inline-code">
+CommentSchema</code>.  This <code className="jarombek-inline-code">CommentSchema</code> can
+be defined similarly to how I implemented <code className="jarombek-inline-code">SongSchema</code>.
 </p>
 <CodeSnippet language="JavaScript">
 const CommentSchema = new Schema({
@@ -126,10 +126,10 @@ const CommentSchema = new Schema({
 </CodeSnippet>
 <p>
 Another powerful feature of Mongoose is we can define database indexes directly on the
-<code class="jarombek-inline-code">Schema</code> object.  With advanced features such as this, Mongoose
+<code className="jarombek-inline-code">Schema</code> object.  With advanced features such as this, Mongoose
 has transformed into something much more powerful than a ORM.  With Mongoose I never used
 the MongoDB CLI since everything I needed could be performed through Mongoose.  Here is
-an index I made on the <code class="jarombek-inline-code">name</code> property
+an index I made on the <code className="jarombek-inline-code">name</code> property
 in the artist schema.
 </p>
 <CodeSnippet language="JavaScript">
@@ -143,8 +143,8 @@ become ugly and hard to read once nested database calls are made (commonly known
 Luckily Mongoose allows us to use <a href="https://jarombek.com/blog/nov-21-2017-js-promises">ES6 Promises</a>
 instead<sup>2</sup>.  One of the first
 things I did when creating my API calls was replace all the callbacks with Promises.  Here
-is some code that performs a <code class="jarombek-inline-code">find</code> operation on the
-<code class="jarombek-inline-code">Song</code> schema and then returns it as a HTTP response using a promise.
+is some code that performs a <code className="jarombek-inline-code">find</code> operation on the
+<code className="jarombek-inline-code">Song</code> schema and then returns it as a HTTP response using a promise.
 </p>
 <CodeSnippet language="JavaScript">
 Song.find().exec()
@@ -165,9 +165,9 @@ Song.find().exec()
 </CodeSnippet>
 <SectionTitle title="Using EJS to Return XML">Using EJS to Return XML</SectionTitle>
 <p>
-You may have noticed in the last code sample the <code class="jarombek-inline-code">res.format()</code>
+You may have noticed in the last code sample the <code className="jarombek-inline-code">res.format()</code>
 function which returns the song data as an HTTP response.  This function also returns either JSON or XML
-depending on the MIME type specified in the HTTP requests <code class="jarombek-inline-code">Accept</code>
+depending on the MIME type specified in the HTTP requests <code className="jarombek-inline-code">Accept</code>
 header.  Normally I don't think the amount of development work needed to return both notations would be worth it but
 Express made it so easy to implement<sup>3</sup>!
 </p>
@@ -252,7 +252,7 @@ settled for ES5 just to be safe.  Here you can see the XML result in postman:
 Text searching is how search engines take user input and return a list of results.  The full picture
 of how it works is beyond the scope of this blog (although it would make for a fun discovery some day!)
 but just know that MongoDB allows for a barebones version of text searching.  You can implement a text
-search by defining an index of type <code class="jarombek-inline-code">'text'</code> on a property (most
+search by defining an index of type <code className="jarombek-inline-code">'text'</code> on a property (most
 likely you will define it on a string but you could even place it on an array)<sup>6</sup>.  MongoDB will
 do the rest of the work for you.  Weights can also be placed on properties to specify how important a
 certain field is for a search<sup>7</sup>.
@@ -260,7 +260,7 @@ certain field is for a search<sup>7</sup>.
 <p>
 Remember how I said practically anything you wanted to do in MongoDB can be done in Node.js using Mongoose?
 You can implement a text search and its necessary indexes as well<sup>8</sup>!  Here are the indexes which
-are placed on the <code class="jarombek-inline-code">SongSchema</code>:
+are placed on the <code className="jarombek-inline-code">SongSchema</code>:
 </p>
 <CodeSnippet language="JavaScript">
 SongSchema.index(
@@ -309,18 +309,18 @@ searchRouter.route('/:query')
 </CodeSnippet>
 <p>
 Now a text search can be executed on the song collection.  When a text string is entered, it finds matches
-on the <code class="jarombek-inline-code">title</code>,
-<code class="jarombek-inline-code">artist</code>, <code class="jarombek-inline-code">album</code>,
-and <code class="jarombek-inline-code">best_lyric</code> fields.  When I search the word 'faith', it
+on the <code className="jarombek-inline-code">title</code>,
+<code className="jarombek-inline-code">artist</code>, <code className="jarombek-inline-code">album</code>,
+and <code className="jarombek-inline-code">best_lyric</code> fields.  When I search the word 'faith', it
 matches a Mariah Carey song with a matching lyric:
 </p>
 <figure id="xmlresponsetext-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-xmlresponsetext.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-30-17-xmlresponsetext.png">
 </figure>
 <SectionTitle title="Basic Auth">Basic Auth</SectionTitle>
 <p>
 I also found a really nice library to add basic auth to my endpoints.  Basic auth works by using the
-HTTP requests <code class="jarombek-inline-code">Authorization</code> header to check for a base64
+HTTP requests <code className="jarombek-inline-code">Authorization</code> header to check for a base64
 encoded credential string.  This credential string before being encoded has
 the form &lt;username&gt;:&lt;password&gt; followed by the unicode pound sign (U+00A3)<sup>9</sup>.
 </p>
