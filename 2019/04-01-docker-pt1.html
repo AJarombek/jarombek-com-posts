@@ -68,7 +68,7 @@ amazon-linux-extras install docker
 <p>
 Most environments have installation instructions on <a href="https://docs.docker.com/install/">Docker's
 website</a>.  To work with Docker, you also must start it on your machine.  For example, on
-Amazon Linux the command <code class="jarombek-inline-code">service docker start</code> starts Docker.
+Amazon Linux the command <code className="jarombek-inline-code">service docker start</code> starts Docker.
 </p>
 <SectionTitle title="Docker Concepts">Docker Concepts</SectionTitle>
 <p>
@@ -77,32 +77,32 @@ container in the same way a class is a blueprint for an object.  A container is 
 </p>
 <p>
 Docker has a CLI for interacting with images and containers.  To download an existing image onto your
-computer, you can execute the <code class="jarombek-inline-code">docker pull</code> command.  For
+computer, you can execute the <code className="jarombek-inline-code">docker pull</code> command.  For
 example, the following command downloads the official ubuntu image onto your computer.  It pulls the
-default repository tag (similar to tags in a git repository), which is <code class="jarombek-inline-code">
+default repository tag (similar to tags in a git repository), which is <code className="jarombek-inline-code">
 latest</code>.
 </p>
 <CodeSnippet language="Bash">
 docker pull ubuntu
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">docker pull</code> command retrieves an image from a repository.
+The <code className="jarombek-inline-code">docker pull</code> command retrieves an image from a repository.
 By default Docker uses <a href="https://hub.docker.com">DockerHub</a> as a repository.  You can find
 the pulled image on the official <a href="https://hub.docker.com/_/ubuntu">Ubuntu DockerHub repository</a>.
 </p>
 <p>
-The following <code class="jarombek-inline-code">docker container run</code> command starts a
-container based on the <code class="jarombek-inline-code">ubuntu</code> image.
+The following <code className="jarombek-inline-code">docker container run</code> command starts a
+container based on the <code className="jarombek-inline-code">ubuntu</code> image.
 </p>
 <CodeSnippet language="Bash">
 docker container run -it ubuntu:latest /bin/bash
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">-it</code> flags allow commands to be written in a terminal
-running inside the container<sup>6</sup>.  <code class="jarombek-inline-code">/bin/bash</code> tells
-the container to run a bash process.  After running the <code class="jarombek-inline-code">docker
+The <code className="jarombek-inline-code">-it</code> flags allow commands to be written in a terminal
+running inside the container<sup>6</sup>.  <code className="jarombek-inline-code">/bin/bash</code> tells
+the container to run a bash process.  After running the <code className="jarombek-inline-code">docker
  container run</code> command, your Bash terminal runs inside the container.  For example, you can run
-<code class="jarombek-inline-code">ps -elf</code> to see all the processes running inside the container.
+<code className="jarombek-inline-code">ps -elf</code> to see all the processes running inside the container.
 To return the Bash shell from the container to the host machine, click <strong>CTRL-P + CTRL-Q</strong> on the keyboard.
 </p>
 <p>
@@ -120,8 +120,8 @@ CONTAINER ID    IMAGE            COMMAND         CREATED           STATUS       
 7daf46a8cbdb    ubuntu:latest    "/bin/bash"     33 seconds ago    Up 32 seconds             infallible_lamport
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">docker container ls</code> reveals that each container is given a
-name; in my case the ubuntu container is given the name <code class="jarombek-inline-code">infallible_lamport</code>.
+<code className="jarombek-inline-code">docker container ls</code> reveals that each container is given a
+name; in my case the ubuntu container is given the name <code className="jarombek-inline-code">infallible_lamport</code>.
 Using a container name, you can reconnect to, stop, or delete a container.
 </p>
 <CodeSnippet language="Bash">

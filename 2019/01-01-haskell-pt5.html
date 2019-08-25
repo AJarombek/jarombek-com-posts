@@ -11,13 +11,13 @@ This article helps clear the confusion of Haskell classes.
 <p>
 My previous Haskell post looked at declaring custom types.  Custom types and existing types can become
 instances of classes, giving them functionality.  Type classes are created with a
-<code class="jarombek-inline-code">class</code> declaration and instances are created with an
-<code class="jarombek-inline-code">instance</code> declaration.
+<code className="jarombek-inline-code">class</code> declaration and instances are created with an
+<code className="jarombek-inline-code">instance</code> declaration.
 </p>
 <p>
 As I mentioned earlier, a class is similar to a Java interface.  Therefore it provides operator and function
-declarations without bodies.  For example, the following <code class="jarombek-inline-code">Eq</code> class matches the one in the
-<code class="jarombek-inline-code">Prelude</code> module that checks for equality.
+declarations without bodies.  For example, the following <code className="jarombek-inline-code">Eq</code> class matches the one in the
+<code className="jarombek-inline-code">Prelude</code> module that checks for equality.
 </p>
 <CodeSnippet language="Haskell">
 class Eq a where
@@ -26,17 +26,17 @@ class Eq a where
   x /= y = not (x == y)
 </CodeSnippet>
 <p>
-The class <code class="jarombek-inline-code">Eq</code> defines two operators, <code class="jarombek-inline-code">
-==</code> and <code class="jarombek-inline-code">/=</code>.  It also creates a default definition
-for the <code class="jarombek-inline-code">/=</code> operator (which is simply the opposite of
-<code class="jarombek-inline-code">==</code>).  If an instance of <code class="jarombek-inline-code">
-Eq</code> does not implement the <code class="jarombek-inline-code">/=</code> operator, its functionality falls
+The class <code className="jarombek-inline-code">Eq</code> defines two operators, <code className="jarombek-inline-code">
+==</code> and <code className="jarombek-inline-code">/=</code>.  It also creates a default definition
+for the <code className="jarombek-inline-code">/=</code> operator (which is simply the opposite of
+<code className="jarombek-inline-code">==</code>).  If an instance of <code className="jarombek-inline-code">
+Eq</code> does not implement the <code className="jarombek-inline-code">/=</code> operator, its functionality falls
 back to the default definition<sup>2</sup>.
 </p>
 <p>
-A type is defined as an instance of a class using an <code class="jarombek-inline-code">instance</code>
-declaration.  The following code declares <code class="jarombek-inline-code">Int</code> as an instance
-of <code class="jarombek-inline-code">Eq</code>.
+A type is defined as an instance of a class using an <code className="jarombek-inline-code">instance</code>
+declaration.  The following code declares <code className="jarombek-inline-code">Int</code> as an instance
+of <code className="jarombek-inline-code">Eq</code>.
 </p>
 <CodeSnippet language="Haskell">
 instance Eq Int where
@@ -44,15 +44,15 @@ instance Eq Int where
   (/=) = neInt
 </CodeSnippet>
 <p>
-While I didn't have to implement <code class="jarombek-inline-code">(/=)</code> due to the default
-definition, there is no harm in implementing it anyway.  <code class="jarombek-inline-code">eqInt</code>
-and <code class="jarombek-inline-code">neInt</code> are internal Haskell functions used to determine
+While I didn't have to implement <code className="jarombek-inline-code">(/=)</code> due to the default
+definition, there is no harm in implementing it anyway.  <code className="jarombek-inline-code">eqInt</code>
+and <code className="jarombek-inline-code">neInt</code> are internal Haskell functions used to determine
 integer equality.
 </p>
 <p>
-Thanks to the <code class="jarombek-inline-code">Eq</code> class and corresponding instance declaration, any two
-<code class="jarombek-inline-code">Int</code> types can be used with the <code class="jarombek-inline-code">
-==</code> and <code class="jarombek-inline-code">/=</code> operators.
+Thanks to the <code className="jarombek-inline-code">Eq</code> class and corresponding instance declaration, any two
+<code className="jarombek-inline-code">Int</code> types can be used with the <code className="jarombek-inline-code">
+==</code> and <code className="jarombek-inline-code">/=</code> operators.
 </p>
 <CodeSnippet language="Haskell">
 main :: IO ()
@@ -62,8 +62,8 @@ main = do
 </CodeSnippet>
 <p>
 Just like built-in types, instances can be created with custom types.  The following code creates
-a custom <code class="jarombek-inline-code">FirTree</code> type and declares it as an instance of
-<code class="jarombek-inline-code">Eq</code>.
+a custom <code className="jarombek-inline-code">FirTree</code> type and declares it as an instance of
+<code className="jarombek-inline-code">Eq</code>.
 </p>
 <CodeSnippet language="Haskell">
 
@@ -81,8 +81,8 @@ instance Eq FirTree where
   _ == _ = False
 </CodeSnippet>
 <p>
-I tested the <code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">
-/=</code> operators with <code class="jarombek-inline-code">FirTree</code> types.
+I tested the <code className="jarombek-inline-code">==</code> and <code className="jarombek-inline-code">
+/=</code> operators with <code className="jarombek-inline-code">FirTree</code> types.
 </p>
 <CodeSnippet language="Haskell">
 main :: IO ()
@@ -111,8 +111,8 @@ of Haskell classes in object oriented terms simply because there are many differ
 These differences become apparent when dealing with multiple inheritance and class extensions.
 </p>
 <p>
-A simple example of a class extension from the <code class="jarombek-inline-code">Prelude</code> module
-is the <code class="jarombek-inline-code">Ord</code> class which extends <code class="jarombek-inline-code">Eq</code>.
+A simple example of a class extension from the <code className="jarombek-inline-code">Prelude</code> module
+is the <code className="jarombek-inline-code">Ord</code> class which extends <code className="jarombek-inline-code">Eq</code>.
 </p>
 <CodeSnippet language="Haskell">
 class (Eq a) => Ord a where
@@ -128,10 +128,10 @@ class (Eq a) => Ord a where
 </CodeSnippet>
 <p>
 One of the major misconceptions I had about class extensions was a result of my object oriented
-background.  I figured that instances of <code class="jarombek-inline-code">Ord</code> would
-inherit the operators and functions from <code class="jarombek-inline-code">Eq</code>, but that is not
+background.  I figured that instances of <code className="jarombek-inline-code">Ord</code> would
+inherit the operators and functions from <code className="jarombek-inline-code">Eq</code>, but that is not
 the case.  What a class extension actually means is that for a type to be an instance of
-<code class="jarombek-inline-code">Ord</code> it must also be an instance of <code class="jarombek-inline-code">Eq</code><sup>3</sup>.
+<code className="jarombek-inline-code">Ord</code> it must also be an instance of <code className="jarombek-inline-code">Eq</code><sup>3</sup>.
 This is much different than object oriented class inheritance.
 </p>
 <p>
@@ -193,10 +193,10 @@ class (ChristmasTree a, EvergreenTree a) => FirTree a where
   needle_retention :: a -> Grade
 </CodeSnippet>
 <p>
-To make the <code class="jarombek-inline-code">FrasierFir</code>, <code class="jarombek-inline-code">BalsamFir</code>,
-and <code class="jarombek-inline-code">DouglasFir</code> types instances of <code class="jarombek-inline-code">
-FirTree</code>, they first must be instances of <code class="jarombek-inline-code">Tree</code>,
-<code class="jarombek-inline-code">ChristmasTree</code>, and <code class="jarombek-inline-code">EvergreenTree</code>.
+To make the <code className="jarombek-inline-code">FrasierFir</code>, <code className="jarombek-inline-code">BalsamFir</code>,
+and <code className="jarombek-inline-code">DouglasFir</code> types instances of <code className="jarombek-inline-code">
+FirTree</code>, they first must be instances of <code className="jarombek-inline-code">Tree</code>,
+<code className="jarombek-inline-code">ChristmasTree</code>, and <code className="jarombek-inline-code">EvergreenTree</code>.
 </p>
 <CodeSnippet language="Haskell">
 {-|

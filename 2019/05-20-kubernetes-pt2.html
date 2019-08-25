@@ -58,7 +58,7 @@ NAME            STATUS     ROLES    AGE   VERSION
 ip-10-0-1-154   NotReady   master   23s   v1.14.2
 </CodeSnippet>
 <p>
-Notice that the node listed has a status of <code class="jarombek-inline-code">NotReady</code>.  The node isn't ready because the
+Notice that the node listed has a status of <code className="jarombek-inline-code">NotReady</code>.  The node isn't ready because the
 cluster isn't set up with networking capabilities yet<sup>1</sup>.  The following command sets up the
 networking.
 </p>
@@ -66,7 +66,7 @@ networking.
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 </CodeSnippet>
 <p>
-After waiting a few seconds, the master node will be in a <code class="jarombek-inline-code">Ready</code> state.
+After waiting a few seconds, the master node will be in a <code className="jarombek-inline-code">Ready</code> state.
 </p>
 <CodeSnippet language="Bash">
 kubectl get nodes
@@ -121,12 +121,12 @@ Pod are the ones which run applications.
 </p>
 <p>
 More often than not, a Pod holds a single container.  In the YAML configuration above, the
-<code class="jarombek-inline-code">nodejs-app</code> Pod holds a single container based on the
-<code class="jarombek-inline-code">ajarombek/nodejs-docker-app:latest</code> Docker image.  This image
+<code className="jarombek-inline-code">nodejs-app</code> Pod holds a single container based on the
+<code className="jarombek-inline-code">ajarombek/nodejs-docker-app:latest</code> Docker image.  This image
 is hosted on <a href="https://hub.docker.com/r/ajarombek/nodejs-docker-app">DockerHub</a>.
 </p>
 <p>
-The Pod definition exposes port <code class="jarombek-inline-code">3000</code> on the container as an entry point to
+The Pod definition exposes port <code className="jarombek-inline-code">3000</code> on the container as an entry point to
 the application.  However, the Pod doesn't provide a way to access the container from outside the
 Kubernetes cluster.  Networking configuration for Pods is performed by another object called a Service.
 </p>
@@ -161,13 +161,13 @@ spec:
 </CodeSnippet>
 <p>
 There are multiple different types of services in Kubernetes.  The type of the service defined above is
-<code class="jarombek-inline-code">NodePort</code>.  A <code class="jarombek-inline-code">NodePort</code>
+<code className="jarombek-inline-code">NodePort</code>.  A <code className="jarombek-inline-code">NodePort</code>
 service exposes a port on each node in the Kubernetes cluster<sup>6</sup>.  When a request is made to
 a nodes IP address at the exposed port, the request is forwarded to any corresponding Pods.
 </p>
 <p>
-Since my node (an EC2 instance) has a public IP address, the <code class="jarombek-inline-code">NodePort</code>
-service allows me to access the application at port <code class="jarombek-inline-code">30001</code>.
+Since my node (an EC2 instance) has a public IP address, the <code className="jarombek-inline-code">NodePort</code>
+service allows me to access the application at port <code className="jarombek-inline-code">30001</code>.
 </p>
 <SectionTitle title="Configuring the Cluster">Configuring the Cluster</SectionTitle>
 <p>
@@ -245,16 +245,16 @@ NAME         READY   STATUS    RESTARTS   AGE
 nodejs-app   0/1     Pending   0          32s
 </CodeSnippet>
 <p>
-The first command proves that the <code class="jarombek-inline-code">nodejs-app-service</code> service
-was created and assigned an internal IP address and port mapping.  <code class="jarombek-inline-code">
-nodejs-app-service</code> is accessible within the cluster at the private IP address <code class="jarombek-inline-code">
-10.110.40.12</code> on port <code class="jarombek-inline-code">3000</code>.  It's also accessible from
-the nodes public IP address at port <code class="jarombek-inline-code">30001</code>.
+The first command proves that the <code className="jarombek-inline-code">nodejs-app-service</code> service
+was created and assigned an internal IP address and port mapping.  <code className="jarombek-inline-code">
+nodejs-app-service</code> is accessible within the cluster at the private IP address <code className="jarombek-inline-code">
+10.110.40.12</code> on port <code className="jarombek-inline-code">3000</code>.  It's also accessible from
+the nodes public IP address at port <code className="jarombek-inline-code">30001</code>.
 </p>
 <p>
-The second command is a bit more concerning.  The status of the Pod is <code class="jarombek-inline-code">
+The second command is a bit more concerning.  The status of the Pod is <code className="jarombek-inline-code">
 Pending</code>, meaning it hasn't been scheduled to run on a node.  To debug this issue, we can
-execute the <code class="jarombek-inline-code">kubectl describe pod
+execute the <code className="jarombek-inline-code">kubectl describe pod
 </code> command.  While it returns a lot of info, the relevant piece is the following:
 </p>
 <CodeSnippet>
@@ -273,29 +273,29 @@ with a configuration object called a <strong>taint</strong>.
 </p>
 <p>
 In Kubernetes, taints repel Pods from being scheduled to certain nodes<sup>7</sup>.  By default, the
-master node has a taint called <code class="jarombek-inline-code">NoSchedule</code>.  Unless you specify
-in the YAML configuration that a Pod tolerates the <code class="jarombek-inline-code">NoSchedule</code>
+master node has a taint called <code className="jarombek-inline-code">NoSchedule</code>.  Unless you specify
+in the YAML configuration that a Pod tolerates the <code className="jarombek-inline-code">NoSchedule</code>
 taint, Pods are not be scheduled to the master node.  Since I did not specify this toleration,
 the Pod failed to be scheduled.
 </p>
 <p>
-A workaround for this issue is to remove the <code class="jarombek-inline-code">NoSchedule</code> taint
+A workaround for this issue is to remove the <code className="jarombek-inline-code">NoSchedule</code> taint
 from the master node.  The following command achieves this (note that the name of your node will be different):
 </p>
 <CodeSnippet language="Bash">
 kubectl taint node ip-10-0-1-154 node-role.kubernetes.io/master:NoSchedule-
 </CodeSnippet>
 <p>
-Now if you check the status of the Pod again with <code class="jarombek-inline-code">kubectl get pod</code>,
-you will see that its status changed to <code class="jarombek-inline-code">Ready</code>!  The Pod
+Now if you check the status of the Pod again with <code className="jarombek-inline-code">kubectl get pod</code>,
+you will see that its status changed to <code className="jarombek-inline-code">Ready</code>!  The Pod
 was successfully scheduled to the master node.  The application setup is complete and the application
 is accessible on the master nodes public IP address.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-19-aws-console.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-19-aws-console.png"/>
 </figure>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-19-web-browser.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-19-web-browser.png"/>
 </figure>
 <SectionTitle title="Cluster Limitations">Cluster Limitations</SectionTitle>
 <p>

@@ -10,19 +10,19 @@ template are mutated (along with async code returning, timeouts completing, etc.
 </p>
 <p>
 Angular also allows developers to change the change detection strategy on a per-component basis.  This post
-explores the two change detection strategies - <code class="jarombek-inline-code">Default</code> and
-<code class="jarombek-inline-code">OnPush</code>.
+explores the two change detection strategies - <code className="jarombek-inline-code">Default</code> and
+<code className="jarombek-inline-code">OnPush</code>.
 </p>
-<SectionTitle title="How Default change detection works">How <code class="jarombek-header-code">Default</code> Change Detection Works</SectionTitle>
+<SectionTitle title="How Default change detection works">How <code className="jarombek-header-code">Default</code> Change Detection Works</SectionTitle>
 <p>
-By default, Angular uses the <code class="jarombek-inline-code">ChangeDetectionStrategy.Default</code>
-change detection strategy.  <code class="jarombek-inline-code">Default</code> tracks alterations to
+By default, Angular uses the <code className="jarombek-inline-code">ChangeDetectionStrategy.Default</code>
+change detection strategy.  <code className="jarombek-inline-code">Default</code> tracks alterations to
 Angular's two-way data binding system.  One thing this strategy checks for is changes to variables in
 the component templates<sup>1</sup>.  Variable alterations include both value and reference changes.
 </p>
 <p>
-Another thing <code class="jarombek-inline-code">Default</code> checks for is DOM events.  At a low
-level Angular monkey patches functions in the DOM API such as <code class="jarombek-inline-code">
+Another thing <code className="jarombek-inline-code">Default</code> checks for is DOM events.  At a low
+level Angular monkey patches functions in the DOM API such as <code className="jarombek-inline-code">
 addEventListener()</code><sup>2</sup>.  This allows Angular to perform its own logic whenever the DOM
 is altered or interacted with.
 </p>
@@ -32,35 +32,35 @@ the current programs execution context.  Monkey patching occurs in <a href="http
 sep-14-2018-groovy-dynamic">dynamic programming languages</a>.
 </Definition>
 <p>
-Other things <code class="jarombek-inline-code">Default</code> change detection checks for includes
+Other things <code className="jarombek-inline-code">Default</code> change detection checks for includes
 asynchronous callbacks and timeout completions<sup>3</sup>.
 </p>
-<SectionTitle title="How OnPush change detection works">How <code class="jarombek-header-code">OnPush</code> Change Detection Works</SectionTitle>
+<SectionTitle title="How OnPush change detection works">How <code className="jarombek-header-code">OnPush</code> Change Detection Works</SectionTitle>
 <p>
-<code class="jarombek-inline-code">ChangeDetectionStrategy.OnPush</code> change detection is used as an
-optimization technique.  For DOM events <code class="jarombek-inline-code">OnPush</code> works
-similarly to <code class="jarombek-inline-code">Default</code>.  The DOM API is monkey patched and change
+<code className="jarombek-inline-code">ChangeDetectionStrategy.OnPush</code> change detection is used as an
+optimization technique.  For DOM events <code className="jarombek-inline-code">OnPush</code> works
+similarly to <code className="jarombek-inline-code">Default</code>.  The DOM API is monkey patched and change
 detection runs when a DOM event occurs.
 </p>
 <p>
-Differences arise when handling variable changes in component templates.  By using <code class="jarombek-inline-code">OnPush</code>,
+Differences arise when handling variable changes in component templates.  By using <code className="jarombek-inline-code">OnPush</code>,
 we tell Angular that the component uses immutable objects in its template<sup>4</sup>.
-<code class="jarombek-inline-code">OnPush</code> will only trigger change detection when a template variable
+<code className="jarombek-inline-code">OnPush</code> will only trigger change detection when a template variable
 reference changes.  Change detection will <strong>not</strong> trigger when a template variable is mutated.
 </p>
 <SectionTitle title="Change Detection Project">Change Detection Project</SectionTitle>
 <p>
-To help visualize the differences between <code class="jarombek-inline-code">Default</code> and
-<code class="jarombek-inline-code">OnPush</code> I created an Angular application with two nearly
-identical components.  One uses <code class="jarombek-inline-code">OnPush</code> and the other uses
-<code class="jarombek-inline-code">Default</code> change detection.  I log every time a change detection
+To help visualize the differences between <code className="jarombek-inline-code">Default</code> and
+<code className="jarombek-inline-code">OnPush</code> I created an Angular application with two nearly
+identical components.  One uses <code className="jarombek-inline-code">OnPush</code> and the other uses
+<code className="jarombek-inline-code">Default</code> change detection.  I log every time a change detection
 cycle occurs to make things clearer.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/3-12-19-cd-project.gif"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/3-12-19-cd-project.gif"/>
 </figure>
 <p>
-The major takeaway from this project is that <code class="jarombek-inline-code">OnPush</code> results
+The major takeaway from this project is that <code className="jarombek-inline-code">OnPush</code> results
 in fewer change detection cycles.  However, be careful and make sure all objects are immutable.
 If variables mutate, unexpected UI changes (or lack thereof) are likely to occur.
 </p>

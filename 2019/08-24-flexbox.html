@@ -20,7 +20,7 @@ of online traffic.
 </p>
 <p>
 Flexbox layouts consist of a flex container and one or more flex items.  The parent element in a Flexbox layout
-is the flex container.  Flex containers contain the <code class="jarombek-inline-code">display: flex</code>
+is the flex container.  Flex containers contain the <code className="jarombek-inline-code">display: flex</code>
 CSS declaration.  Direct children of the flex container are called flex items.  The next section walks through
 some simple Flexbox layouts.
 </p>
@@ -32,7 +32,7 @@ of the top ten programming languages based on the number of lines I’ve coded i
 Flexbox layout:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-1.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-1.png"/>
 </figure>
 <p>
 To create this layout, I used the following styles.  I omitted all the styles for colors, backgrounds, and fonts.
@@ -69,18 +69,18 @@ To create this layout, I used the following styles.  I omitted all the styles fo
 </CodeSnippet>
 <p>
 I’m using Sass for my stylesheets to better represent the hierarchy of flex containers and flex items,
-along with the help of mixins and <code class="jarombek-inline-code">for</code> loops.  I also included
-CSS declarations with <code class="jarombek-inline-code">-ms-*</code> prefixes so that Flexbox can work
+along with the help of mixins and <code className="jarombek-inline-code">for</code> loops.  I also included
+CSS declarations with <code className="jarombek-inline-code">-ms-*</code> prefixes so that Flexbox can work
 with Internet Explorer<sup>4</sup>.  IE versions 10 and 11 supports an older spec of Flexbox which is
 specified with these declaration prefixes.
 </p>
 <p>
 The outer flex container specifies the y-axis as the main axis, so the languages are displayed vertically.
-Notice that you can align the flex items along the x-axis with the <code class="jarombek-inline-code">
+Notice that you can align the flex items along the x-axis with the <code className="jarombek-inline-code">
 align-items</code> attribute.  Here is another layout which uses the x-axis as the main axis:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-2.gif"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-2.gif"/>
 </figure>
 <p>
 Here are the new styles for this layout:
@@ -131,14 +131,14 @@ Here are the new styles for this layout:
 }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">flex-direction</code> was altered from <code class="jarombek-inline-code">column</code>
-to <code class="jarombek-inline-code">row</code> in order to use the x-axis.  I made sure that the flex items
-went off the screen instead of moving onto the next line with the <code class="jarombek-inline-code">flex-wrap: nowrap</code>
+<code className="jarombek-inline-code">flex-direction</code> was altered from <code className="jarombek-inline-code">column</code>
+to <code className="jarombek-inline-code">row</code> in order to use the x-axis.  I made sure that the flex items
+went off the screen instead of moving onto the next line with the <code className="jarombek-inline-code">flex-wrap: nowrap</code>
 declaration.  In the flex item, I added new flex attributes which determine the size of the flex item.
 The next layout simply allows flex items to move onto the next line inside the flex container.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-3.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-3.png"/>
 </figure>
 <CodeSnippet language="Sass">
 .flex-container {
@@ -180,7 +180,7 @@ and resize to find room.  The following layout changes the way spacing is distri
 and don’t allow them to grow in size above their natural width:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-4.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-4.png"/>
 </figure>
 <CodeSnippet language="Sass">
 .flex-container {
@@ -225,12 +225,12 @@ and don’t allow them to grow in size above their natural width:
 </CodeSnippet>
 <p>
 In the final flex layout, I changed the ordering of the flex items so the languages are listed in reverse.
-I accomplished this with a Sass <code class="jarombek-inline-code">for</code> loop.  It loops over the flex
-items and gives them an <code class="jarombek-inline-code">order</code> attribute.  Otherwise the styles
+I accomplished this with a Sass <code className="jarombek-inline-code">for</code> loop.  It loops over the flex
+items and gives them an <code className="jarombek-inline-code">order</code> attribute.  Otherwise the styles
 are the same as the previous layout.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-5.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-5.png"/>
 </figure>
 <CodeSnippet language="Sass">
 .flex-item {

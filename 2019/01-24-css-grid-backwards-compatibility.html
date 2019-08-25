@@ -12,7 +12,7 @@ Grid backwards compatible to older browsers.
 I took three components from my website and simplified them to show how they work on older browsers.
 All modern browsers (Chrome, Edge, Firefox, Opera, Safari) implement feature queries, which check if
 certain stylesheet features are available in the browser environment<sup>1,2</sup>.  Feature queries
-are created with the <code class="jarombek-inline-code">@supports</code> CSS rule.
+are created with the <code className="jarombek-inline-code">@supports</code> CSS rule.
 </p>
 <p>
 One of the big issues with my website was CSS Grid didn't work properly in Microsoft Edge.  This was due to
@@ -31,7 +31,7 @@ The first layout example is similar to the one used in my software development a
 you are currently viewing).
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-24-19-example-1.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-24-19-example-1.png"/>
 </figure>
 <p>
 Here is the HTML and relevant CSS styles for this layout:
@@ -138,31 +138,31 @@ Here is the HTML and relevant CSS styles for this layout:
 }
 </CodeSnippet>
 <p>
-In this layout, browsers supporting <code class="jarombek-inline-code">grid-area: auto</code>
-use styles within the <code class="jarombek-inline-code">@supports (grid-area: auto) {...}</code> rule
-block.  Browsers unsupportive of <code class="jarombek-inline-code">grid-area: auto</code>
-use styles within the <code class="jarombek-inline-code">@supports not (grid-area: auto) {...}</code> rule block.
+In this layout, browsers supporting <code className="jarombek-inline-code">grid-area: auto</code>
+use styles within the <code className="jarombek-inline-code">@supports (grid-area: auto) {...}</code> rule
+block.  Browsers unsupportive of <code className="jarombek-inline-code">grid-area: auto</code>
+use styles within the <code className="jarombek-inline-code">@supports not (grid-area: auto) {...}</code> rule block.
 </p>
 <p>
-For browsers not supporting CSS Grid, I replaced <code class="jarombek-inline-code">display: grid</code> with
-<code class="jarombek-inline-code">display: table</code>.  The <code class="jarombek-inline-code">display</code>
-property is used to determine the display type of an HTML element.  Both the <code class="jarombek-inline-code">
-grid</code> and <code class="jarombek-inline-code">table</code> values for <code class="jarombek-inline-code">
-display</code> alter how child elements are laid out<sup>3</sup>.  While <code class="jarombek-inline-code">
-display: grid</code> defines a CSS Grid container, <code class="jarombek-inline-code">display: table</code>
+For browsers not supporting CSS Grid, I replaced <code className="jarombek-inline-code">display: grid</code> with
+<code className="jarombek-inline-code">display: table</code>.  The <code className="jarombek-inline-code">display</code>
+property is used to determine the display type of an HTML element.  Both the <code className="jarombek-inline-code">
+grid</code> and <code className="jarombek-inline-code">table</code> values for <code className="jarombek-inline-code">
+display</code> alter how child elements are laid out<sup>3</sup>.  While <code className="jarombek-inline-code">
+display: grid</code> defines a CSS Grid container, <code className="jarombek-inline-code">display: table</code>
 creates a table layout with rows and columns containing cells.  Table layout is just like an HTML table
-where the element <code class="jarombek-inline-code">&lt;tr&gt;</code> represents a table row and the
-element <code class="jarombek-inline-code">&lt;td&gt;</code> represents a table cell.  The corresponding
-<code class="jarombek-inline-code">display</code> values are <code class="jarombek-inline-code">table-row</code>
-and <code class="jarombek-inline-code">table-cell</code>, respectively<sup>4</sup>.
+where the element <code className="jarombek-inline-code">&lt;tr&gt;</code> represents a table row and the
+element <code className="jarombek-inline-code">&lt;td&gt;</code> represents a table cell.  The corresponding
+<code className="jarombek-inline-code">display</code> values are <code className="jarombek-inline-code">table-row</code>
+and <code className="jarombek-inline-code">table-cell</code>, respectively<sup>4</sup>.
 </p>
 <p>
 With the table layout I created a similar view to the one built with CSS Grid.  I gave both article
-headers the <code class="jarombek-inline-code">display: table-cell</code> definition.  Table cells can
+headers the <code className="jarombek-inline-code">display: table-cell</code> definition.  Table cells can
 be vertically positioned just like grid areas in CSS Grid<sup>5</sup>.  While CSS Grid uses
-<code class="jarombek-inline-code">align-self</code> to position elements vertically inside their grid
-area, table cells use <code class="jarombek-inline-code">vertical-align</code>.
-<code class="jarombek-inline-code">vertical-align: middle</code> positions the contents of a table
+<code className="jarombek-inline-code">align-self</code> to position elements vertically inside their grid
+area, table cells use <code className="jarombek-inline-code">vertical-align</code>.
+<code className="jarombek-inline-code">vertical-align: middle</code> positions the contents of a table
 cell in the middle of the cell<sup>6</sup>.
 </p>
 <p>
@@ -174,7 +174,7 @@ The second layout example is a technology tag that I use at the top of my softwa
 articles.  This article has CSS, CSS Grid, and HTML tags.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-24-19-example-2.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-24-19-example-2.png"/>
 </figure>
 <p>
 Here is the HTML and relevant CSS styles for this layout:
@@ -243,34 +243,34 @@ Here is the HTML and relevant CSS styles for this layout:
 }
 </CodeSnippet>
 <p>
-Once again I'm using <code class="jarombek-inline-code">display: table</code> as a replacement for
-<code class="jarombek-inline-code">display: grid</code>.  This time around I'm also centering the tag
-component in the middle of the the <code class="jarombek-inline-code">&lt;body&gt;</code> element.  In
-CSS Grid, I'm using <code class="jarombek-inline-code">align-items: center</code> and
-<code class="jarombek-inline-code">justify-items: center</code> to align children elements in the middle
+Once again I'm using <code className="jarombek-inline-code">display: table</code> as a replacement for
+<code className="jarombek-inline-code">display: grid</code>.  This time around I'm also centering the tag
+component in the middle of the the <code className="jarombek-inline-code">&lt;body&gt;</code> element.  In
+CSS Grid, I'm using <code className="jarombek-inline-code">align-items: center</code> and
+<code className="jarombek-inline-code">justify-items: center</code> to align children elements in the middle
 of the page vertically and horizontally, respectively.
 </p>
 <p>
-For older browsers, things get a bit more complex.  First I use the <code class="jarombek-inline-code">
-position: absolute</code> definition, which positions <code class="jarombek-inline-code">&lt;body&gt;</code>
+For older browsers, things get a bit more complex.  First I use the <code className="jarombek-inline-code">
+position: absolute</code> definition, which positions <code className="jarombek-inline-code">&lt;body&gt;</code>
 relative to its nearest positioned relative.  A positioned element is an HTML element with a
-<code class="jarombek-inline-code">position</code> property of value <code class="jarombek-inline-code">
-relative</code>, <code class="jarombek-inline-code">fixed</code>, <code class="jarombek-inline-code">
-absolute</code> or <code class="jarombek-inline-code">sticky</code>.  Since <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">position</code> property of value <code className="jarombek-inline-code">
+relative</code>, <code className="jarombek-inline-code">fixed</code>, <code className="jarombek-inline-code">
+absolute</code> or <code className="jarombek-inline-code">sticky</code>.  Since <code className="jarombek-inline-code">
 &lt;body&gt;</code> has no positioned ancestor, its positioned relative to the webpage document<sup>7</sup>.
 </p>
 <p>
-With absolute positioning, the <code class="jarombek-inline-code">top: 50%</code> and
-<code class="jarombek-inline-code">left: 50%</code> definitions place <code class="jarombek-inline-code">
+With absolute positioning, the <code className="jarombek-inline-code">top: 50%</code> and
+<code className="jarombek-inline-code">left: 50%</code> definitions place <code className="jarombek-inline-code">
 &lt;body&gt;</code> in the middle of the webpage document.  The only issue with these two definitions is
-they place the top left corner of <code class="jarombek-inline-code">&lt;body&gt;</code> in the
-middle of the webpage.  Therefore the tag component appears misaligned from the center.  To fix this I use the <code class="jarombek-inline-code">transform</code>
-property.  <code class="jarombek-inline-code">transform: translate(-50%, -50%)</code> feels like a hack
+they place the top left corner of <code className="jarombek-inline-code">&lt;body&gt;</code> in the
+middle of the webpage.  Therefore the tag component appears misaligned from the center.  To fix this I use the <code className="jarombek-inline-code">transform</code>
+property.  <code className="jarombek-inline-code">transform: translate(-50%, -50%)</code> feels like a hack
 to get the central positioning perfect, but sometimes with legacy CSS hacks are required<sup>8</sup>!
-<code class="jarombek-inline-code">translate()</code> repositions an element along the x-axis and y-axis
-of the webpage.  <code class="jarombek-inline-code">translate(-50%, -50%)</code> moves
-<code class="jarombek-inline-code">&lt;body&gt;</code> 50% of its height upwards along the y-axis and
-50% of its width leftwards along the x-axis.  Now the <code class="jarombek-inline-code">&lt;body&gt;
+<code className="jarombek-inline-code">translate()</code> repositions an element along the x-axis and y-axis
+of the webpage.  <code className="jarombek-inline-code">translate(-50%, -50%)</code> moves
+<code className="jarombek-inline-code">&lt;body&gt;</code> 50% of its height upwards along the y-axis and
+50% of its width leftwards along the x-axis.  Now the <code className="jarombek-inline-code">&lt;body&gt;
 </code> element is centered!
 </p>
 <SectionTitle title="Feature Component">Example 3: Feature Component</SectionTitle>
@@ -279,7 +279,7 @@ The third layout example displays a feature for the website. My website <a href=
 home page</a> has three feature components.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-24-19-example-3.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-24-19-example-3.png"/>
 </figure>
 <p>
 Here is the HTML and relevant CSS styles for this layout:
@@ -369,7 +369,7 @@ The concepts covered in my first two layouts will help you understand the code f
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 While it's fun to work with the latest browser technologies, we still need to support users that
-aren't as bleeding edge.  Feature queries with the <code class="jarombek-inline-code">@supports</code>
+aren't as bleeding edge.  Feature queries with the <code className="jarombek-inline-code">@supports</code>
 CSS rule will soon be all that's needed to support legacy browsers as Internet Explorer usage continues
 to dwindle.  All the code from this discovery post is available on <a href="https://github.com/AJarombek/jarombek-com-sources/
 tree/master/2019/01-Jan/01-24-css-grid-backwards-compatibility">GitHub</a>.

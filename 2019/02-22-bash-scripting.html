@@ -23,7 +23,7 @@ Bash scripts.
 Bash scripts have the file extension <strong>.sh</strong>.  A typical bash file begins with a
 <a href="https://jarombek.com/blog/may-26-2018-nodejs-command-line#shebang-line">shebang line</a> pointing
 to the bash interpreter.  Script input arguments are handled with the
-<code class="jarombek-inline-code">$&lt;argument-number&gt;</code> syntax.
+<code className="jarombek-inline-code">$&lt;argument-number&gt;</code> syntax.
 </p>
 <CodeSnippet language="Bash">
 #!/usr/bin/env bash
@@ -39,9 +39,9 @@ Name="Andrew Jarombek"
 echo ${Name}
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">${...}</code> syntax is called a parameter expansion.  Parameter
+The <code className="jarombek-inline-code">${...}</code> syntax is called a parameter expansion.  Parameter
 expansions are used to substitute variables or expressions with their values.  Therefore
-<code class="jarombek-inline-code">echo ${Name}</code> is substituted with <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">echo ${Name}</code> is substituted with <code className="jarombek-inline-code">
 echo "Andrew Jarombek"</code>.
 </p>
 <p>
@@ -50,8 +50,8 @@ consequences which I'll explore in a future post.  Bash variables contain charac
 which are used in different ways depending on the context<sup>4</sup>.
 </p>
 <p>
-Parameter expansions can manipulate existing variables.  The following examples alter the <code class="jarombek-inline-code">
-Name</code> variable.  In this context <code class="jarombek-inline-code">Name</code> is a string.
+Parameter expansions can manipulate existing variables.  The following examples alter the <code className="jarombek-inline-code">
+Name</code> variable.  In this context <code className="jarombek-inline-code">Name</code> is a string.
 </p>
 <CodeSnippet language="Bash">
 Name="Andrew Jarombek"
@@ -78,13 +78,13 @@ AgeInTenYears=$(($Age + 10))
 echo ${AgeInTenYears}  # 33
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">$((...))</code> syntax creates an arithmetic substitution<sup>5</sup>.
+The <code className="jarombek-inline-code">$((...))</code> syntax creates an arithmetic substitution<sup>5</sup>.
 There are other ways to create integer contexts for performing arithmetic, including backticks and the
-<code class="jarombek-inline-code">let</code> construct<sup>6</sup>.
+<code className="jarombek-inline-code">let</code> construct<sup>6</sup>.
 </p>
 <p>
 Bash also has an easy construct for creating functions.  This is much improved from the hacky labeling
-and <code class="jarombek-inline-code">call</code> statements in Batch.
+and <code className="jarombek-inline-code">call</code> statements in Batch.
 </p>
 <CodeSnippet language="Bash">
 Age=23
@@ -100,7 +100,7 @@ func
 <p>
 One interesting aspect of Bash functions is that variables defined in functions leak into the global
 scope.  Luckily if this is not what you intend, there are keywords for altering this behavior.
-The <code class="jarombek-inline-code">local</code> keyword defines a variable scoped to the function.
+The <code className="jarombek-inline-code">local</code> keyword defines a variable scoped to the function.
 </p>
 <CodeSnippet language="Bash">
 func2() {
@@ -121,7 +121,7 @@ Global Variable, Local Variable
 Global Variable,
 </CodeSnippet>
 <p>
-As you can see, <code class="jarombek-inline-code">Local</code> is not accessible outside the function.
+As you can see, <code className="jarombek-inline-code">Local</code> is not accessible outside the function.
 </p>
 <p>
 Arrays are also available in Bash.  They are simpler than their Batch equivalents because complicated
@@ -154,8 +154,8 @@ Catamount
 1 2 3 4 5
 </CodeSnippet>
 <p>
-Bash also has simple <code class="jarombek-inline-code">for</code> and
-<code class="jarombek-inline-code">if</code> statements:
+Bash also has simple <code className="jarombek-inline-code">for</code> and
+<code className="jarombek-inline-code">if</code> statements:
 </p>
 <CodeSnippet language="Bash">
 # Accumulate all of the strings in the town list
@@ -193,9 +193,9 @@ Date is before Jan. 31st, 2019
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 I really enjoy working with Bash due to its simplicity.  It's commands are short and easy to use,
-with common utilities such as <code class="jarombek-inline-code">echo</code>, <code class="jarombek-inline-code">
-cat</code>, <code class="jarombek-inline-code">grep</code>, <code>head</code>, and
-<code class="jarombek-inline-code">tail</code> being good examples.  I much prefer it over Batch
+with common utilities such as <code className="jarombek-inline-code">echo</code>, <code className="jarombek-inline-code">
+cat</code>, <code className="jarombek-inline-code">grep</code>, <code>head</code>, and
+<code className="jarombek-inline-code">tail</code> being good examples.  I much prefer it over Batch
 scripting.  You can check out more Bash code on <a href="https://github.com/AJarombek/jarombek-com-sources/
 tree/master/2019/02-Feb/02-22-bash-scripting">GitHub</a>.
 </p>

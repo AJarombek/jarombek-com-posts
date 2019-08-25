@@ -65,49 +65,49 @@ is a basic WebAssembly module containing a function that adds two integers toget
 </CodeSnippet>
 <p>
 WebAssembly programs consist of modules which can communicate with one another.  The functionality of
-modules is concentrated in functions, which are specified with the <code class="jarombek-inline-code">
+modules is concentrated in functions, which are specified with the <code className="jarombek-inline-code">
 func</code> keyword.  WebAssembly code can be written in a linear format or with s-expressions<sup>7</sup>.
 S-expressions are tree-like structures which are nested in WebAssembly with parenthesis.
 </p>
 <p>
-WebAssembly has four basic types, 32-bit integers (<code class="jarombek-inline-code">i32</code>),
-64-bit integers (<code class="jarombek-inline-code">i64</code>), 32-bit floating point numbers
-(<code class="jarombek-inline-code">f32</code>), and 64-bit floating point numbers
-(<code class="jarombek-inline-code">f64</code>).  With these basic types any complex type can be
+WebAssembly has four basic types, 32-bit integers (<code className="jarombek-inline-code">i32</code>),
+64-bit integers (<code className="jarombek-inline-code">i64</code>), 32-bit floating point numbers
+(<code className="jarombek-inline-code">f32</code>), and 64-bit floating point numbers
+(<code className="jarombek-inline-code">f64</code>).  With these basic types any complex type can be
 created.  Each function has a set number of local variables accessed with the
-<code class="jarombek-inline-code">get_local</code> operation<sup>8</sup>.  Each of the function
-parameters (specified with <code class="jarombek-inline-code">(param ${param_name} {param-type})</code>)
+<code className="jarombek-inline-code">get_local</code> operation<sup>8</sup>.  Each of the function
+parameters (specified with <code className="jarombek-inline-code">(param ${param_name} {param-type})</code>)
 is a local variable of the function.
 </p>
 <p>
-In the <code class="jarombek-inline-code">$add</code> function body, the first instruction
-<code class="jarombek-inline-code">get_local $n0</code> takes the first parameter and places it on
-the execution stack.  The second instruction <code class="jarombek-inline-code">get_local $n1</code>
+In the <code className="jarombek-inline-code">$add</code> function body, the first instruction
+<code className="jarombek-inline-code">get_local $n0</code> takes the first parameter and places it on
+the execution stack.  The second instruction <code className="jarombek-inline-code">get_local $n1</code>
 takes the second parameter and places it on the execution stack.  The final instruction
-<code class="jarombek-inline-code">i32.add</code> pops both integers off the execution stack, adds
+<code className="jarombek-inline-code">i32.add</code> pops both integers off the execution stack, adds
 them together, and places the result back on the stack.  Finally, the result is returned from
 the function.
 </p>
 <p>
-The final line of the WebAssembly module exports the <code class="jarombek-inline-code">$add</code>
+The final line of the WebAssembly module exports the <code className="jarombek-inline-code">$add</code>
 function for use outside the module.  In my case, I use this function in JavaScript code.
 </p>
 <SectionTitle title="Running WebAssembly in JavaScript">Running WebAssembly in JavaScript</SectionTitle>
 <p>
-JavaScript has a <code class="jarombek-inline-code">WebAssembly</code> global object that is used
-for all WebAssembly related functionality<sup>9</sup>.  I use the <code class="jarombek-inline-code">
+JavaScript has a <code className="jarombek-inline-code">WebAssembly</code> global object that is used
+for all WebAssembly related functionality<sup>9</sup>.  I use the <code className="jarombek-inline-code">
 WebAssembly</code> global object to compile WebAssembly byte code (WASM) and instantiate it in JavaScript.
-Compiling and instantiating Webassembly byte code is accomplished with the <code class="jarombek-inline-code">
-WebAssembly.compile()</code> and <code class="jarombek-inline-code">WebAssembly.instantiate()</code>
+Compiling and instantiating Webassembly byte code is accomplished with the <code className="jarombek-inline-code">
+WebAssembly.compile()</code> and <code className="jarombek-inline-code">WebAssembly.instantiate()</code>
 functions, respectively.
 </p>
 <p>
-In order to work with the <code class="jarombek-inline-code">WebAssembly</code> global object, the
+In order to work with the <code className="jarombek-inline-code">WebAssembly</code> global object, the
 WAT files I coded need to be converted to binary WASM files.  This is accomplished with
 the WebAssembly Tool Kit (WABT).  Although WABT is implemented in C++, there is a JavaScript port in the
-npm registry<sup>10</sup>.  The following code uses the <code class="jarombek-inline-code">
-WebAssembly</code> global object and WABT module to execute the WebAssembly <code class="jarombek-inline-code">
-$add</code> function. <code class="jarombek-inline-code">$add</code> exists in a file called <strong>test.wat</strong>.
+npm registry<sup>10</sup>.  The following code uses the <code className="jarombek-inline-code">
+WebAssembly</code> global object and WABT module to execute the WebAssembly <code className="jarombek-inline-code">
+$add</code> function. <code className="jarombek-inline-code">$add</code> exists in a file called <strong>test.wat</strong>.
 </p>
 <CodeSnippet language="JavaScript">
 // wat-wasm.js
@@ -164,8 +164,8 @@ const {execWat} = require('./wat-wasm');
 execWat("wa/test.wat", (instance) => console.info(instance.exports.add(2, 2)));
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">instance.exports.add(2, 2)</code> accesses the exported WebAssembly
-function and invokes it.  As expected, the code returns <code class="jarombek-inline-code">4</code>.
+<code className="jarombek-inline-code">instance.exports.add(2, 2)</code> accesses the exported WebAssembly
+function and invokes it.  As expected, the code returns <code className="jarombek-inline-code">4</code>.
 </p>
 <SectionTitle title="WebAssembly Next Steps">WebAssembly Next Steps</SectionTitle>
 <p>
@@ -244,9 +244,9 @@ second uses s-expressions.
 </CodeSnippet>
 <p>
 This code reveals some of the 32-bit integer operators that WebAssembly provides.  Also, inline integer
-values are created with the <code class="jarombek-inline-code">i32.const</code> instruction.
+values are created with the <code className="jarombek-inline-code">i32.const</code> instruction.
 Changing these functions to handle floating point distances requires type conversions and the
-<code class="jarombek-inline-code">f32</code> type.
+<code className="jarombek-inline-code">f32</code> type.
 </p>
 <CodeSnippet language="WebAssembly">
 (func $calcPace2 (param $miles f32) (param $minutes i32)
@@ -268,10 +268,10 @@ Changing these functions to handle floating point distances requires type conver
 </CodeSnippet>
 <p>
 WebAssembly provides linear memory for use in modules.  In the memory section of my module I declared
-<code class="jarombek-inline-code">(memory 1)</code>, meaning that the module needs access to a single
+<code className="jarombek-inline-code">(memory 1)</code>, meaning that the module needs access to a single
 page (64 KiB) of memory<sup>12</sup>.  Memory is read and written to using operators.  For example,
-<code class="jarombek-inline-code">i32.load</code> is used to read an integer from memory and
-<code class="jarombek-inline-code">i32.store</code> is used to write an integer to memory.  Memory is
+<code className="jarombek-inline-code">i32.load</code> is used to read an integer from memory and
+<code className="jarombek-inline-code">i32.store</code> is used to write an integer to memory.  Memory is
 indexed starting at zero, with integers used to read/write data.
 </p>
 <CodeSnippet language="WebAssembly">
@@ -293,7 +293,7 @@ indexed starting at zero, with integers used to read/write data.
 Memory helps create functions that persist data between invocations, such as a
 <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/01-Jan/01-07-webassembly/
 wa/basics.wat">function invocation counter</a>.  WebAssembly also supports more complex program
-flow, such as loops and conditionals.  The following function demonstrates <code class="jarombek-inline-code">
+flow, such as loops and conditionals.  The following function demonstrates <code className="jarombek-inline-code">
 if</code> statements in WebAssembly.
 </p>
 <CodeSnippet language="WebAssembly">

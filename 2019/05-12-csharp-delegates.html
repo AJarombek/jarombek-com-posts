@@ -8,24 +8,24 @@ C# and Java.
 <SectionTitle title="Delegate Basics">Delegate Basics</SectionTitle>
 <p>
 A delegate type defines the return type and parameters required for a function to be one of its
-instances<sup>1</sup>.  For example, the following <code class="jarombek-inline-code">Combiner</code>
+instances<sup>1</sup>.  For example, the following <code className="jarombek-inline-code">Combiner</code>
 delegate must take in two integer arguments and return a single integer.
 </p>
 <CodeSnippet language="C#">
 delegate int Combiner(int x, int y);
 </CodeSnippet>
 <p>
-The following two functions are compatible with <code class="jarombek-inline-code">Combiner</code>.
+The following two functions are compatible with <code className="jarombek-inline-code">Combiner</code>.
 </p>
 <CodeSnippet language="C#">
 static int Add(int x, int y) => x + y;
 static int Subtract(int x, int y) => x - y;
 </CodeSnippet>
 <p>
-With the <code class="jarombek-inline-code">Combiner</code> delegate and these basic functions, I
-created a basic gambling simulator.  The <code class="jarombek-inline-code">Gamble</code> method
-internally assigns the <code class="jarombek-inline-code">Add</code> or <code class="jarombek-inline-code">
-Subtract</code> functions to the <code class="jarombek-inline-code">Combiner</code> delegate type.
+With the <code className="jarombek-inline-code">Combiner</code> delegate and these basic functions, I
+created a basic gambling simulator.  The <code className="jarombek-inline-code">Gamble</code> method
+internally assigns the <code className="jarombek-inline-code">Add</code> or <code className="jarombek-inline-code">
+Subtract</code> functions to the <code className="jarombek-inline-code">Combiner</code> delegate type.
 </p>
 <CodeSnippet language="C#">
 /// &lt;summary>
@@ -57,8 +57,8 @@ static void Main(string[] args)
 </CodeSnippet>
 <p>
 Delegates in C# and lambda functions in Java really shine when used with higher order functions.
-For example, the following code passes a <code class="jarombek-inline-code">Transformer</code> delegate
-as an argument to a <code class="jarombek-inline-code">Map</code> function.
+For example, the following code passes a <code className="jarombek-inline-code">Transformer</code> delegate
+as an argument to a <code className="jarombek-inline-code">Map</code> function.
 </p>
 <CodeSnippet language="C#">
 delegate int Transformer(int x);
@@ -91,7 +91,7 @@ static void Main(string[] args)
 So far, nothing I've shown you about delegates differentiates them from Java lambda functions and
 functional interfaces.  Both delegates and functional interfaces know how to call a function
 with a certain return value and parameter types.  For example, the following Java code maps values
-in a list with a <code class="jarombek-inline-code">Transformer</code> functional interface just
+in a list with a <code className="jarombek-inline-code">Transformer</code> functional interface just
 like the last example.
 </p>
 <CodeSnippet language="Java">
@@ -140,9 +140,9 @@ invokes multiple functions.  Think of multicasting as a way of combining
 delegate instances together.  This pattern makes more sense with an example.
 </p>
 <p>
-The following code defines a delegate type <code class="jarombek-inline-code">TransformerRef</code> and
-two functions named <code class="jarombek-inline-code">Increment</code> and
-<code class="jarombek-inline-code">Triple</code>.
+The following code defines a delegate type <code className="jarombek-inline-code">TransformerRef</code> and
+two functions named <code className="jarombek-inline-code">Increment</code> and
+<code className="jarombek-inline-code">Triple</code>.
 </p>
 <CodeSnippet language="C#">
 /// &lt;summary>
@@ -168,14 +168,14 @@ static void Main(string[] args)
 }
 </CodeSnippet>
 <p>
-These functions use <code class="jarombek-inline-code">ref</code> return types and arguments so that
+These functions use <code className="jarombek-inline-code">ref</code> return types and arguments so that
 the integer value is modified in place (at a single location in memory) instead of creating a new
-integer.  Both can be made instances of the <code class="jarombek-inline-code">TransformerRef</code>
+integer.  Both can be made instances of the <code className="jarombek-inline-code">TransformerRef</code>
   delegate type.
 </p>
 <p>
 Now let's make a delegate instance with multicasting.  The following delegate instance combines
-<code class="jarombek-inline-code">Increment</code> and <code class="jarombek-inline-code">Triple</code>.
+<code className="jarombek-inline-code">Increment</code> and <code className="jarombek-inline-code">Triple</code>.
 </p>
 <CodeSnippet language="C#">
 // Create a delegate with two methods.  Increment is called first, Triple is called second
@@ -193,8 +193,8 @@ The above code proved that the value <strong>5</strong> is first increment and t
 </p>
 <p>
 Delegate instances with multicasting are easily modified after creation.  Let's say I
-want the <code class="jarombek-inline-code">transformer</code> delegate instance to only triple the
-value.  To do this, I simply remove the <code class="jarombek-inline-code">Increment</code> function.
+want the <code className="jarombek-inline-code">transformer</code> delegate instance to only triple the
+value.  To do this, I simply remove the <code className="jarombek-inline-code">Increment</code> function.
 </p>
 <CodeSnippet language="C#">
 // Remove the increment function from the delegate
@@ -213,10 +213,10 @@ found in comparable languages like Java.
 <SectionTitle title="Built-In Delegate Types">Built-In Delegate Types</SectionTitle>
 <p>
 Similar to how the Java standard library exposes multiple functional interfaces for use, C# provides
-delegate types in the <code class="jarombek-inline-code">System</code> namespace.  These types can
-often be used instead of a custom type.  I recreated the commonly used <code class="jarombek-inline-code">
-Filter</code> and <code class="jarombek-inline-code">Reduce</code> functions for the
-<code class="jarombek-inline-code">List</code> type using the <code class="jarombek-inline-code">
+delegate types in the <code className="jarombek-inline-code">System</code> namespace.  These types can
+often be used instead of a custom type.  I recreated the commonly used <code className="jarombek-inline-code">
+Filter</code> and <code className="jarombek-inline-code">Reduce</code> functions for the
+<code className="jarombek-inline-code">List</code> type using the <code className="jarombek-inline-code">
 System.Func</code> delegate type.  That code is available on <a href="https://github.com/AJarombek/
 jarombek-com-sources/blob/master/2019/05-May/05-12-csharp-delegates/csharp/Util.cs">GitHub</a>.
 </p>
@@ -232,7 +232,7 @@ As we've discussed, a delegate knows how to call one or many method(s).  It does
 method is a standard function, lambda function, or local method.  They all work with delegates!
 </p>
 <p>
-A lambda function is a nameless function that uses the fat arrow syntax <code class="jarombek-inline-code">args => result</code>.
+A lambda function is a nameless function that uses the fat arrow syntax <code className="jarombek-inline-code">args => result</code>.
 It can take the place of a standard function in a delegate instance.  One of the limitations of
 lambda functions is that they must be assigned to a delegate type<sup>3</sup>.
 </p>

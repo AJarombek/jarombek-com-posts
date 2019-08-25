@@ -30,8 +30,8 @@ double programming_experience {2.5};
 </CodeSnippet>
 <p>
 C++ has some modern syntax as well.  For example, types don't need to be explicitly declared with the help of
-the <code class="jarombek-inline-code">auto</code> keyword.  <code class="jarombek-inline-code">auto</code>
-is similar to <code class="jarombek-inline-code">var</code> in Java and C# (note: all these languages
+the <code className="jarombek-inline-code">auto</code> keyword.  <code className="jarombek-inline-code">auto</code>
+is similar to <code className="jarombek-inline-code">var</code> in Java and C# (note: all these languages
 are still <a href="https://jarombek.com/blog/jul-15-2018-groovy-optional-typing#dynamic-&-static-typing">
 statically typed</a>).
 </p>
@@ -40,9 +40,9 @@ statically typed</a>).
 auto percentage_programming = programming_experience / age;
 </CodeSnippet>
 <p>
-Just like C, you can define constant variables with the <code class="jarombek-inline-code">const</code>
-keyword.  C++ adds the <code class="jarombek-inline-code">constexpr</code> keyword, which defines an
-expression or function that is evaluated at compile time<sup>3</sup>.  <code class="jarombek-inline-code">
+Just like C, you can define constant variables with the <code className="jarombek-inline-code">const</code>
+keyword.  C++ adds the <code className="jarombek-inline-code">constexpr</code> keyword, which defines an
+expression or function that is evaluated at compile time<sup>3</sup>.  <code className="jarombek-inline-code">
 constexpr</code> functions must be pure functions that only handle immutable variables.  I created a
 compile time function that calculates the mile pace of a run.
 </p>
@@ -65,7 +65,7 @@ int main()
 }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">constexpr</code> in C++ was likely influenced by functional
+<code className="jarombek-inline-code">constexpr</code> in C++ was likely influenced by functional
 programming.  Creating compile time functions is also possible in Haskell, a
 <a href="https://jarombek.com/blog/oct-6-2018-haskell-pt1">functional programming language</a>
 <sup>4</sup>.  You can check out the Haskell code on <a href="https://github.com/AJarombek/
@@ -73,7 +73,7 @@ jarombek-com-sources/tree/master/2019/01-Jan/01-03-cpp-first-impressions/haskell
 </p>
 <p>
 Compile time functions are commonly used as a performance strategy.  We can prove
-<code class="jarombek-inline-code">pace()</code> executes at compile time by using
+<code className="jarombek-inline-code">pace()</code> executes at compile time by using
 static assertions.  Static assertions are just like regular assertions except executed at compile
 time instead of runtime.
 </p>
@@ -91,7 +91,7 @@ thing about them is how IDEs check if they pass in the code itself.
 <p>
 C++ also adds additional pointer functionality to the C model.  While you can still use pointers
 just like in C, there is an additional "references to" operator specified with the unary suffix
-<code class="jarombek-inline-code">&</code>.
+<code className="jarombek-inline-code">&</code>.
 </p>
 <CodeSnippet language="C++">
 // Basic pointers are the same as C
@@ -188,8 +188,8 @@ int main()
 </CodeSnippet>
 <SectionTitle title="C">C</SectionTitle>
 <p>
-The C version uses a <code class="jarombek-inline-code">struct</code> to represent the run and maintains
-the <code class="jarombek-inline-code">pace()</code> function in the same header file.
+The C version uses a <code className="jarombek-inline-code">struct</code> to represent the run and maintains
+the <code className="jarombek-inline-code">pace()</code> function in the same header file.
 </p>
 <CodeSnippet language="C">
 // Run.h

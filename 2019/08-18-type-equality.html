@@ -24,8 +24,8 @@ Reference Equality
 <p>
 Tests for reference equality check to see if two variables, primitives, or objects refer to the
 same space in memory.  When two variables are referentially equal, altering the value of one impacts the other
-since they refer to the same bytes in memory.  For example, <code class="jarombek-inline-code">
-var a = "value"</code> and <code class="jarombek-inline-code">var b = a</code> results in two variables
+since they refer to the same bytes in memory.  For example, <code className="jarombek-inline-code">
+var a = "value"</code> and <code className="jarombek-inline-code">var b = a</code> results in two variables
   that point to the same memory location in many languages.
 </p>
 </div>
@@ -37,11 +37,11 @@ Value Equality
 <div className="jarombek-cte-body">
 <p>
 Tests for value equality check to see if two variables, primitives, or objects are logically the same.
-For example, two integers containing the value <code class="jarombek-inline-code">2</code> are deemed
- equal in value, since <code class="jarombek-inline-code">2 = 2</code>.  Another example is
-two objects <code class="jarombek-inline-code">a</code> and <code class="jarombek-inline-code">b</code>
-where the properties in <code class="jarombek-inline-code">a</code> have the same values assigned to
-them as the properties in <code class="jarombek-inline-code">b</code>.  These two objects would
+For example, two integers containing the value <code className="jarombek-inline-code">2</code> are deemed
+ equal in value, since <code className="jarombek-inline-code">2 = 2</code>.  Another example is
+two objects <code className="jarombek-inline-code">a</code> and <code className="jarombek-inline-code">b</code>
+where the properties in <code className="jarombek-inline-code">a</code> have the same values assigned to
+them as the properties in <code className="jarombek-inline-code">b</code>.  These two objects would
 pass a value equality check.
 </p>
 </div>
@@ -68,8 +68,8 @@ Loosely Typed
 A language that is loosely typed (weakly typed) is one where type rules are not as strict.  In a
 loosely typed language types can often be converted to other types implicitly.  This is known as
 implicit type coercion, since a type can be coerced to another type.  For example, in PHP
-<code class="jarombek-inline-code">2 == '2'</code> returns <code class="jarombek-inline-code">true</code>
-because the string <code class="jarombek-inline-code">'2'</code> is implicitly converted to a number
+<code className="jarombek-inline-code">2 == '2'</code> returns <code className="jarombek-inline-code">true</code>
+because the string <code className="jarombek-inline-code">'2'</code> is implicitly converted to a number
 before the type equality check is made.  Languages such as JavaScript, PHP, and PowerShell are
 generally considered loosely typed languages.  However, there is no clear boundary between a loosely
 typed language and a strongly typed language.  It's mostly up to personal interpretation which category
@@ -86,10 +86,10 @@ Strongly Typed
 A language that is strongly typed has very strict type rules.  In order for a type to be converted
 to another type, an explicit conversion mechanism must be visible in the code.  For example, Java is
 a strongly typed language where explicit casts are used to convert from one type to another, such as
-<code class="jarombek-inline-code">double two = 2.0</code> and <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">double two = 2.0</code> and <code className="jarombek-inline-code">
 int twoInt = (int) two;</code>.  However, there are still a few cases in Java where implicit type
-coercion occurs, such as converting an <code class="jarombek-inline-code">int</code> to a
-<code class="jarombek-inline-code">double</code> or boxing and un-boxing primitives.  Languages such
+coercion occurs, such as converting an <code className="jarombek-inline-code">int</code> to a
+<code className="jarombek-inline-code">double</code> or boxing and un-boxing primitives.  Languages such
 as C, Java, and Python are generally considered strongly typed.  Just like loosely typed languages,
 there is no explicit rule for whether or not a language is strongly typed.  It's mostly up to personal
 interpretation of the language.
@@ -106,15 +106,15 @@ and Python.  Then I'll run through the remaining ten languages in alphabetical o
 <SectionTitle title="Java">Java</SectionTitle>
 <p>
 <a href="https://jarombek.com/blog?query=java&page=1">Java</a> has two different categories of types -
-primitives and objects.  Primitive types are checked for value equality with the <code class="jarombek-inline-code">==</code>
-operator.  Object types are checked for reference equality with the <code class="jarombek-inline-code">==</code>
-operator and value equality with the <code class="jarombek-inline-code">equals()</code> method found
-in the <code class="jarombek-inline-code">Object</code> class.
+primitives and objects.  Primitive types are checked for value equality with the <code className="jarombek-inline-code">==</code>
+operator.  Object types are checked for reference equality with the <code className="jarombek-inline-code">==</code>
+operator and value equality with the <code className="jarombek-inline-code">equals()</code> method found
+in the <code className="jarombek-inline-code">Object</code> class.
 </p>
 <p>
-The <code class="jarombek-inline-code">==</code> operator tests the values in two variables memory locations
+The <code className="jarombek-inline-code">==</code> operator tests the values in two variables memory locations
 for equality.  Primitive types hold their values directly in their assigned memory space.  Therefore,
-<code class="jarombek-inline-code">==</code> tests for value equality with primitives.
+<code className="jarombek-inline-code">==</code> tests for value equality with primitives.
 </p>
 <CodeSnippet language="Java">
 int five = 5;
@@ -125,11 +125,11 @@ int fiveAgain = 5;
 assert five == fiveAgain;
 </CodeSnippet>
 <p>
-There is no way to test reference equality with primitives.  Primitives also can't use the <code class="jarombek-inline-code">
+There is no way to test reference equality with primitives.  Primitives also can't use the <code className="jarombek-inline-code">
 equals()</code> method since they aren't objects and can't have methods.
 </p>
 <p>
-The following code demonstrates how <code class="jarombek-inline-code">String</code> objects are tested for equality.  String literals are unique because
+The following code demonstrates how <code className="jarombek-inline-code">String</code> objects are tested for equality.  String literals are unique because
  Java caches them in the same memory location if they have equal values.  As you will soon see, many other
 languages use this optimization for strings as well.
 </p>
@@ -151,11 +151,11 @@ assert day.equals(dayAgain);
 assert day.equals(dayAgainAgain);
 </CodeSnippet>
 <p>
-However, for most objects <code class="jarombek-inline-code">==</code> tests for reference equality and
-<code class="jarombek-inline-code">equals()</code> tests for value equality.  I created a custom
-<code class="jarombek-inline-code">Yarn</code> class to demonstrate how object equality works.  For value
-equality to work properly, <code class="jarombek-inline-code">Yarn</code> overrides the
-<code class="jarombek-inline-code">equals()</code> method from <code class="jarombek-inline-code">Object</code>.
+However, for most objects <code className="jarombek-inline-code">==</code> tests for reference equality and
+<code className="jarombek-inline-code">equals()</code> tests for value equality.  I created a custom
+<code className="jarombek-inline-code">Yarn</code> class to demonstrate how object equality works.  For value
+equality to work properly, <code className="jarombek-inline-code">Yarn</code> overrides the
+<code className="jarombek-inline-code">equals()</code> method from <code className="jarombek-inline-code">Object</code>.
 </p>
 <CodeSnippet language="Java">
 public class Yarn {
@@ -217,12 +217,12 @@ assert yarn3 != yarn4;
 assert !yarn3.equals(yarn4);
 </CodeSnippet>
 <p>
-Variables <code class="jarombek-inline-code">yarn1</code> and <code class="jarombek-inline-code">yarn2</code>
-are the only <code class="jarombek-inline-code">Yarn</code> instances that pass reference and value equality tests.
+Variables <code className="jarombek-inline-code">yarn1</code> and <code className="jarombek-inline-code">yarn2</code>
+are the only <code className="jarombek-inline-code">Yarn</code> instances that pass reference and value equality tests.
 </p>
 <p>
 While Java is generally a strongly typed language, there are a few occasions where type coercion occurs with
-the <code class="jarombek-inline-code">==</code> operator.  This is usually due to boxing and un-boxing
+the <code className="jarombek-inline-code">==</code> operator.  This is usually due to boxing and un-boxing
 primitives along with comparing numeric primitives<sup>2</sup>.  Here are a few examples:
 </p>
 <CodeSnippet language="Java">
@@ -244,15 +244,15 @@ assert twoInt == twoInteger;
 <SectionTitle title="JavaScript">JavaScript</SectionTitle>
 <p>
 <a href="https://jarombek.com/blog?query=javascript&page=1">JavaScript</a> has two operators that perform
-equality checks - <code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">===</code>.
+equality checks - <code className="jarombek-inline-code">==</code> and <code className="jarombek-inline-code">===</code>.
 When working with primitive types, both operators test value equality.  When working with object types, both
 operators test reference equality.
 </p>
 <p>
 There isn't much debate that JavaScript is a loosely typed programming language.  When working with primitives,
-<code class="jarombek-inline-code">==</code> enables implicit type coercion during the comparison.  On the
-other hand, <code class="jarombek-inline-code">===</code> prohibits implicit type coercion.  For example,
-when comparing a string and a number using <code class="jarombek-inline-code">==</code>, the string is
+<code className="jarombek-inline-code">==</code> enables implicit type coercion during the comparison.  On the
+other hand, <code className="jarombek-inline-code">===</code> prohibits implicit type coercion.  For example,
+when comparing a string and a number using <code className="jarombek-inline-code">==</code>, the string is
 converted to a numeric type before the comparison occurs.
 </p>
 <CodeSnippet language="JavaScript">
@@ -268,7 +268,7 @@ assert("2" !== 2);
 </CodeSnippet>
 <p>
 Because JavaScript contains a lot of implicit type coercion, many developers argue that you shouldn't use
-<code class="jarombek-inline-code">==</code> on primitives.  Here are some examples of the confusing
+<code className="jarombek-inline-code">==</code> on primitives.  Here are some examples of the confusing
 consequences of implicit type coercion:
 </p>
 <CodeSnippet language="JavaScript">
@@ -339,8 +339,8 @@ assert(23 != 24);
 assert(twentyTwo == 23); // 22 == 23 unexpectedly due to valueOf() monkey patch.
 </CodeSnippet>
 <p>
-When testing object types for equality, the <code class="jarombek-inline-code">==</code> and
-<code class="jarombek-inline-code">===</code> operators are much more predictable.  They both test
+When testing object types for equality, the <code className="jarombek-inline-code">==</code> and
+<code className="jarombek-inline-code">===</code> operators are much more predictable.  They both test
 objects for reference equality.
 </p>
 <CodeSnippet language="JavaScript">
@@ -447,9 +447,9 @@ assert(!arrayEquals([{}], [{}]));
 <SectionTitle title="Python">Python</SectionTitle>
 <p>
 <a href="https://jarombek.com/blog?query=python&page=1">Python</a> has two ways to test for equality - the
-<code class="jarombek-inline-code">==</code> operator and the <code class="jarombek-inline-code">is</code>
-statement.  Value equality is tested with <code class="jarombek-inline-code">==</code> and reference equality
-is tested with <code class="jarombek-inline-code">is</code>.  Python equality is easier to reason about
+<code className="jarombek-inline-code">==</code> operator and the <code className="jarombek-inline-code">is</code>
+statement.  Value equality is tested with <code className="jarombek-inline-code">==</code> and reference equality
+is tested with <code className="jarombek-inline-code">is</code>.  Python equality is easier to reason about
 because all types are objects.  Python is also strongly typed, so there is no implicit type coercion when
 testing equality.
 </p>
@@ -463,7 +463,7 @@ assert "1" != 1
 </CodeSnippet>
 <p>
 Similar to Java, Python caches string literals in the same memory location, causing the results of
-<code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">is</code> is be the same.
+<code className="jarombek-inline-code">==</code> and <code className="jarombek-inline-code">is</code> is be the same.
 </p>
 <CodeSnippet language="Python">
 # Both these strings pass value and reference equality tests.
@@ -496,10 +496,10 @@ assert id(forever) == id(foreverAgain)
 assert id(desc) != id(descAgain)
 </CodeSnippet>
 <p>
-I created a custom <code class="jarombek-inline-code">Yarn</code> class to demonstrate the normal behavior
-of <code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">is</code>.
-Python provides a built in <code class="jarombek-inline-code">__eq__</code> method that classes can override.
-This method impacts the behavior of the <code class="jarombek-inline-code">==</code> operator for testing
+I created a custom <code className="jarombek-inline-code">Yarn</code> class to demonstrate the normal behavior
+of <code className="jarombek-inline-code">==</code> and <code className="jarombek-inline-code">is</code>.
+Python provides a built in <code className="jarombek-inline-code">__eq__</code> method that classes can override.
+This method impacts the behavior of the <code className="jarombek-inline-code">==</code> operator for testing
 value equality.
 </p>
 <CodeSnippet language="Python">
@@ -563,8 +563,8 @@ Bash provides a couple operators for determining equality of plain text.  All th
 equality.  There is no way that I know of to test reference equality.
 </p>
 <p>
-The <code class="jarombek-inline-code">=</code> and <code class="jarombek-inline-code">==</code> operators
-test for plain text equality.  The <code class="jarombek-inline-code">-eq</code> operator tests for integer equality.
+The <code className="jarombek-inline-code">=</code> and <code className="jarombek-inline-code">==</code> operators
+test for plain text equality.  The <code className="jarombek-inline-code">-eq</code> operator tests for integer equality.
 </p>
 <CodeSnippet language="Bash">
 
@@ -619,16 +619,16 @@ day3=${mondays_workouts[*]}
 </CodeSnippet>
 <SectionTitle title="C">C</SectionTitle>
 <p>
-<a href="https://jarombek.com/blog?query=c&page=1">C</a> has a single <code class="jarombek-inline-code">==</code>
-operator for testing type equality.  <code class="jarombek-inline-code">==</code> can be used to test integer,
+<a href="https://jarombek.com/blog?query=c&page=1">C</a> has a single <code className="jarombek-inline-code">==</code>
+operator for testing type equality.  <code className="jarombek-inline-code">==</code> can be used to test integer,
 floating point, and pointer types for equality.  Integer and floating point equality operations test for
 value equality.  Pointer equality operations test for reference equality.  C is strongly typed, so no type
 coercion occurs during these equality tests.
 </p>
 <p>
-One of the small differences between the <code class="jarombek-inline-code">==</code> operator in C and
-other languages is that in C it returns a number instead of a boolean value.  <code class="jarombek-inline-code">==</code>
-returns <code class="jarombek-inline-code">1</code> when the two items are equal and <code class="jarombek-inline-code">0</code>
+One of the small differences between the <code className="jarombek-inline-code">==</code> operator in C and
+other languages is that in C it returns a number instead of a boolean value.  <code className="jarombek-inline-code">==</code>
+returns <code className="jarombek-inline-code">1</code> when the two items are equal and <code className="jarombek-inline-code">0</code>
 when they aren't.
 </p>
 <CodeSnippet language="C">
@@ -641,7 +641,7 @@ assert(two == twoAgain);
 assert(twosAreEqual == 1);
 </CodeSnippet>
 <p>
-As I mentioned, comparing two pointers with the <code class="jarombek-inline-code">==</code> operator tests
+As I mentioned, comparing two pointers with the <code className="jarombek-inline-code">==</code> operator tests
 for reference equality.  Similar to other languages, C caches string literals so they point to the same
 memory location.  This is proven in the following code:
 </p>
@@ -654,7 +654,7 @@ assert(name == nameAgain);
 assert(name != lastName);
 </CodeSnippet>
 <p>
-Strings in C can be represented as character pointers (<code class="jarombek-inline-code">char*</code>) or character
+Strings in C can be represented as character pointers (<code className="jarombek-inline-code">char*</code>) or character
 arrays.  Since character arrays always claim a new slice of memory, reference equality will fail when comparing
 them to a character pointer.
 </p>
@@ -667,9 +667,9 @@ assert(nameArray != lastName);
 </CodeSnippet>
 <p>
 C is an imperative programming language and doesn't support classes or objects.  The basic construct it does
-support is structs.  Unfortunately the <code class="jarombek-inline-code">==</code> operator doesn't work
+support is structs.  Unfortunately the <code className="jarombek-inline-code">==</code> operator doesn't work
 with structs.  If you try using it a compile time error will occur.  To test struts for value equality,
-each item in the struct must be checked for equality individually.  There is also a <code class="jarombek-inline-code">memcmp()</code>
+each item in the struct must be checked for equality individually.  There is also a <code className="jarombek-inline-code">memcmp()</code>
 function available to test structs for value equality, however it isn't always reliable<sup>5,6</sup>.  To test
 structs for reference equality, you just need to compare the pointers to the structs.
 </p>
@@ -726,9 +726,9 @@ int main() {
 </CodeSnippet>
 <SectionTitle title="C++">C++</SectionTitle>
 <p>
-Similar to C, <a href="https://jarombek.com/blog?query=c++&page=1">C++</a> has a single <code class="jarombek-inline-code">==</code>
+Similar to C, <a href="https://jarombek.com/blog?query=c++&page=1">C++</a> has a single <code className="jarombek-inline-code">==</code>
 operator for testing type equality.  However, C++ is an object-oriented language that allows for operator
-overloading.  Because of this, all structs and classes can use the <code class="jarombek-inline-code">==</code>
+overloading.  Because of this, all structs and classes can use the <code className="jarombek-inline-code">==</code>
 operator with their own custom logic for value equality.  Pointer types are still used for reference equality
 just like C.
 </p>
@@ -784,7 +784,7 @@ You can see an example of equality between objects in C++ on <a href="https://gi
 jarombek-com-sources/tree/master/2019/08-Aug/08-18-type-equality/cpp">GitHub</a>.
 </p>
 <p>
-Also the <code class="jarombek-inline-code">==</code> operator in C++ returns a boolean type instead of
+Also the <code className="jarombek-inline-code">==</code> operator in C++ returns a boolean type instead of
 an integer type as it does in C.
 </p>
 <CodeSnippet language="C++">
@@ -799,15 +799,15 @@ cout << typeid(twosAreEqual).name() << endl; // 'b' for boolean
 </CodeSnippet>
 <SectionTitle title="C#">C#</SectionTitle>
 <p>
-<a href="https://jarombek.com/blog?query=c#&page=1">C#</a> provides an <code class="jarombek-inline-code">==</code>
-operator, an <code class="jarombek-inline-code">Equals()</code> method, and a <code class="jarombek-inline-code">
-ReferenceEquals()</code> method for testing equality.  When working with primitives, <code class="jarombek-inline-code">==</code>
-and <code class="jarombek-inline-code">Equals()</code> test for value equality.  C# is strongly typed so
+<a href="https://jarombek.com/blog?query=c#&page=1">C#</a> provides an <code className="jarombek-inline-code">==</code>
+operator, an <code className="jarombek-inline-code">Equals()</code> method, and a <code className="jarombek-inline-code">
+ReferenceEquals()</code> method for testing equality.  When working with primitives, <code className="jarombek-inline-code">==</code>
+and <code className="jarombek-inline-code">Equals()</code> test for value equality.  C# is strongly typed so
 there is no type coercion when testing for equality.
 </p>
 <p>
 C# is often compared to Java due to similarities in their structure.  However, there are some
-differences when it comes to equality.  While Java primitives can't use the <code class="jarombek-inline-code">
+differences when it comes to equality.  While Java primitives can't use the <code className="jarombek-inline-code">
 equals()</code> method, C# primitives can.  This is because primitives in C# are aliases for structs.
 </p>
 <CodeSnippet language="C#">
@@ -817,17 +817,17 @@ Assert(one != two);
 Assert(!one.Equals(two));
 </CodeSnippet>
 <p>
-When working with custom structs or classes, <code class="jarombek-inline-code">Equals()</code> tests for
-value equality and <code class="jarombek-inline-code">ReferenceEquals()</code> tests for reference equality.
-The <code class="jarombek-inline-code">==</code> operator is a trickier situation in C#.  Unlike Java, C#
+When working with custom structs or classes, <code className="jarombek-inline-code">Equals()</code> tests for
+value equality and <code className="jarombek-inline-code">ReferenceEquals()</code> tests for reference equality.
+The <code className="jarombek-inline-code">==</code> operator is a trickier situation in C#.  Unlike Java, C#
 permits operator overloading.  This means a class designer can decide if they want to overload
-<code class="jarombek-inline-code">==</code> or not.  Depending on this decision, <code class="jarombek-inline-code">==</code>
+<code className="jarombek-inline-code">==</code> or not.  Depending on this decision, <code className="jarombek-inline-code">==</code>
 may test for value equality or reference equality.
 </p>
 <p>
-For example, the built in <code class="jarombek-inline-code">Uri</code> class overloads the <code class="jarombek-inline-code">==</code>
-operator so that it tests for value equality.  I also created a custom <code class="jarombek-inline-code">Yarn</code>
-class which doesn't overload <code class="jarombek-inline-code">==</code> so that it maintains reference equality.
+For example, the built in <code className="jarombek-inline-code">Uri</code> class overloads the <code className="jarombek-inline-code">==</code>
+operator so that it tests for value equality.  I also created a custom <code className="jarombek-inline-code">Yarn</code>
+class which doesn't overload <code className="jarombek-inline-code">==</code> so that it maintains reference equality.
 The consequences can be seen below:
 </p>
 <CodeSnippet language="C#">
@@ -846,20 +846,20 @@ Assert(pinkYarn != anotherPinkYarn); // == still maintains reference equality
 Assert(!pinkYarn.Equals(multiColorYarn));
 </CodeSnippet>
 <p>
-Luckily you can still use the <code class="jarombek-inline-code">ReferenceEquals()</code> method in case
-the <code class="jarombek-inline-code">==</code> operator is overloaded.  If you want to see more examples
+Luckily you can still use the <code className="jarombek-inline-code">ReferenceEquals()</code> method in case
+the <code className="jarombek-inline-code">==</code> operator is overloaded.  If you want to see more examples
 of equality in C#, check out my <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/
 08-Aug/08-18-type-equality/csharp/equality">GitHub</a> page.
 </p>
 <SectionTitle title="Groovy">Groovy</SectionTitle>
 <p>
 <a href="https://jarombek.com/blog?query=groovy&page=1">Groovy</a> takes Java's type equality system and
-makes some major changes to it.  Groovy uses <code class="jarombek-inline-code">==</code> to test for value
-equality for all values.  This is different than Java which uses <code class="jarombek-inline-code">==</code>
-for reference equality with value types.  You can still use <code class="jarombek-inline-code">Object.equals()</code>
-in Groovy, however it will provide the same result as <code class="jarombek-inline-code">==</code>.  Because
-both <code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">Object.equals()</code>
-are used for value equality, Groovy introduced a new method <code class="jarombek-inline-code">Object.is()</code>
+makes some major changes to it.  Groovy uses <code className="jarombek-inline-code">==</code> to test for value
+equality for all values.  This is different than Java which uses <code className="jarombek-inline-code">==</code>
+for reference equality with value types.  You can still use <code className="jarombek-inline-code">Object.equals()</code>
+in Groovy, however it will provide the same result as <code className="jarombek-inline-code">==</code>.  Because
+both <code className="jarombek-inline-code">==</code> and <code className="jarombek-inline-code">Object.equals()</code>
+are used for value equality, Groovy introduced a new method <code className="jarombek-inline-code">Object.is()</code>
 to test for reference equality.
 </p>
 <CodeSnippet language="Groovy">
@@ -912,7 +912,7 @@ AJarombek/jarombek-com-sources/tree/master/2019/08-Aug/08-18-type-equality/groov
 <a href="https://jarombek.com/blog?query=haskell&page=1">Haskell</a> is a functional programming language that
 behaves much differently than the other languages I'm looking at today.  It doesn't have reference equality
 by default, mostly for performance reasons<sup>7</sup>.  However, you can implement value equality by making
-a type an instance of the <code class="jarombek-inline-code">Eq</code> type class.
+a type an instance of the <code className="jarombek-inline-code">Eq</code> type class.
 </p>
 <CodeSnippet language="Haskell">
 
@@ -930,8 +930,8 @@ instance Eq WrappingPaper where
   WrappingPaper brand1 pattern1 == WrappingPaper brand2 pattern2 = brand1 == brand2 && pattern1 == pattern2
 </CodeSnippet>
 <p>
-Once <code class="jarombek-inline-code">Eq</code> is implemented, the <code class="jarombek-inline-code">==</code>
-and <code class="jarombek-inline-code">/=</code> operators can be used.  Note that Haskell is strongly typed,
+Once <code className="jarombek-inline-code">Eq</code> is implemented, the <code className="jarombek-inline-code">==</code>
+and <code className="jarombek-inline-code">/=</code> operators can be used.  Note that Haskell is strongly typed,
 so no type coercion occurs.
 </p>
 <CodeSnippet language="Haskell">
@@ -956,8 +956,8 @@ main = do
 <p>
 <a href="https://jarombek.com/blog?query=php&page=1">PHP</a> behaves similarly to JavaScript when it comes
 to type equality.  PHP is a loosely typed language that provides two operators for testing equality between
-types.  <code class="jarombek-inline-code">==</code> tests value equality with coercion for primitive types
-and tests value equality without coercion for objects.  <code class="jarombek-inline-code">===</code> tests
+types.  <code className="jarombek-inline-code">==</code> tests value equality with coercion for primitive types
+and tests value equality without coercion for objects.  <code className="jarombek-inline-code">===</code> tests
 value equality without coercion for primitive types and tests reference equality for objects.  Here are some
 examples of primitive type equality checks:
 </p>
@@ -1022,14 +1022,14 @@ assert($yarn3 !== $yarn4);
 <SectionTitle title="PowerShell">PowerShell</SectionTitle>
 <p>
 <a href="https://jarombek.com/blog?query=powershell&page=1">PowerShell</a> is a loosely typed scripting
-language.  It has a native operator <code class="jarombek-inline-code">-eq</code> for testing value equality.
+language.  It has a native operator <code className="jarombek-inline-code">-eq</code> for testing value equality.
 One of the cool things about PowerShell is that is has full access to the .NET Framework, including the
-<code class="jarombek-inline-code">[System.Object]::Equals()</code> and <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">[System.Object]::Equals()</code> and <code className="jarombek-inline-code">
 [System.Object]::ReferenceEquals()</code> functions I explored earlier in C#.
 </p>
 <p>
-When testing primitive values for value equality, the <code class="jarombek-inline-code">-eq</code> operator
-(and opposite <code class="jarombek-inline-code">-ne</code> operator) work as expected for a loosely typed language:
+When testing primitive values for value equality, the <code className="jarombek-inline-code">-eq</code> operator
+(and opposite <code className="jarombek-inline-code">-ne</code> operator) work as expected for a loosely typed language:
 </p>
 <CodeSnippet language="PowerShell">
 [int] $two = 2;
@@ -1042,9 +1042,9 @@ Test-Assertion($two -ne 3)
 Test-Assertion($two -ne "3")
 </CodeSnippet>
 <p>
-When working with objects in PowerShell, the <code class="jarombek-inline-code">-eq</code> operator and
-<code class="jarombek-inline-code">[System.Object]::Equals()</code> function are used to test value equality.
-The <code class="jarombek-inline-code">[System.Object]::ReferenceEquals()</code> function is used to
+When working with objects in PowerShell, the <code className="jarombek-inline-code">-eq</code> operator and
+<code className="jarombek-inline-code">[System.Object]::Equals()</code> function are used to test value equality.
+The <code className="jarombek-inline-code">[System.Object]::ReferenceEquals()</code> function is used to
 test reference equality.
 </p>
 <CodeSnippet language="PowerShell">
@@ -1102,9 +1102,9 @@ Test-Assertion(-not [System.Object]::ReferenceEquals($yarn3, $yarn4))
 <SectionTitle title="Swift">Swift</SectionTitle>
 <p>
 <a href="https://jarombek.com/blog?query=swift&page=1">Swift</a> provides two operators to test equality.
-For value types and structs, the <code class="jarombek-inline-code">==</code> operator tests for value equality.
-There is no way to test for reference equality on value types or structs.  For objects, the <code class="jarombek-inline-code">==</code>
-operator tests for value equality and the <code class="jarombek-inline-code">===</code> operator tests
+For value types and structs, the <code className="jarombek-inline-code">==</code> operator tests for value equality.
+There is no way to test for reference equality on value types or structs.  For objects, the <code className="jarombek-inline-code">==</code>
+operator tests for value equality and the <code className="jarombek-inline-code">===</code> operator tests
 for reference equality.
 </p>
 <p>
@@ -1137,7 +1137,7 @@ assert(lastName == lastNameAgain)
 </CodeSnippet>
 <p>
 The next piece of code creates a custom struct and a custom class.  Both demonstrate how the
-<code class="jarombek-inline-code">==</code> and <code class="jarombek-inline-code">===</code> operators work.
+<code className="jarombek-inline-code">==</code> and <code className="jarombek-inline-code">===</code> operators work.
 </p>
 <CodeSnippet language="Swift">
 struct Yarn: Equatable {
@@ -1214,7 +1214,7 @@ system and adds restrictions to it.  The reason for this is to try and protect J
 making mistakes with type coercion.  You could say that TypeScript is more strongly typed than JavaScript.
 </p>
 <p>
-If you try using the <code class="jarombek-inline-code">==</code> operator on two different types, TypeScript
+If you try using the <code className="jarombek-inline-code">==</code> operator on two different types, TypeScript
 will throw a compile time error:
 </p>
 <CodeSnippet language="TypeScript">
@@ -1227,7 +1227,7 @@ assert(2 !== "2");
 </CodeSnippet>
 <p>
 You can however trick TypeScript into thinking the two values are of comparable types by using the
-<code class="jarombek-inline-code">any</code> or <code class="jarombek-inline-code">Object</code> types:
+<code className="jarombek-inline-code">any</code> or <code className="jarombek-inline-code">Object</code> types:
 </p>
 <CodeSnippet language="TypeScript">
 

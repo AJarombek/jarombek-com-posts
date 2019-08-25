@@ -60,12 +60,12 @@ parametric polymorphism, variance means the same thing as inclusion polymorphism
 <p>
 Generic types expose type parameters which are filled in by creators and consumers of the type
 instances.  Type parameters are symbols that accept a range of different types.  For example, in
-C# the syntax <code class="jarombek-inline-code">&lt;...&gt;</code> is used next to the class
-identifier to define a generic type.  For example, the <code class="jarombek-inline-code">List</code>
-class is defined <code class="jarombek-inline-code">List&lt;T&gt;</code>, where
-<code class="jarombek-inline-code">T</code> is the type parameter.  Instances of the type fill
-in the type parameter with any type argument, such as <code class="jarombek-inline-code">
-new List&lt;int&gt;();</code> or <code class="jarombek-inline-code">new List&lt;string&gt;();</code>.
+C# the syntax <code className="jarombek-inline-code">&lt;...&gt;</code> is used next to the class
+identifier to define a generic type.  For example, the <code className="jarombek-inline-code">List</code>
+class is defined <code className="jarombek-inline-code">List&lt;T&gt;</code>, where
+<code className="jarombek-inline-code">T</code> is the type parameter.  Instances of the type fill
+in the type parameter with any type argument, such as <code className="jarombek-inline-code">
+new List&lt;int&gt;();</code> or <code className="jarombek-inline-code">new List&lt;string&gt;();</code>.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -89,9 +89,9 @@ are contravariant or covariant, clear relationships between different types are 
 </ComparisonTable>
 <p>
 In C#, non-generic types follow covariance.  Therefore, the assigned value of a variable declaration
-can be a subtype or the same type as the declared type.  For example, <code class="jarombek-inline-code">
-object myObj;</code> can be assigned to the same type (<code class="jarombek-inline-code">object()</code>)
-or a subtype (<code class="jarombek-inline-code">"a string literal"</code>).
+can be a subtype or the same type as the declared type.  For example, <code className="jarombek-inline-code">
+object myObj;</code> can be assigned to the same type (<code className="jarombek-inline-code">object()</code>)
+or a subtype (<code className="jarombek-inline-code">"a string literal"</code>).
 </p>
 <CodeSnippet language="C#">
 object myObj1 = new object();
@@ -115,8 +115,8 @@ Java</a>.  However, C# provides us with the flexibility to give generics varianc
 </p>
 <p>
 As of C# 4.0, generic type parameters can be made covariant or contravariant with interfaces<sup>7</sup>.
-To make a type parameter covariant, it must be marked with the <code class="jarombek-inline-code">out</code>
-modifier.  To make a type parameter contravariant, it must be marked with the <code class="jarombek-inline-code">
+To make a type parameter covariant, it must be marked with the <code className="jarombek-inline-code">out</code>
+modifier.  To make a type parameter contravariant, it must be marked with the <code className="jarombek-inline-code">
 in</code> modifier<sup>8</sup>.  I defined an interface with one contravariant type parameter and one
 covariant type parameter.
 </p>
@@ -128,22 +128,22 @@ public interface ICovariant&lt;in TK, out TV&gt;
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">TK</code> type parameter is contravariant and the
-<code class="jarombek-inline-code">TV</code> type parameter is covariant.  Contravariant types with the
-<code class="jarombek-inline-code">in</code> modifier can only be passed in to a method and can't be
-returned by a method.  Covariant types with the <code class="jarombek-inline-code">out</code> modifier
+The <code className="jarombek-inline-code">TK</code> type parameter is contravariant and the
+<code className="jarombek-inline-code">TV</code> type parameter is covariant.  Contravariant types with the
+<code className="jarombek-inline-code">in</code> modifier can only be passed in to a method and can't be
+returned by a method.  Covariant types with the <code className="jarombek-inline-code">out</code> modifier
 can only be returned by a method and can't be used as a method argument.
 </p>
 <p>
-With <code class="jarombek-inline-code">ICovariant</code> defined, I created a class
-<code class="jarombek-inline-code">VariantMap</code> which implements <code class="jarombek-inline-code">ICovariant</code>.
+With <code className="jarombek-inline-code">ICovariant</code> defined, I created a class
+<code className="jarombek-inline-code">VariantMap</code> which implements <code className="jarombek-inline-code">ICovariant</code>.
 </p>
 <CodeSnippet language="C#">
 public class VariantMap&lt;TK, TV&gt; : ICovariant&lt;TK, TV&gt; {}
 </CodeSnippet>
 <p>
-Finally I proved that <code class="jarombek-inline-code">TK</code> is contravariant and
-<code class="jarombek-inline-code">TV</code> is covariant.
+Finally I proved that <code className="jarombek-inline-code">TK</code> is contravariant and
+<code className="jarombek-inline-code">TV</code> is covariant.
 </p>
 <CodeSnippet language="C#">
 // Program.cs
@@ -163,10 +163,10 @@ Assert(variantMap2.Get(0).Equals(0));
 Assert(variantMap2.Get("Andy").Equals(23));
 </CodeSnippet>
 <p>
-You can check out the full <code class="jarombek-inline-code">VariantMap</code>,
-<code class="jarombek-inline-code">ICovariant</code> and <code class="jarombek-inline-code">Program</code>
+You can check out the full <code className="jarombek-inline-code">VariantMap</code>,
+<code className="jarombek-inline-code">ICovariant</code> and <code className="jarombek-inline-code">Program</code>
 code on <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/02-Feb/02-03-variance-csharp-generics">GitHub</a>.
-In my repository there is also an <code class="jarombek-inline-code">InvariantMap</code> class which
+In my repository there is also an <code className="jarombek-inline-code">InvariantMap</code> class which
 uses invariant generic type parameters.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>

@@ -68,11 +68,11 @@ ENTRYPOINT ["node", "./main.js"]
 </CodeSnippet>
 <p>
 As previously mentioned, a Dockerfile is a blueprint for an image.  A container is a running image.
-The Dockerfile for my application begins by building on top of the <code class="jarombek-inline-code">alpine</code>
-image.  <code class="jarombek-inline-code">alpine</code> is an extremely small Docker image based
+The Dockerfile for my application begins by building on top of the <code className="jarombek-inline-code">alpine</code>
+image.  <code className="jarombek-inline-code">alpine</code> is an extremely small Docker image based
 on the Alpine Linux distribution.  On top of the Alpine OS, I install Node.js and the application npm
-dependencies.  Finally I declare the <code class="jarombek-inline-code">node</code> process that
-runs on the container in the <code class="jarombek-inline-code">ENTRYPOINT</code> instruction.
+dependencies.  Finally I declare the <code className="jarombek-inline-code">node</code> process that
+runs on the container in the <code className="jarombek-inline-code">ENTRYPOINT</code> instruction.
 </p>
 <p>
 Now it's time to containerize the application in the <a href="https://jarombek.com/blog/apr-8-2019-docker-pt2">
@@ -94,9 +94,9 @@ The following command does the trick:
 docker image build -t nodejs-docker-app:latest .
 </CodeSnippet>
 <p>
-The final dot (<code class="jarombek-inline-code">.</code>) in this command is important since it tells
+The final dot (<code className="jarombek-inline-code">.</code>) in this command is important since it tells
 Docker to build an image based on the Dockerfile in the current directory.  List all the Docker images
-to confirm that a new <code class="jarombek-inline-code">nodejs-docker-app</code> image exists.
+to confirm that a new <code className="jarombek-inline-code">nodejs-docker-app</code> image exists.
 </p>
 <CodeSnippet language="Bash">
 docker image ls
@@ -106,23 +106,23 @@ docker image ls
 # alpine              latest              cdf98d1859c1        6 days ago          5.53MB
 </CodeSnippet>
 <p>
-Notice there is also an <code class="jarombek-inline-code">alpine</code> image.  This is pulled from
-DockerHub during the <code class="jarombek-inline-code">FROM alpine</code> instruction of my Dockerfile.
+Notice there is also an <code className="jarombek-inline-code">alpine</code> image.  This is pulled from
+DockerHub during the <code className="jarombek-inline-code">FROM alpine</code> instruction of my Dockerfile.
 </p>
 <p>
-The next step is to start a Docker container from the <code class="jarombek-inline-code">nodejs-docker-app</code> image.
+The next step is to start a Docker container from the <code className="jarombek-inline-code">nodejs-docker-app</code> image.
 </p>
 <CodeSnippet language="Bash">
 docker container run -d --name nodejs-app -p 80:3000 nodejs-docker-app:latest
 </CodeSnippet>
 <p>
-Confirm the container is running by listing the containers with <code class="jarombek-inline-code">docker
+Confirm the container is running by listing the containers with <code className="jarombek-inline-code">docker
  container ls</code>.  The application is now running in a container on port 3000 and accessible from the
 Docker playground EC2 instance on port 80.  Using the public DNS name of the EC2 instance, the application
 is viewable from a web browser.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/4-28-19-app.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/4-28-19-app.png"/>
 </figure>
 <p>
 While this is a very basic application, the same containerizing process can be used for complex pieces

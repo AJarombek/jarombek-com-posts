@@ -50,7 +50,7 @@ of the Control Plane - persistent storage, Kubernetes API, Scheduler, and Contro
 <p>
 The Kubernetes <strong>API server</strong> is a CRUD API that describes and modifies objects in the
 cluster<sup>4,5</sup>.  Interaction with the Kubernetes API server is often done through a CLI called
-<code class="jarombek-inline-code">kubectl</code>.  However, since the API server is a REST API, you
+<code className="jarombek-inline-code">kubectl</code>.  However, since the API server is a REST API, you
 can also interact with it using HTTP requests.
 </p>
 <p>
@@ -62,9 +62,9 @@ the same configuration).  The YAML file declares the desired state of the pod or
 </p>
 <p>
 The most common approach for adding an object to a Kubernetes cluster is to send a YAML file to the
-API server.  This is usually done through the <code class="jarombek-inline-code">kubectl</code> CLI
-with the <code class="jarombek-inline-code">kubectl create -f &lt;filename>.yml</code> or
-<code class="jarombek-inline-code">kubectl apply -f &lt;filename>.yml</code> commands.  For example, the following
+API server.  This is usually done through the <code className="jarombek-inline-code">kubectl</code> CLI
+with the <code className="jarombek-inline-code">kubectl create -f &lt;filename>.yml</code> or
+<code className="jarombek-inline-code">kubectl apply -f &lt;filename>.yml</code> commands.  For example, the following
 YAML file creates a pod object which holds a single container.
 </p>
 <CodeSnippet language="YAML">
@@ -96,13 +96,13 @@ spec:
 </CodeSnippet>
 <p>
 The Pod contains a container running a simple Node.js/Express web application.  To deploy this object
-on a Kubernetes cluster, the following <code class="jarombek-inline-code">kubectl</code> command is run:
+on a Kubernetes cluster, the following <code className="jarombek-inline-code">kubectl</code> command is run:
 </p>
 <CodeSnippet language="Bash">
 kubectl create -f pod.yml
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">kubectl</code> sends the YAML document to the API server.  When
+<code className="jarombek-inline-code">kubectl</code> sends the YAML document to the API server.  When
 the API server receives a YAML document, it stores all the Kubernetes objects it declares in persistent
 storage as JSON<sup>6</sup>.  Kubernetes uses an etcd key-value store for <strong>persistent storage</strong>.
 </p>
@@ -112,7 +112,7 @@ runs an algorithm to determine which node a pod should run on<sup>7</sup>.  The
 <strong>Controller Manager</strong> maintains multiple different controllers.  Controllers watch the
 API Server for changes to Kubernetes objects<sup>8</sup>.  Most Kubernetes objects have their own
 Controller.  For example, there is a ReplicaSet controller which watches for changes to
-<code class="jarombek-inline-code">ReplicaSet</code> objects.  When changes occur, controllers perform
+<code className="jarombek-inline-code">ReplicaSet</code> objects.  When changes occur, controllers perform
 operations on the cluster.  Their objective is to keep the cluster matching the desired state declared
 in the Kubernetes objects.  The only Kubernetes object that Controller's don't handle are Pods, which are
 configured by a component called the Kubelet.  I will provide details about the Kubelet when discussing
@@ -122,7 +122,7 @@ worker nodes.
 Here is a diagram of the master node and its four main components:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-13-19-k8s-master.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-13-19-k8s-master.png"/>
 </figure>
 <ComparisonTable title="Master Node Components">
 <ComparisonTableEntry>
@@ -185,7 +185,7 @@ in more detail in my next Kubernetes article.
 Here is a diagram of the worker node and its main components:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-13-19-k8s-worker.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-13-19-k8s-worker.png"/>
 </figure>
 <ComparisonTable title="Worker Node Components">
 <ComparisonTableEntry>
@@ -224,7 +224,7 @@ can be used instead of Docker.
 Here is a diagram of a three node cluster with one master node and two worker nodes:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-13-19-k8s-cluster.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-13-19-k8s-cluster.png"/>
 </figure>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>

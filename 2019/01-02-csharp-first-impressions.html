@@ -53,7 +53,7 @@ namespace Application
 </CodeSnippet>
 <p>
 While namespaces are an influence of C++, the rest of the object looks like a Java POJO.  It even
-overrides the <code class="jarombek-inline-code">ToString()</code> method from the <code class="jarombek-inline-code">object</code>
+overrides the <code className="jarombek-inline-code">ToString()</code> method from the <code className="jarombek-inline-code">object</code>
 superclass, which is the same as Java besides for some letter case differences.
 </p>
 <p>
@@ -132,7 +132,7 @@ var @int = 5;
 Assert(@int == 5);
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">@</code> token isn't part of the identifier, and can be
+The <code className="jarombek-inline-code">@</code> token isn't part of the identifier, and can be
 removed if the name isn't a reserved keyword<sup>3</sup>.
 </p>
 <p>
@@ -214,7 +214,7 @@ Assert(jaggedArray[1][2] == 5);
 <p>
 By default, variables are passed to functions by value in C# such that value-types are passed as a copy
 of the value and reference-types are passed as a copy of the reference.  Pass by value behavior can be
-changed to pass by reference with the <code class="jarombek-inline-code">ref</code> keyword.  In C++
+changed to pass by reference with the <code className="jarombek-inline-code">ref</code> keyword.  In C++
 this behavior requires the use of pointers.
 </p>
 <CodeSnippet language="C#">
@@ -248,7 +248,7 @@ public static void Main(params string[] args)
 }
 </CodeSnippet>
 <p>
-Function parameters can also use the <code class="jarombek-inline-code">out</code> keyword to
+Function parameters can also use the <code className="jarombek-inline-code">out</code> keyword to
 declare an output parameter.  Output parameters are used to return multiple values from a function.
 Although I think tuples are a more elegant solution, output variables are also a viable option.
 The only other language I can think of that uses output parameters is <a href="https://github.com/AJarombek/
@@ -273,7 +273,7 @@ public static void Main(params string[] args)
 
 </CodeSnippet>
 <p>
-C# also has operator level support for dealing with <code class="jarombek-inline-code">null</code> values.
+C# also has operator level support for dealing with <code className="jarombek-inline-code">null</code> values.
 The null-coalescing and null-conditional operators present in C# are some of the most useful operators
 found in modern languages (<a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2019/
 01-Jan/01-02-csharp-first-impressions/basics/null.swift">Swift</a> and <a href="https://github.com/

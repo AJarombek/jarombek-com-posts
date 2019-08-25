@@ -10,7 +10,7 @@ this article looks at basic features of PowerShell and how it compares to Bash a
 <p>
 Powershell is a command line shell and scripting language first released for Windows in 2006<sup>1</sup>.
 It was created as a better way to perform command line scripting on Windows.  Before Powershell, Batch
-files were used for command line scripting in the <code class="jarombek-inline-code">cmd.exe</code> CLI.
+files were used for command line scripting in the <code className="jarombek-inline-code">cmd.exe</code> CLI.
 While Batch was suitable for basic tasks, the scripting language was rough around the edges and lacked
 modern functionality.  PowerShell aimed to improve upon these shortcomings.
 </p>
@@ -38,9 +38,9 @@ param (
 </CodeSnippet>
 <p>
 This code declares a single parameter for the <strong>basics.ps1</strong> script.  It creates a new
-variable <code class="jarombek-inline-code">$author</code> of type string (<code class="jarombek-inline-code">
+variable <code className="jarombek-inline-code">$author</code> of type string (<code className="jarombek-inline-code">
 [string]</code>).  If no argument is supplied to <strong>basics.ps1</strong>, the default value
-<code class="jarombek-inline-code">"Andrew Jarombek"</code> is used.
+<code className="jarombek-inline-code">"Andrew Jarombek"</code> is used.
 </p>
 <p>
 PowerShell scripts are easily invoked in the PowerShell CLI by writing the path of the script followed
@@ -54,10 +54,10 @@ basics.ps1
 basics.ps1 "Andy J"
 </CodeSnippet>
 <p>
-Variables are written to stdout with the <code class="jarombek-inline-code">Write-Host</code> command,
-which is admittedly a bit more verbose than its <code class="jarombek-inline-code">echo</code> bash
+Variables are written to stdout with the <code className="jarombek-inline-code">Write-Host</code> command,
+which is admittedly a bit more verbose than its <code className="jarombek-inline-code">echo</code> bash
 counterpart.  The verbosity of commands is a common PowerShell gripe from developers accustomed to using Bash.  The following command
-prints out the <code class="jarombek-inline-code">$author</code> parameter.
+prints out the <code className="jarombek-inline-code">$author</code> parameter.
 </p>
 <CodeSnippet language="PowerShell">
 Write-Host $author
@@ -66,30 +66,30 @@ Write-Host $author
 <p>
 One complicated aspect of PowerShell is its execution policy.  Execution policies configure requirements
 that must be met for a PowerShell script to execute<sup>4</sup>.  By default, the execution policy for
-PowerShell on Windows machines is <code class="jarombek-inline-code">Restricted</code>, meaning no scripts
+PowerShell on Windows machines is <code className="jarombek-inline-code">Restricted</code>, meaning no scripts
 are allowed to execute.  When I first started using PowerShell this was quite confusing since all my scripts
 failed before executing.
 </p>
 <p>
 While you can create complex execution policy hierarchies at the process, user, and computer levels
-(among others), the most basic way to change the execution policy is with the <code class="jarombek-inline-code">
+(among others), the most basic way to change the execution policy is with the <code className="jarombek-inline-code">
 Set-ExecutionPolicy &lt;policy&gt;</code> command.  For example, the following command changes the
-execution policy to <code class="jarombek-inline-code">RemoteSigned</code>, which provides some protection
+execution policy to <code className="jarombek-inline-code">RemoteSigned</code>, which provides some protection
 against running untrustworthy downloaded scripts.
 </p>
 <CodeSnippet language="PowerShell">
 Set-ExecutionPolicy RemoteSigned
 </CodeSnippet>
 <p>
-You can also check the current execution policy with <code class="jarombek-inline-code">Get-ExecutionPolicy</code>.
+You can also check the current execution policy with <code className="jarombek-inline-code">Get-ExecutionPolicy</code>.
 All the different execution policies are explained on <a href="https://docs.microsoft.com/en-us/
 powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-6">Microsoft's website</a>.
 </p>
 <SectionTitle title="Working with Objects">Working with Objects</SectionTitle>
 <p>
 As I previously mentioned, all types in PowerShell are objects.  Because of this, variables have methods
-and properties that we can invoke and access.  For example, the <code class="jarombek-inline-code">string</code>
-type has methods such as <code class="jarombek-inline-code">Substring()</code> and <code class="jarombek-inline-code">
+and properties that we can invoke and access.  For example, the <code className="jarombek-inline-code">string</code>
+type has methods such as <code className="jarombek-inline-code">Substring()</code> and <code className="jarombek-inline-code">
 Replace()</code>.
 </p>
 <CodeSnippet language="PowerShell">
@@ -113,8 +113,8 @@ True
 Andrew Jarbek
 </CodeSnippet>
 <p>
-I also utilized a PowerShell operator <code class="jarombek-inline-code">-match</code> to match a
-regular expression to the <code class="jarombek-inline-code">$author</code> string.
+I also utilized a PowerShell operator <code className="jarombek-inline-code">-match</code> to match a
+regular expression to the <code className="jarombek-inline-code">$author</code> string.
 </p>
 <p>
 If you are coming from Batch or Bash, the fact that PowerShell has objects similar to an Object-oriented
@@ -134,12 +134,12 @@ Write-Host $ageInTenYears
 33
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">$age</code> is implicitly typed in this example.  It can be explicitly
-typed as <code class="jarombek-inline-code">[int]$age = 23</code>.
+<code className="jarombek-inline-code">$age</code> is implicitly typed in this example.  It can be explicitly
+typed as <code className="jarombek-inline-code">[int]$age = 23</code>.
 </p>
 <p>
 PowerShells object based type system really shines when dealing with more complex types.  For example,
-the following script handles the <code class="jarombek-inline-code">DateTime</code> type.
+the following script handles the <code className="jarombek-inline-code">DateTime</code> type.
 </p>
 <CodeSnippet language="PowerShell">
 # Get the current date set on the computer
@@ -252,8 +252,8 @@ Write-Host $age
 23
 </CodeSnippet>
 <p>
-To create a global variable from a function, the <code class="jarombek-inline-code">global:</code>
-variable prefix is used.  PowerShell also provides a <code class="jarombek-inline-code">script:</code>
+To create a global variable from a function, the <code className="jarombek-inline-code">global:</code>
+variable prefix is used.  PowerShell also provides a <code className="jarombek-inline-code">script:</code>
 variable prefix which persists the variable across function invocations.
 </p>
 <CodeSnippet language="PowerShell">
@@ -279,15 +279,15 @@ Local count: , Script count: 0, Global count: 0
 </CodeSnippet>
 <p>
 Function parameters and return values are a bit funky in PowerShell.  Parameters are defined similar
-to script parameters with a <code class="jarombek-inline-code">param()</code> block.  Return values
-are captured at the end of a function or when a <code class="jarombek-inline-code">return</code> keyword
-is encountered.  Therefore a <code class="jarombek-inline-code">return</code> keyword isn't needed for
+to script parameters with a <code className="jarombek-inline-code">param()</code> block.  Return values
+are captured at the end of a function or when a <code className="jarombek-inline-code">return</code> keyword
+is encountered.  Therefore a <code className="jarombek-inline-code">return</code> keyword isn't needed for
 functions to return a value!  They simply declare a function exit point<sup>5</sup>.
 </p>
 <p>
 I think the easiest way to demonstrate this behavior is with an example.  The following three functions
 multiply a string a number of times and return a new string.  They all behave the same way despite
-the <code class="jarombek-inline-code">return</code> keyword used differently (or missing entirely) in each.
+the <code className="jarombek-inline-code">return</code> keyword used differently (or missing entirely) in each.
 </p>
 <CodeSnippet language="PowerShell">
 # Output of functions are captured and returned.
