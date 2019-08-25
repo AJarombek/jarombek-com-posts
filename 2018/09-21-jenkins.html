@@ -69,7 +69,7 @@ the DSL Plugin.
 There are a number of different ways to install Jenkins (such as using a Docker container), however
 I usually use the <a href="https://jenkins.io/download/">Generic Java Package</a> approach.  With
 a Jenkins .war file on hand, starting a Jenkins server is as simple as executing
-<code class="jarombek-inline-code">java -jar jenkins.war</code> in the terminal.
+<code className="jarombek-inline-code">java -jar jenkins.war</code> in the terminal.
 </p>
 <p>
 The Jenkins Job DSL Plugin does not install by default, so it must be added under Manage Jenkins >
@@ -129,22 +129,22 @@ job("Seed_Job") {
 <p>
 The Jenkins Job DSL Plugin has some incredible <a href="https://jenkinsci.github.io/job-dsl-plugin/#">
 documentation</a> on the Groovy DSL for creating jobs, but I did my best to inline document what was
-happening above.  This script creates a second freestyle job called <code class="jarombek-inline-code">
-Seed_Job</code>, which takes in three parameters.  <code class="jarombek-inline-code">Seed_Job</code> creates
+happening above.  This script creates a second freestyle job called <code className="jarombek-inline-code">
+Seed_Job</code>, which takes in three parameters.  <code className="jarombek-inline-code">Seed_Job</code> creates
 new jobs by executing a Job DSL script in a Git repository.
 </p>
 <p>
 After clicking “Build Now” in the seed job, I can see two jobs listed on the Jenkins server:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins01.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins01.png"/>
 </figure>
 <p>
 With Seed_Job all set, I created a new parameterized build with the location of one of my GitHub
 repositories and the path to a Job DSL script.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins02.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins02.png"/>
 </figure>
 <p>
 Based of the parameters, Seed_Job will checkout the devops-prototypes repository from the master
@@ -174,7 +174,7 @@ pipelineJob("Hello_World") {
 }
 </CodeSnippet>
 <p>
-This Groovy script creates a Pipeline Job called <code class="jarombek-inline-code">Hello_World
+This Groovy script creates a Pipeline Job called <code className="jarombek-inline-code">Hello_World
 </code>.  The script finds a Jenkinsfile in the devops-prototypes repository on the master branch.
 This Jenkinsfile is what will execute every time the Hello_World job runs.
 </p>
@@ -182,13 +182,13 @@ This Jenkinsfile is what will execute every time the Hello_World job runs.
 After clicking "Build", I looked at the console output from Seed_Job and saw that the new Hello_World pipeline job was created.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins03.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins03.png"/>
 </figure>
 <p>
 Now I see three jobs listed on the Jenkins server:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins04.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins04.png"/>
 </figure>
 <p>
 Running the Hello_World job executes the following Jenkinsfile:
@@ -224,13 +224,13 @@ method will suffice.
 </p>
 <p>
 The pipeline code starts by specifying a node to run the job on with
-<code class="jarombek-inline-code">node("master")</code>.  A node is a system that can run a Jenkins
+<code className="jarombek-inline-code">node("master")</code>.  A node is a system that can run a Jenkins
 job, and the master node is the default system for the Jenkins server<sup>7</sup>.  Usually jobs are
 supposed to run on nodes other than master, but for a simple prototype its okay.
 </p>
 <p>
 A stage specifies a logical grouping of steps in a pipeline<sup>8</sup>.  I specified one stage for
-my pipeline - <code class="jarombek-inline-code">stage("Execute Bash Script")</code>.  Each
+my pipeline - <code className="jarombek-inline-code">stage("Execute Bash Script")</code>.  Each
 stage can have multiple steps, with each step being a command that executes.  My stage has two steps,
 both of which execute commands in Bash.  The first step looks at all the files accessible to the
 Jenkins pipeline, and the second step executes a simple script.sh file:
@@ -245,7 +245,7 @@ date
 Executing this pipeline produces the following output:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins05.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-21-18-jenkins05.png"/>
 </figure>
 <p>
 In this demo I used Seed_Job to generated a simple “Hello World” example.  However, it can also create

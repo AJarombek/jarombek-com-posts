@@ -8,7 +8,7 @@ creating APIs.  Hopefully this knowledge helps me create better Python objects.
 </p>
 <SectionTitle title="Investigating Python Methods">Investigating Python Methods</SectionTitle>
 <p>
-I created a class named <code class="jarombek-inline-code">Meta</code> to help explore different
+I created a class named <code className="jarombek-inline-code">Meta</code> to help explore different
 object oriented features.  It holds two pieces of information - the first and last name of whoever
 created the object instance.  Here is the class outline:
 </p>
@@ -29,19 +29,19 @@ class Meta:
 <p>
 One thing you may notice about this Python code is there are type hints for argument types
 and method return types.  Introduced in 2015 with Python 3.5, type hints aren't strictly enforced,
-but they do help IDE's identify code that doesn't follow expected types<sup>1</sup>.  The type hints in <code class="jarombek-inline-code">Meta</code> tell us that
-<code class="jarombek-inline-code">first_name</code> and <code class="jarombek-inline-code">
-last_name</code> are expected to be of type <code class="jarombek-inline-code">str</code> and
-the special <code class="jarombek-inline-code">__init__()</code> method returns
-<code class="jarombek-inline-code">None</code>.  Perhaps I'll write a full article about type hints
+but they do help IDE's identify code that doesn't follow expected types<sup>1</sup>.  The type hints in <code className="jarombek-inline-code">Meta</code> tell us that
+<code className="jarombek-inline-code">first_name</code> and <code className="jarombek-inline-code">
+last_name</code> are expected to be of type <code className="jarombek-inline-code">str</code> and
+the special <code className="jarombek-inline-code">__init__()</code> method returns
+<code className="jarombek-inline-code">None</code>.  Perhaps I'll write a full article about type hints
 in the future!
 </p>
 <p>
 When writing Python classes, one way to create specialized methods is with decorators (annotations).
 Decorators wrap methods with additional functionality.  One of the basic decorators is
-<code class="jarombek-inline-code">@property</code>, which creates a getter method.  In
-<code class="jarombek-inline-code">Meta</code> I created getter methods for the internal
-<code class="jarombek-inline-code">__first_name</code> and <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">@property</code>, which creates a getter method.  In
+<code className="jarombek-inline-code">Meta</code> I created getter methods for the internal
+<code className="jarombek-inline-code">__first_name</code> and <code className="jarombek-inline-code">
 __last_name</code> properties.
 </p>
 <CodeSnippet language="Python">
@@ -65,11 +65,11 @@ def last_name(self) -> str:
   return self.__last_name
 </CodeSnippet>
 <p>
-Now that these getter methods are created, the internal <code class="jarombek-inline-code">
-__first_name</code> and <code class="jarombek-inline-code">__last_name</code> properties are accessible
-through <code class="jarombek-inline-code">first_name</code> and <code class="jarombek-inline-code">
-last_name</code>.  If you try accessing the <code class="jarombek-inline-code">__first_name</code>
-or <code class="jarombek-inline-code">__last_name</code> properties directly an <code class="jarombek-inline-code">
+Now that these getter methods are created, the internal <code className="jarombek-inline-code">
+__first_name</code> and <code className="jarombek-inline-code">__last_name</code> properties are accessible
+through <code className="jarombek-inline-code">first_name</code> and <code className="jarombek-inline-code">
+last_name</code>.  If you try accessing the <code className="jarombek-inline-code">__first_name</code>
+or <code className="jarombek-inline-code">__last_name</code> properties directly an <code className="jarombek-inline-code">
 AttributeError</code> is thrown.
 </p>
 <CodeSnippet language="Python">
@@ -89,9 +89,9 @@ Unable to find property __first_name in class Meta
 </CodeSnippet>
 <p>
 Classes also typically contain special methods defined in Python's data model.
-<code class="jarombek-inline-code">Meta</code> contains the <code class="jarombek-inline-code">
-__format__()</code> special method which is invoked from the <code class="jarombek-inline-code">
-format()</code> built-in method.  <code class="jarombek-inline-code">format()</code> returns a string
+<code className="jarombek-inline-code">Meta</code> contains the <code className="jarombek-inline-code">
+__format__()</code> special method which is invoked from the <code className="jarombek-inline-code">
+format()</code> built-in method.  <code className="jarombek-inline-code">format()</code> returns a string
 representation of an object.
 </p>
 <CodeSnippet language="Python">
@@ -113,22 +113,22 @@ meta = Meta("Andrew", "Jarombek")
 assert format(meta, '') == '(Andrew, Jarombek)'
 </CodeSnippet>
 <p>
-My implementation of <code class="jarombek-inline-code">__format__()</code> is interesting because it uses the objects
-internal dictionary <code class="jarombek-inline-code">__dict__</code>.  Each object instance has
-a <code class="jarombek-inline-code">__dict__</code> property which contains all the objects instance
-attributes.  For <code class="jarombek-inline-code">Meta</code> these instance attributes are the
-first and last name.  In <code class="jarombek-inline-code">__format__()</code>, the variable
-<code class="jarombek-inline-code">components</code> is assigned to a generator which loops through
-each item in <code class="jarombek-inline-code">__dict__</code> and formats them.  Finally,
-<code class="jarombek-inline-code">components</code> is passed to a strings
-<code class="jarombek-inline-code">format()</code> method and returned.
+My implementation of <code className="jarombek-inline-code">__format__()</code> is interesting because it uses the objects
+internal dictionary <code className="jarombek-inline-code">__dict__</code>.  Each object instance has
+a <code className="jarombek-inline-code">__dict__</code> property which contains all the objects instance
+attributes.  For <code className="jarombek-inline-code">Meta</code> these instance attributes are the
+first and last name.  In <code className="jarombek-inline-code">__format__()</code>, the variable
+<code className="jarombek-inline-code">components</code> is assigned to a generator which loops through
+each item in <code className="jarombek-inline-code">__dict__</code> and formats them.  Finally,
+<code className="jarombek-inline-code">components</code> is passed to a strings
+<code className="jarombek-inline-code">format()</code> method and returned.
 </p>
 <p>
-You may be expecting <code class="jarombek-inline-code">__dict__</code> to contain both
-<code class="jarombek-inline-code">__first_name</code> and <code class="jarombek-inline-code">__last_name
+You may be expecting <code className="jarombek-inline-code">__dict__</code> to contain both
+<code className="jarombek-inline-code">__first_name</code> and <code className="jarombek-inline-code">__last_name
 </code>.  While this would make sense, Python actually name mangles any attributes that begin with two
 underscores<sup>2</sup>.  Python adds the class name into the instance attribute, so
-<code class="jarombek-inline-code">__first_name</code> becomes <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">__first_name</code> becomes <code className="jarombek-inline-code">
 _Meta__first_name</code>.
 </p>
 <CodeSnippet language="Python">
@@ -141,30 +141,30 @@ assert meta.__dict__['_Meta__first_name'] == 'Andrew'
 assert meta.__dict__['_Meta__last_name'] == 'Jarombek'
 </CodeSnippet>
 <p>
-Using the per instance <code class="jarombek-inline-code">__dict__</code> demonstrates a common
+Using the per instance <code className="jarombek-inline-code">__dict__</code> demonstrates a common
 approach in many programming languages - safety over security.  Although instance attributes
 beginning with double underscores are considered private attributes and are name mangled, they are
-still accessible through the <code class="jarombek-inline-code">__dict__</code> property (and
+still accessible through the <code className="jarombek-inline-code">__dict__</code> property (and
 through default attribute access).  In a similar sense, private instance variables in Java are only
 about safety, since they are still accessible with <a href="https://jarombek.com/blog/
 jul-1-2018-java-reflection">reflection</a>.  Safety is about protecting developers from common
 mistakes and maintaining elegant code, not stopping them from performing certain actions.
 </p>
 <p>
-Methods in Python are given a special first argument commonly named <code class="jarombek-inline-code">
+Methods in Python are given a special first argument commonly named <code className="jarombek-inline-code">
 self</code>.  This name is not strictly enforced by Python, but it's convention and considered a best
-practice.  <code class="jarombek-inline-code">self</code> refers to the object itself, and can be
+practice.  <code className="jarombek-inline-code">self</code> refers to the object itself, and can be
 used like any other object reference.
 </p>
 <p>
 With the help of decorators, we can change the special first argument passed to methods.  There are
-two decorators up to the task, <code class="jarombek-inline-code">@classmethod</code> and
-<code class="jarombek-inline-code">@staticmethod</code>.  <code class="jarombek-inline-code">@classmethod</code> changes the first
-argument from the object instance to the class itself<sup>3</sup>.  <code class="jarombek-inline-code">
+two decorators up to the task, <code className="jarombek-inline-code">@classmethod</code> and
+<code className="jarombek-inline-code">@staticmethod</code>.  <code className="jarombek-inline-code">@classmethod</code> changes the first
+argument from the object instance to the class itself<sup>3</sup>.  <code className="jarombek-inline-code">
 @staticmethod</code> completely removes the first special argument.
 </p>
 <p>
-<code class="jarombek-inline-code">@classmethod</code> is commonly used for alternative constructors
+<code className="jarombek-inline-code">@classmethod</code> is commonly used for alternative constructors
 (known as <a href="https://jarombek.com/blog/may-20-2018-java-generics-api">static factory methods</a>
 in Java).  I also created a class method that returns basic information about the class.
 </p>
@@ -201,9 +201,9 @@ assert meta.first_name == "Andrew"
 assert meta.last_name == "Jarombek"
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">@staticmethod</code> does not have many uses, however you can
+<code className="jarombek-inline-code">@staticmethod</code> does not have many uses, however you can
 use it to logically group a function into a class.  I created a static method which simply calls
-<code class="jarombek-inline-code">Meta.create()</code>.
+<code className="jarombek-inline-code">Meta.create()</code>.
 </p>
 <CodeSnippet language="Python">
 # Meta.py
@@ -219,15 +219,15 @@ def static_create():
 </CodeSnippet>
 <SectionTitle title="Altering an Object's Internal Storage Mechanism">Altering an Object's Internal Storage Mechanism</SectionTitle>
 <p>
-I already went over how each object instance contains metadata in the <code class="jarombek-inline-code">
+I already went over how each object instance contains metadata in the <code className="jarombek-inline-code">
 __dict__</code> property.  While this approach works well most of the time, it can get expensive for
 each object instance to store an internal dictionary data structure<sup>4</sup>.
 </p>
 <p>
 If you have millions of object instances derived from the same class, its less expensive to maintain
 a per-instance tuple rather than a per-instance dictionary.  Python provides this alternative metadata
-storage mechanism with the <code class="jarombek-inline-code">__slots__</code> property.  The
-<code class="jarombek-inline-code">__slots__</code> tuple maintains all the instance attributes of a class.
+storage mechanism with the <code className="jarombek-inline-code">__slots__</code> property.  The
+<code className="jarombek-inline-code">__slots__</code> tuple maintains all the instance attributes of a class.
 </p>
 <CodeSnippet language="Python">
 class CodeWritten:
@@ -279,11 +279,11 @@ class CodeWritten:
 Unable to add an attribute not declared in __slots__
 </CodeSnippet>
 <p>
-A side effect of using <code class="jarombek-inline-code">__slots__</code> is that instance
-attributes aren't allowed in an object if they aren't defined in <code class="jarombek-inline-code">
-__slots__</code>.  While <code class="jarombek-inline-code">__slots__</code> can be used as a way
+A side effect of using <code className="jarombek-inline-code">__slots__</code> is that instance
+attributes aren't allowed in an object if they aren't defined in <code className="jarombek-inline-code">
+__slots__</code>.  While <code className="jarombek-inline-code">__slots__</code> can be used as a way
 to prevent users from adding attributes to objects, this is considered a bad practice in the Python
-community<sup>5</sup>.  Preventing users from adding attributes is not what <code class="jarombek-inline-code">
+community<sup>5</sup>.  Preventing users from adding attributes is not what <code className="jarombek-inline-code">
 __slots__</code> was designed for.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>

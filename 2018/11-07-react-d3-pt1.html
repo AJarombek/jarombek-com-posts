@@ -20,12 +20,12 @@ AJarombek?utf8=%E2%9C%93&tab=repositories&q=Saints-XCTF&type=&language=">SaintsX
 Here is the final product:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-7-18-bar-chart.gif"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-7-18-bar-chart.gif"/>
 </figure>
 <p>
 I used <a href="https://github.com/facebook/create-react-app">create-react-app</a> to reduce the startup time
 for my React project.  I built a <a href="https://jarombek.com/blog/
-may-31-2018-react-seed#react-component">React Component</a> called <code class="jarombek-inline-code">
+may-31-2018-react-seed#react-component">React Component</a> called <code className="jarombek-inline-code">
 App</code> which creates buttons for navigating between weeks in the bar graph.
 </p>
 <CodeSnippet language="JavaScript">
@@ -86,7 +86,7 @@ class App extends React.Component {
 export default App;
 </CodeSnippet>
 <p>
-The imported module <code class="jarombek-inline-code">runData</code> contains daily running mileage along
+The imported module <code className="jarombek-inline-code">runData</code> contains daily running mileage along
 with ratings of how each run felt from 0-9.  The daily statistics are grouped by week.
 </p>
 <CodeSnippet language="JavaScript">
@@ -104,7 +104,7 @@ const runData = [
 ]
 </CodeSnippet>
 <p>
-The following code sets up the <code class="jarombek-inline-code">Graph</code> component with react-faux-dom.
+The following code sets up the <code className="jarombek-inline-code">Graph</code> component with react-faux-dom.
 The full code for <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2018/11-Nov/
 11-07-react-d3/d3-demo/src/Graph.js">Graph.js</a> including the D3 configuration is on GitHub.
 </p>
@@ -186,8 +186,8 @@ class Graph extends React.Component {
 export default withFauxDOM(Graph);
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">withFauxDOM()</code> in the export statement attaches the
-"fake" DOM onto the <code class="jarombek-inline-code">Graph</code> component.  With the addition of
+<code className="jarombek-inline-code">withFauxDOM()</code> in the export statement attaches the
+"fake" DOM onto the <code className="jarombek-inline-code">Graph</code> component.  With the addition of
 two style sheets <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2018/11-Nov/
 11-07-react-d3/d3-demo/src/Graph.css">Graph.css</a> and <a href="https://github.com/AJarombek/
 jarombek-com-sources/blob/master/2018/11-Nov/11-07-react-d3/d3-demo/src/App.css">App.css</a>, this

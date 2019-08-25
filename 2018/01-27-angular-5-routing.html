@@ -41,15 +41,15 @@ First I made an Angular component that has an HTML template for all the tabs.
 &lt;/div&gt;
 </CodeSnippet>
 <p>
-This code sets up <code class="jarombek-inline-code">[routerLink]</code> properties which specify
+This code sets up <code className="jarombek-inline-code">[routerLink]</code> properties which specify
 which path to route to.  Each of these routes is assigned to an Angular
 component.  When you click a route, its component template is placed inside the
-<code class="jarombek-inline-code">&lt;router-outlet&gt;</code> element.
+<code className="jarombek-inline-code">&lt;router-outlet&gt;</code> element.
 </p>
 <p>
-The Angular component for the template above is <code class="jarombek-inline-code">AppComponent</code>.
-It is wrapped with the router's components inside a module called <code class="jarombek-inline-code">
-AppModule</code>.  The most important aspect of <code class="jarombek-inline-code">AppModule</code> is
+The Angular component for the template above is <code className="jarombek-inline-code">AppComponent</code>.
+It is wrapped with the router's components inside a module called <code className="jarombek-inline-code">
+AppModule</code>.  The most important aspect of <code className="jarombek-inline-code">AppModule</code> is
 the mappings from routes to components:
 </p>
 <CodeSnippet language="TypeScript">
@@ -90,24 +90,24 @@ export class AppModule { }
 </CodeSnippet>
 <p>
 Each route is assigned a relative path and an Angular component.  The
-<code class="jarombek-inline-code">routes</code> variable is used in the
-<code class="jarombek-inline-code">@NgModule</code> annotation with <code class="jarombek-inline-code">
-RouterModule</code>.  I used <code class="jarombek-inline-code">RouterModule.forRoot()</code>
-because <code class="jarombek-inline-code">AppModule</code> is the root module.
+<code className="jarombek-inline-code">routes</code> variable is used in the
+<code className="jarombek-inline-code">@NgModule</code> annotation with <code className="jarombek-inline-code">
+RouterModule</code>.  I used <code className="jarombek-inline-code">RouterModule.forRoot()</code>
+because <code className="jarombek-inline-code">AppModule</code> is the root module.
 </p>
 <p>
-Most of the components used in <code class="jarombek-inline-code">routes</code> are very simple.  However, notice that some have a
-<code class="jarombek-inline-code">loadChildren</code> property instead of <code class="jarombek-inline-code">
-component</code>.  The routes with a <code class="jarombek-inline-code">loadChildren</code> property are lazily loaded<sup>1,2</sup>.  They are not shipped
+Most of the components used in <code className="jarombek-inline-code">routes</code> are very simple.  However, notice that some have a
+<code className="jarombek-inline-code">loadChildren</code> property instead of <code className="jarombek-inline-code">
+component</code>.  The routes with a <code className="jarombek-inline-code">loadChildren</code> property are lazily loaded<sup>1,2</sup>.  They are not shipped
 with the main application and are only loaded from the server when accessed.
 </p>
 <p>
 The prototype project has two modules: the root module that I just showed and a
-<code class="jarombek-inline-code">ProfileModule</code> that contains components accessible only
-to signed in users.  If you look closely at the <code class="jarombek-inline-code">loadChildren</code>
-properties you can see that they specify a file path to <code class="jarombek-inline-code">ProfileModule</code>.
+<code className="jarombek-inline-code">ProfileModule</code> that contains components accessible only
+to signed in users.  If you look closely at the <code className="jarombek-inline-code">loadChildren</code>
+properties you can see that they specify a file path to <code className="jarombek-inline-code">ProfileModule</code>.
 This module is lazily loaded upon following either of these paths.  Here is the code for
-<code class="jarombek-inline-code">ProfileModule</code> (notice that it specifies its own sub-routes):
+<code className="jarombek-inline-code">ProfileModule</code> (notice that it specifies its own sub-routes):
 </p>
 <CodeSnippet language="TypeScript">
 import { NgModule } from '@angular/core';
@@ -135,7 +135,7 @@ export class ProfileModule { }
 </CodeSnippet>
 <p>
 The templates for these components are just placeholders at the moment.  For example, here is the placeholder
-for <code class="jarombek-inline-code">ProfileComponent</code>:
+for <code className="jarombek-inline-code">ProfileComponent</code>:
 </p>
 <CodeSnippet language="HTML">
 &lt;p&gt;
@@ -145,21 +145,21 @@ for <code class="jarombek-inline-code">ProfileComponent</code>:
 <SectionTitle title="Lazy Loading In Action">Lazy Loading In Action</SectionTitle>
 <p>
 Let's make sure that lazy loading is actually working.  When the page first loads,
-<code class="jarombek-inline-code">HomeComponent</code> is displayed as
+<code className="jarombek-inline-code">HomeComponent</code> is displayed as
 expected and the developer tools reveal all the files loaded with the application.
 </p>
 <figure id="prelazy-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-27-17-prelazy.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-27-17-prelazy.png">
 </figure>
 <p>
-Now if I click on the Profile tab, the <code class="jarombek-inline-code">ProfileComponent</code> loads.
+Now if I click on the Profile tab, the <code className="jarombek-inline-code">ProfileComponent</code> loads.
 This component is lazily loaded.  As expected the webpage displays 'Profile Component!' and in the
 developer tools another file is loaded!  This file contains all the code
-for <code class="jarombek-inline-code">ProfileModule</code> including
-<code class="jarombek-inline-code">ProfileComponent</code>.  Lazy loading confirmed!
+for <code className="jarombek-inline-code">ProfileModule</code> including
+<code className="jarombek-inline-code">ProfileComponent</code>.  Lazy loading confirmed!
 </p>
 <figure id="postlazy-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-27-17-postlazy.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/1-27-17-postlazy.png">
 </figure>
 <p>
 I just began my journey with Angular 5 and am excited to learn more!  Angular is

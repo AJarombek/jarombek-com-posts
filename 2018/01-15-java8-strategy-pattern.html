@@ -1,7 +1,7 @@
 <div>
 <p>
 Since I started learning Java 8, much of my lambda code is from the stream API or the
-new <code class="jarombek-inline-code">Iterable.forEach()</code> function.  While both are great, I've
+new <code className="jarombek-inline-code">Iterable.forEach()</code> function.  While both are great, I've
 been looking for ways to integrate Java 8 lambdas with other programming patterns.  While
 reading a book on Java 8 today I saw one pattern with a lot of potential: the strategy pattern<sup>1</sup>.
 </p>
@@ -13,7 +13,7 @@ while the lambda function implements the details at runtime.
 </p>
 <p>
 First I created a functional interface that takes a variable number of
-<code class="jarombek-inline-code">double[]</code> arrays and returns a <code class="jarombek-inline-code">double</code>.
+<code className="jarombek-inline-code">double[]</code> arrays and returns a <code className="jarombek-inline-code">double</code>.
 </p>
 <CodeSnippet language="Java">
 @FunctionalInterface
@@ -23,7 +23,7 @@ public interface CalculateStrategy {
 </CodeSnippet>
 <p>
 Next I implemented the strategy pattern<sup>3</sup>.  The constructor takes a lambda expression that specifies
-the algorithm strategy.  Then the <code class="jarombek-inline-code">exec()</code> function executes the
+the algorithm strategy.  Then the <code className="jarombek-inline-code">exec()</code> function executes the
 strategy with given inputs.
 </p>
 <CodeSnippet language="Java">

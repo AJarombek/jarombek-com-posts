@@ -23,7 +23,7 @@ Dynamic Programming Language
 <p>
 Dynamic languages enable certain attributes of a program to be changed at runtime.  In an object
 oriented language, these attributes include class fields and methods<sup>1</sup>.  For example, new
-fields can be added to the <code class="jarombek-inline-code">String</code> class at runtime or an
+fields can be added to the <code className="jarombek-inline-code">String</code> class at runtime or an
 existing methods behavior can be altered at runtime.  These manipulations don't effect the original
 class definition and can be applied per instance or across all instances<sup>2</sup>.
 </p>
@@ -44,7 +44,7 @@ Static languages disallow certain attributes of a program from changing at runti
 languages are flexible with.  In the object oriented paradigm, a classes fields and methods are
 static and their definitions can't be changed at runtime (they are
 finalized at compile time).  For example, the number of methods and fields on
-<code class="jarombek-inline-code">String</code> can't change once a program compiles.  If a
+<code className="jarombek-inline-code">String</code> can't change once a program compiles.  If a
 method is invoked that does not exist, the program will not even compile.
 </p>
 </div>
@@ -58,8 +58,8 @@ occurs between the method or field lookup and the method invocation/field access
 </p>
 <p>
 Groovy calls the layer of indirection the Meta Object Protocol (MOP).  One piece of the MOP is
-funneling method invocations and field accesses through the <code class="jarombek-inline-code">
-MetaClass</code> object.  <code class="jarombek-inline-code">MetaClass</code> holds all relevant
+funneling method invocations and field accesses through the <code className="jarombek-inline-code">
+MetaClass</code> object.  <code className="jarombek-inline-code">MetaClass</code> holds all relevant
 information about a class, including the methods and fields in the class definition.
 </p>
 <CodeSnippet language="Groovy">
@@ -72,7 +72,7 @@ assert mc.methods.size() == 9
 assert mc.properties.size() == 1
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">MetaClass</code> object is used to invoke methods on the
+The <code className="jarombek-inline-code">MetaClass</code> object is used to invoke methods on the
 object it describes.  If you are familiar with Java, the technique will remind you of
 <a href="https://jarombek.com/blog/jul-1-2018-java-reflection">Java's Reflection API</a>.
 </p>
@@ -82,8 +82,8 @@ assert mc.invokeMethod([1,2,3], "get", [2]) == 3
 </CodeSnippet>
 <p>
 Whenever you invoke a method on a Groovy object, behind the scenes
-<code class="jarombek-inline-code">invokeMethod()</code> is called on the Groovy object's
-<code class="jarombek-inline-code">MetaClass</code>.
+<code className="jarombek-inline-code">invokeMethod()</code> is called on the Groovy object's
+<code className="jarombek-inline-code">MetaClass</code>.
 </p>
 <p>
 Another piece of the MOP is handling calls for methods that don't exist.  Groovy has special
@@ -91,16 +91,16 @@ hook methods for the MOP to invoke whenever a non-existent method is called.  As
 developers we can overwrite hook methods and add our own logic!
 </p>
 <p>
-The hook method that the MOP uses when a method is missing is <code class="jarombek-inline-code">
+The hook method that the MOP uses when a method is missing is <code className="jarombek-inline-code">
 methodMissing()</code>.  Similarly, the hook method for missing properties is
-<code class="jarombek-inline-code">propertyMissing()</code>.
+<code className="jarombek-inline-code">propertyMissing()</code>.
 </p>
 <p>
-<code class="jarombek-inline-code">methodMissing()</code> and <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">methodMissing()</code> and <code className="jarombek-inline-code">
 propertyMissing()</code> are implemented in a class definition.  Below is a sample class
-representing my programming language use in the past few weeks.  <code class="jarombek-inline-code">
-LanguageUse</code> uses both <code class="jarombek-inline-code">methodMissing()</code> and
-<code class="jarombek-inline-code">propertyMissing()</code>.
+representing my programming language use in the past few weeks.  <code className="jarombek-inline-code">
+LanguageUse</code> uses both <code className="jarombek-inline-code">methodMissing()</code> and
+<code className="jarombek-inline-code">propertyMissing()</code>.
 </p>
 <CodeSnippet language="Groovy">
 class LanguageUse {
@@ -144,9 +144,9 @@ class LanguageUse {
 }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">LanguageUse</code> uses <code class="jarombek-inline-code">
-methodMissing()</code> and <code class="jarombek-inline-code">propertyMissing()</code> to access
-values from the <code class="jarombek-inline-code">lastMonth</code> map.  Now I can make method
+<code className="jarombek-inline-code">LanguageUse</code> uses <code className="jarombek-inline-code">
+methodMissing()</code> and <code className="jarombek-inline-code">propertyMissing()</code> to access
+values from the <code className="jarombek-inline-code">lastMonth</code> map.  Now I can make method
 calls and access fields without any corresponding method or field definitions!
 </p>
 <CodeSnippet language="Groovy">
@@ -164,9 +164,9 @@ assert languageUse.java == 30
 </CodeSnippet>
 <p>
 MOP hook methods enable APIs in a dynamic programming language to be extremely flexible.  Even if
-the encapsulated <code class="jarombek-inline-code">lastMonth</code> map mutates, the new
-key-&gt;value entries are still accessible through the dynamic  <code class="jarombek-inline-code">
-methodMissing()</code> and <code class="jarombek-inline-code">propertyMissing()</code> methods!
+the encapsulated <code className="jarombek-inline-code">lastMonth</code> map mutates, the new
+key-&gt;value entries are still accessible through the dynamic  <code className="jarombek-inline-code">
+methodMissing()</code> and <code className="jarombek-inline-code">propertyMissing()</code> methods!
 </p>
 <SectionTitle title="Dynamic Programming in a Real-World Application?">Dynamic Programming in a Real-World Application?</SectionTitle>
 <p>
@@ -175,10 +175,10 @@ Groovy In Action</strong> I saw another great use of dynamic programming that co
 one of my existing applications.  I have a web, iOS, and Android application called
 <a href="https://github.com/AJarombek?utf8=%E2%9C%93&tab=repositories&q=Saints-XCTF&type=&language=">
 SaintsXCTF</a> which my college cross country and track & field teams use for exercise logging.
-Groovy In Action presents sample code that extends the <code class="jarombek-inline-code">Number
+Groovy In Action presents sample code that extends the <code className="jarombek-inline-code">Number
 </code> metaclass, adding additional functionality to convert between different metrics<sup>5</sup>.
 I decided to build upon this sample code in a way that would fit the needs of SaintsXCTF.  The
-following code dynamically adds new methods to the <code class="jarombek-inline-code">Number</code>
+following code dynamically adds new methods to the <code className="jarombek-inline-code">Number</code>
 class that assists conversions between miles, kilometers, and meters.
 </p>
 <CodeSnippet language="Groovy">
@@ -204,19 +204,19 @@ assert run5k.toMeters.round(2) == 5000
 </CodeSnippet>
 <p>
 This code creates six getter methods, each of which correspond to a field on
-<code class="jarombek-inline-code">Number</code>.  Each method defines what happens when its
+<code className="jarombek-inline-code">Number</code>.  Each method defines what happens when its
 corresponding field is accessed.
 </p>
 <p>
 If you read my post on <a  href="https://jarombek.com/blog/aug-16-2018-groovy-closures">
-Groovy closures</a> you will remember that each closure has a <code class="jarombek-inline-code">
-delegate</code> property.  <code class="jarombek-inline-code">delegate</code> determines how outer
-scope variables are resolved in a closure.  By default, <code class="jarombek-inline-code">
+Groovy closures</a> you will remember that each closure has a <code className="jarombek-inline-code">
+delegate</code> property.  <code className="jarombek-inline-code">delegate</code> determines how outer
+scope variables are resolved in a closure.  By default, <code className="jarombek-inline-code">
 delegate</code> is set to the owner of a closure, which is the closures lexical scope.  In the code
-above, <code class="jarombek-inline-code">delegate</code> will resolve to the instance of
-<code class="jarombek-inline-code">Number</code>.  Therefore, accessing the field
-<code class="jarombek-inline-code">5.kilometers</code> results in the calculation
-<code class="jarombek-inline-code">5 / 1.60934.miles</code>.
+above, <code className="jarombek-inline-code">delegate</code> will resolve to the instance of
+<code className="jarombek-inline-code">Number</code>.  Therefore, accessing the field
+<code className="jarombek-inline-code">5.kilometers</code> results in the calculation
+<code className="jarombek-inline-code">5 / 1.60934.miles</code>.
 </p>
 <p>
 Manipulating classes in a languages standard library to accommodate an application is the greatest power of

@@ -26,10 +26,10 @@ once<sup>3</sup>.  A function takes in arguments one at a time by having a singl
 returning a function that also takes a single argument<sup>4</sup>.  Returning a function makes a
 curried function a higher order function - one that either takes in a function as an argument or
 results in a function.  A basic example of a curried function is one that multiplies two numbers.
-Denoted as <code class="jarombek-inline-code">mult :: Int -> (Int -> Int)</code>, this curried
-function is invoked with the statement <code class="jarombek-inline-code">
-mult 2 3</code>, resulting in <code class="jarombek-inline-code">6</code> (note the syntax matches
-Haskell). <code class="jarombek-inline-code">mult</code> takes a single integer argument and 
+Denoted as <code className="jarombek-inline-code">mult :: Int -> (Int -> Int)</code>, this curried
+function is invoked with the statement <code className="jarombek-inline-code">
+mult 2 3</code>, resulting in <code className="jarombek-inline-code">6</code> (note the syntax matches
+Haskell). <code className="jarombek-inline-code">mult</code> takes a single integer argument and
 returns a function that also takes a single integer argument.  Curried functions are commonly used 
 to create partial applications.
 </Definition>
@@ -52,8 +52,8 @@ mult x y = x * y
 <p>
 Now that a curried function exists, partial implementations are easily defined.  Note that the
 following partial implementations fix one of the curried functions arguments to a value.  For example,
-<code class="jarombek-inline-code">dub</code> fixes one of the integer arguments to
-<code class="jarombek-inline-code">2</code>, so all function invocations will multiply the functions
+<code className="jarombek-inline-code">dub</code> fixes one of the integer arguments to
+<code className="jarombek-inline-code">2</code>, so all function invocations will multiply the functions
 argument by 2.
 </p>
 <CodeSnippet language="Haskell">
@@ -83,9 +83,9 @@ Curried functions and partial applications are also easy to make in JavaScript u
 </UpdateInfo>
 <SectionTitle title="Currying Groovy Closures">Currying Groovy Closures</SectionTitle>
 <p>
-The closure object in Groovy has a <code class="jarombek-inline-code">curry()</code> method.
-Invoking <code class="jarombek-inline-code">curry()</code> creates a partial implementation of the
-closure.  It is important to remember that <code class="jarombek-inline-code">curry()</code> does
+The closure object in Groovy has a <code className="jarombek-inline-code">curry()</code> method.
+Invoking <code className="jarombek-inline-code">curry()</code> creates a partial implementation of the
+closure.  It is important to remember that <code className="jarombek-inline-code">curry()</code> does
 not create a curried function like those we defined in Haskell.  Currying
 in Groovy only creates specialized versions of a function (yes, this is confusing.  You may want to
 re-read this paragraph).
@@ -108,13 +108,13 @@ def timesTen = times.curry(10)
 assert timesTen(10) == 100
 </CodeSnippet>
 <p>
-The argument passed to the <code class="jarombek-inline-code">curry()</code> method is a value
+The argument passed to the <code className="jarombek-inline-code">curry()</code> method is a value
 bound to one of the closures parameters.
 </p>
 <p>
 One solid use case of partial implementation is to take a generic function and create many
 specialized variants.  In the following code I have a generic closure for logging exercises.  The
-parameters of the closure <code class="jarombek-inline-code">workout</code> are the distance,
+parameters of the closure <code className="jarombek-inline-code">workout</code> are the distance,
 time spent, and type of exercise.  Specialized workout closures are built with partial
 implementations:
 </p>

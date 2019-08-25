@@ -54,9 +54,9 @@ to perform method overloading in Java, Groovy, JavaScript, Python, Swift, and PH
 I set up a few classes in each language to help demonstrate method overloading.  I built classes
 representing a garden I often do work in at Tod’s Point in Old Greenwich, CT.  The garden is
 filled with flowers and animals often stop by to eat.  Three classes were built to
-depict the scene - <code class="jarombek-inline-code">Animal</code>,
-<code class="jarombek-inline-code">Plant</code> and
-<code class="jarombek-inline-code">Garden</code>:
+depict the scene - <code className="jarombek-inline-code">Animal</code>,
+<code className="jarombek-inline-code">Plant</code> and
+<code className="jarombek-inline-code">Garden</code>:
 </p>
 <CodeSnippet language="Groovy">
 class Animal {
@@ -95,11 +95,11 @@ class Garden {
 </CodeSnippet>
 <p>
 Tod’s Points garden is filled with animals, plants, and potentially other random objects - which
-correspond to the instance variables <code class="jarombek-inline-code">animals</code>,
-<code class="jarombek-inline-code">plants</code>, and <code class="jarombek-inline-code">
-randomObjects</code> in <code class="jarombek-inline-code">Garden</code>.  The method of interest
-is <code class="jarombek-inline-code">inGarden()</code> located in the
-<code class="jarombek-inline-code">Garden</code> class.  This is the method that we
+correspond to the instance variables <code className="jarombek-inline-code">animals</code>,
+<code className="jarombek-inline-code">plants</code>, and <code className="jarombek-inline-code">
+randomObjects</code> in <code className="jarombek-inline-code">Garden</code>.  The method of interest
+is <code className="jarombek-inline-code">inGarden()</code> located in the
+<code className="jarombek-inline-code">Garden</code> class.  This is the method that we
 wish to overload.
 </p>
 <SectionTitle title="Java">Java</SectionTitle>
@@ -158,26 +158,26 @@ unique in the sense that it chooses which overloaded method to invoke at compile
 <p>
 Picking overloaded methods at compile time has some interesting consequences.  Remember that
 variables in Java have both compile time and runtime types.  Often the compile time and runtime
-types of variables are the same, such as the variable definition <code class="jarombek-inline-code">
+types of variables are the same, such as the variable definition <code className="jarombek-inline-code">
 Animal doe = Animal.ofName("doe", Animal.Species.DEER);</code>.  Both compile and runtime types are
-of the class <code class="jarombek-inline-code">Animal</code>.  The overloaded method that gets
-invoked is equally predictable - <code class="jarombek-inline-code">inGarden(Animal animal)</code>.
+of the class <code className="jarombek-inline-code">Animal</code>.  The overloaded method that gets
+invoked is equally predictable - <code className="jarombek-inline-code">inGarden(Animal animal)</code>.
 </p>
 <p>
 Things get more complicated when the compile time and runtime types are different.  Different
 compile time and runtime types are possible in object oriented programming thanks to polymorphism.
-Take the variable definition <code class="jarombek-inline-code">Object objectDoe = doe;</code>.  The
-compile time type of the variable <code class="jarombek-inline-code">objectDoe</code> is
-<code class="jarombek-inline-code">Object</code>.  However, recall that the type of the variable
-<code class="jarombek-inline-code">doe</code> is <code class="jarombek-inline-code">Animal</code>.
+Take the variable definition <code className="jarombek-inline-code">Object objectDoe = doe;</code>.  The
+compile time type of the variable <code className="jarombek-inline-code">objectDoe</code> is
+<code className="jarombek-inline-code">Object</code>.  However, recall that the type of the variable
+<code className="jarombek-inline-code">doe</code> is <code className="jarombek-inline-code">Animal</code>.
 Two different types for one variable!
 </p>
 <p>
 So the question becomes which overloaded method gets invoked when calling
-<code class="jarombek-inline-code">garden.inGarden(objectDoe)</code> -
-<code class="jarombek-inline-code">inGarden(Animal animal)</code> or
-<code class="jarombek-inline-code">inGarden(Object object)</code>?  Java actually picks
-<code class="jarombek-inline-code">inGarden(Object object)</code>, as it only considers the compile
+<code className="jarombek-inline-code">garden.inGarden(objectDoe)</code> -
+<code className="jarombek-inline-code">inGarden(Animal animal)</code> or
+<code className="jarombek-inline-code">inGarden(Object object)</code>?  Java actually picks
+<code className="jarombek-inline-code">inGarden(Object object)</code>, as it only considers the compile
 time type for overloaded methods.
 </p>
 <p>
@@ -232,9 +232,9 @@ assert garden.inGarden(objectDoe)
 <p>
 Unlike Java, Groovy will determine which overloaded method to call based on the runtime types of the
 method arguments.  This is because Groovy is dynamically typed - it enforces Java’s type system only
-at runtime.  Calling <code class="jarombek-inline-code">garden.inGarden(objectDoe)</code> in Groovy
-will invoke <code class="jarombek-inline-code">inGarden(Animal animal)</code> instead of
-<code class="jarombek-inline-code">inGarden(Object object)</code>.  Without going into much detail
+at runtime.  Calling <code className="jarombek-inline-code">garden.inGarden(objectDoe)</code> in Groovy
+will invoke <code className="jarombek-inline-code">inGarden(Animal animal)</code> instead of
+<code className="jarombek-inline-code">inGarden(Object object)</code>.  Without going into much detail
 on dynamic programming languages, this behavior in Groovy is thanks to multimethods.
 </p>
 <Definition word="Multimethods">
@@ -346,18 +346,18 @@ different method arguments is handled in one method definition.
 <UpdateInfo date="November 27th, 2018">
 <p>
 There are a few things incorrect about the above Python code and explanation.  Function
-overloading is possible in Python outside of a class with the <code class="jarombek-inline-code">@singledispatch</code>
-decorator.  <code class="jarombek-inline-code">@singledispatch</code> creates a generic function that has different
+overloading is possible in Python outside of a class with the <code className="jarombek-inline-code">@singledispatch</code>
+decorator.  <code className="jarombek-inline-code">@singledispatch</code> creates a generic function that has different
 bodies depending on the argument types<sup>7</sup>.  I refactored the garden example above to use
-<code class="jarombek-inline-code">@singledispatch</code>.  That code exists in the <a href="https://bit.ly/2PaGVZK">garden2.py</a>
+<code className="jarombek-inline-code">@singledispatch</code>.  That code exists in the <a href="https://bit.ly/2PaGVZK">garden2.py</a>
 and <a href="https://bit.ly/2DNzPrP">main2.py</a> files on GitHub.
 </p>
 <p>
-The second problem is in the <code class="jarombek-inline-code">Garden</code> constructor.  In Python default arguments for
+The second problem is in the <code className="jarombek-inline-code">Garden</code> constructor.  In Python default arguments for
 should never be mutable<sup>8</sup>.  The problem is default arguments are bound to the function
 object when the module is loaded<sup>9</sup>.  After that, if the value is mutated, it affects
 all further invocations of the function.  This exploit is shown in <a href="https://bit.ly/2KF93Ua">mainI.py</a>.  I fixed the
-<code class="jarombek-inline-code">Garden</code> class in <a href="https://bit.ly/2KDWS9T">GardenII.py</a>
+<code className="jarombek-inline-code">Garden</code> class in <a href="https://bit.ly/2KDWS9T">GardenII.py</a>
 and <a href="https://bit.ly/2SiQlV0">mainII.py</a>.
 </p>
 </UpdateInfo>
@@ -409,11 +409,11 @@ assert(!garden.inGarden("Squirrel"))
 <p>
 Swift is interesting because it is a statically typed language with optional type annotations
 that can be applied to variables<sup>10</sup>.  The most generic type in Swift is
-<code class="jarombek-inline-code">Any</code> - meaning an instance of any type.  If you define a
-variable with <code class="jarombek-inline-code">Any</code> as the type annotation such as
-<code class="jarombek-inline-code">let otherDoe: Any = doe</code>, the generic overloaded method
-<code class="jarombek-inline-code">inGarden(_ object: Any)</code> will be called instead of
-<code class="jarombek-inline-code">inGarden(_ animal: Animal)</code>.
+<code className="jarombek-inline-code">Any</code> - meaning an instance of any type.  If you define a
+variable with <code className="jarombek-inline-code">Any</code> as the type annotation such as
+<code className="jarombek-inline-code">let otherDoe: Any = doe</code>, the generic overloaded method
+<code className="jarombek-inline-code">inGarden(_ object: Any)</code> will be called instead of
+<code className="jarombek-inline-code">inGarden(_ animal: Animal)</code>.
 </p>
 <SectionTitle title="PHP">PHP</SectionTitle>
 <p>

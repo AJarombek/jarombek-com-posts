@@ -3,7 +3,7 @@
 Usually when I work in Java generics are easy to reason about.  They enforce types
 on a collection or a class I created.  When declaring a class with a generic, an instance of that
 class can be parameterized with one (or more) element types.  A simple example is an
-<code class="jarombek-inline-code">ArrayList</code>, which is implemented with a generic parameter like so:
+<code className="jarombek-inline-code">ArrayList</code>, which is implemented with a generic parameter like so:
 </p>
 <CodeSnippet language="Java">
 
@@ -12,14 +12,14 @@ public class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt; implements List&lt
 }
 </CodeSnippet>
 <p>
-Note that <code class="jarombek-inline-code">ArrayList</code> extends <code class="jarombek-inline-code">AbstractList</code> and implements
-<code class="jarombek-inline-code">List</code>.  <code class="jarombek-inline-code">AbstractList</code>
-actually implements <code class="jarombek-inline-code">List</code> itself, so the definition of
-<code class="jarombek-inline-code">implements &lt;List&gt;</code> is not needed.  It is only
+Note that <code className="jarombek-inline-code">ArrayList</code> extends <code className="jarombek-inline-code">AbstractList</code> and implements
+<code className="jarombek-inline-code">List</code>.  <code className="jarombek-inline-code">AbstractList</code>
+actually implements <code className="jarombek-inline-code">List</code> itself, so the definition of
+<code className="jarombek-inline-code">implements &lt;List&gt;</code> is not needed.  It is only
 there for clarity and readability.
 </p>
 <p>
-You can create an instance of an <code class="jarombek-inline-code">ArrayList</code> with a type:
+You can create an instance of an <code className="jarombek-inline-code">ArrayList</code> with a type:
 </p>
 <CodeSnippet language="Java">
 List&lt;Number&gt; numberList = new ArrayList&lt;Number&gt;();
@@ -29,19 +29,19 @@ List&lt;Number&gt; numberList = new ArrayList&lt;Number&gt;();
 List&lt;Number&gt; numberList2 = new ArrayList&lt;&gt;();
 </CodeSnippet>
 <p>
-Easy right?  But what happens if I change the generic assignment to <code class="jarombek-inline-code">
-Integer</code>?  My first thought was it should work, since  <code class="jarombek-inline-code">Integer
-</code> is a subclass of <code class="jarombek-inline-code">Number</code>:
+Easy right?  But what happens if I change the generic assignment to <code className="jarombek-inline-code">
+Integer</code>?  My first thought was it should work, since  <code className="jarombek-inline-code">Integer
+</code> is a subclass of <code className="jarombek-inline-code">Number</code>:
 </p>
 <CodeSnippet language="Java">
 List&lt;Number&gt; n2 = new ArrayList&lt;Integer&gt;(); // Incompatible Types
 </CodeSnippet>
 <p>
-This code actually fails, saying that <code class="jarombek-inline-code">Number</code> and
-<code class="jarombek-inline-code">Integer</code> are incompatible types.  This is because of a unique
+This code actually fails, saying that <code className="jarombek-inline-code">Number</code> and
+<code className="jarombek-inline-code">Integer</code> are incompatible types.  This is because of a unique
 implementation detail of generics.  Generics are invariant, meaning that two generic type parameters are
-neither supertypes or subtypes of one another.  That means <code class="jarombek-inline-code">
-List&lt;Integer&gt;</code> is not a subtype of <code class="jarombek-inline-code">List&lt;Number&gt;</code>,
+neither supertypes or subtypes of one another.  That means <code className="jarombek-inline-code">
+List&lt;Integer&gt;</code> is not a subtype of <code className="jarombek-inline-code">List&lt;Number&gt;</code>,
 they are simply not equal.  Therefore, the above assignment statement is invalid.
 </p>
 <UpdateInfo date="February 3rd, 2019">
@@ -51,18 +51,18 @@ with C# Generics</a> if you want to learn more.
 </UpdateInfo>
 <p>
 It is important to note that object assignments still enable polymorphism when using generics.  In the
-example above an <code class="jarombek-inline-code">ArrayList</code> was still assigned to a
-<code class="jarombek-inline-code">List</code>.
+example above an <code className="jarombek-inline-code">ArrayList</code> was still assigned to a
+<code className="jarombek-inline-code">List</code>.
 </p>
 <Definition word="Covariant">
 When a programming language type system allows variables to be assigned any type less than
 (subtype) or equal to the variables declared type<sup>1</sup>.  In Java, obviously a type
-<code class="jarombek-inline-code">List</code> can be assigned to a variable defined as type
-<code class="jarombek-inline-code">List</code> such as <code class="jarombek-inline-code">List&lt;Object&gt;
+<code className="jarombek-inline-code">List</code> can be assigned to a variable defined as type
+<code className="jarombek-inline-code">List</code> such as <code className="jarombek-inline-code">List&lt;Object&gt;
  list = new List&lt;&gt;();</code>.  This follows the second part of the rule when the types are equal.
-You can also assign any subtype of <code class="jarombek-inline-code">List</code>, such as
-<code class="jarombek-inline-code">ArrayList</code>.  This follows the first part of the rule.  Arrays in
-Java are also covariant such that the following assignment is legal: <code class="jarombek-inline-code">
+You can also assign any subtype of <code className="jarombek-inline-code">List</code>, such as
+<code className="jarombek-inline-code">ArrayList</code>.  This follows the first part of the rule.  Arrays in
+Java are also covariant such that the following assignment is legal: <code className="jarombek-inline-code">
 Number[] array = new Integer[1];</code>
 </Definition>
 <Definition word="Contravariant">
@@ -73,7 +73,7 @@ error when a supertype is assigned to a declaration.
 <Definition word="Invariant">
 When a type in a programming language is neither a supertype or subtype of any other type.  In Java generics
 follow invariance, so a generic type assignment can only correspond to a generic type declaration of the same type.
-For example the following assignment is valid: <code class="jarombek-inline-code">List&lt;Number&gt; numberList =
+For example the following assignment is valid: <code className="jarombek-inline-code">List&lt;Number&gt; numberList =
  new ArrayList&lt;Number&gt;();</code>.  The work around for generics invariance is generic wildcards.
 </Definition>
 <p>
@@ -87,8 +87,8 @@ array[0] = 1.6;
 </CodeSnippet>
 <p>
 What happens here is you can assign an array a value of any subtype.  However, when the array was
-initialized it was given the type <code class="jarombek-inline-code">Integer</code>.  While
-<code class="jarombek-inline-code">1.6</code> is a valid number, it is not a valid integer.  Therefore we
+initialized it was given the type <code className="jarombek-inline-code">Integer</code>.  While
+<code className="jarombek-inline-code">1.6</code> is a valid number, it is not a valid integer.  Therefore we
 get an unfortunate exception at runtime.  Note that the code above compiles cleanly - the error is only
 noticeable when running the program.  At that point its too late!
 </p>
@@ -165,8 +165,8 @@ of the correct type is added.  Similarly there is no guarantee that a declared v
 the type of an unbounded generic list.  Therefore both these operations are disallowed.
 </p>
 <p>
-However you can assign a list element to a variable of type <code class="jarombek-inline-code">Object</code>
-or use Java 10's <code class="jarombek-inline-code">var</code> keyword.
+However you can assign a list element to a variable of type <code className="jarombek-inline-code">Object</code>
+or use Java 10's <code className="jarombek-inline-code">var</code> keyword.
 </p>
 <p>
 Interestingly unbounded wildcards are reified (unlike all other generics) in the sense that they don't
@@ -191,25 +191,25 @@ numbers.add(1);
 Number number = numbers.get(1);
 </CodeSnippet>
 <p>
-The syntax <code class="jarombek-inline-code">List&lt;? extends Number&gt;</code> defines a generic type
-of <code class="jarombek-inline-code">Number</code> or any subtype of <code class="jarombek-inline-code">
-Number</code>, such as <code class="jarombek-inline-code">Integer</code>.  In the code above assigning the
-subtype <code class="jarombek-inline-code">Integer</code> is valid but
-assigning the supertype <code class="jarombek-inline-code">Object</code> is not.
+The syntax <code className="jarombek-inline-code">List&lt;? extends Number&gt;</code> defines a generic type
+of <code className="jarombek-inline-code">Number</code> or any subtype of <code className="jarombek-inline-code">
+Number</code>, such as <code className="jarombek-inline-code">Integer</code>.  In the code above assigning the
+subtype <code className="jarombek-inline-code">Integer</code> is valid but
+assigning the supertype <code className="jarombek-inline-code">Object</code> is not.
 </p>
 <p>
 The confusing part is what comes next.  Adding another integer to the list
-fails.  This is because its impossible to guarantee that <code class="jarombek-inline-code">numbers</code>
-is actually a list of <code class="jarombek-inline-code">Integer</code>, even though it was assigned
-<code class="jarombek-inline-code">Integer</code> values.  If you think about it this makes sense.  The
-list can be a <code class="jarombek-inline-code">Number</code> or any subclass.  This means that is could
+fails.  This is because its impossible to guarantee that <code className="jarombek-inline-code">numbers</code>
+is actually a list of <code className="jarombek-inline-code">Integer</code>, even though it was assigned
+<code className="jarombek-inline-code">Integer</code> values.  If you think about it this makes sense.  The
+list can be a <code className="jarombek-inline-code">Number</code> or any subclass.  This means that is could
 be an integer, but it also could be a double, float, or some other complex number type.  There is simply
 no way of guaranteeing type safety, and once the code is compiled all type information is lost.
 </p>
 <p>
 However, it is known that the value of a list element is of type
-<code class="jarombek-inline-code">Number</code> or any of its subtypes.  Therefore it is valid to assign a
-list element to type <code class="jarombek-inline-code">Number</code>.
+<code className="jarombek-inline-code">Number</code> or any of its subtypes.  Therefore it is valid to assign a
+list element to type <code className="jarombek-inline-code">Number</code>.
 </p>
 <p>
 Another kind of unbounded wildcard works with supertypes:
@@ -228,24 +228,24 @@ nums.add(8);
 Number num = nums.get(1);
 </CodeSnippet>
 <p>
-The syntax <code class="jarombek-inline-code">List&lt;? super Number&gt;</code>
-defines a generic type of <code class="jarombek-inline-code">Number</code> or any supertype of
-<code class="jarombek-inline-code">Number</code>, such as <code class="jarombek-inline-code">Object</code>.
-In the code above using the supertype <code class="jarombek-inline-code">Object</code> for
-the assignment is valid but using the subtype <code class="jarombek-inline-code">Integer</code> is not.
+The syntax <code className="jarombek-inline-code">List&lt;? super Number&gt;</code>
+defines a generic type of <code className="jarombek-inline-code">Number</code> or any supertype of
+<code className="jarombek-inline-code">Number</code>, such as <code className="jarombek-inline-code">Object</code>.
+In the code above using the supertype <code className="jarombek-inline-code">Object</code> for
+the assignment is valid but using the subtype <code className="jarombek-inline-code">Integer</code> is not.
 </p>
 <p>
 Adding to the list works without error because an
-<code class="jarombek-inline-code">Integer</code> is always a <code class="jarombek-inline-code">Number</code> or
-any of its supertypes (such as <code class="jarombek-inline-code">Object</code>).  Thanks to
-polymorphism, an <code class="jarombek-inline-code">Integer</code> is a <code class="jarombek-inline-code">
-Number</code> and an <code class="jarombek-inline-code">Object</code>.
+<code className="jarombek-inline-code">Integer</code> is always a <code className="jarombek-inline-code">Number</code> or
+any of its supertypes (such as <code className="jarombek-inline-code">Object</code>).  Thanks to
+polymorphism, an <code className="jarombek-inline-code">Integer</code> is a <code className="jarombek-inline-code">
+Number</code> and an <code className="jarombek-inline-code">Object</code>.
 </p>
 <p>
-The type in the list still isn't guaranteed, and for that reason a list item can't be assigned to type <code class="jarombek-inline-code">
+The type in the list still isn't guaranteed, and for that reason a list item can't be assigned to type <code className="jarombek-inline-code">
 Number</code>.  For example, if the list contains
-<code class="jarombek-inline-code">Object</code> values the assignment statement is invalid - an
-<code class="jarombek-inline-code">Object</code> is not a <code class="jarombek-inline-code">Number</code><sup>5</sup>.
+<code className="jarombek-inline-code">Object</code> values the assignment statement is invalid - an
+<code className="jarombek-inline-code">Object</code> is not a <code className="jarombek-inline-code">Number</code><sup>5</sup>.
 </p>
 <SectionTitle title="Wrapping Up">Wrapping Up</SectionTitle>
 <p>

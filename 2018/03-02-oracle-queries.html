@@ -12,11 +12,11 @@ was interesting to me!  I will start out pretty simple and then get more complex
 </p>
 <SectionTitle title="Fun Queries">Fun Queries!</SectionTitle>
 <p>
-Often I perform queries with multiple <code class="jarombek-inline-code">WHERE</code> conditions chained
-by <code class="jarombek-inline-code">AND</code> clauses.  If I want to find whether a column is between two
-different values, I can use the <code class="jarombek-inline-code">BETWEEN</code>
+Often I perform queries with multiple <code className="jarombek-inline-code">WHERE</code> conditions chained
+by <code className="jarombek-inline-code">AND</code> clauses.  If I want to find whether a column is between two
+different values, I can use the <code className="jarombek-inline-code">BETWEEN</code>
 clause instead.  This makes my intentions clearer and reduces
-the number of <code class="jarombek-inline-code">AND</code> clauses.  The following query looks for books
+the number of <code className="jarombek-inline-code">AND</code> clauses.  The following query looks for books
 between two dates:
 </p>
 <CodeSnippet language="SQL">
@@ -25,16 +25,16 @@ BETWEEN to_date('2014-08-01', 'YYYY-mm-dd')
 AND to_date('2014-08-31', 'YYYY-mm-dd');
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">WHERE</code> clauses can also look for soft matches, where
+<code className="jarombek-inline-code">WHERE</code> clauses can also look for soft matches, where
 only a portion of a string matches.  Soft matches use the
-<code class="jarombek-inline-code">LIKE</code> clause which can be chained with a
-string value.  The <code class="jarombek-inline-code">%</code> wildcard is used to match any
+<code className="jarombek-inline-code">LIKE</code> clause which can be chained with a
+string value.  The <code className="jarombek-inline-code">%</code> wildcard is used to match any
 number of characters.  The following query searches for books with titles containing the word 'Java':
 </p>
 <CodeSnippet language="SQL">
 SELECT * FROM books WHERE title LIKE '%Java%';
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 ISBN TITLE            RELEASED  STARTED   FINISHED  TIME_READING
 ---- ---------------- --------- --------- --------- ------------
 .... Java 8 in Action 01-AUG-14 10-OCT-17 08-FEB-18 121
@@ -43,12 +43,12 @@ ISBN TITLE            RELEASED  STARTED   FINISHED  TIME_READING
 The current table structure of this database forms a many to many relationship.  Here is the ER diagram:
 </p>
 <figure id="image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/Database-ER.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/Database-ER.png">
 </figure>
 <p>
 In the following query I perform an inner join across this many to many relationship to get a book, the
 language its about, and the inception date of the language.  Inner joins only return rows when the
-columns in the <code class="jarombek-inline-code">JOIN ... ON ...</code> statement have non-null
+columns in the <code className="jarombek-inline-code">JOIN ... ON ...</code> statement have non-null
 values<sup>1</sup>.  Therefore, no row is returned for a language that has no corresponding book.
 </p>
 <CodeSnippet language="SQL">
@@ -58,7 +58,7 @@ INNER JOIN book_languages bl ON b.isbn = bl.isbn
 INNER JOIN languages l ON bl.name = l.name
 ORDER BY b.title;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
            ISBN TITLE                      NAME       CREATED
 --------------- -------------------------- ---------- ----------
   9781491901946 AngularJS: Up and Running  JavaScript 04-DEC-95
@@ -70,11 +70,11 @@ ORDER BY b.title;
 <p>
 You may want to make a SQL query that doesn't actually return the data in a table, but
 instead returns different values depending on the underlying structure.  The following query does exactly that.
-Depending on whether a book has a <code class="jarombek-inline-code">time_reading</code> value, it
-returns 'Finished Reading' or 'Not Completed' (note: the <code class="jarombek-inline-code">time_reading
-</code> column is a virtual column that is only generated when both a <code class="jarombek-inline-code">
-finished</code> and <code class="jarombek-inline-code">started</code> date exist).  This operation is
-performed with the <code class="jarombek-inline-code">nvl2()</code> function, which for its
+Depending on whether a book has a <code className="jarombek-inline-code">time_reading</code> value, it
+returns 'Finished Reading' or 'Not Completed' (note: the <code className="jarombek-inline-code">time_reading
+</code> column is a virtual column that is only generated when both a <code className="jarombek-inline-code">
+finished</code> and <code className="jarombek-inline-code">started</code> date exist).  This operation is
+performed with the <code className="jarombek-inline-code">nvl2()</code> function, which for its
 first argument takes a column.  If this column isn't null, the second argument is returned.  Otherwise
 the third argument is returned.
 </p>
@@ -87,11 +87,11 @@ FROM books;
 </CodeSnippet>
 <p>
 For if-else logic more complex than checking for null values, the
-<code class="jarombek-inline-code">CASE</code> statement is used<sup>2</sup>.
+<code className="jarombek-inline-code">CASE</code> statement is used<sup>2</sup>.
 I checked if the time spent reading a book was greater than certain values, and if so returned a
 different string.  Here is the result of this query:
 </p>
-<span class="code-span">
+<span className="code-span">
 TITLE                       STILL_READING     DURATION
 --------------------------- ----------------- -------------
 Java 8 in Action            Finished Reading  Long Read
@@ -103,7 +103,7 @@ Spring In Action            Finished Reading  Short Read
 <p>
 The next query looks at hierarchical data.  This data forms parent child relationships in
 a tree structure.  The three tables in the database don't have any hierarchical data.
-I changed that by creating a new table called <code class="jarombek-inline-code">language_hierarchy</code>
+I changed that by creating a new table called <code className="jarombek-inline-code">language_hierarchy</code>
 which stores data about languages and other languages that influenced them.
 </p>
 <CodeSnippet language="SQL">
@@ -117,7 +117,7 @@ CREATE TABLE language_hierarchy(
       FOREIGN KEY (influnced_by) REFERENCES languages(name) ON DELETE CASCADE
 );
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 NAME          INFLUNCED_BY
 ------------- --------------
 Java          C
@@ -141,15 +141,15 @@ TypeScript    JavaScript
 JSON          JavaScript
 </span>
 <p>
-The hierarchical nature of this data can be displayed using the <code class="jarombek-inline-code">
-CONNECT BY PRIOR</code> and <code class="jarombek-inline-code">START WITH</code> clauses.
-<code class="jarombek-inline-code">START WITH</code> defines a row to start the hierarchical analysis at
+The hierarchical nature of this data can be displayed using the <code className="jarombek-inline-code">
+CONNECT BY PRIOR</code> and <code className="jarombek-inline-code">START WITH</code> clauses.
+<code className="jarombek-inline-code">START WITH</code> defines a row to start the hierarchical analysis at
 (it doesn't have to be the root node in the graph).  In the following query I started with the language 'C'
-since so many modern languages are influenced by it. The <code class="jarombek-inline-code">CONNECT BY
+since so many modern languages are influenced by it. The <code className="jarombek-inline-code">CONNECT BY
  PRIOR</code> clause defines the parent child relationship.  For example, let's say there are two rows where the
-<code class="jarombek-inline-code">name</code> column in row #1 equals
-the <code class="jarombek-inline-code">influenced_by</code> column in row #2.  The
-<code class="jarombek-inline-code">CONNECT BY PRIOR name = influnced_by</code> statement says that row
+<code className="jarombek-inline-code">name</code> column in row #1 equals
+the <code className="jarombek-inline-code">influenced_by</code> column in row #2.  The
+<code className="jarombek-inline-code">CONNECT BY PRIOR name = influnced_by</code> statement says that row
 #1 is the child node and has a relationship with parent node row #2.
 </p>
 <p>
@@ -161,7 +161,7 @@ FROM language_hierarchy
 START WITH name = 'C'
 CONNECT BY PRIOR name = influnced_by;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
     LEVEL LANGUAGE
 --------- -----------------------
         1 C
@@ -187,12 +187,12 @@ CONNECT BY PRIOR name = influnced_by;
         3     Swift
 </span>
     <p>
-You may be wondering about the <code class="jarombek-inline-code">LEVEL</code> column.  This is a pseudo
-column which indicates the level in the tree<sup>3</sup>.  <code class="jarombek-inline-code">LEVEL</code> is
-used along with the <code class="jarombek-inline-code">lpad()</code> function to add tabs in front of the
+You may be wondering about the <code className="jarombek-inline-code">LEVEL</code> column.  This is a pseudo
+column which indicates the level in the tree<sup>3</sup>.  <code className="jarombek-inline-code">LEVEL</code> is
+used along with the <code className="jarombek-inline-code">lpad()</code> function to add tabs in front of the
 language name.  In this example I started at the root column of the tree and
 navigated downwards, but trees can also be traversed upwards from a child node.  This is achieved by
-switching the columns in the <code class="jarombek-inline-code">CONNECT BY</code>
+switching the columns in the <code className="jarombek-inline-code">CONNECT BY</code>
 clause<sup>4</sup>.  In the following query I started at the language 'Java' and traversed the tree upwards.
 </p>
 <CodeSnippet language="SQL">
@@ -201,7 +201,7 @@ FROM language_hierarchy
 START WITH name = 'Java'
 CONNECT BY PRIOR influnced_by = name;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
     LEVEL LANGUAGE
 --------- -----------------------
         1 Java
@@ -209,11 +209,11 @@ CONNECT BY PRIOR influnced_by = name;
 </span>
 <p>
 Let say I want to group the time spent reading with the language I am reading about.  I can do this by joining the
-<code class="jarombek-inline-code">books</code> and <code class="jarombek-inline-code">book_languages</code> tables
-on the language name. I also use the aggregate function <code class="jarombek-inline-code">sum()</code> on the
-<code class="jarombek-inline-code">time_reading</code> column.  Finally I want a row in the result set that totals
-all the time spent reading.  This is where the <code class="jarombek-inline-code">ROLLUP</code> clause comes
-in.  <code class="jarombek-inline-code">ROLLUP</code> is used in conjunction with the <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">books</code> and <code className="jarombek-inline-code">book_languages</code> tables
+on the language name. I also use the aggregate function <code className="jarombek-inline-code">sum()</code> on the
+<code className="jarombek-inline-code">time_reading</code> column.  Finally I want a row in the result set that totals
+all the time spent reading.  This is where the <code className="jarombek-inline-code">ROLLUP</code> clause comes
+in.  <code className="jarombek-inline-code">ROLLUP</code> is used in conjunction with the <code className="jarombek-inline-code">
 GROUP BY</code> clause to return a row with the subtotal for the grouping<sup>5</sup>:
 </p>
 <CodeSnippet language="SQL">
@@ -222,7 +222,7 @@ SELECT l.name, sum(b.time_reading) FROM books b
     INNER JOIN book_languages l ON b.isbn = l.isbn
 GROUP BY ROLLUP(l.name);
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 NAME          SUM(B.TIME_READING)
 ------------- -------------------
 Java          134
@@ -234,11 +234,11 @@ SQL           26
 <p>
 It would be nice if the name column in the
 subtotal row displayed a name like 'Total Days'.  This behavior is implemented with the help of
-the <code class="jarombek-inline-code">grouping()</code> function.  <code class="jarombek-inline-code">grouping()</code> accepts a column and
+the <code className="jarombek-inline-code">grouping()</code> function.  <code className="jarombek-inline-code">grouping()</code> accepts a column and
 returns 1 if the column value is null and 0 if the value exists<sup>6</sup>.  In this example I
-used the <code class="jarombek-inline-code">grouping()</code> function along with the
-<code class="jarombek-inline-code">CASE</code> clause to populate the last rows
-<code class="jarombek-inline-code">name</code> column.
+used the <code className="jarombek-inline-code">grouping()</code> function along with the
+<code className="jarombek-inline-code">CASE</code> clause to populate the last rows
+<code className="jarombek-inline-code">name</code> column.
 </p>
 <CodeSnippet language="SQL">
 SELECT
@@ -251,7 +251,7 @@ SELECT
     INNER JOIN book_languages l ON b.isbn = l.isbn
 GROUP BY ROLLUP(l.name);
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 NAME          TOTAL_TIME_READING
 ------------- -------------------
 Java          134

@@ -71,8 +71,8 @@ json_data = json.dumps(json_object)
 </CodeSnippet>
 <p>
 Now I need to generate a routing key for this message.  Routing keys in RabbitMQ are strings
-separated by <code class="jarombek-inline-code">.</code> symbols.  For example, a key could be written as
-<code class="jarombek-inline-code">foo.bar</code>.  These keys are used in the topic exchange type, where
+separated by <code className="jarombek-inline-code">.</code> symbols.  For example, a key could be written as
+<code className="jarombek-inline-code">foo.bar</code>.  These keys are used in the topic exchange type, where
 each consumer specifies a routing key pattern to subscribe to<sup>2</sup>.
 </p>
 <CodeSnippet language="Python">
@@ -95,7 +95,7 @@ routing_key = build_routing_key(args.routing_keys)
 Now I need to create a connection to RabbitMQ.  First I created two new
 RabbitMQ users on the command line, one for consuming and one for producing.  The following example creates the users and gives them both full
 permissions to configure, read, and write to RabbitMQ across all queues and exchanges.  The
-<code class="jarombek-inline-code">".*"</code> pattern is what matches to any queue or exchange, with the
+<code className="jarombek-inline-code">".*"</code> pattern is what matches to any queue or exchange, with the
 first pattern for configuring, the second for reading, and the last for writing<sup>3</sup>.
 </p>
 <CodeSnippet language="Python">
@@ -109,7 +109,7 @@ rabbitmqctl set_permissions running-log-consumer ".*" ".*" ".*"
 rabbitmqctl set_permissions running-log-producer ".*" ".*" ".*"
 </CodeSnippet>
 <p>
-Since I'm building the producer, I'll use the <code class="jarombek-inline-code">
+Since I'm building the producer, I'll use the <code className="jarombek-inline-code">
 running-log-producer</code> user.  A connection to RabbitMQ is done over
 TCP (a reliable data stream protocol between applications).  Inside each RabbitMQ TCP connection
 is a channel, which is a virtual connection to perform messaging commands<sup>4</sup>.  The following

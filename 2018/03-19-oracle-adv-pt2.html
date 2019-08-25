@@ -2,26 +2,26 @@
 <p>
 This is part II of my Oracle advanced query discovery.  You can check out
 <a href="https://jarombek.com/blog/mar-18-2018-oracle-adv-pt1">part I</a> as well!  The two clauses
-I'm analyzing in this discovery are <code class="jarombek-inline-code">MODEL</code> and
-<code class="jarombek-inline-code">PIVOT</code>.  The table I'm running queries against is
-<code class="jarombek-inline-code">code_written</code>,
+I'm analyzing in this discovery are <code className="jarombek-inline-code">MODEL</code> and
+<code className="jarombek-inline-code">PIVOT</code>.  The table I'm running queries against is
+<code className="jarombek-inline-code">code_written</code>,
 which stores how many lines of code I wrote in each language over the years.
 The data is real too!
 </p>
 <p>
-The <code class="jarombek-inline-code">MODEL</code> clause allows you to access columns in
+The <code className="jarombek-inline-code">MODEL</code> clause allows you to access columns in
 a multidimensional array.  The calculations performed on
 this array are similar to those seen in a spreadsheet application<sup>1</sup>.
-The reason Oracle included the <code class="jarombek-inline-code">MODEL</code> clause is
+The reason Oracle included the <code className="jarombek-inline-code">MODEL</code> clause is
 users often copied SQL query results and pasted them into spreadsheets, manipulating
-the data from there.  With <code class="jarombek-inline-code">MODEL</code>, similar manipulations are performed in native SQL.
+the data from there.  With <code className="jarombek-inline-code">MODEL</code>, similar manipulations are performed in native SQL.
 </p>
 <p>
-The following query is a basic example of the <code class="jarombek-inline-code">MODEL</code>
+The following query is a basic example of the <code className="jarombek-inline-code">MODEL</code>
 clause.  I don't think my lines written statistics are an accurate representation of time spent
 in each language.  For example, Java is a very verbose language.
 Meanwhile, Python has very concise syntax and I often make complex programs
-in very little code.  I used the <code class="jarombek-inline-code">MODEL</code> clause
+in very little code.  I used the <code className="jarombek-inline-code">MODEL</code> clause
 to adjust the lines written for Java and Python based on their verbosity.
 </p>
 <CodeSnippet language="SQL">
@@ -36,7 +36,7 @@ MEASURES (lines lines_written) (
 )
 ORDER BY lines_written DESC NULLS LAST;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR  LANGUAGE      LINES_WRITTEN
 ----- ------------- ---------------
 2017  Swift         10726
@@ -52,32 +52,32 @@ YEAR  LANGUAGE      LINES_WRITTEN
 In the results, Swift is now listed as the language with the most lines written in 2017.
 </p>
 <p>
-Besides for the <code class="jarombek-inline-code">MODEL</code> clause, the three other important
-clauses in this query are <code class="jarombek-inline-code">PARTITION BY</code>,
-<code class="jarombek-inline-code">DIMENSION BY</code>, and <code class="jarombek-inline-code">MEASURES</code>.
-<code class="jarombek-inline-code">PARTITION BY</code> defines groupings in a result set.
-<code class="jarombek-inline-code">MODEL</code> performs operations on each of these
+Besides for the <code className="jarombek-inline-code">MODEL</code> clause, the three other important
+clauses in this query are <code className="jarombek-inline-code">PARTITION BY</code>,
+<code className="jarombek-inline-code">DIMENSION BY</code>, and <code className="jarombek-inline-code">MEASURES</code>.
+<code className="jarombek-inline-code">PARTITION BY</code> defines groupings in a result set.
+<code className="jarombek-inline-code">MODEL</code> performs operations on each of these
 groupings<sup>2</sup>.  In my query I partition by year, so rules defined later are applied to each year.
 </p>
 <p>
-<code class="jarombek-inline-code">DIMENSION BY</code> identifies each cell in the partition.
+<code className="jarombek-inline-code">DIMENSION BY</code> identifies each cell in the partition.
 Each cell makes up one element in a multidimensional array.  In the query above,
 I dimension by language so each cell is a language.  I selected a cell
-with the strings <code class="jarombek-inline-code">'Java'</code> and
-<code class="jarombek-inline-code">'Python'</code>.  The array created from the partition in the query above only has
+with the strings <code className="jarombek-inline-code">'Java'</code> and
+<code className="jarombek-inline-code">'Python'</code>.  The array created from the partition in the query above only has
 one dimension, but that doesn't have to be the case.
 </p>
 <p>
-<code class="jarombek-inline-code">MEASURES</code> defines what type is located in each cell along with
+<code className="jarombek-inline-code">MEASURES</code> defines what type is located in each cell along with
 the name of the array<sup>3</sup>.  In the previous query, I
-declared that each cell contains a <code class="jarombek-inline-code">lines</code> element and the
-array is named <code class="jarombek-inline-code">lines_written</code>.
+declared that each cell contains a <code className="jarombek-inline-code">lines</code> element and the
+array is named <code className="jarombek-inline-code">lines_written</code>.
 </p>
 <p>
-Another cool thing about the <code class="jarombek-inline-code">MODEL</code> clause is
-its possible to loop through the array of cells with a <code class="jarombek-inline-code">FOR</code>
-loop<sup>4</sup>.  You can get the current value within the <code class="jarombek-inline-code">FOR</code>
-loop with <code class="jarombek-inline-code">CURRENTV()</code>.  The
+Another cool thing about the <code className="jarombek-inline-code">MODEL</code> clause is
+its possible to loop through the array of cells with a <code className="jarombek-inline-code">FOR</code>
+loop<sup>4</sup>.  You can get the current value within the <code className="jarombek-inline-code">FOR</code>
+loop with <code className="jarombek-inline-code">CURRENTV()</code>.  The
 following queries get the monthly line totals for each language.  Although the queries all return the same
 result, you can follow the comments to see how each optimizes the previous query.
 </p>
@@ -140,7 +140,7 @@ DIMENSION BY (year)
   )
 ORDER BY total_lines DESC;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR  LANGUAGE      TOTAL_LINES
 ----- ------------- --------------
 2016  Java          1080
@@ -153,10 +153,10 @@ YEAR  LANGUAGE      TOTAL_LINES
 </span>
 <p>
 Now onto probably the coolest thing I've seen in Oracle so far: the
-<code class="jarombek-inline-code">PIVOT</code> clause!  <code class="jarombek-inline-code">PIVOT</code> is used to rotate
+<code className="jarombek-inline-code">PIVOT</code> clause!  <code className="jarombek-inline-code">PIVOT</code> is used to rotate
 rows into columns!  An aggregate function must be used with the
-<code class="jarombek-inline-code">PIVOT</code> clause.  The following query rotates the
-<code class="jarombek-inline-code">year</code> row into multiple columns:
+<code className="jarombek-inline-code">PIVOT</code> clause.  The following query rotates the
+<code className="jarombek-inline-code">year</code> row into multiple columns:
 </p>
 <CodeSnippet language="SQL">
 SELECT * FROM (
@@ -170,7 +170,7 @@ PIVOT (
     SUM(lines) FOR year IN (2014, 2015, 2016, 2017, 2018)
 );
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 LANGUAGE       2014   2015   2016   2017   2018
 -------------- ------ ------ ------ ------ ------
 JavaScript                   2008   6663   1120
@@ -191,8 +191,8 @@ Swift                               10726  103
 <p>
 Now that is awesome!  This is the exact layout I'd use for this data in an Excel
 spreadsheet.  I can improve this query by displaying the total
-number of lines for each language using the <code class="jarombek-inline-code">GROUP BY ROLLUP</code>
-clause and <code class="jarombek-inline-code">GROUPING()</code>.
+number of lines for each language using the <code className="jarombek-inline-code">GROUP BY ROLLUP</code>
+clause and <code className="jarombek-inline-code">GROUPING()</code>.
 </p>
 <CodeSnippet language="SQL">
 CREATE TABLE code_written_pivot AS
@@ -214,7 +214,7 @@ FOR year IN (2014, 2015, 2016, 2017, 2018, 'Total' AS Total)
 )
 ORDER BY "2018" DESC NULLS LAST;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 LANGUAGE       2014   2015   2016   2017   2018   TOTAL
 -------------- ------ ------ ------ ------ ------ ------
 TypeScript                          133    1850   1983
@@ -235,8 +235,8 @@ PHP                          5433   3670   0      9103
 </span>
 <p>
 Notice that I created a table from the result of this query.  I did this to demonstrate the
-<code class="jarombek-inline-code">UNPIVOT</code> query, which performs
-the opposite operation of <code class="jarombek-inline-code">PIVOT</code>:
+<code className="jarombek-inline-code">UNPIVOT</code> query, which performs
+the opposite operation of <code className="jarombek-inline-code">PIVOT</code>:
 </p>
 <CodeSnippet language="SQL">
 SELECT * FROM code_written_pivot
@@ -244,7 +244,7 @@ UNPIVOT (
     lines FOR year IN (Total, "2018", "2017", "2016", "2015", "2014")
 );
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 LANGUAGE       YEAR            LINES
 -------------- ----- ---------------
 TypeScript     TOTAL            1983

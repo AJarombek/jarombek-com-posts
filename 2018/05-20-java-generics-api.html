@@ -9,12 +9,12 @@ design decisions throughout.
 <SectionTitle title="The API">The API</SectionTitle>
 <p>
 The API I built for this discovery post has two major pieces.  The first is a workout API.  It has an
-<code class="jarombek-inline-code">Exercise</code> interface along with two concrete classes that implement
-it - <code class="jarombek-inline-code">Run</code> and <code class="jarombek-inline-code">Ski</code>.  I am
+<code className="jarombek-inline-code">Exercise</code> interface along with two concrete classes that implement
+it - <code className="jarombek-inline-code">Run</code> and <code className="jarombek-inline-code">Ski</code>.  I am
 an avid runner and have been experimenting with nordic skiing so I thought they would be appropriate.
 </p>
 <figure>
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-18-exercise.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-18-exercise.png">
 </figure>
 <p>
 The second piece of the API holds a blockchain data structure.  I've started to read about blockchain in my
@@ -27,13 +27,13 @@ of blocks that contain a list of transactions.  That is it.
 Here is the dependency graph for my blockchain API:
 </p>
 <figure>
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-18-blockchain.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-18-blockchain.png">
 </figure>
 <SectionTitle title="The Workout API">The Workout API</SectionTitle>
 <p>
 The workout API is much simpler so lets start there.  At the top of the API is the
-<code class="jarombek-inline-code">Exercise</code> interface, which both <code class="jarombek-inline-code">
-Run</code> and <code class="jarombek-inline-code">Ski</code> implement.  This interface defines the methods
+<code className="jarombek-inline-code">Exercise</code> interface, which both <code className="jarombek-inline-code">
+Run</code> and <code className="jarombek-inline-code">Ski</code> implement.  This interface defines the methods
 that all exercises must have.  For three of these methods the implementing class must supply the method body.
 However one of the methods has a default implementation, which is used when the implementing class
 doesn't override it.  I made a whole discovery post on
@@ -56,16 +56,16 @@ public interface Exercise {
 }
 </CodeSnippet>
 <p>
-Now let's look at the first implementing class - <code class="jarombek-inline-code">Run</code>.  This class
-represents a running exercise.  The <code class="jarombek-inline-code">Run</code> class implements one other
-interface besides for <code class="jarombek-inline-code">Exercise</code> called
-<code class="jarombek-inline-code">Comparable</code>.  The <code class="jarombek-inline-code">Comparable</code>
-interface has one method called <code class="jarombek-inline-code">compareTo()</code> which is used to compare
-two objects of the same type.  The <code class="jarombek-inline-code">Comparable</code> interface gives
+Now let's look at the first implementing class - <code className="jarombek-inline-code">Run</code>.  This class
+represents a running exercise.  The <code className="jarombek-inline-code">Run</code> class implements one other
+interface besides for <code className="jarombek-inline-code">Exercise</code> called
+<code className="jarombek-inline-code">Comparable</code>.  The <code className="jarombek-inline-code">Comparable</code>
+interface has one method called <code className="jarombek-inline-code">compareTo()</code> which is used to compare
+two objects of the same type.  The <code className="jarombek-inline-code">Comparable</code> interface gives
 objects a natural ordering, which allows them to be sorted in a logical way<sup>1</sup>.  It
-also allows them to work properly with sorted collections such as <code class="jarombek-inline-code">
-TreeMap</code> and static methods such as <code class="jarombek-inline-code">Arrays.sort()</code><sup>2</sup>.
-If you ever have a class with a logical ordering, definitely implement <code class="jarombek-inline-code">
+also allows them to work properly with sorted collections such as <code className="jarombek-inline-code">
+TreeMap</code> and static methods such as <code className="jarombek-inline-code">Arrays.sort()</code><sup>2</sup>.
+If you ever have a class with a logical ordering, definitely implement <code className="jarombek-inline-code">
 Comparable</code>!
 </p>
 <CodeSnippet language="Java">
@@ -88,29 +88,29 @@ public class Run implements Exercise, Comparable&lt;Run&gt; {
 }
 </CodeSnippet>
 <p>
-With Java 8's introduction of the <code class="jarombek-inline-code">Comparator</code> construction methods,
-overriding the <code class="jarombek-inline-code">compareTo()</code> method is extremely easy<sup>3</sup>.  The
-<code class="jarombek-inline-code">comparing()</code> static method above takes in a lambda function, specifying
-a sorting key.  <code class="jarombek-inline-code">comparing()</code> can be chained
-with <code class="jarombek-inline-code">thenComparing()</code>, which is used in case of a tie.  In my
+With Java 8's introduction of the <code className="jarombek-inline-code">Comparator</code> construction methods,
+overriding the <code className="jarombek-inline-code">compareTo()</code> method is extremely easy<sup>3</sup>.  The
+<code className="jarombek-inline-code">comparing()</code> static method above takes in a lambda function, specifying
+a sorting key.  <code className="jarombek-inline-code">comparing()</code> can be chained
+with <code className="jarombek-inline-code">thenComparing()</code>, which is used in case of a tie.  In my
 code, the first item compared is the date of the run, followed by the miles run, etc.  Note that I use
 a method reference instead of a lambda function.
 </p>
 <Definition word="Method Reference">
 A method reference is a shorthand notation for a lambda function (also known as an arrow function).  A common
 use case of a lambda is to simply call a method on the input parameter.  Example:
-<code class="jarombek-inline-code">(Car car) -> car.getModelYear()</code>.  In Java, simple lambdas that
+<code className="jarombek-inline-code">(Car car) -> car.getModelYear()</code>.  In Java, simple lambdas that
 call an existing method can use a method reference<sup>4</sup>.  The example above can be rewritten with a method
-reference as <code class="jarombek-inline-code">Car::getModelYear()</code>.  Note that we use the class and not the
-instance itself in the method reference (<code class="jarombek-inline-code">Car</code> not
-<code class="jarombek-inline-code">car</code>).  This is because
-<code class="jarombek-inline-code">car</code> isn't explicitly defined anywhere for use in the method
+reference as <code className="jarombek-inline-code">Car::getModelYear()</code>.  Note that we use the class and not the
+instance itself in the method reference (<code className="jarombek-inline-code">Car</code> not
+<code className="jarombek-inline-code">car</code>).  This is because
+<code className="jarombek-inline-code">car</code> isn't explicitly defined anywhere for use in the method
 reference.  The only case where you would use an instance in a method reference is when calling a method on an
 existing variable outside the lambdas scope<sup>5</sup>.
 </Definition>
 <p>
-Another interesting aspect of the <code class="jarombek-inline-code">Run</code> class is it doesn't have
-a public constructor method.  In order to create a new <code class="jarombek-inline-code">Run</code> instance
+Another interesting aspect of the <code className="jarombek-inline-code">Run</code> class is it doesn't have
+a public constructor method.  In order to create a new <code className="jarombek-inline-code">Run</code> instance
 you have to call one of its many static factory methods, which internally make calls to a private constructor.
 </p>
 <CodeSnippet language="Java">
@@ -161,31 +161,31 @@ always the name of the class.  A common problem with static factory methods is p
 know they exist!  To find them they have to search through the JavaDocs, which for large objects can be a hassle.
 </p>
 <p>
-The reason I used static factory methods in the <code class="jarombek-inline-code">Run</code> (and
-<code class="jarombek-inline-code">Ski</code>) classes actually has no relation to the reasons I just stated.
+The reason I used static factory methods in the <code className="jarombek-inline-code">Run</code> (and
+<code className="jarombek-inline-code">Ski</code>) classes actually has no relation to the reasons I just stated.
 When you don't have a public constructor in a class, it is impossible for other classes to extend it
 <sup>6</sup>.  Therefore using static factory methods instead of a public constructor stops inheritance!
 </p>
 <p>
-Classes in Java such as <code class="jarombek-inline-code">String</code> stop inheritance in another way
-(by declaring the class as <code class="jarombek-inline-code">final</code>).  But why stop inheritance? What is the benefit?
+Classes in Java such as <code className="jarombek-inline-code">String</code> stop inheritance in another way
+(by declaring the class as <code className="jarombek-inline-code">final</code>).  But why stop inheritance? What is the benefit?
 </p>
 <p>
 One of the requirements for building immutable objects is prohibiting their class from being subclassed.  You may
 have created a perfect immutable class with no side effects, but that doesn't mean a subclass is required
 to stay immutable<sup>7</sup>.  This can cause code to behave unexpectedly, since Java variables are
 <a href="https://jarombek.com/blog/may-13-2018-generics-arrays-complexities-java">covariant</a>.  Removing
-inheritance keeps my <code class="jarombek-inline-code">Run</code> and <code class="jarombek-inline-code">
+inheritance keeps my <code className="jarombek-inline-code">Run</code> and <code className="jarombek-inline-code">
 Ski</code> classes immutable!
 </p>
 <p>
-The rest of the code in the <code class="jarombek-inline-code">Run</code> class implements the methods defined in
-the <code class="jarombek-inline-code">Exercise</code> interface along with overriding
-<code class="jarombek-inline-code">toString()</code>, <code class="jarombek-inline-code">equals()</code>, and
-<code class="jarombek-inline-code">hashCode()</code> from <code class="jarombek-inline-code">Object</code>.
+The rest of the code in the <code className="jarombek-inline-code">Run</code> class implements the methods defined in
+the <code className="jarombek-inline-code">Exercise</code> interface along with overriding
+<code className="jarombek-inline-code">toString()</code>, <code className="jarombek-inline-code">equals()</code>, and
+<code className="jarombek-inline-code">hashCode()</code> from <code className="jarombek-inline-code">Object</code>.
 </p>
 <p>
-<code class="jarombek-inline-code">Ski</code> is written similarly to <code class="jarombek-inline-code">Run</code>.
+<code className="jarombek-inline-code">Ski</code> is written similarly to <code className="jarombek-inline-code">Run</code>.
 You can check out the code in the <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/
 2018/05-May/5-20-Java-Generics-API/exercise/Run.java">Run</a> and
 <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2018/05-May/5-20-Java-Generics-API/
@@ -195,7 +195,7 @@ exercise/Exercise.java">Exercise</a> interface on GitHub.
 </p>
 <SectionTitle title="The Blockchain API">The Blockchain API</SectionTitle>
 <p>
-The blockchain API is a bit more complex.  At the top we have the <code class="jarombek-inline-code">BlockChain
+The blockchain API is a bit more complex.  At the top we have the <code className="jarombek-inline-code">BlockChain
 </code> interface, which is defined as follows:
 </p>
 <CodeSnippet language="Java">
@@ -228,7 +228,7 @@ public interface BlockChain&lt;E&gt; {
 </CodeSnippet>
 <p>
 These are the three key methods used in all blockchain implementations.  One design decision for the
-blockchain API was to not have concrete child classes directly implement <code class="jarombek-inline-code">
+blockchain API was to not have concrete child classes directly implement <code className="jarombek-inline-code">
 BlockChain</code>.  Instead I created a skeletal implementation of the interface, and had my concrete
 classes extend the skeletal implementation.
 </p>
@@ -239,22 +239,22 @@ default methods) while defining the rules for a type.  Abstract classes are powe
 development quicker and are DRY by defining shared code for subclasses.  A problem with abstract classes is that
     they break encapsulation, making subclasses dependent on the abstract class for implementation details<sup>8</sup>.
 Interfaces, even with default methods, cant implement details such as instance variables and overridden methods
-from <code class="jarombek-inline-code">Object</code>.  Skeletal implementations are abstract classes that also
+from <code className="jarombek-inline-code">Object</code>.  Skeletal implementations are abstract classes that also
 implement an interface.  The user has two options - either implement the interface or extend the skeletal
 implementation - the second of which could save them time since they would write less code.
 </Definition>
 <p>
 In my case the reason for the skeletal implementation is to reuse the overridden methods from
-<code class="jarombek-inline-code">Object</code>.  This pattern works well for the blockchain API because in
+<code className="jarombek-inline-code">Object</code>.  This pattern works well for the blockchain API because in
 many cases checking whether two blockchains are equal does not depend on how the blockchain is implemented
 under the hood, just if it holds the same data.  The same can't be said for the exercise API.  While
-<code class="jarombek-inline-code">Run</code> and <code class="jarombek-inline-code">Bike</code> did share
+<code className="jarombek-inline-code">Run</code> and <code className="jarombek-inline-code">Bike</code> did share
 some fields, they also had unique ones for each implementation.  In that case a skeletal implementation would
 not have made sense to implement.
 </p>
 <p>
 As a side note, if a blockchain implementation didn't want to follow the rules enforced in the skeletal
-implementation, it could simply implement <code class="jarombek-inline-code">BlockChain</code>!
+implementation, it could simply implement <code className="jarombek-inline-code">BlockChain</code>!
 </p>
 <p>
 Here is my skeletal implementation:
@@ -307,25 +307,25 @@ public abstract class AbstractBlockChain&lt;E&gt; implements BlockChain&lt;E&gt;
 }
 </CodeSnippet>
 <p>
-Now it is time to look at the meat of the blockchain API - the concrete class <code class="jarombek-inline-code">
-SimpleBlockChain</code> and the class <code class="jarombek-inline-code">Block</code>.  The
-<code class="jarombek-inline-code">SimpleBlockChain</code> class extends the skeletal implementation, exposing
-three methods to interact with the blockchain.  It also holds a list of <code class="jarombek-inline-code">
+Now it is time to look at the meat of the blockchain API - the concrete class <code className="jarombek-inline-code">
+SimpleBlockChain</code> and the class <code className="jarombek-inline-code">Block</code>.  The
+<code className="jarombek-inline-code">SimpleBlockChain</code> class extends the skeletal implementation, exposing
+three methods to interact with the blockchain.  It also holds a list of <code className="jarombek-inline-code">
 Block</code> instances.  This list is a primitive "block chain."  Each block holds a list of transactions which
-occurred as well as a reference to the previous block.  <code class="jarombek-inline-code">
+occurred as well as a reference to the previous block.  <code className="jarombek-inline-code">
 Block</code> is immutable - to add a new transaction to a block a whole
-new block instance must be created.  The reason <code class="jarombek-inline-code">
+new block instance must be created.  The reason <code className="jarombek-inline-code">
 Block</code> is immutable is to make it reliable and easy to test!
 </p>
 <p>
-Here is a diagram of the <code class="jarombek-inline-code">SimpleBlockChain</code> and
-<code class="jarombek-inline-code">Block</code> classes:
+Here is a diagram of the <code className="jarombek-inline-code">SimpleBlockChain</code> and
+<code className="jarombek-inline-code">Block</code> classes:
 </p>
 <figure>
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-18-simpleblock.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/5-20-18-simpleblock.png">
 </figure>
 <p>
-Let's start with the <code class="jarombek-inline-code">SimpleBlockChain</code> class:
+Let's start with the <code className="jarombek-inline-code">SimpleBlockChain</code> class:
 </p>
 <CodeSnippet language="Java">
 public final class SimpleBlockChain&lt;E&gt; extends AbstractBlockChain&lt;E&gt; {
@@ -348,11 +348,11 @@ public final class SimpleBlockChain&lt;E&gt; extends AbstractBlockChain&lt;E&gt;
 }
 </CodeSnippet>
 <p>
-Notice that the number of transactions per block is five and the <code class="jarombek-inline-code">
+Notice that the number of transactions per block is five and the <code className="jarombek-inline-code">
 getBlockList()</code> method is package private, meaning that implementing code can't access it.
 </p>
 <p>
-Now let's look at the <code class="jarombek-inline-code">add()</code> and <code class="jarombek-inline-code">
+Now let's look at the <code className="jarombek-inline-code">add()</code> and <code className="jarombek-inline-code">
 find()</code> methods.
 </p>
 <CodeSnippet language="Java">
@@ -403,17 +403,17 @@ public Optional&lt;Block.Transaction&lt;E&gt;&gt; find(long id) {
 }
 </CodeSnippet>
 <p>
-Both of these methods return an <code class="jarombek-inline-code">Optional</code> instance.
-I decided to go with this approach so I wouldn't have to throw a <code class="jarombek-inline-code">
-NullPointerException</code> or return <code class="jarombek-inline-code">null</code> if the insert or search
+Both of these methods return an <code className="jarombek-inline-code">Optional</code> instance.
+I decided to go with this approach so I wouldn't have to throw a <code className="jarombek-inline-code">
+NullPointerException</code> or return <code className="jarombek-inline-code">null</code> if the insert or search
 failed.  With optionals its explicitly clear to API users that inserting can fail or
 a transaction may not exist when searching.  I dedicated an entire discovery post to
 <a href="https://jarombek.com/blog/jan-30-2018-java8-optionals">Optionals in Java 8</a> in case you want to learn
 more.
 </p>
 <p>
-The last method that needs to be implemented is <code class="jarombek-inline-code">addAll()</code>.  The parameter
-type <code class="jarombek-inline-code">Iterable&lt;? extends E&gt;</code> may look a bit unfamiliar.  Let's break
+The last method that needs to be implemented is <code className="jarombek-inline-code">addAll()</code>.  The parameter
+type <code className="jarombek-inline-code">Iterable&lt;? extends E&gt;</code> may look a bit unfamiliar.  Let's break
 it down.
 </p>
 <CodeSnippet language="Java">
@@ -423,25 +423,25 @@ public void addAll(Iterable&lt;? extends E&gt; elements) {
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">addAll()</code> method takes in type <code class="jarombek-inline-code">
-Iterable</code>.  <code class="jarombek-inline-code">Iterable</code> is an interface for an object that can be
-looped through.  For example, the <code class="jarombek-inline-code">Collection</code> interface extends the
-<code class="jarombek-inline-code">Iterable</code> interface.  That means that all classes in the Java collections
-framework implement <code class="jarombek-inline-code">Iterable</code>, such as <code class="jarombek-inline-code">
-ArrayList</code> or <code class="jarombek-inline-code">HashSet</code>.  Since the method parameter of
-<code class="jarombek-inline-code">addAll()</code> is so generic, a lot of flexibility is given to the API user in
+The <code className="jarombek-inline-code">addAll()</code> method takes in type <code className="jarombek-inline-code">
+Iterable</code>.  <code className="jarombek-inline-code">Iterable</code> is an interface for an object that can be
+looped through.  For example, the <code className="jarombek-inline-code">Collection</code> interface extends the
+<code className="jarombek-inline-code">Iterable</code> interface.  That means that all classes in the Java collections
+framework implement <code className="jarombek-inline-code">Iterable</code>, such as <code className="jarombek-inline-code">
+ArrayList</code> or <code className="jarombek-inline-code">HashSet</code>.  Since the method parameter of
+<code className="jarombek-inline-code">addAll()</code> is so generic, a lot of flexibility is given to the API user in
 regards to argument passing!
 </p>
 <p>
-The <code class="jarombek-inline-code">Iterable</code> parameter also has a generic type of
-<code class="jarombek-inline-code">&lt;? extends E&gt;</code>.  This gives the API user even more flexibility,
-since they can pass an <code class="jarombek-inline-code">Iterable</code> class with the generic type matching
-the <code class="jarombek-inline-code">SimpleBlockChain</code> generic type or subtyping the
-<code class="jarombek-inline-code">SimpleBlockChain</code> generic type.
+The <code className="jarombek-inline-code">Iterable</code> parameter also has a generic type of
+<code className="jarombek-inline-code">&lt;? extends E&gt;</code>.  This gives the API user even more flexibility,
+since they can pass an <code className="jarombek-inline-code">Iterable</code> class with the generic type matching
+the <code className="jarombek-inline-code">SimpleBlockChain</code> generic type or subtyping the
+<code className="jarombek-inline-code">SimpleBlockChain</code> generic type.
 </p>
 <p>
-An example would be a <code class="jarombek-inline-code">SimpleBlockChain</code> instance of generic type
-<code class="jarombek-inline-code">Exercise</code>.  When passing an argument to <code class="jarombek-inline-code">
+An example would be a <code className="jarombek-inline-code">SimpleBlockChain</code> instance of generic type
+<code className="jarombek-inline-code">Exercise</code>.  When passing an argument to <code className="jarombek-inline-code">
 addAll()</code> all four of the following are valid:
 </p>
 <CodeSnippet language="Java">
@@ -463,19 +463,19 @@ blockChain.addAll(exercisesList);
 </CodeSnippet>
 <p>
 Making the API as flexible as possible is very important and can make end users lives much easier!  Imagine the
-hassle of having all your data stored in a <code class="jarombek-inline-code">LinkedList</code> and then finding
-out the API only accepts <code class="jarombek-inline-code">ArrayList</code> instances!
+hassle of having all your data stored in a <code className="jarombek-inline-code">LinkedList</code> and then finding
+out the API only accepts <code className="jarombek-inline-code">ArrayList</code> instances!
 </p>
 <p>
-Time to go over the <code class="jarombek-inline-code">Block</code> class.  This class doesn't implement an
+Time to go over the <code className="jarombek-inline-code">Block</code> class.  This class doesn't implement an
 interface, but adding one would be a good exercise!  The class has one package-private constructor and
 one private constructor.  You may initially think its possible to extend this class if you are in
 its package.  Although it does have a package-private constructor, the class is declared
-<code class="jarombek-inline-code">final</code>, so subclassing is disallowed.  This is good since
-<code class="jarombek-inline-code">Block</code> is immutable.
+<code className="jarombek-inline-code">final</code>, so subclassing is disallowed.  This is good since
+<code className="jarombek-inline-code">Block</code> is immutable.
 </p>
 <p>
-I'm not going to show the code for the <code class="jarombek-inline-code">Block</code> class in this post but you
+I'm not going to show the code for the <code className="jarombek-inline-code">Block</code> class in this post but you
 can look at it on <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2018/05-May/
 5-20-Java-Generics-API/bchain/Block.java">GitHub</a>.  It even has a nice static member class for
 transactions!

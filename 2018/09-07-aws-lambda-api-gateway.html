@@ -27,7 +27,7 @@ another AWS service called API Gateway.  API Gateway gives AWS Lambda functions 
 REST API endpoint mapping.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-7-18-serverless.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-7-18-serverless.png"/>
 </figure>
 <p>
 With a serverless model, you don’t have to maintain an entire backend server.
@@ -52,24 +52,24 @@ exports.handler = (event, context, callback) => {
 </CodeSnippet>
 <p>
 The function definition takes three arguments and is given the name
-<code class="jarombek-inline-code">handler</code>.  <code class="jarombek-inline-code">callback
+<code className="jarombek-inline-code">handler</code>.  <code className="jarombek-inline-code">callback
 </code> is a callback function used to return data back to whoever invoked the lambda function.  The
-first argument passed to <code class="jarombek-inline-code">callback</code> is an error status.  If this
-argument is <code class="jarombek-inline-code">null</code>, the lambda function
+first argument passed to <code className="jarombek-inline-code">callback</code> is an error status.  If this
+argument is <code className="jarombek-inline-code">null</code>, the lambda function
 returned successfully.  The second argument contains any data the lambda function should return.
 My function always returns back the roman numeral.
 </p>
 <p>
-The argument <code class="jarombek-inline-code">context</code> contains runtime information about
+The argument <code className="jarombek-inline-code">context</code> contains runtime information about
 the lambda function.
 </p>
 <p>
-<code class="jarombek-inline-code">event</code> provides information about the lambda function
-request.  Inside <code class="jarombek-inline-code">event</code> exists data passed by whoever
-invoked the function.  In the code above I access the <code class="jarombek-inline-code">integer
-</code> property on <code class="jarombek-inline-code">event</code>.
-<code class="jarombek-inline-code">integer</code> contains a number that is passed to
-<code class="jarombek-inline-code">toRomanNumeral()</code>.
+<code className="jarombek-inline-code">event</code> provides information about the lambda function
+request.  Inside <code className="jarombek-inline-code">event</code> exists data passed by whoever
+invoked the function.  In the code above I access the <code className="jarombek-inline-code">integer
+</code> property on <code className="jarombek-inline-code">event</code>.
+<code className="jarombek-inline-code">integer</code> contains a number that is passed to
+<code className="jarombek-inline-code">toRomanNumeral()</code>.
 </p>
 <CodeSnippet language="JavaScript">
 const toRomanNumeral = (int) => {
@@ -182,8 +182,8 @@ resource "aws_iam_role" "lambda-role" {
 </CodeSnippet>
 <p>
 With AWS Lambda set up, I created an API Gateway REST API.  I defined nested API Gateway resources
-so that the REST API forms the path <code class="jarombek-inline-code">/roman-numeral/{integer}
-</code>.  <code class="jarombek-inline-code">{integer}</code> is replaced with whatever number a user
+so that the REST API forms the path <code className="jarombek-inline-code">/roman-numeral/{integer}
+</code>.  <code className="jarombek-inline-code">{integer}</code> is replaced with whatever number a user
 of the API wants converted to a roman numeral.
 </p>
 <CodeSnippet language="HCL">
@@ -302,16 +302,16 @@ output "url" {
 }
 </CodeSnippet>
 <p>
-Take note of the <code class="jarombek-inline-code">request_templates</code> and
-<code class="jarombek-inline-code">response_templates</code> configuration under
-<code class="jarombek-inline-code">aws_api_gateway_integration</code> and
-<code class="jarombek-inline-code">aws_api_gateway_integration_response</code> respectively.  For
+Take note of the <code className="jarombek-inline-code">request_templates</code> and
+<code className="jarombek-inline-code">response_templates</code> configuration under
+<code className="jarombek-inline-code">aws_api_gateway_integration</code> and
+<code className="jarombek-inline-code">aws_api_gateway_integration_response</code> respectively.  For
  HTTP requests and responses to API Gateway, templates are used to determine what is passed to
 AWS Lambda functions and returned back to the API invoker.
 </p>
 <p>
-Both <code class="jarombek-inline-code">request_templates</code> and
-<code class="jarombek-inline-code">response_templates</code> for API Gateway use the Velocity
+Both <code className="jarombek-inline-code">request_templates</code> and
+<code className="jarombek-inline-code">response_templates</code> for API Gateway use the Velocity
 Template Language (which is managed by Apache, the same company that leads development of
 <a href="https://jarombek.com/blog/jul-2-2018-groovy-basics-pt1">Groovy</a>).
 </p>
@@ -329,18 +329,18 @@ templating, don’t worry about the syntax - the logic is very simple.
 }
 </CodeSnippet>
 <p>
-The first line takes the <code class="jarombek-inline-code">{integer}</code> parameter from the
-URL <code class="jarombek-inline-code">/roman-numeral/{integer}</code> and assigns it to the
-variable <code class="jarombek-inline-code">$integer</code>.  The rest of the Velocity template
-creates a JSON object to pass to the AWS Lambda function.  If <code class="jarombek-inline-code">
+The first line takes the <code className="jarombek-inline-code">{integer}</code> parameter from the
+URL <code className="jarombek-inline-code">/roman-numeral/{integer}</code> and assigns it to the
+variable <code className="jarombek-inline-code">$integer</code>.  The rest of the Velocity template
+creates a JSON object to pass to the AWS Lambda function.  If <code className="jarombek-inline-code">
 $integer</code> contains a value, its used as a JSON property.  Otherwise, an empty JSON object
-<code class="jarombek-inline-code">{}</code> is passed to the lambda function.
+<code className="jarombek-inline-code">{}</code> is passed to the lambda function.
 </p>
 <p>
 The HTTP response template is also simple.  It takes whatever value is returned from the lambda
-function (represented as <code class="jarombek-inline-code">$input.path('$')</code>) and assigns
-it to the variable <code class="jarombek-inline-code">$response</code>.  If the response exists,
-it is returned with the JSON.  Otherwise, the JSON property <code class="jarombek-inline-code">error
+function (represented as <code className="jarombek-inline-code">$input.path('$')</code>) and assigns
+it to the variable <code className="jarombek-inline-code">$response</code>.  If the response exists,
+it is returned with the JSON.  Otherwise, the JSON property <code className="jarombek-inline-code">error
 </code> is used to return an error message.
 </p>
 <CodeSnippet language="Velocity">
@@ -356,7 +356,7 @@ it is returned with the JSON.  Otherwise, the JSON property <code class="jarombe
 </CodeSnippet>
 <SectionTitle title="Testing API Gateway">Testing API Gateway</SectionTitle>
 <p>
-With Terraform all configured, I ran <code class="jarombek-inline-code">terraform apply</code> and
+With Terraform all configured, I ran <code className="jarombek-inline-code">terraform apply</code> and
 tested out the REST API which invokes my AWS Lambda function.
 </p>
 <CodeSnippet language="Bash">

@@ -34,7 +34,7 @@ used.  For this reason I decided not to use C.
 <SectionTitle title="The Anatomy of a Regular Expression">The Anatomy of a Regular Expression</SectionTitle>
 <p>
 Regular expressions are used in two stages - compilation and execution (also referred to as
-matching).  The compilation stage parses the <code class="jarombek-inline-code">String</code>
+matching).  The compilation stage parses the <code className="jarombek-inline-code">String</code>
 representation of a regular expression<sup>2</sup>.  The structure of a regular expression after
 it is parsed takes the form of a single state in a finite-state machine<sup>3</sup>.  The
 process of compiling a regular expression can take a long time - much longer than executing it.
@@ -61,11 +61,11 @@ Groovy, and JavaScript.
 </p>
 <SectionTitle title="Exact and Existence Matches">Exact and Existence Matches</SectionTitle>
 <p>
-In Java the package <code class="jarombek-inline-code">java.util.regex</code> is used for
-handling regular expressions.  The two key classes are <code class="jarombek-inline-code">
-Pattern</code> and <code class="jarombek-inline-code">Matcher</code>.
-<code class="jarombek-inline-code">Pattern</code> is the result of a regular expressions
-compilation and <code class="jarombek-inline-code">Matcher</code> executes (or performs matching
+In Java the package <code className="jarombek-inline-code">java.util.regex</code> is used for
+handling regular expressions.  The two key classes are <code className="jarombek-inline-code">
+Pattern</code> and <code className="jarombek-inline-code">Matcher</code>.
+<code className="jarombek-inline-code">Pattern</code> is the result of a regular expressions
+compilation and <code className="jarombek-inline-code">Matcher</code> executes (or performs matching
 operations) on a string with a pattern.
 </p>
 <p>
@@ -89,16 +89,16 @@ assert !Pattern.matches(dateRegex, myBirthday);
 </CodeSnippet>
 <p>
 Two different methods are used to match the string to the regular expression.
-<code class="jarombek-inline-code">String.matches(regex)</code> is invoked on the string instance.
-Alternatively the static method <code class="jarombek-inline-code">Pattern.matches(regex, string)
+<code className="jarombek-inline-code">String.matches(regex)</code> is invoked on the string instance.
+Alternatively the static method <code className="jarombek-inline-code">Pattern.matches(regex, string)
 </code> can be invoked to the same result.  If you look at the Java source code for
-<code class="jarombek-inline-code">String.matches(regex)</code>, its method body simply contains
-<code class="jarombek-inline-code">return Pattern.matches(regex, this);</code>  Both return a
-<code class="jarombek-inline-code">boolean</code> value detailing whether the entire string
+<code className="jarombek-inline-code">String.matches(regex)</code>, its method body simply contains
+<code className="jarombek-inline-code">return Pattern.matches(regex, this);</code>  Both return a
+<code className="jarombek-inline-code">boolean</code> value detailing whether the entire string
 matched the regular expression.
 </p>
 <p>
-What's more interesting is the method body for <code class="jarombek-inline-code">
+What's more interesting is the method body for <code className="jarombek-inline-code">
 Pattern.match(regex, string)</code>.  Here is a peek at the Java source code in Pattern.java.
 </p>
 <CodeSnippet language="Java">
@@ -109,15 +109,15 @@ public static boolean matches(String regex, CharSequence input) {
 }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">Pattern.matches(regex, string)</code> is composed of multiple
+<code className="jarombek-inline-code">Pattern.matches(regex, string)</code> is composed of multiple
 steps.  First the compile step of the regular expression is invoked with
-<code class="jarombek-inline-code">Pattern.compile()</code>.  Once the regular expression is
+<code className="jarombek-inline-code">Pattern.compile()</code>.  Once the regular expression is
 compiled into a state in the finite-state machine, an instance of
-<code class="jarombek-inline-code">Matcher</code> is created by invoking
-<code class="jarombek-inline-code">Pattern.matcher()</code>.  Finally the entire string can be
-matched to the regular expression with <code class="jarombek-inline-code">Matcher.matches()</code>.
+<code className="jarombek-inline-code">Matcher</code> is created by invoking
+<code className="jarombek-inline-code">Pattern.matcher()</code>.  Finally the entire string can be
+matched to the regular expression with <code className="jarombek-inline-code">Matcher.matches()</code>.
 At this point both compilation and execution (matching) steps are complete and a
-<code class="jarombek-inline-code">boolean</code> value of whether or not the string matched the
+<code className="jarombek-inline-code">boolean</code> value of whether or not the string matched the
 regular expression is returned.
 </p>
 <p>
@@ -151,10 +151,10 @@ assert endOfYearMatcher.find();
 assert !myBirthdayMatcher.find();
 </CodeSnippet>
 <p>
-Invocations to <code class="jarombek-inline-code">Pattern.compile()</code> and
-<code class="jarombek-inline-code">Pattern.matcher()</code> are now separated out into two steps.
-The result of <code class="jarombek-inline-code">Pattern.compile()</code> is reused for all
-pattern matches.  <code class="jarombek-inline-code">Matcher.find()</code> is the method which
+Invocations to <code className="jarombek-inline-code">Pattern.compile()</code> and
+<code className="jarombek-inline-code">Pattern.matcher()</code> are now separated out into two steps.
+The result of <code className="jarombek-inline-code">Pattern.compile()</code> is reused for all
+pattern matches.  <code className="jarombek-inline-code">Matcher.find()</code> is the method which
 attempts to find a subsequence that matches the regular expression pattern.
 </p>
 <p>
@@ -166,7 +166,7 @@ on their knowledge of the compilation and execution phases.
 <SectionTitle title="Groovy">Groovy</SectionTitle>
 <p>
 Groovy does its best to simplify the usage of regular expressions, although under the hood it uses
-Java's <code class="jarombek-inline-code">Pattern</code> and <code class="jarombek-inline-code">
+Java's <code className="jarombek-inline-code">Pattern</code> and <code className="jarombek-inline-code">
 Matcher</code> classes.  Groovy is actually unique in my experience with programming languages in
 regards to regular expressions.  Groovy uses three operators to help with building regular
 expression patterns, matching a pattern to a string, and finding all pattern matches in a string.
@@ -174,23 +174,23 @@ expression patterns, matching a pattern to a string, and finding all pattern mat
 <ComparisonTable title="Regular Expression Operators">
 <ComparisonTableEntry>
 <h5 className="jarombek-cte-title">
-Find Operator <code class="jarombek-header-code">=~</code>
+Find Operator <code className="jarombek-header-code">=~</code>
 </h5>
 <div className="jarombek-cte-body">
 <p>
 Checks to see if a pattern matches any substring within a string.  The value before the operand is
 the string to look for a match on.  The value after the operand is the regular expression to match
-against a substring.  For example, both <code class="jarombek-inline-code">
-"02-26" =~ /[0-9]{2}-[0-9]{2}/</code> and <code class="jarombek-inline-code">
-"02-26-2018" =~ /[0-9]{2}-[0-9]{2}/</code> will return <code class="jarombek-inline-code">
-true</code> while <code class="jarombek-inline-code">"Andy" =~ /[0-9]{2}-[0-9]{2}/</code> will
-return <code class="jarombek-inline-code">false</code>.
+against a substring.  For example, both <code className="jarombek-inline-code">
+"02-26" =~ /[0-9]{2}-[0-9]{2}/</code> and <code className="jarombek-inline-code">
+"02-26-2018" =~ /[0-9]{2}-[0-9]{2}/</code> will return <code className="jarombek-inline-code">
+true</code> while <code className="jarombek-inline-code">"Andy" =~ /[0-9]{2}-[0-9]{2}/</code> will
+return <code className="jarombek-inline-code">false</code>.
 </p>
 <p>
-The find operator is equivalent to invoking <code class="jarombek-inline-code">
+The find operator is equivalent to invoking <code className="jarombek-inline-code">
 Pattern.compile(regex).matcher(string)</code> to get an instance of
-<code class="jarombek-inline-code">Matcher</code> and then calling
-<code class="jarombek-inline-code">Matcher.find()</code> on the <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">Matcher</code> and then calling
+<code className="jarombek-inline-code">Matcher.find()</code> on the <code className="jarombek-inline-code">
 Matcher</code> instance.  Since all these operations are combined into one step, the compilation of
 the regex is not cached for future use.  The find operator should be used if the regular expression
 is only compiled once in the project.  Otherwise, the compilation step should be separated out with
@@ -200,19 +200,19 @@ the pattern operator for reuse.
 </ComparisonTableEntry>
 <ComparisonTableEntry>
 <h5 className="jarombek-cte-title">
-Match Operator <code class="jarombek-header-code">==~</code>
+Match Operator <code className="jarombek-header-code">==~</code>
 </h5>
 <div className="jarombek-cte-body">
 <p>
 Checks to see if a pattern matches an entire string.  The value before the operand is the
 string to look for a match on.  The value after the operand is the regular expression to match
-against the entire string.  For example, <code class="jarombek-inline-code">
-"02-26" ==~ /[0-9]{2}-[0-9]{2}/</code> will return <code class="jarombek-inline-code">true</code>
-while <code class="jarombek-inline-code">"02-26-2018" ==~ /[0-9]{2}-[0-9]{2}/</code> will return
-<code class="jarombek-inline-code">false</code>.
+against the entire string.  For example, <code className="jarombek-inline-code">
+"02-26" ==~ /[0-9]{2}-[0-9]{2}/</code> will return <code className="jarombek-inline-code">true</code>
+while <code className="jarombek-inline-code">"02-26-2018" ==~ /[0-9]{2}-[0-9]{2}/</code> will return
+<code className="jarombek-inline-code">false</code>.
 </p>
 <p>
-Note that the match operator is equivalent to calling <code class="jarombek-inline-code">
+Note that the match operator is equivalent to calling <code className="jarombek-inline-code">
 Pattern.matches(regex, string)</code> in Java.  Therefore, this operator combines compilation and
 execution into a single step.  A match operator should be used if a regular expression is only
 compiled once in the project.  Otherwise, the compilation step should be separated out with the
@@ -222,20 +222,20 @@ pattern operator for reuse.
 </ComparisonTableEntry>
 <ComparisonTableEntry>
 <h5 className="jarombek-cte-title">
-Pattern Operator <code class="jarombek-header-code">~string</code>
+Pattern Operator <code className="jarombek-header-code">~string</code>
 </h5>
 <div className="jarombek-cte-body">
 <p>
 The pattern operator transforms a string it is applied to into an instance of
-<code class="jarombek-inline-code">Pattern</code><sup>6</sup>.  Patterns are a result of the
+<code className="jarombek-inline-code">Pattern</code><sup>6</sup>.  Patterns are a result of the
 compilation stage of a regular expression.  Therefore, a pattern is a state in the regular
 expressions finite-state machine.  The benefit of separating the compiling phase into its own
 operand is to cache the pattern for multiple uses, since determining the state of a regular
 expression based off its string representation is a slow task.
 </p>
 <p>
-An example of the pattern operator is <code class="jarombek-inline-code">
-~/([a-zA-Z]{5-10})/</code>.  The result is a <code class="jarombek-inline-code">
+An example of the pattern operator is <code className="jarombek-inline-code">
+~/([a-zA-Z]{5-10})/</code>.  The result is a <code className="jarombek-inline-code">
 Pattern</code> object of the regular expression.
 </p>
 </div>
@@ -279,23 +279,23 @@ assert !pattern.matcher(myBirthday).matches()
 <p>
 Under the optimization section that uses the pattern operator, multiple different approaches are
 used to check for matches.  The typical implementation is to chain calls to the Java methods
-<code class="jarombek-inline-code">Pattern.matcher(string)</code> and
-<code class="jarombek-inline-code">Matcher.matches()</code>, although alternatives are also
+<code className="jarombek-inline-code">Pattern.matcher(string)</code> and
+<code className="jarombek-inline-code">Matcher.matches()</code>, although alternatives are also
 available.
 </p>
 <p>
 Groovy takes Java's approach to regular expressions and simplifies the syntax with the use of
 operators.  Groovy developers simply use the find, match, and pattern operators instead
-of learning the <code class="jarombek-inline-code">java.util.regex</code> API.
+of learning the <code className="jarombek-inline-code">java.util.regex</code> API.
 </p>
 <SectionTitle title="JavaScript">JavaScript</SectionTitle>
 <p>
 JavaScript takes a different approach to the compilation and execution phases of regular
 expressions.  The compilation phase of regular expressions occurs when the
-<code class="jarombek-inline-code">RegExp</code> object is first created<sup>6</sup>.  This can
+<code className="jarombek-inline-code">RegExp</code> object is first created<sup>6</sup>.  This can
 occur at different points in time depending on whether a regular expression literal or constructor
-function <code class="jarombek-inline-code">RegExp(string)</code> is used to declare the
-<code class="jarombek-inline-code">RegExp</code> object.
+function <code className="jarombek-inline-code">RegExp(string)</code> is used to declare the
+<code className="jarombek-inline-code">RegExp</code> object.
 </p>
 <p>
 Regular expression literals are the preferred approach because the JavaScript engine precompiles
@@ -334,7 +334,7 @@ assert(!datePattern.test(myBirthday));
 <p>
 One thing to note about the JavaScript implementation is that exact matches vs existence matches
 are handled in the regular expression string instead of the JavaScript regex API.  Both exact and
-existence matches use the <code class="jarombek-inline-code">RegExp.test(string)</code> method.
+existence matches use the <code className="jarombek-inline-code">RegExp.test(string)</code> method.
 </p>
 <SectionTitle title="Looping Through Matches">Looping Through Matches</SectionTitle>
 <p>

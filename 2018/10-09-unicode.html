@@ -36,11 +36,11 @@ const delta = '\u0394';
 </CodeSnippet>
 <p>
 The hexadecimal number 0394 represents a single Unicode character - the greek delta (Δ).  Unicode code
-points are often prefixed with the character 'U' like so: <code class="jarombek-inline-code">U+0394</code>.
+points are often prefixed with the character 'U' like so: <code className="jarombek-inline-code">U+0394</code>.
 </p>
 <p>
 Things get confusing when we consider which character encoding the string
-<code class="jarombek-inline-code"> '\u0394'</code> uses.  A reasonable guess is that it uses 
+<code className="jarombek-inline-code"> '\u0394'</code> uses.  A reasonable guess is that it uses
 the Unicode character encoding.  Unfortunately
 it's not that simple.  Unicode is a standard for how to create character encodings, and there are
 many different encoding formats that match the Unicode spec.
@@ -58,7 +58,7 @@ UTF-8
 <p>
 A character encoding for Unicode that uses between 1 and 4 bytes.  Each unit in UTF-8 is 8 bits, or
 one byte.  The amount of bytes used to represent characters depends on the Unicode code point.  For
-code points less than <code class="jarombek-inline-code">U+0074</code>, the encoding uses a single
+code points less than <code className="jarombek-inline-code">U+0074</code>, the encoding uses a single
 byte<sup>4</sup>.  This encompasses most european languages and all of ASCII.  Since ASCII is also
 encoded using one byte, the UTF-8 encoding is backwards compatible to ASCII for the first 128
 characters<sup>5</sup>.  Since each unit in UTF-8 is one byte, the encoding is endianless.
@@ -76,8 +76,8 @@ two bytes<sup>6</sup>.  Similar to UTF-8, the number of bytes used to represent 
 the Unicode code point.  Since each unit is two bytes long, the order in which these bytes are stored
 is important.  Bytes can be stored in a little endian or big endian manner.  The endianness of UTF-16
 is dependent on the Byte Order Mark (BOM), which consists of two byes at the beginning of the
-encoding<sup>7</sup>.  The BOM bytes <code class="jarombek-inline-code">0xFF 0xFE</code> are used to
-declare a little endian encoding, while the bytes <code class="jarombek-inline-code">0xFE 0xFF</code>
+encoding<sup>7</sup>.  The BOM bytes <code className="jarombek-inline-code">0xFF 0xFE</code> are used to
+declare a little endian encoding, while the bytes <code className="jarombek-inline-code">0xFE 0xFF</code>
 are used to declare a big endian encoding<sup>8</sup>.  Java uses UTF-16 to represent characters
 <sup>9</sup> and most JavaScript engines use UTF-16 for character encoding<sup>10, 11</sup>.
 </p>
@@ -94,12 +94,12 @@ bytes.  Unlike UTF-8 and UTF-16, the number of bytes used to represent character
 the Unicode code point.  All code points use 4 bytes.  Bytes can be stored in a little endian or big
 endian manner.  The endianness of UTF-32 is dependent on the BOM, which consists of four byes at the
 beginning of the encoding<sup>7</sup>.  The BOM bytes
-<code class="jarombek-inline-code">0xFF 0xFE 0x00 0x00</code> are used to declare a little endian
-encoding, while the bytes <code class="jarombek-inline-code">0x00 0x00 0xFE 0xFF</code> are used to
+<code className="jarombek-inline-code">0xFF 0xFE 0x00 0x00</code> are used to declare a little endian
+encoding, while the bytes <code className="jarombek-inline-code">0x00 0x00 0xFE 0xFF</code> are used to
 declare a big endian encoding<sup>8</sup>.  Since all code points in UTF-32 use 4 bytes, it is very
 easy to determine the length of a string using this encoding.  However, UTF-32 is memory
 intensive, since there are often many wasted bytes (as you can see in the BOM where some bytes are
-empty - <code class="jarombek-inline-code">0x00</code>)<sup>12</sup>.
+empty - <code className="jarombek-inline-code">0x00</code>)<sup>12</sup>.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -121,21 +121,21 @@ emojis) reside outside the BMP<sup>13</sup>.
 <Definition word="Little Endian">
 Describes a byte ordering where groups of bytes are ordered from the little end<sup>14</sup>.  With little endian, 
 the first byte in the group is the least significant byte.  For example, the character 'a' in
-the UTF-16 little endian encoding is represented as <code class="jarombek-inline-code">0x61 0x00
-</code>, where <code class="jarombek-inline-code">0x61</code> is the least significant byte in the
-<code class="jarombek-inline-code">U+0061</code> code point.
+the UTF-16 little endian encoding is represented as <code className="jarombek-inline-code">0x61 0x00
+</code>, where <code className="jarombek-inline-code">0x61</code> is the least significant byte in the
+<code className="jarombek-inline-code">U+0061</code> code point.
 </Definition>
 <Definition word="Big Endian">
 Describes a byte ordering where groups of bytes are ordered from the big end.  With big endian, the first
 byte in the group is the most significant byte.  For example, the character 'a' in the UTF-16 big
-endian encoding is represented as <code class="jarombek-inline-code">0x00 0x61</code>, where
-<code class="jarombek-inline-code">0x00</code> is the most significant byte in the
-<code class="jarombek-inline-code">U+0061</code> code point.
+endian encoding is represented as <code className="jarombek-inline-code">0x00 0x61</code>, where
+<code className="jarombek-inline-code">0x00</code> is the most significant byte in the
+<code className="jarombek-inline-code">U+0061</code> code point.
 </Definition>
 <p>
 Let's look at different Unicode encodings in Python code.  The following strings represent two
-different ways of writing <code class="jarombek-inline-code">'beyoncé'</code> in Unicode.
-The escaped sequences (ex. <code class="jarombek-inline-code">\u0301</code>) are Unicode code points.
+different ways of writing <code className="jarombek-inline-code">'beyoncé'</code> in Unicode.
+The escaped sequences (ex. <code className="jarombek-inline-code">\u0301</code>) are Unicode code points.
 </p>
 <CodeSnippet language="Python">
 # Two different unicode representations of 'beyoncé'
@@ -171,7 +171,7 @@ is by far the most memory efficient.
 This code also reveals some complexities of the Unicode standard.  Strings can look the same, but
 use different code points under the hood.  Unicode complexities cause issues, especially
 when checking for equality between two strings.  Upon observing the strings in variables
-<code class="jarombek-inline-code">b</code> and <code class="jarombek-inline-code">b2</code>, you
+<code className="jarombek-inline-code">b</code> and <code className="jarombek-inline-code">b2</code>, you
 would expect them to be equal.  However, the first assertion statement reveals they are not.  If
 you checked the length of these two strings, the result may also be a surprise:
 </p>
@@ -182,12 +182,12 @@ assert len(b) == 8
 assert len(b2) == 7
 </CodeSnippet>
 <p>
-Since variable <code class="jarombek-inline-code">b</code> used two code points (
-<code class="jarombek-inline-code">\u0065\u0301</code>) to represent 'é', Python says it has length
+Since variable <code className="jarombek-inline-code">b</code> used two code points (
+<code className="jarombek-inline-code">\u0065\u0301</code>) to represent 'é', Python says it has length
 8, even though the human readable representation has 7 characters.  The 'e' code point (
-<code class="jarombek-inline-code">\u0065</code>) is called a
+<code className="jarombek-inline-code">\u0065</code>) is called a
 base character and the accent code point (
-<code class="jarombek-inline-code">\u0301</code>) is called a combining character.  Code points are defined this way since
+<code className="jarombek-inline-code">\u0301</code>) is called a combining character.  Code points are defined this way since
 combining characters are merged with base characters to create a single visible character<sup>15</sup>.
 To solve the issue of length and equality disparity in Unicode strings (in large part thanks to
 combining and base characters), normalization is used.

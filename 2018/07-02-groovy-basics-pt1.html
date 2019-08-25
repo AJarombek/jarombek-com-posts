@@ -39,25 +39,25 @@ Hello
 Hello World
 </CodeSnippet>
 <p>
-No parenthesis are needed for the <code class="jarombek-inline-code">println()</code>
-method invocation.  Also the variable <code class="jarombek-inline-code">hello</code> was defined
-with the keyword <code class="jarombek-inline-code">def</code>.  In Groovy
-<code class="jarombek-inline-code">def</code> is simply a Java
-<code class="jarombek-inline-code">Object</code>, so anything that is an object can also be defined
-with <code class="jarombek-inline-code">def</code><sup>2</sup>.
+No parenthesis are needed for the <code className="jarombek-inline-code">println()</code>
+method invocation.  Also the variable <code className="jarombek-inline-code">hello</code> was defined
+with the keyword <code className="jarombek-inline-code">def</code>.  In Groovy
+<code className="jarombek-inline-code">def</code> is simply a Java
+<code className="jarombek-inline-code">Object</code>, so anything that is an object can also be defined
+with <code className="jarombek-inline-code">def</code><sup>2</sup>.
 </p>
 <p>
-In the third line <code class="jarombek-inline-code">hello</code> is redefined as a list.  Notice
+In the third line <code className="jarombek-inline-code">hello</code> is redefined as a list.  Notice
 how concise the syntax is for creating a list in Groovy (although Java 9 did make list
-creation much shorter with the static factory method <code class="jarombek-inline-code">
+creation much shorter with the static factory method <code className="jarombek-inline-code">
 List.of()</code>).  The last line shows off a language feature I miss a lot when coding in Java.
 Groovy supports string templating and even allows for simpler syntax than the line shown here (you
 can omit the outer curly braces in most cases).
 </p>
 <p>
-Now that <code class="jarombek-inline-code">hello</code> is an instance of
-<code class="jarombek-inline-code">List</code>, I'll demonstrate some cool operations Groovy adds
-for list manipulation.  One of the most interesting is the spread-dot operator (<code class="jarombek-inline-code">*.</code>).
+Now that <code className="jarombek-inline-code">hello</code> is an instance of
+<code className="jarombek-inline-code">List</code>, I'll demonstrate some cool operations Groovy adds
+for list manipulation.  One of the most interesting is the spread-dot operator (<code className="jarombek-inline-code">*.</code>).
 </p>
 <CodeSnippet language="Groovy">
 def helloLengths = hello*.length()
@@ -74,7 +74,7 @@ the corresponding element from the old list.  With this operator keeping data st
 is extremely easy!  I am really excited to use this operator in my own code.
 </p>
 <p>
-Groovy also supplies an easy way to iterate over collections with the <code class="jarombek-inline-code">each()</code> method.
+Groovy also supplies an easy way to iterate over collections with the <code className="jarombek-inline-code">each()</code> method.
 </p>
 <CodeSnippet language="Groovy">
 def list = [1, 2, 3, 4, 5]
@@ -91,8 +91,8 @@ list.each {
 25
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">each()</code> method takes one argument which at first
-glance looks kinda funky.  The argument passed to <code class="jarombek-inline-code">each()</code>
+The <code className="jarombek-inline-code">each()</code> method takes one argument which at first
+glance looks kinda funky.  The argument passed to <code className="jarombek-inline-code">each()</code>
 is called a closure.  <a href="https://jarombek.com/blog/aug-16-2018-groovy-closures">Closures in Groovy</a>
 are not to be confused with <a href="https://jarombek.com/
 blog/nov-9-2017-js-closure-modules">closures in JavaScript</a> or similar languages.  Groovy's
@@ -100,18 +100,18 @@ closures are similar to those in <a href="https://jarombek.com/blog/nov-14-2017-
 Swift</a>.  A closure in Groovy is an anonymous block of code that can take in arguments and return
 a value<sup>4</sup>.  The syntax of Groovy closures may have you believe they are simply lambda
 functions from Java.  While the object type of a Java lambda expression is an object that implements a
-functional interface, in Groovy closures are an object of type <code class="jarombek-inline-code">
+functional interface, in Groovy closures are an object of type <code className="jarombek-inline-code">
 Closure</code><sup>5, 6</sup>.  This allows Groovy closures, like Java lambda functions and Swift
 closures, to be passed as arguments to methods.  The syntax for closures is <code
-  class="jarombek-inline-code">{ [ params -> ] statements}</code>, where the parameters can be
+  className="jarombek-inline-code">{ [ params -> ] statements}</code>, where the parameters can be
 explicitly or implicitly declared (an implicit parameter resolves to the <code
-  class="jarombek-inline-code">it</code> variable)<sup>7</sup>.  This is where the
-<code class="jarombek-inline-code">it</code> variable in the closure passed to <code
-  class="jarombek-inline-code">each()</code> comes from.
+  className="jarombek-inline-code">it</code> variable)<sup>7</sup>.  This is where the
+<code className="jarombek-inline-code">it</code> variable in the closure passed to <code
+  className="jarombek-inline-code">each()</code> comes from.
 </p>
 <p>
 Closures can also be bound to a variable.  In the following example, a closure is assigned 
-to a variable of type <code class="jarombek-inline-code">Closure</code>:
+to a variable of type <code className="jarombek-inline-code">Closure</code>:
 </p>
 <CodeSnippet language="Groovy">
 Closure squared = { println it * it }
@@ -127,7 +127,7 @@ list.each(squared)
 25
 </CodeSnippet>
 <p>
-This awesome <code class="jarombek-inline-code">each()</code> method can even be called on a data
+This awesome <code className="jarombek-inline-code">each()</code> method can even be called on a data
 structure declaration!
 </p>
 <CodeSnippet language="Groovy">
@@ -142,10 +142,10 @@ A Great Friend: Tom
 A Great Friend: Ben
 </CodeSnippet>
 <p>
-Groovy exposes a <code class="jarombek-inline-code">collect()</code> method for collections which
+Groovy exposes a <code className="jarombek-inline-code">collect()</code> method for collections which
 transforms each entry in the collection and produces a new list with the transformed values<sup>8</sup>.
-The transformation is passed to <code class="jarombek-inline-code">collect()</code>
-in the form of a closure.  Like the spread-dot operator, the <code class="jarombek-inline-code">
+The transformation is passed to <code className="jarombek-inline-code">collect()</code>
+in the form of a closure.  Like the spread-dot operator, the <code className="jarombek-inline-code">
 collect()</code> method does not mutate the original collection, enabling immutable data structures.
 </p>
 <CodeSnippet language="Groovy">
@@ -157,7 +157,7 @@ println squaredList
 </CodeSnippet>
 <p>
 Groovy even has a really nice shorthand operator for appending an item to a collection (<code
-  class="jarombek-inline-code">&lt;&lt;</code>).
+  className="jarombek-inline-code">&lt;&lt;</code>).
 </p>
 <CodeSnippet language="Groovy">
 // Long version and Groovy shorthand for appending to a data structure
@@ -172,8 +172,8 @@ println squaredList
 <p>
 Along with string templating, I really miss the ability to create multi-line strings in Java.
 Groovy is nice enough to give us that ability.  You can still use all the Java
-<code class="jarombek-inline-code">String</code> methods as well - such as
-<code class="jarombek-inline-code">trim()</code>
+<code className="jarombek-inline-code">String</code> methods as well - such as
+<code className="jarombek-inline-code">trim()</code>
 </p>
 <CodeSnippet language="Groovy">
 def paragraph = '''
@@ -190,8 +190,8 @@ Groovy programming language.  I have written a little
 bit of Groovy in the past but never a significant amount.
 </CodeSnippet>
 <p>
-I already showed off how awesome the short <code class="jarombek-inline-code">List</code> syntax is
-in Groovy.  The syntax for the <code class="jarombek-inline-code">Map</code> data structure is
+I already showed off how awesome the short <code className="jarombek-inline-code">List</code> syntax is
+in Groovy.  The syntax for the <code className="jarombek-inline-code">Map</code> data structure is
 equally short and sweet!
 </p>
 <CodeSnippet language="Groovy">
@@ -237,7 +237,7 @@ job=Software Developer
 Andrew Jarombek is 23 years old and lives in Connecticut
 </CodeSnippet>
 <p>
-The following code shows off Groovy's concise <code class="jarombek-inline-code">for</code> loops.  Groovy
+The following code shows off Groovy's concise <code className="jarombek-inline-code">for</code> loops.  Groovy
 also allows for number ranges both in loops and during data structure creation<sup>9</sup>.
 </p>
 <CodeSnippet language="Groovy">
@@ -284,10 +284,10 @@ Iteration of the loop: 4
 </CodeSnippet>
 <p>
 Groovy introduces the spaceship operator, declared with the
-<code class="jarombek-inline-code">&lt;=&gt;</code> syntax.  Spaceship operators are shorthand for
-Java's <code class="jarombek-inline-code">CompareTo()</code> method of the
-<code class="jarombek-inline-code">Comparable</code> interface<sup>10</sup>.  I discussed the
-<code class="jarombek-inline-code">Comparable</code> interface briefly in my discussion of building
+<code className="jarombek-inline-code">&lt;=&gt;</code> syntax.  Spaceship operators are shorthand for
+Java's <code className="jarombek-inline-code">CompareTo()</code> method of the
+<code className="jarombek-inline-code">Comparable</code> interface<sup>10</sup>.  I discussed the
+<code className="jarombek-inline-code">Comparable</code> interface briefly in my discussion of building
 a <a href="https://jarombek.com/blog/may-20-2018-java-generics-api">Java API with Generics</a>.
 Basically comparison is used to define a logical ordering of objects, so the spaceship operator
 compares objects based on an ordering written in the class definition.  Even better the spaceship
@@ -314,7 +314,7 @@ println "Hello" <=> null
 </CodeSnippet>
 <p>
 The final really cool operator I want to discuss in Groovy is the elvis operator, which is
-declared with the <code class="jarombek-inline-code">?:</code> syntax.  Elvis operators are
+declared with the <code className="jarombek-inline-code">?:</code> syntax.  Elvis operators are
 shorthand for a full ternary operator which checks if a value is truthy in the condition block
 <sup>11</sup>.  If its truthy, that value is returned - otherwise a default value is returned.
 Basically you can use the elvis operator as a check if a variable is false and assign it a default

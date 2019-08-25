@@ -1,16 +1,16 @@
 <div>
 <p>
-This post reviews Java 8's new <code class="jarombek-inline-code">CompletableFuture</code> class, which builds upon the
-<code class="jarombek-inline-code">Future</code> class introduced in Java 5<sup>1</sup>.  A
-<code class="jarombek-inline-code">CompletableFuture</code> represents an operation in progress that
- will contain a value when completed<sup>2</sup>.  <code class="jarombek-inline-code">CompletableFuture</code> helps create asynchronous code that
+This post reviews Java 8's new <code className="jarombek-inline-code">CompletableFuture</code> class, which builds upon the
+<code className="jarombek-inline-code">Future</code> class introduced in Java 5<sup>1</sup>.  A
+<code className="jarombek-inline-code">CompletableFuture</code> represents an operation in progress that
+ will contain a value when completed<sup>2</sup>.  <code className="jarombek-inline-code">CompletableFuture</code> helps create asynchronous code that
 doesn't block during long running tasks.  It is basically Java's version of JavaScript's
-<code class="jarombek-inline-code">Promise</code> object.
+<code className="jarombek-inline-code">Promise</code> object.
 </p>
 <p>
 I created a simple API to test it out.  The API contains a list of programming languages and
 information about them.  Getting a language from the API takes a long time to complete
-(simulating a long running network call) so I used <code class="jarombek-inline-code">
+(simulating a long running network call) so I used <code className="jarombek-inline-code">
 CompletableFuture</code> to deal with the language information once it arrives.  In the meantime I can
 perform other operations.
 </p>
@@ -58,7 +58,7 @@ public class LanguageAPI {
 </CodeSnippet>
 <p>
 I initialized the language values in the constructor.  I also used Java 8's
-Date and Time API to specify each languages creation date.  Here is the <code class="jarombek-inline-code">Language</code> POJO.
+Date and Time API to specify each languages creation date.  Here is the <code className="jarombek-inline-code">Language</code> POJO.
 </p>
 <CodeSnippet language="Java">
 public class Language {
@@ -106,19 +106,19 @@ public class APIClient {
 }
 </CodeSnippet>
 <p>
-Since the <code class="jarombek-inline-code">getLanguage()</code> method takes a long time to complete,
-I wrapped it in a <code class="jarombek-inline-code">CompletableFuture</code>.  To do this I
-used <code class="jarombek-inline-code">CompletableFuture</code>'s <code class="jarombek-inline-code">
-supplyAsync()</code> method.  This method accepts a <code class="jarombek-inline-code">Supplier</code>
-which is asynchronously executed.  I put the <code class="jarombek-inline-code">getLanguage()
-</code> method in the <code class="jarombek-inline-code">Supplier</code> argument.  Once the value is resolved
-I print it using <code class="jarombek-inline-code">thenAccept()</code>.
+Since the <code className="jarombek-inline-code">getLanguage()</code> method takes a long time to complete,
+I wrapped it in a <code className="jarombek-inline-code">CompletableFuture</code>.  To do this I
+used <code className="jarombek-inline-code">CompletableFuture</code>'s <code className="jarombek-inline-code">
+supplyAsync()</code> method.  This method accepts a <code className="jarombek-inline-code">Supplier</code>
+which is asynchronously executed.  I put the <code className="jarombek-inline-code">getLanguage()
+</code> method in the <code className="jarombek-inline-code">Supplier</code> argument.  Once the value is resolved
+I print it using <code className="jarombek-inline-code">thenAccept()</code>.
 The contents of this method are executed once the value exists,
-in my case the <code class="jarombek-inline-code">System.out::println</code> method reference.
+in my case the <code className="jarombek-inline-code">System.out::println</code> method reference.
 </p>
 <p>
 Running this code prints 'Finding Java...' before the
-<code class="jarombek-inline-code">Langauge</code> object is resolved.  Asynchronous code at work!
+<code className="jarombek-inline-code">Langauge</code> object is resolved.  Asynchronous code at work!
 </p>
 <CodeSnippet language="Bash">
 # Finding Java...
@@ -126,10 +126,10 @@ Running this code prints 'Finding Java...' before the
 # Language(name=Java, created=1995-05-23, version=9.0, paradigm=Object Oriented)
 </CodeSnippet>
 <p>
-I haven't tried more complex examples, but <code class="jarombek-inline-code">CompletableFuture</code>
+I haven't tried more complex examples, but <code className="jarombek-inline-code">CompletableFuture</code>
 seems like a nice new addition to Java.  In the past when performing asynchronous code in Java
 I used Android libraries or the Spring framework, but I can see myself using
-<code class="jarombek-inline-code">CompletableFuture</code> in the future!  The code for this discovery is on
+<code className="jarombek-inline-code">CompletableFuture</code> in the future!  The code for this discovery is on
 <a href="https://github.com/AJarombek/jarombek-com-sources/tree/master/2018/02-Feb/2-7-Java-Completable-Future">GitHub</a>.
 </p>
 </div>

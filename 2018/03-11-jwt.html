@@ -14,7 +14,7 @@ between are the Node.js/Express web server and my Angular 5 client.
 A JWT is a Base64 encoded JSON object along with an algorithm used for signing.  It contains a header, payload,
 and signature<sup>2</sup>.  These three components are separated by a period in the Base64 encoding like so:
 </p>
-<span class="code-span">
+<span className="code-span">
 eyJhbGciOiJSUzI1NiJ9.
 eyJpYXQiOjE1MjAzOTI5NDIsImV4cCI6MTUyMDM5NjU0Miwic3ViIjoiNWE5NjE2IyZThiZDBiZDVlIn0.
 dGQU3FsuuOy9-IEEMHGTPB1bCOOk_28d_vofg56h9
@@ -32,10 +32,10 @@ signature.  The header carries claims about the JWT itself.  In my use case, the
 <p>
 The payload contains user data about the JWT.  This is the data that I wanted transferred in the
 first place.  In my implementation the JWT payload has three claims.  The first is the
-<code class="jarombek-inline-code">sub</code> claim, which identifies the subject that the claim
+<code className="jarombek-inline-code">sub</code> claim, which identifies the subject that the claim
 is about.  In my application, the subject is the user that is logged in.  The second claim is
-the <code class="jarombek-inline-code">iat</code> claim, which specifies when the JWT was issued.
-The final claim is the <code class="jarombek-inline-code">exp</code> claim, which is the expiration
+the <code className="jarombek-inline-code">iat</code> claim, which specifies when the JWT was issued.
+The final claim is the <code className="jarombek-inline-code">exp</code> claim, which is the expiration
 time of the JWT.  Both the issued time and expiration time are specified in UNIX time, or the
 number of seconds since midnight January 1st, 1970.  Here is a sample decoded payload from my application:
 </p>
@@ -260,7 +260,7 @@ back to the login form.
 <p>
 Finally on all outgoing HTTP requests I attached the JWT to the request body.  This is so
 that the JWT can be verified by the Node.js/Express server.
-I set up this functionality with an <code class="jarombek-inline-code">HttpInterceptor</code>:
+I set up this functionality with an <code className="jarombek-inline-code">HttpInterceptor</code>:
 </p>
 <CodeSnippet language="TypeScript">
 import {Injectable} from "@angular/core";

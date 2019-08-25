@@ -14,7 +14,7 @@ language.  This post covers some of the functional concepts I explored in my fir
 <SectionTitle title="Guarded Equations">Guarded Equations</SectionTitle>
 <p>
 Often when writing a program with branching outcomes, a conditional expression is used.  Haskell
-also supports <code class="jarombek-inline-code">if...else</code> conditional expressions, which are
+also supports <code className="jarombek-inline-code">if...else</code> conditional expressions, which are
 used like so:
 </p>
 <CodeSnippet language="Haskell">
@@ -28,8 +28,8 @@ older n = if n > 23 then 1
           else -1
 </CodeSnippet>
 <p>
-Invoking <code class="jarombek-inline-code">older 24</code> returns <code class="jarombek-inline-code">1
-</code> while <code class="jarombek-inline-code">older 22</code> returns <code class="jarombek-inline-code">
+Invoking <code className="jarombek-inline-code">older 24</code> returns <code className="jarombek-inline-code">1
+</code> while <code className="jarombek-inline-code">older 22</code> returns <code className="jarombek-inline-code">
 -1</code>.  Another way to perform the same logic is to use a guarded equation.
 </p>
 <CodeSnippet language="Haskell">
@@ -43,15 +43,15 @@ older' n | n > 23 = 1
          | otherwise = -1
 </CodeSnippet>
 <p>
-Guarded equations follow a more mathematical design, using a <code class="jarombek-inline-code">
+Guarded equations follow a more mathematical design, using a <code className="jarombek-inline-code">
 | condition = outcome</code> syntax which is read "Such that a condition is met, return an outcome<sup>1</sup>."  Guarded
 equations are easily translated into mathematical equations<sup>2</sup>.  The following equation
-represents the <code class="jarombek-inline-code">older'</code> function:
+represents the <code className="jarombek-inline-code">older'</code> function:
 </p>
 <MathNotation tex="﻿older'(x) = \begin{cases} 1 & x > 23 \\ 0 & x = 23 \\ -1 & otherwise \end{cases}"></MathNotation>
 <p>
 The following function demonstrates a more advanced example of guarded equations.  It returns a
-sub-list from a list using recursion and the cons operator (<code class="jarombek-inline-code">:</code>),
+sub-list from a list using recursion and the cons operator (<code className="jarombek-inline-code">:</code>),
 which constructs a list.
 </p>
 <CodeSnippet language="Haskell">
@@ -103,12 +103,12 @@ sumListSq :: Num a => [a] -> a
 sumListSq xs = sum [x^2 | x <- xs]
 </CodeSnippet>
 <p>
-The list comprehension notation <code class="jarombek-inline-code">[x^2 | x <- xs]</code> is read as
-"item <code class="jarombek-inline-code">x</code> drawn from list
-<code class="jarombek-inline-code">xs</code> such that <code class="jarombek-inline-code">x^2</code>".
-When <code class="jarombek-inline-code">sumListSq [2,3,4]</code>
-is invoked, the list is mapped to <code class="jarombek-inline-code">[4,9,16]</code> first.  Then the sum of
-the list is calculated, which is <code class="jarombek-inline-code">29</code>.
+The list comprehension notation <code className="jarombek-inline-code">[x^2 | x <- xs]</code> is read as
+"item <code className="jarombek-inline-code">x</code> drawn from list
+<code className="jarombek-inline-code">xs</code> such that <code className="jarombek-inline-code">x^2</code>".
+When <code className="jarombek-inline-code">sumListSq [2,3,4]</code>
+is invoked, the list is mapped to <code className="jarombek-inline-code">[4,9,16]</code> first.  Then the sum of
+the list is calculated, which is <code className="jarombek-inline-code">29</code>.
 </p>
 <p>
 Like many constructs in Haskell, list comprehensions are easily translated into mathematical notation:

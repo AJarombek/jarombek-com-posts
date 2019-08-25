@@ -35,7 +35,7 @@ function mutates and removing unnecessary exceptions is beneficial.  Predictable
 are nice to work with and help future developers who look at your code!
 </p>
 <p>
-As an example, eliminating null errors is simple with Java 8's <code class="jarombek-inline-code">
+As an example, eliminating null errors is simple with Java 8's <code className="jarombek-inline-code">
 Optional</code> class!  I described optionals in a
 prior <a href="https://jarombek.com/blog/jan-30-2018-java8-optionals">article</a>, but invalid conditions
 are easily expressed in functions with optionals.  For example, the book I read discusses a divide by zero scenario:
@@ -76,9 +76,9 @@ public class Functional {
 </CodeSnippet>
 <p>
 First I tried dividing 5 by 2, then 5 by 0, and finally the dreaded
-<code class="jarombek-inline-code">null</code> by 6.5.  With optionals, none of these divisions throw an error.
-Instead I simply check the resulting <code class="jarombek-inline-code">Optional</code> for a value.  The first valid
-division contains a result while the other two return <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">null</code> by 6.5.  With optionals, none of these divisions throw an error.
+Instead I simply check the resulting <code className="jarombek-inline-code">Optional</code> for a value.  The first valid
+division contains a result while the other two return <code className="jarombek-inline-code">
 Optional.empty</code>.  The output of this program is as follows:
 </p>
 <CodeSnippet>

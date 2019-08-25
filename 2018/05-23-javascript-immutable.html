@@ -15,8 +15,8 @@ an object or primitive can't be altered.
 </Definition>
 <SectionTitle title="Constant vs Immutable">Constant vs. Immutable</SectionTitle>
 <p>
-One common confusion with immutability in JavaScript revolves around the new <code class="jarombek-inline-code">
-const</code> keyword introduced in ES6.  <code class="jarombek-inline-code">const</code> declares a
+One common confusion with immutability in JavaScript revolves around the new <code className="jarombek-inline-code">
+const</code> keyword introduced in ES6.  <code className="jarombek-inline-code">const</code> declares a
 constant variable, one that can't change once its assigned.  The trick is that constant in JavaScript
 doesn't mean that the referenced object is immutable.  You can mutate the referenced object all you want.
 What you can't do is change the reference to point to a different object or primitive.
@@ -65,7 +65,7 @@ Names After Modification: Joe,Jarombek
 Names After Frozen: Joe,Jarombek
 </CodeSnippet>
 <p>
-More on that <code class="jarombek-inline-code">Object.freeze()</code> function shortly.  For now simply note that it
+More on that <code className="jarombek-inline-code">Object.freeze()</code> function shortly.  For now simply note that it
 prevents the mutation of an object!
 </p>
 <p>
@@ -79,13 +79,13 @@ it is impossible to mutate its value even if you try.
 </Definition>
 <p>
 In JavaScript all objects have internal attributes determining which actions can be performed on them<sup>1</sup>.
-One of these internal attributes is <code class="jarombek-inline-code">Extensible</code>, which determines whether
+One of these internal attributes is <code className="jarombek-inline-code">Extensible</code>, which determines whether
 an object can be modified.  Modifying an object entails removing or adding a property.  By default,
 objects in JavaScript are extensible, meaning programmers are free to modify them.
 </p>
 <p>
-One way to set the internal <code class="jarombek-inline-code">Extensible</code> attribute to false is
-<code class="jarombek-inline-code">Object.seal()</code>.  Once an object is passed to this function it can
+One way to set the internal <code className="jarombek-inline-code">Extensible</code> attribute to false is
+<code className="jarombek-inline-code">Object.seal()</code>.  Once an object is passed to this function it can
 no longer be modified.  Note that sealing is not the same as making an object immutable.  You can still mutate
 existing properties:
 </p>
@@ -117,7 +117,7 @@ Sealed Cat After Modification: {"breed":"Russian Blue","name":"Dotty"}
 </CodeSnippet>
 <p>
 Sealing an object makes it explicitly un-modifiable.  This is nice, however we are looking for explicit
-immutability.  To achieve this goal, we can use <code class="jarombek-inline-code">Object.freeze()</code>.
+immutability.  To achieve this goal, we can use <code className="jarombek-inline-code">Object.freeze()</code>.
 </p>
 <CodeSnippet language="JavaScript">
 const person = {
@@ -154,13 +154,13 @@ Is Person Frozen: true
 }
 </CodeSnippet>
 <p>
-Once an object is frozen none of its properties can be modified.  <code class="jarombek-inline-code">Object.freeze()
+Once an object is frozen none of its properties can be modified.  <code className="jarombek-inline-code">Object.freeze()
 </code> explicitly states the object passed as an argument is immutable.
 </p>
 <p>
-There is a catch with <code class="jarombek-inline-code">Object.freeze()</code>.  The freeze operation is shallow,
+There is a catch with <code className="jarombek-inline-code">Object.freeze()</code>.  The freeze operation is shallow,
 meaning only direct properties on the object are restricted from mutating.  Nested objects properties are not
-frozen.  This is why in the above code the <code class="jarombek-inline-code">country</code> property is able to
+frozen.  This is why in the above code the <code className="jarombek-inline-code">country</code> property is able to
 mutate.  Code that performs a deep freeze is a bit more involved<sup>2</sup>.
 </p>
 <SectionTitle title="Implicitly Immutable">Implicitly Immutable</SectionTitle>
@@ -170,9 +170,9 @@ implicitly immutable in a programming language it is never strictly declared as 
 developer its implied that the data is immutable because other code doesn't mutate it.  Its known to be immutable.
 </Definition>
 <p>
-ES6 introduced two new ways to keep data implicitly immutable.  One is <code class="jarombek-inline-code">
+ES6 introduced two new ways to keep data implicitly immutable.  One is <code className="jarombek-inline-code">
 Object.assign()</code> and the other is the spread operator (the recommended approach).  I demonstrate both
-on the <code class="jarombek-inline-code">person</code> object below:
+on the <code className="jarombek-inline-code">person</code> object below:
 </p>
 <CodeSnippet language="JavaScript">
 const person = {
@@ -206,20 +206,20 @@ The New Person: {"name":"Joe","hometown":{"city":"Riverside","state":"Connecticu
 The New(er) Person: {"name":"Tom","hometown":{"city":"Riverside","state":"Connecticut","country":"USA"}}
 </CodeSnippet>
 <p>
-The spread operator (<code class="jarombek-inline-code">...</code>) makes a copy of every property on an original
+The spread operator (<code className="jarombek-inline-code">...</code>) makes a copy of every property on an original
 object (or array) and spreads them out into a new object (or array).  It performs the necessary copy to keep
-property data immutable.  Note that just like <code class="jarombek-inline-code">Object.freeze()</code>, the spread
+property data immutable.  Note that just like <code className="jarombek-inline-code">Object.freeze()</code>, the spread
 operator makes a shallow copy.  If you wanted to make a deep copy the code is a bit more involved.
 </p>
 <p>
-<code class="jarombek-inline-code">Object.assign()</code> is a bit more verbose.  It creates a copy of an object,
+<code className="jarombek-inline-code">Object.assign()</code> is a bit more verbose.  It creates a copy of an object,
 where the first parameter is the target object upon which the new object is built.  The rest of the parameters are
 the sources objects, which are copied into the target object.  Although
-<code class="jarombek-inline-code">Object.assign()</code> gets the job done, the spread operator is much more
+<code className="jarombek-inline-code">Object.assign()</code> gets the job done, the spread operator is much more
 concise (and the recommended approach).
 </p>
 <p>
-One important note before moving on.  In the examples above the <code class="jarombek-inline-code">name</code>
+One important note before moving on.  In the examples above the <code className="jarombek-inline-code">name</code>
 property is defined twice in the target object.  In JavaScript this is okay.  In the case of a property name conflict the 
 second property value overwrites the first property value.  Property conflict resolution helps give a copied
 object's property a new value without mutating the existing property!
@@ -381,7 +381,7 @@ console.info(noEightArray);
 I know this post is centered around JavaScript, but this year I also spent time working in
 <a href="https://jarombek.com/blog/mar-8-2018-typescript">TypeScript</a> for the <a href="https://jarombek.com/
 blog/mar-17-2018-mean-stack-prototype">Angular framework</a>.  TypeScript has a really cool way to define
-explicitly immutable properties and variables with the <code class="jarombek-inline-code">readonly</code> keyword.
+explicitly immutable properties and variables with the <code className="jarombek-inline-code">readonly</code> keyword.
 This keyword makes properties immutable<sup>3</sup>!
 </p>
 <CodeSnippet language="TypeScript">
@@ -434,7 +434,7 @@ to say the least.
 </p>
 <p>
 One question that arises from this post is which is better - implicit or explicit immutability.  I would say it
-depends.  In JavaScript the <code class="jarombek-inline-code">Object.freeze()</code> approach to explicit
+depends.  In JavaScript the <code className="jarombek-inline-code">Object.freeze()</code> approach to explicit
 immutability is not very safe.  Since the object is not frozen when it is initialized there are points in time
 before its frozen.  This is dangerous.  The TypeScript approach to explicit immutability is much better since
 it is applied to the property definitions.

@@ -13,7 +13,7 @@ There is a relationship between books and languages, since all the books are abo
 <p>
 The first query that uses analytic functions ranks programming languages by the
 time spent reading about them.  There are two main functions used for ranking -
-<code class="jarombek-inline-code">RANK()</code> and <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">RANK()</code> and <code className="jarombek-inline-code">
 DENSE_RANK()</code>.  The only difference between them is the way they handle ties in the
 rankings<sup>1</sup>.  The difference in rankings is apparent in the following query:
 </p>
@@ -28,7 +28,7 @@ INNER JOIN book_languages l ON b.isbn = l.isbn
 GROUP BY l.name
 ORDER BY rank;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 NAME         SUM(B.TIME_READING) RANK      DENSE_RANK
 ------------ ------------------- --------- ---------------
 Java         134                 1         1
@@ -37,15 +37,15 @@ SQL          26                  2         2
 JavaScript                       4         3
 </span>
 <p>
-An interesting piece of this query is the <code class="jarombek-inline-code">NULLS LAST</code>
-clause.  When ordering items, <code class="jarombek-inline-code">null</code> values come
-first by default.  In this query <code class="jarombek-inline-code">null</code> is equivalent to zero time reading, so I want them to come
-last.  The <code class="jarombek-inline-code">NULLS LAST</code> clause performs this switch.
+An interesting piece of this query is the <code className="jarombek-inline-code">NULLS LAST</code>
+clause.  When ordering items, <code className="jarombek-inline-code">null</code> values come
+first by default.  In this query <code className="jarombek-inline-code">null</code> is equivalent to zero time reading, so I want them to come
+last.  The <code className="jarombek-inline-code">NULLS LAST</code> clause performs this switch.
 </p>
 <p>
-Ranks can also be partitioned into subgroups by specifying a <code class="jarombek-inline-code">PARTITION BY</code> column.
-Partitions are a bit too complex for my basic <code class="jarombek-inline-code">book_languages</code>
-table, so I created a new table <code class="jarombek-inline-code">code_written</code> that is used for
+Ranks can also be partitioned into subgroups by specifying a <code className="jarombek-inline-code">PARTITION BY</code> column.
+Partitions are a bit too complex for my basic <code className="jarombek-inline-code">book_languages</code>
+table, so I created a new table <code className="jarombek-inline-code">code_written</code> that is used for
 the remaining examples.  This table contains a year, language, and lines
 of code written in that language for the year (these are real statistics!):
 </p>
@@ -74,7 +74,7 @@ SELECT
 FROM code_written
 ORDER BY year, yearly_rank;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR    LANGUAGE       LINES           YEARLY_RANK     ALL_TIME_RANK
 ------- -------------- --------------- --------------- ---------------
 2014	Java           4282            1               7
@@ -104,7 +104,7 @@ SELECT
 FROM code_written
 ORDER BY year, yearly_distribution;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR     LANGUAGE     LINES           YEARLY_DISTRIBUTION ALL_TIME_DISTRIBUTION
 -------- ------------ --------------- ------------------- ---------------------
 2014	 Java         4282            0                   0.14
@@ -130,7 +130,7 @@ SELECT
     PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY lines DESC) AS median
 FROM code_written GROUP BY language;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 LANGUAGE              MEDIAN
 --------------------- ----------
 C                     325
@@ -150,8 +150,8 @@ XML                   1344
 </span>
 <p>
 The next couple queries all utilize window functions.  Window functions apply an aggregate function
-such as <code class="jarombek-inline-code">AVG()</code> or
-<code class="jarombek-inline-code">SUM()</code> to a subset of rows in a result set<sup>3</sup>.
+such as <code className="jarombek-inline-code">AVG()</code> or
+<code className="jarombek-inline-code">SUM()</code> to a subset of rows in a result set<sup>3</sup>.
 This subset is known as the window.  Here's an example of a
 window function query that shows the cumulative sum of lines written:
 </p>
@@ -164,7 +164,7 @@ SELECT
 FROM code_written
 GROUP BY year;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR     TOTAL_LINES CUMULATIVE_LINES
 ----- -------------- ----------------
 2014            4282             4282
@@ -174,11 +174,11 @@ YEAR     TOTAL_LINES CUMULATIVE_LINES
 2018            5986            89789
 </span>
 <p>
-The column aliased as <code class="jarombek-inline-code">cumulative_lines</code> is really
+The column aliased as <code className="jarombek-inline-code">cumulative_lines</code> is really
 interesting.  Its SQL statement starts by saying "compute the sum of all the
-rows in the window with the statement <code class="jarombek-inline-code">SUM(SUM(lines))</code>".  Next I
-defined what rows are in the window.  <code class="jarombek-inline-code">ORDER BY year</code>
-accumulates the sum in a yearly order.  This is enforced with <code class="jarombek-inline-code">
+rows in the window with the statement <code className="jarombek-inline-code">SUM(SUM(lines))</code>".  Next I
+defined what rows are in the window.  <code className="jarombek-inline-code">ORDER BY year</code>
+accumulates the sum in a yearly order.  This is enforced with <code className="jarombek-inline-code">
 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>, which says the window consists of this row and all rows prior.
 </p>
 <p>
@@ -208,12 +208,12 @@ FROM code_written
 GROUP BY year;
 </CodeSnippet>
 <p>
-If you want to get a certain value in a window, use <code class="jarombek-inline-code">
+If you want to get a certain value in a window, use <code className="jarombek-inline-code">
 FIRST_VALUE()</code> to get the first row in the
-window, <code class="jarombek-inline-code">LAST_VALUE()</code> to get the last row, or
-<code class="jarombek-inline-code">NTH_VALUE()</code> to get any other row.  When the first value in the
+window, <code className="jarombek-inline-code">LAST_VALUE()</code> to get the last row, or
+<code className="jarombek-inline-code">NTH_VALUE()</code> to get any other row.  When the first value in the
 window is predictable beforehand you can do really powerful things.  For example,
-in the following query I know that <code class="jarombek-inline-code">FIRST_VALUE()</code> returns
+in the following query I know that <code className="jarombek-inline-code">FIRST_VALUE()</code> returns
 the previous years total lines written.   I can easily to perform comparisons between the row in the
 query and the first row in the window, such as the percentage change between the two:
 </p>
@@ -229,7 +229,7 @@ SELECT
 FROM code_written
 GROUP BY year;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR       TOTAL_LINES LAST_YEAR_TOTAL PERCENT_CHANGE
 ------ --------------- --------------- ---------------
   2014            4282            4282 100%
@@ -241,8 +241,8 @@ YEAR       TOTAL_LINES LAST_YEAR_TOTAL PERCENT_CHANGE
 <p>
 The final query in this discovery lists all the languages used each year ordered from
 most used to least used.  You can combine column values across multiple rows with the
-<code class="jarombek-inline-code">LISTAGG()</code> function along with the
-<code class="jarombek-inline-code">WITHIN GROUP</code> clause.
+<code className="jarombek-inline-code">LISTAGG()</code> function along with the
+<code className="jarombek-inline-code">WITHIN GROUP</code> clause.
 </p>
 <CodeSnippet language="SQL">
 SELECT
@@ -252,7 +252,7 @@ SELECT
 FROM code_written
 GROUP BY year;
 </CodeSnippet>
-<span class="code-span">
+<span className="code-span">
 YEAR  LANGUAGES_USED                                TOTAL_LINES
 ----- --------------------------------------------- ------------
 2014  Java                                          4282
@@ -262,7 +262,7 @@ YEAR  LANGUAGES_USED                                TOTAL_LINES
 2018  TypeScript, JavaScript, Java, SQL, ...        5986
 </span>
 <p>
-In my next <a href="https://jarombek.com/blog/mar-19-2018-oracle-adv-pt2">discovery</a> I will look at the <code class="jarombek-inline-code">MODEL</code> clause and the incredibly
-cool <code class="jarombek-inline-code">PIVOT</code> clause that pivots a table on a certain column!
+In my next <a href="https://jarombek.com/blog/mar-19-2018-oracle-adv-pt2">discovery</a> I will look at the <code className="jarombek-inline-code">MODEL</code> clause and the incredibly
+cool <code className="jarombek-inline-code">PIVOT</code> clause that pivots a table on a certain column!
 </p>
 </div>

@@ -28,7 +28,7 @@ _my, _name, _is, _andy = items
 assert _my == "My" and _name == "name" and _is == "is" and _andy == "Andy"
 </CodeSnippet>
 <p>
-Tuple unpacking also has a special operator (<code class="jarombek-inline-code">*</code>), which
+Tuple unpacking also has a special operator (<code className="jarombek-inline-code">*</code>), which
 behaves in different ways depending on the context.  One such context is using
 a tuple as a functions argument.  In this case, the tuple records are spread out as separate arguments
 to the function.
@@ -38,11 +38,11 @@ print(items)   # ('My', 'name', 'is', 'Andy')
 print(*items)  # My name is Andy
 </CodeSnippet>
 <p>
-The call <code class="jarombek-inline-code">print(*items)</code> is equivalent to
-<code class="jarombek-inline-code">print(items[0], items[1], items[2], items[3])</code>.
+The call <code className="jarombek-inline-code">print(*items)</code> is equivalent to
+<code className="jarombek-inline-code">print(items[0], items[1], items[2], items[3])</code>.
 </p>
 <p>
-The <code class="jarombek-inline-code">*</code> operator is also powerful when used to grab excess
+The <code className="jarombek-inline-code">*</code> operator is also powerful when used to grab excess
 items from an unpacked tuple<sup>1</sup>.
 </p>
 <CodeSnippet language="Python">
@@ -82,7 +82,7 @@ pointers in C</a>.
 <p>
 Memory views observe a chunk of memory that holds a data structure.  You can think of memory views
 as pointers to certain memory locations of Python data structures such as
-<code class="jarombek-inline-code">bytes</code> or <code class="jarombek-inline-code">bytearray</code>.
+<code className="jarombek-inline-code">bytes</code> or <code className="jarombek-inline-code">bytearray</code>.
 It is important to note that memory views do not hold any of the underlying data they observe<sup>2
 </sup>.  They simply know memory locations.  Because the creation of a memory view does not copy any of
 a data structures content, it is very efficient for dealing with binary data.
@@ -90,8 +90,8 @@ a data structures content, it is very efficient for dealing with binary data.
 <p>
 Memory views are only used with data structures that expose the buffer protocol.  In Python, the
 buffer protocol is a way to observe the internal structure of an object<sup>3</sup>.  Both
-<code class="jarombek-inline-code">bytes</code> and <code class="jarombek-inline-code">bytearray</code>
-expose the buffer protocol.  The built-in <code class="jarombek-inline-code">memoryview()</code>
+<code className="jarombek-inline-code">bytes</code> and <code className="jarombek-inline-code">bytearray</code>
+expose the buffer protocol.  The built-in <code className="jarombek-inline-code">memoryview()</code>
 function is used to create a memory view.
 </p>
 <CodeSnippet language="Python">
@@ -102,8 +102,8 @@ name_byte_array = bytearray('Andy', 'utf-8')
 memv = memoryview(name_byte_array)
 </CodeSnippet>
 <p>
-Upon observing the contents of <code class="jarombek-inline-code">memv</code>, I noticed each index
-in the memory view is mapped to a byte in <code class="jarombek-inline-code">name_byte_array</code>.
+Upon observing the contents of <code className="jarombek-inline-code">memv</code>, I noticed each index
+in the memory view is mapped to a byte in <code className="jarombek-inline-code">name_byte_array</code>.
 </p>
 <CodeSnippet language="Python">
 # Analyze each byte in the memory view
@@ -112,9 +112,9 @@ assert chr(memv[0]) == 'A' and chr(memv[1]) == 'n' and chr(memv[2]) == 'd' and c
 </CodeSnippet>
 <p>
 Although it may appear that the memory view copied and holds the contents of the byte array, we know
-that it simply has a pointer to the existing <code class="jarombek-inline-code">name_byte_array</code>.
+that it simply has a pointer to the existing <code className="jarombek-inline-code">name_byte_array</code>.
 This is proven through a few simple tests.  First, altering data at an index in the memory view also
-alters <code class="jarombek-inline-code">name_byte_array</code>.  The following code changes the
+alters <code className="jarombek-inline-code">name_byte_array</code>.  The following code changes the
 first letter to a lowercase 'a':
 </p>
 <CodeSnippet language="Python">
@@ -128,7 +128,7 @@ assert name_byte_array == bytearray(b'andy')
 </CodeSnippet>
 <p>
 Memory views can also be sliced without copying any bytes<sup>4</sup>.  If the sliced memory view is
-altered, <code class="jarombek-inline-code">name_byte_array</code> will still be impacted.
+altered, <code className="jarombek-inline-code">name_byte_array</code> will still be impacted.
 </p>
 <CodeSnippet language="Python">
 # Split the memory view, creating a new memory view that holds only the last two bytes
@@ -180,7 +180,7 @@ assert s3 >= s4      # s3 is a superset of s4
 assert s3 > s4       # s3 is a proper superset (superset but not matching set) of s4
 </CodeSnippet>
 <p>
-Python has the best <code class="jarombek-inline-code">set</code> implementation I’ve seen in a language
+Python has the best <code className="jarombek-inline-code">set</code> implementation I’ve seen in a language
 so far.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>

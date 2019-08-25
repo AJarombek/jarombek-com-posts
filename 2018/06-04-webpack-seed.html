@@ -25,8 +25,8 @@ speeding up the web application.
 <p>
 Because of plugins, Webpack has the ability to perform a wide range of tasks besides bundling.  Plugins in
 Webpack intercept events during the bundling process<sup>1</sup>.  Examples
-of plugins I use in my configuration are <code class="jarombek-inline-code">ExtractTextPlugin</code> (which
-extracts CSS out of the bundled file created by Webpack) and <code class="jarombek-inline-code">
+of plugins I use in my configuration are <code className="jarombek-inline-code">ExtractTextPlugin</code> (which
+extracts CSS out of the bundled file created by Webpack) and <code className="jarombek-inline-code">
 HotModuleReplacement</code> (live swapping of modules during development<sup>2</sup>).  How plugins actually
 work in the bundling pipeline is beyond the scope of this post, but is something worth learning to
 better understand Webpack.
@@ -89,7 +89,7 @@ internal dependency graph.  From this module Webpack will find all other referen
 graph<sup>3</sup>.
 </p>
 <p>
-In the configuration file the entry point is specified with the <code class="jarombek-inline-code">entry</code>
+In the configuration file the entry point is specified with the <code className="jarombek-inline-code">entry</code>
 property.  Configurations can have multiple entry points, and Webpack will create multiple dependency graphs in
 that case.
 </p>
@@ -97,28 +97,28 @@ that case.
 <Definition word="Webpack Output">
 The output determines a location to write the bundle files created by Webpack.  You can also specify a filename to
 write the bundle to along with more advanced configurations.  The output point is specified with the
-<code class="jarombek-inline-code">output</code> property.
+<code className="jarombek-inline-code">output</code> property.
 </Definition>
 <Definition word="Webpack Loader">
 Loaders are used to transform files.  They are a preprocessing step before Webpack builds its final bundle.  While
 Webpack was built to work with JavaScript code, you can use loaders to include other languages in the dependency
 graph<sup>4</sup>.  Loaders can also transform (or transpile) JavaScript code.  They are commonly configured in the
-<code class="jarombek-inline-code">module.rules</code> property.  Loaders can also be configured in JavaScript source
+<code className="jarombek-inline-code">module.rules</code> property.  Loaders can also be configured in JavaScript source
 code, however this technique is not recommended since it couples application code with Webpack<sup>5</sup>.  These
 inline loaders break separation of concerns.
 </Definition>
 <Definition word="Webpack Plugin">
 Plugins intercept events during the bundling process, and can do a wide range of tasks.  These tasks extend the
-capabilities of Webpack.  Plugins are configured in the <code class="jarombek-inline-code">plugin</code> array.
+capabilities of Webpack.  Plugins are configured in the <code className="jarombek-inline-code">plugin</code> array.
 </Definition>
 <p>
 With these definitions in mind, we can make some assumptions about the previously shown Webpack configuration.  The
-root of the dependency graph is the <code class="jarombek-inline-code">src</code> directory as specified by the
-input.  The output directory is <code class="jarombek-inline-code">dist</code> and the output filename is specified
-as <code class="jarombek-inline-code">[name].js</code>.  These brackets specify a placeholder value.  When Webpack runs,
-the <code class="jarombek-inline-code">[name]</code> placeholder is replaced with the property name specified in
-<code class="jarombek-inline-code">entry</code>.  Since the entry point is declared as
-<code class="jarombek-inline-code">bundle: PATHS.app</code>, the output file is <code class="jarombek-inline-code">
+root of the dependency graph is the <code className="jarombek-inline-code">src</code> directory as specified by the
+input.  The output directory is <code className="jarombek-inline-code">dist</code> and the output filename is specified
+as <code className="jarombek-inline-code">[name].js</code>.  These brackets specify a placeholder value.  When Webpack runs,
+the <code className="jarombek-inline-code">[name]</code> placeholder is replaced with the property name specified in
+<code className="jarombek-inline-code">entry</code>.  Since the entry point is declared as
+<code className="jarombek-inline-code">bundle: PATHS.app</code>, the output file is <code className="jarombek-inline-code">
 dist/bundle.js</code>.
 </p>
 <p>
@@ -127,13 +127,13 @@ greater cross browser compatibility (since some users still use old browsers tha
 features).  The second loader allows Webpack to handle HTML files.
 </p>
 <p>
-The only plugin in the configuration, <code class="jarombek-inline-code">HtmlWebPackPlugin</code>, creates a root
-HTML file for a client side project.  This HTML file includes <code class="jarombek-inline-code">&lt;script&gt;</code>
-elements for the JavaScript files that Webpack bundles.  The <code class="jarombek-inline-code">
+The only plugin in the configuration, <code className="jarombek-inline-code">HtmlWebPackPlugin</code>, creates a root
+HTML file for a client side project.  This HTML file includes <code className="jarombek-inline-code">&lt;script&gt;</code>
+elements for the JavaScript files that Webpack bundles.  The <code className="jarombek-inline-code">
 HtmlWebPackPlugin()</code> constructor function specifies the name of the created HTML file
-(<code class="jarombek-inline-code">index.html</code>) and a template file to base the created HTML file off of
-(located at <code class="jarombek-inline-code">/src/index.html</code>).  The created index.html file is located
-in the output directory (<code class="jarombek-inline-code">dist</code>) after Webpack runs.
+(<code className="jarombek-inline-code">index.html</code>) and a template file to base the created HTML file off of
+(located at <code className="jarombek-inline-code">/src/index.html</code>).  The created index.html file is located
+in the output directory (<code className="jarombek-inline-code">dist</code>) after Webpack runs.
 </p>
 <p>
 I find that many Webpack configurations look complex at first sight.  However, it gets easier to understand when I
@@ -164,20 +164,20 @@ web.  Luckily Webpack loaders make this process extremely simple.
 }
 </CodeSnippet>
 <p>
-This configuration specifies three loaders - <code class="jarombek-inline-code">style-loader</code>,
-<code class="jarombek-inline-code">css-loader</code>, and <code class="jarombek-inline-code">sass-loader</code>.
-Confusingly Webpack executes loaders from right to left - so <code class="jarombek-inline-code">
-sass-loader</code> is executed first.  <code class="jarombek-inline-code">sass-loader</code> compiles Sass to
-CSS, and then <code class="jarombek-inline-code">css-loader</code> creates a dependency graph of CSS files by
-linking <code class="jarombek-inline-code">@import</code> statements and <code class="jarombek-inline-code">
+This configuration specifies three loaders - <code className="jarombek-inline-code">style-loader</code>,
+<code className="jarombek-inline-code">css-loader</code>, and <code className="jarombek-inline-code">sass-loader</code>.
+Confusingly Webpack executes loaders from right to left - so <code className="jarombek-inline-code">
+sass-loader</code> is executed first.  <code className="jarombek-inline-code">sass-loader</code> compiles Sass to
+CSS, and then <code className="jarombek-inline-code">css-loader</code> creates a dependency graph of CSS files by
+linking <code className="jarombek-inline-code">@import</code> statements and <code className="jarombek-inline-code">
 url()</code> blocks as dependencies<sup>6</sup>.  These styles are then inlined in the projects HTML file inside
-a <code class="jarombek-inline-code">&lt;style&gt;</code> tag.  When viewing the website, elements appear
+a <code className="jarombek-inline-code">&lt;style&gt;</code> tag.  When viewing the website, elements appear
 styled according to the projects stylesheets.
 </p>
 <p>
 This setup is perfect for a development environment.  Unfortunately inline styles are not recommended in a
 production environment<sup>7</sup>.  An alternative to inlining styles is to separate them out into their own
-bundle.  This can be done with the <code class="jarombek-inline-code">ExtractTextPlugin</code>.
+bundle.  This can be done with the <code className="jarombek-inline-code">ExtractTextPlugin</code>.
 </p>
 <CodeSnippet language="JavaScript">
 const plugin = new ExtractTextPlugin({
@@ -202,8 +202,8 @@ module.exports = {
 </CodeSnippet>
 <p>
 In this code snippet I extract the CSS styling into a bundle.  The bundle has a placeholder name
-<code class="jarombek-inline-code">[name].css</code>.  Now the HTML file that Webpack produces will have a
-<code class="jarombek-inline-code">&lt;link&gt;</code> element referencing the CSS stylesheet.
+<code className="jarombek-inline-code">[name].css</code>.  Now the HTML file that Webpack produces will have a
+<code className="jarombek-inline-code">&lt;link&gt;</code> element referencing the CSS stylesheet.
 </p>
 <SectionTitle title="Handling Images">Handling Images</SectionTitle>
 <p>

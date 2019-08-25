@@ -67,7 +67,7 @@ notifications:
 </CodeSnippet>
 <p>
 Let’s break this file down.  I set the language to a Node.js flavor of
-JavaScript by writing <code class="jarombek-inline-code">language: node_js</code>.  My TravisCI config
+JavaScript by writing <code className="jarombek-inline-code">language: node_js</code>.  My TravisCI config
 runs tests on two different Node.js versions.  I did this to test out how backwards
 compatible my project was!  Even though the project uses TypeScript and not Node.js, I guess specifying
 the language as Node.js basically tells Travis "This project uses npm."
@@ -80,13 +80,13 @@ have to install Chrome in the build in order to get the Karma tests to run prope
 <p>
 Accomplishing this requires use of the apt add-on.  The apt add-on provides commands to the
 apt-get package handler for installation<sup>4</sup>.
-I specified that I want to install <code class="jarombek-inline-code">google-chrome</code>
-from the <code class="jarombek-inline-code">google-chrome-stable</code> package.
+I specified that I want to install <code className="jarombek-inline-code">google-chrome</code>
+from the <code className="jarombek-inline-code">google-chrome-stable</code> package.
 </p>
 <p>
-Before the script is run I tell TravisCI to install AngularCLI (<code class="jarombek-inline-code">
+Before the script is run I tell TravisCI to install AngularCLI (<code className="jarombek-inline-code">
 npm install -g @angular/cli</code>).  This allows TravisCI to use the
-<code class="jarombek-inline-code">ng</code> commands.  Then I specified
+<code className="jarombek-inline-code">ng</code> commands.  Then I specified
 that the tests should run and that a build should execute.  If both of these commands succeed, TravisCI's
 success criteria is met.  Finally, code coverage statistics are sent to <a href="https://coveralls.io/">Coveralls</a>
 , another really cool tool that easily integrates with GitHub.

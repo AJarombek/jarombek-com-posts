@@ -22,11 +22,11 @@ directives</a>, and other services.  As of today the latest version of Angular i
 Both Angular components and directives have lifecycles.  A common implementation of directives with lifecycles are
 spies<sup>1</sup>.  Spies track the lifecycle of an HTML element in the DOM.  In my MEAN stack prototype,
 I used a <a href="https://jarombek.com/blog/mar-17-2018-mean-stack-prototype#post-page">spy directive
-</a> to determine when <code class="jarombek-inline-code">&lt;input&gt;</code> elements were created and
-destroyed.  Spies utilize two lifecycle hook methods, <code class="jarombek-inline-code">ngOnInit()</code>
-and <code class="jarombek-inline-code">ngOnDestroy()</code>.  <code class="jarombek-inline-code">
+</a> to determine when <code className="jarombek-inline-code">&lt;input&gt;</code> elements were created and
+destroyed.  Spies utilize two lifecycle hook methods, <code className="jarombek-inline-code">ngOnInit()</code>
+and <code className="jarombek-inline-code">ngOnDestroy()</code>.  <code className="jarombek-inline-code">
 ngOnInit()</code> is invoked after a directive is initialized (its element is added to the DOM) and
-<code class="jarombek-inline-code">ngOnDestroy()</code> is invoked on directive destruction (its
+<code className="jarombek-inline-code">ngOnDestroy()</code> is invoked on directive destruction (its
 element is removed from the DOM).  You can view the full code for the spy directive on
 <a href="https://bit.ly/2DMzzdH">GitHub</a>.
 </p>
@@ -47,31 +47,31 @@ Let's take a look at some of the most important lifecycle hook methods.
 </p>
 <SectionTitle title="constructor()" isCode="true">constructor()</SectionTitle>
 <p>
-A component class <code class="jarombek-inline-code">constructor()</code> is not a lifecycle hook method,
+A component class <code className="jarombek-inline-code">constructor()</code> is not a lifecycle hook method,
 but I included it here since its invoked before any lifecycle hook methods are invoked.  The constructor also exists on every component class.
 The constructor is limited in use because component properties aren't initialized yet when its called<sup>4</sup>.
 </p>
 <SectionTitle title="ngOnChanges()" isCode="true">ngOnChanges()</SectionTitle>
 <p>
-<code class="jarombek-inline-code">ngOnChanges()</code> is a change detection lifecycle hook.  It's
+<code className="jarombek-inline-code">ngOnChanges()</code> is a change detection lifecycle hook.  It's
 invoked right after the constructor finishes executing for child components that are passed 
-<code class="jarombek-inline-code">@Input</code> properties.  If no <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">@Input</code> properties.  If no <code className="jarombek-inline-code">
 @Input</code> properties are bound to a component, this hook method isn't called.
 </p>
 <SectionTitle title="ngOnInit()" isCode="true">ngOnInit()</SectionTitle>
 <p>
-<code class="jarombek-inline-code">ngOnInit()</code> is an initialization lifecycle hook that is
+<code className="jarombek-inline-code">ngOnInit()</code> is an initialization lifecycle hook that is
 very commonly used.  Its invoked after all the component properties are initialized.  I often used
-<code class="jarombek-inline-code">ngOnInit()</code> to bind services to component properties.
+<code className="jarombek-inline-code">ngOnInit()</code> to bind services to component properties.
 </p>
 <SectionTitle title="ngDoCheck()" isCode="true">ngDoCheck()</SectionTitle>
 <p>
-<code class="jarombek-inline-code">ngDoCheck()</code> is invoked every time a change occurs to a component.
+<code className="jarombek-inline-code">ngDoCheck()</code> is invoked every time a change occurs to a component.
 Be warned - implementing this lifecycle hook can be very expensive since it runs every time the UI changes.
 </p>
 <SectionTitle title="ngOnDestroy()" isCode="true">ngOnDestroy()</SectionTitle>
 <p>
-<code class="jarombek-inline-code">ngOnDestroy()</code> is invoked when the component is destroyed.
+<code className="jarombek-inline-code">ngOnDestroy()</code> is invoked when the component is destroyed.
 </p>
 <SectionTitle title="Lifecycle Project">Lifecycle Project</SectionTitle>
 <p>
@@ -80,7 +80,7 @@ this project is available on <a href="https://github.com/AJarombek/jarombek-com-
 2018/11-Nov/11-24-angular-lifecycle">GitHub</a>.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-24-18-angular-lifecycle.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-24-18-angular-lifecycle.png"/>
 </figure>
 <p>
 In a future post I will look at lifecycles in React!

@@ -9,7 +9,7 @@ is easily defined using mathematical notation:
 <MathNotation tex="﻿﻿(f \circ g)(x)"></MathNotation>
 <p>
 In mathematical notation, function compositions are represented by a circle.  In Haskell, function
-compositions use a dot (<code class="jarombek-inline-code">.</code>) notation.  The following function
+compositions use a dot (<code className="jarombek-inline-code">.</code>) notation.  The following function
 redefines the function composition operator<sup>1</sup>.
 </p>
 <CodeSnippet language="Haskell">
@@ -18,15 +18,15 @@ f . g = \x -> f (g x)
 </CodeSnippet>
 <p>
 The function composition operator is implemented as expected.  It takes in two functions
-(<code class="jarombek-inline-code">f</code> and <code class="jarombek-inline-code">g</code>) and composes
-them together to create a third function (<code class="jarombek-inline-code">f . g</code>).
-<code class="jarombek-inline-code">f . g</code> is then passed an argument
-<code class="jarombek-inline-code">x</code>.  Note that <code class="jarombek-inline-code">
-g</code> has type <code class="jarombek-inline-code">(a -> b)</code> and
-<code class="jarombek-inline-code">f</code> has type <code class="jarombek-inline-code">(b -> c)</code>.
-The return type of <code class="jarombek-inline-code">g</code> matches the parameter type of
-<code class="jarombek-inline-code">f</code>, and composed together their type is
-<code class="jarombek-inline-code">(a -> c)</code>.
+(<code className="jarombek-inline-code">f</code> and <code className="jarombek-inline-code">g</code>) and composes
+them together to create a third function (<code className="jarombek-inline-code">f . g</code>).
+<code className="jarombek-inline-code">f . g</code> is then passed an argument
+<code className="jarombek-inline-code">x</code>.  Note that <code className="jarombek-inline-code">
+g</code> has type <code className="jarombek-inline-code">(a -> b)</code> and
+<code className="jarombek-inline-code">f</code> has type <code className="jarombek-inline-code">(b -> c)</code>.
+The return type of <code className="jarombek-inline-code">g</code> matches the parameter type of
+<code className="jarombek-inline-code">f</code>, and composed together their type is
+<code className="jarombek-inline-code">(a -> c)</code>.
 </p>
 <p>
 Function compositions make functions more readable and concise.  Here are two simple examples:
@@ -60,7 +60,7 @@ main = do
 "2 26 1995"
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">list_str</code> demonstrates that any number of functions can be
+<code className="jarombek-inline-code">list_str</code> demonstrates that any number of functions can be
 composed together.  For more complex examples, you can look on my <a href="https://github.com/AJarombek/
 jarombek-com-sources/blob/master/2018/11-Nov/11-06-haskell-pt3/composition.hs">GitHub</a>.
 </p>
@@ -69,8 +69,8 @@ jarombek-com-sources/blob/master/2018/11-Nov/11-06-haskell-pt3/composition.hs">G
 In the beginning of this article I mentioned that function compositions are represented as method
 chains in most languages.  While true for JavaScript, its also possible to use a dot syntax
 similar to Haskell.  Dot syntax is available since JavaScript is flexible about the amount of space
-around the member operator<sup>2</sup>.  For example, <code class="jarombek-inline-code">array.map()</code>
-can be rewritten as <code class="jarombek-inline-code">array . map()</code> and JavaScript won't complain.
+around the member operator<sup>2</sup>.  For example, <code className="jarombek-inline-code">array.map()</code>
+can be rewritten as <code className="jarombek-inline-code">array . map()</code> and JavaScript won't complain.
 </p>
 <p>
 Here are the two Haskell functions from before rewritten in JavaScript:
@@ -102,8 +102,8 @@ assert(list_str(list2) === 'My name is Andy');
 <SectionTitle title="Java Function Compositions">Java Function Compositions</SectionTitle>
 <p>
 With Java 8, function compositions got a major overhaul.  The functional interface
-<code class="jarombek-inline-code">Function</code> contains two methods for creating function compositions:
-<code class="jarombek-inline-code">compose()</code> and <code class="jarombek-inline-code">andThen()</code>.
+<code className="jarombek-inline-code">Function</code> contains two methods for creating function compositions:
+<code className="jarombek-inline-code">compose()</code> and <code className="jarombek-inline-code">andThen()</code>.
 The only difference between them is the ordering in which the composition operates.
 </p>
 <CodeSnippet language="Java">

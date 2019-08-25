@@ -29,13 +29,13 @@ The MEAN stack prototype is a website that allows its users to upload cat pictur
 the website is named MeowPics.
 </p>
 <figure id="meowcat-image">
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/meowcat.png">
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/meowcat.png">
 </figure>
 <p>
 The MongoDB, Express, Angular, and Node.js technology stack works as follows:
 </p>
 <figure id="meanstack-image">
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/MEAN-Stack.png">
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/MEAN-Stack.png">
 </figure>
 <p>
 The first piece of the technology stack for MeowPics that I will go over is the MongoDB document database.
@@ -166,13 +166,13 @@ module.exports = app.listen(port, () => {
 <p>
 If you've seen an Express application before this should look familiar, although there are a few unique configurations.
 I'm using Mongoose 5, which requires less startup configuration.  I also set the
-<code class="jarombek-inline-code">limit</code> property for <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">limit</code> property for <code className="jarombek-inline-code">
 bodyParser</code> because the client sends large cat images to the server.  Now any request
 with a body under 50MB succeeds.
 </p>
 <p>
 I'm also using the helmet module which secures my API by setting certain HTTP headers on requests
-<sup>2</sup>.  All I did to activate helmet was write one line: <code class="jarombek-inline-code">
+<sup>2</sup>.  All I did to activate helmet was write one line: <code className="jarombek-inline-code">
 app.use(helmet({}))</code>.
 </p>
 <p>
@@ -215,15 +215,15 @@ UserSchema.index({username: 1});
 module.exports = mongoose.model('User', UserSchema, 'user');
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">UserSchema</code> defines five properties -
-<code class="jarombek-inline-code">username</code>, <code class="jarombek-inline-code">first</code>,
-<code class="jarombek-inline-code">last</code>, <code class="jarombek-inline-code">password</code> &amp;
-<code class="jarombek-inline-code">postCount</code>.  It also configures validation for each property.  Mongoose even
+The <code className="jarombek-inline-code">UserSchema</code> defines five properties -
+<code className="jarombek-inline-code">username</code>, <code className="jarombek-inline-code">first</code>,
+<code className="jarombek-inline-code">last</code>, <code className="jarombek-inline-code">password</code> &amp;
+<code className="jarombek-inline-code">postCount</code>.  It also configures validation for each property.  Mongoose even
 helps define indexes!  Practically all necessary MongoDB configurations and setup can be done from Mongoose!
-Now I am ready to use this model in my <code class="jarombek-inline-code">userRouter</code>.
+Now I am ready to use this model in my <code className="jarombek-inline-code">userRouter</code>.
 </p>
 <p>
-The <code class="jarombek-inline-code">userRouter</code> defines a CRUD API for the User model.  Here
+The <code className="jarombek-inline-code">userRouter</code> defines a CRUD API for the User model.  Here
 is the GET request for all the users in the database.
 </p>
 <CodeSnippet language="JavaScript">
@@ -245,8 +245,8 @@ userRouter.route('/')
 I am utilizing Mongoose 5's support for async functions here.  It is much more concise and
 easy to read this way!  For more on how async functions work you can check out my
 <a href="https://jarombek.com/blog/nov-26-2017-js-async-function">discovery post</a> on the topic.
-This code calls the Mongoose <code class="jarombek-inline-code">find()</code> function on the
-<code class="jarombek-inline-code">User</code> schema.  This function asynchronously returns all of the
+This code calls the Mongoose <code className="jarombek-inline-code">find()</code> function on the
+<code className="jarombek-inline-code">User</code> schema.  This function asynchronously returns all of the
 documents in the user collection.
 </p>
 <p>
@@ -284,14 +284,14 @@ userRouter.route('/:username')
     });
 </CodeSnippet>
 <p>
-In this code I used three Mongoose functions: <code class="jarombek-inline-code">remove()</code>,
-<code class="jarombek-inline-code">findOne()</code>, and <code class="jarombek-inline-code">create()</code>.
-<code class="jarombek-inline-code">remove()</code> deletes an instance of
-the Mongoose user schema and <code class="jarombek-inline-code">findOne()</code> tries to find that user
-to make sure it was properly deleted.  Finally I use <code class="jarombek-inline-code">create()</code>
+In this code I used three Mongoose functions: <code className="jarombek-inline-code">remove()</code>,
+<code className="jarombek-inline-code">findOne()</code>, and <code className="jarombek-inline-code">create()</code>.
+<code className="jarombek-inline-code">remove()</code> deletes an instance of
+the Mongoose user schema and <code className="jarombek-inline-code">findOne()</code> tries to find that user
+to make sure it was properly deleted.  Finally I use <code className="jarombek-inline-code">create()</code>
 to insert a new document in the audit collection.  This audit collection holds all the important
 database interaction history.  Let's take a quick look at the
-<code class="jarombek-inline-code">AuditSchema</code> because it is quite unique:
+<code className="jarombek-inline-code">AuditSchema</code> because it is quite unique:
 </p>
 <CodeSnippet language="JavaScript">
 const mongoose = require('mongoose');
@@ -322,19 +322,19 @@ AuditSchema.index({object: 1});
 module.exports = mongoose.model('Audit', AuditSchema, 'audit');
 </CodeSnippet>
 <p>
-There are two important aspects of this schema.  The first is the <code class="jarombek-inline-code">
-expires</code> property on <code class="jarombek-inline-code">time</code> and the corresponding
-index defined for <code class="jarombek-inline-code">time</code>.  This is how you create
+There are two important aspects of this schema.  The first is the <code className="jarombek-inline-code">
+expires</code> property on <code className="jarombek-inline-code">time</code> and the corresponding
+index defined for <code className="jarombek-inline-code">time</code>.  This is how you create
 a time-to-live (TTL) collection in Mongoose.  In MongoDB a TTL collection is one that expires its
-documents after a set amount of time<sup>3</sup>.  In this case the <code class="jarombek-inline-code">
+documents after a set amount of time<sup>3</sup>.  In this case the <code className="jarombek-inline-code">
 audit</code> collection expires its documents after a week.  This is a similar behavior to many
 logging frameworks in applications.
 </p>
 <p>
-The second important aspect is the <code class="jarombek-inline-code">capped</code> property at the end
-of the schema definition.  This defines a max number of documents (the <code class="jarombek-inline-code">max</code> property)
-and a max number of bytes (the <code class="jarombek-inline-code">size</code> property) that are allowed in the
-collection<sup>4</sup>.  The <code class="jarombek-inline-code">audit</code> collection allows
+The second important aspect is the <code className="jarombek-inline-code">capped</code> property at the end
+of the schema definition.  This defines a max number of documents (the <code className="jarombek-inline-code">max</code> property)
+and a max number of bytes (the <code className="jarombek-inline-code">size</code> property) that are allowed in the
+collection<sup>4</sup>.  The <code className="jarombek-inline-code">audit</code> collection allows
 a maximum of 100 documents of no greater than 8192 bytes.
 </p>
 <p>
@@ -377,8 +377,8 @@ postRouter.route('/')
 </CodeSnippet>
 <p>
 This endpoint extracts picture data from the HTTP request body and sends it to the function
-<code class="jarombek-inline-code">saveFile()</code>. The arguments for this function pass base 64
-encoded picture data and the file name.  Let's take a look at <code class="jarombek-inline-code">saveFile()</code> now:
+<code className="jarombek-inline-code">saveFile()</code>. The arguments for this function pass base 64
+encoded picture data and the file name.  Let's take a look at <code className="jarombek-inline-code">saveFile()</code> now:
 </p>
 <CodeSnippet language="JavaScript">
 const fs = require('fs');
@@ -395,8 +395,8 @@ exports.saveFile = function saveFile(name, data) {
 };
 </CodeSnippet>
 <p>
-The imported <code class="jarombek-inline-code">fs</code> module allows for interaction with the
-filesystem.  I use the <code class="jarombek-inline-code">writeFile()</code> function to
+The imported <code className="jarombek-inline-code">fs</code> module allows for interaction with the
+filesystem.  I use the <code className="jarombek-inline-code">writeFile()</code> function to
 create a new file in the filesystem with the base 64 encoded picture data.
 </p>
 <p>
@@ -408,11 +408,11 @@ and all the endpoints that use these functions in
 postRouter.js</a>.
 </p>
 <p>
-You may have noticed that I passed <code class="jarombek-inline-code">postRouter.post()</code>
-the argument <code class="jarombek-inline-code">jwtUtils.checkIfAuthenticated</code>.  This is a function
+You may have noticed that I passed <code className="jarombek-inline-code">postRouter.post()</code>
+the argument <code className="jarombek-inline-code">jwtUtils.checkIfAuthenticated</code>.  This is a function
 used for authentication.  Certain endpoints in my REST API
 require the user to be authenticated, such as deleting a user or creating a new post.  When a user
-logs in, they go through the <code class="jarombek-inline-code">authRouter</code> and get an
+logs in, they go through the <code className="jarombek-inline-code">authRouter</code> and get an
 authentication token.  This token is included on all further HTTP requests.  I used
 JSON Web Tokens (JWT) for authentication in my application.  JWT's are a huge topic,
 and I wrote an <a href="https://github.com/AJarombek/jarombek-com-submittions/blob/master/Discoveries/
@@ -435,7 +435,7 @@ web application.  Webpack is quite complex and deserves many discovery posts of 
 </p>
 <p>
 While Webpack is mostly used in the front-end, there is nothing stopping you from using it with Node.js.  The
-environment Webpack runs on is changed with the <code class="jarombek-inline-code">target</code> field
+environment Webpack runs on is changed with the <code className="jarombek-inline-code">target</code> field
 in the Webpack configuration<sup>6</sup>.  Let's take a look at the Webpack configuration file
 <a href="https://github.com/AJarombek/mean-server-prototype/blob/master/src/webpack.config.js">
 webpack.config.js</a> used in my Node.js/Express server:
@@ -466,14 +466,14 @@ module.exports = {
 </CodeSnippet>
 <p>
 First this configuration declares two entry points for
-Webpack to start building its dependency graph.  The entry <code class="jarombek-inline-code">
+Webpack to start building its dependency graph.  The entry <code className="jarombek-inline-code">
 babel-polyfill</code> is necessary to use those wonderful async functions seen in my routes.
-I then set the target environment to node.  The <code class="jarombek-inline-code">node</code>
-field is necessary because of a bug where the variable <code class="jarombek-inline-code">
+I then set the target environment to node.  The <code className="jarombek-inline-code">node</code>
+field is necessary because of a bug where the variable <code className="jarombek-inline-code">
 __dirname</code> contains the incorrect value after being bundled with Webpack<sup>7</sup>.
 </p>
 <p>
-The <code class="jarombek-inline-code">module</code> field defines Webpack loaders.  Loaders
+The <code className="jarombek-inline-code">module</code> field defines Webpack loaders.  Loaders
 perform transformations on files during the bundling process.
 The loader used here is for Babel, a compiler that transpiles ES6+ JavaScript code into ES5.
 While less important on the server side since newest versions of Node.js support the newest
@@ -482,15 +482,15 @@ compatibility for a web application.  I did a full discovery on
 <a href="https://jarombek.com/blog/nov-10-2017-es6-modules-babel">Babel</a> as well!
 </p>
 <p>
-Let's look at the Webpack config for <code class="jarombek-inline-code">babel-loader</code>.  The
-regex defined in the <code class="jarombek-inline-code">test</code> property tells Webpack to
-only use the <code class="jarombek-inline-code">babel-loader</code> on files with the JavaScript
-extension.  The other regex defined in <code class="jarombek-inline-code">exclude</code>
+Let's look at the Webpack config for <code className="jarombek-inline-code">babel-loader</code>.  The
+regex defined in the <code className="jarombek-inline-code">test</code> property tells Webpack to
+only use the <code className="jarombek-inline-code">babel-loader</code> on files with the JavaScript
+extension.  The other regex defined in <code className="jarombek-inline-code">exclude</code>
 tells Webpack to not run this loader on the projects module dependencies in the
-<code class="jarombek-inline-code">node_modules</code> folder.
+<code className="jarombek-inline-code">node_modules</code> folder.
 </p>
 <p>
-Finally, the <code class="jarombek-inline-code">output</code> property defines where the
+Finally, the <code className="jarombek-inline-code">output</code> property defines where the
 completed bundle is located.  I tell Webpack to put it in the build directory with the name app.js.
 And just like that, the Webpack config for the server application is completed!
 </p>
@@ -557,16 +557,16 @@ describe("GET '/'", () => {
 });
 </CodeSnippet>
 <p>
-In the mocha testing framework <code class="jarombek-inline-code">describe()</code> defines a testing
-group and <code class="jarombek-inline-code">it()</code> defines a test
+In the mocha testing framework <code className="jarombek-inline-code">describe()</code> defines a testing
+group and <code className="jarombek-inline-code">it()</code> defines a test
 case<sup>8</sup>.  In the code above I defined a testing group with three test cases.
 The first test case checks to see if an endpoint returns an HTTP 200 OK status.  I use the
-supertest <code class="jarombek-inline-code">get()</code> function to make a GET request to an endpoint
-and use <code class="jarombek-inline-code">expect()</code> to define the anticipated HTTP response.
+supertest <code className="jarombek-inline-code">get()</code> function to make a GET request to an endpoint
+and use <code className="jarombek-inline-code">expect()</code> to define the anticipated HTTP response.
 </p>
 <p>
 The second and third test cases also use these basic building blocks.  I chain
-<code class="jarombek-inline-code">expect()</code> functions to
+<code className="jarombek-inline-code">expect()</code> functions to
 define multiple anticipated responses.  The second test checks that the returned
 content type is JSON and is a certain length.  The last test case makes sure the helmet
 module discussed earlier is properly adding HTTP headers.
@@ -630,12 +630,12 @@ for the user route is not loaded from the server until the route is traversed.  
 in a discovery post.
 </p>
 <p>
-You may be wondering why the <code class="jarombek-inline-code">AppComponent</code> is missing in
-these routes.  <code class="jarombek-inline-code">AppComponent</code> is actually the root component
+You may be wondering why the <code className="jarombek-inline-code">AppComponent</code> is missing in
+these routes.  <code className="jarombek-inline-code">AppComponent</code> is actually the root component
 and is bootstrapped into the module<sup>9</sup>.  Its defined in the
-<code class="jarombek-inline-code">bootstrap</code> property on the
-<code class="jarombek-inline-code">@NgModule</code> definition.  On app launch the
-<code class="jarombek-inline-code">AppComponent</code> is bootstrapped and rendered by default.
+<code className="jarombek-inline-code">bootstrap</code> property on the
+<code className="jarombek-inline-code">@NgModule</code> definition.  On app launch the
+<code className="jarombek-inline-code">AppComponent</code> is bootstrapped and rendered by default.
 </p>
 <CodeSnippet language="TypeScript">
 @NgModule({
@@ -644,10 +644,10 @@ and is bootstrapped into the module<sup>9</sup>.  Its defined in the
 })
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">AppComponent</code> template defines the navigation bar for
-the website.  Clicking on the navigation bar changes the route.  Based on the <code class="jarombek-inline-code">routes</code>
+The <code className="jarombek-inline-code">AppComponent</code> template defines the navigation bar for
+the website.  Clicking on the navigation bar changes the route.  Based on the <code className="jarombek-inline-code">routes</code>
 variable shown before, different routes display different components on the page.  The
-components are displayed in the <code class="jarombek-inline-code">&lt;router-outlet&gt;</code> element, as
+components are displayed in the <code className="jarombek-inline-code">&lt;router-outlet&gt;</code> element, as
 discussed further in my <a href="https://jarombek.com/blog/jan-27-2018-angular-5-routing">discovery post</a>.
 The code for the app component template is found in
 <a href="https://github.com/AJarombek/mean-client-prototype/blob/master/web-app/src/app/app.component.html">app.component.html</a>
@@ -675,16 +675,16 @@ receive messages to and from child components.  This allows for message passing 
 I'll go into detail about these services once I look at the child components that subscribe to them.
 </p>
 <p>
-Let's look at the default route of the application which displays the <code class="jarombek-inline-code">HomeComponent</code>.
+Let's look at the default route of the application which displays the <code className="jarombek-inline-code">HomeComponent</code>.
 </p>
 <SectionTitle title="Home Page">Home Page</SectionTitle>
 <figure id="maincomponent-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/main-component.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/main-component.png">
 </figure>
 <p>
-The code in <code class="jarombek-inline-code">HomeComponent</code> is pretty simple.  It subscribes to
-a service called <code class="jarombek-inline-code">postService</code>.  By calling
-the <code class="jarombek-inline-code">getAll()</code> function in <code class="jarombek-inline-code">
+The code in <code className="jarombek-inline-code">HomeComponent</code> is pretty simple.  It subscribes to
+a service called <code className="jarombek-inline-code">postService</code>.  By calling
+the <code className="jarombek-inline-code">getAll()</code> function in <code className="jarombek-inline-code">
 postService</code> the component gets all the cat posts stored on the server.  These are displayed in the UI.
 </p>
 <CodeSnippet language="TypeScript">
@@ -721,7 +721,7 @@ export class HomeComponent {
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">postService</code> is one of the many services I created
+The <code className="jarombek-inline-code">postService</code> is one of the many services I created
 for this project.  It makes HTTP requests to the posts API.  Here is a look at the service:
 </p>
 <CodeSnippet language="TypeScript">
@@ -758,15 +758,15 @@ export class PostService implements HttpService {
 }
 </CodeSnippet>
 <p>
-Each function corresponds with a route defined in the Node.js <code class="jarombek-inline-code">postRouter</code>
+Each function corresponds with a route defined in the Node.js <code className="jarombek-inline-code">postRouter</code>
 API.  The service implements a TypeScript interface.  The code for this interface is found in
 <a href="https://github.com/AJarombek/mean-client-prototype/blob/master/web-app/src/app/http.service.ts">
 http.service.ts</a>.  This interface is implemented in all my HTTP request services.
 </p>
 <p>
-The HTML template for <code class="jarombek-inline-code">HomeComponent</code> loops through
-the <code class="jarombek-inline-code">posts</code> array and passes each post to the
-<code class="jarombek-inline-code">CatPictureComponent</code>.  This component displays the
+The HTML template for <code className="jarombek-inline-code">HomeComponent</code> loops through
+the <code className="jarombek-inline-code">posts</code> array and passes each post to the
+<code className="jarombek-inline-code">CatPictureComponent</code>.  This component displays the
 cat post on the UI.
 </p>
 <CodeSnippet language="HTML">
@@ -781,7 +781,7 @@ cat post on the UI.
 </CodeSnippet>
 <SectionTitle title="Cat Posts">Cat Posts</SectionTitle>
 <p>
-<code class="jarombek-inline-code">CatPictureComponent</code> displays details about a cat post and a
+<code className="jarombek-inline-code">CatPictureComponent</code> displays details about a cat post and a
 picture in the UI.  It does this with the Bootstrap card component<sup>10</sup>.  The card component
 makes displaying cat posts in a resizable grid extremely easy.  The one problem I
 have is the card components default behavior can't be customized.  By default the cards component
@@ -791,9 +791,9 @@ top to bottom instead.  However, Bootstrap does not allow for this customization
 Bootstrap components aren't quite adequate for the needs of a production level website.
 </p>
 <p>
-Here is the <code class="jarombek-inline-code">CatPictureComponent</code> template.  Take a close look
-at the first <code class="jarombek-inline-code">&lt;p&gt;</code> element, the
-<code class="jarombek-inline-code">(click)</code> event, and the <code class="jarombek-inline-code">
+Here is the <code className="jarombek-inline-code">CatPictureComponent</code> template.  Take a close look
+at the first <code className="jarombek-inline-code">&lt;p&gt;</code> element, the
+<code className="jarombek-inline-code">(click)</code> event, and the <code className="jarombek-inline-code">
 [routerLink]</code> property.
 </p>
 <CodeSnippet language="HTML">
@@ -819,8 +819,8 @@ at the first <code class="jarombek-inline-code">&lt;p&gt;</code> element, the
 <p>
 The click event and router are placed on the name of the user who made the post.  This allows users
 to click the name and view the uploader's profile.  Besides for changing the SPA route, the
-<code class="jarombek-inline-code">emitUsername()</code> function is also called.  This function
-creates a message containing the posts username.  The <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">emitUsername()</code> function is also called.  This function
+creates a message containing the posts username.  The <code className="jarombek-inline-code">
 ProfileComponent</code> will subscribe to this emitted message so it knows
 which users information needs to be loaded.  The code for emitting the message is found in
 <a href="https://github.com/AJarombek/mean-client-prototype/blob/master/web-app/src/app/cat-picture/
@@ -836,17 +836,17 @@ of the Angular framework, and I am curious how React.js handles the same situati
 </p>
 <SectionTitle title="Login Page">Login Page</SectionTitle>
 <figure id="logincomponent-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/login-component.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/login-component.png">
 </figure>
 <p>
-The <code class="jarombek-inline-code">LoginComponent</code> is pretty self
-explanatory - it logs in a user!  <code class="jarombek-inline-code">LoginComponent</code> asks for authentication
-from the server and get a JWT in response.  I then store the JWT in <code class="jarombek-inline-code">
+The <code className="jarombek-inline-code">LoginComponent</code> is pretty self
+explanatory - it logs in a user!  <code className="jarombek-inline-code">LoginComponent</code> asks for authentication
+from the server and get a JWT in response.  I then store the JWT in <code className="jarombek-inline-code">
 localStorage</code> and send it along with all HTTP requests
 to the server.  For more information on that process you can check out my discovery post on JWT.
 </p>
 <p>
-The <code class="jarombek-inline-code">LoginComponent</code> also uses the Angular forms API to easily
+The <code className="jarombek-inline-code">LoginComponent</code> also uses the Angular forms API to easily
 create and validate form inputs.  I really liked working with the forms API.  It simplified
 what is often the most convoluted part of a web application.  I remember how difficult it was to
 create a simple login and signup form on my first website (which was a LAMP stack website using JQuery
@@ -865,7 +865,7 @@ signup.component.ts">signup.component.ts</a> and
 signup.component.html">signup.component.html</a>.
 </p>
 <figure id="signupcomponent-image">
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/signup-component.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/signup-component.png">
 </figure>
 <p>
 Another cool thing about the forms API is the ease of implementing a custom validator.
@@ -886,21 +886,21 @@ second state allows them to upload a cat picture.  The third state occurs after 
 is successfully made.
 </p>
 <p>
-In order to display these three states, I used Angular's <code class="jarombek-inline-code">
-&lt;ng-template&gt;</code> HTML element.  <code class="jarombek-inline-code">&lt;ng-template&gt;</code> is Angular's implementation
-of HTML's native <code class="jarombek-inline-code">&lt;template&gt;</code> element.  Anything in
-<code class="jarombek-inline-code">&lt;template&gt;</code> is not be rendered when the page first loads, but is added
-to the page later on.  In my case the contents of <code class="jarombek-inline-code">
-&lt;ng-template&gt;</code> are rendered when certain variables in the <code class="jarombek-inline-code">PostComponent</code>
-are set to <code class="jarombek-inline-code">true</code>.
+In order to display these three states, I used Angular's <code className="jarombek-inline-code">
+&lt;ng-template&gt;</code> HTML element.  <code className="jarombek-inline-code">&lt;ng-template&gt;</code> is Angular's implementation
+of HTML's native <code className="jarombek-inline-code">&lt;template&gt;</code> element.  Anything in
+<code className="jarombek-inline-code">&lt;template&gt;</code> is not be rendered when the page first loads, but is added
+to the page later on.  In my case the contents of <code className="jarombek-inline-code">
+&lt;ng-template&gt;</code> are rendered when certain variables in the <code className="jarombek-inline-code">PostComponent</code>
+are set to <code className="jarombek-inline-code">true</code>.
 </p>
 <p>
-One of the challenges I faced with <code class="jarombek-inline-code">PostComponent</code> was
-retrieving the value in an HTML <code class="jarombek-inline-code">&lt;input&gt;</code>
+One of the challenges I faced with <code className="jarombek-inline-code">PostComponent</code> was
+retrieving the value in an HTML <code className="jarombek-inline-code">&lt;input&gt;</code>
 element before it was removed from the DOM.  This scenario occurred when the first state was destroyed and the second state
 was created.  The solution was to create a spy directive on the
-<code class="jarombek-inline-code">&lt;input&gt;</code> elements<sup>11</sup>.  The spy monitored
-the lifecycle of the <code class="jarombek-inline-code">&lt;input&gt;</code> element.  When the element was
+<code className="jarombek-inline-code">&lt;input&gt;</code> elements<sup>11</sup>.  The spy monitored
+the lifecycle of the <code className="jarombek-inline-code">&lt;input&gt;</code> element.  When the element was
 created or destroyed I performed certain actions, such as initializing
 its value or retrieving its value.  Here is a look at the spy directive:
 </p>
@@ -947,8 +947,8 @@ export class SpyDirective implements OnInit, OnDestroy {
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">lifecycleService</code> allows for message passing between
-the spy directive and the <code class="jarombek-inline-code">PostComponent</code>.
+The <code className="jarombek-inline-code">lifecycleService</code> allows for message passing between
+the spy directive and the <code className="jarombek-inline-code">PostComponent</code>.
 You can look at this service in <a href="https://github.com/AJarombek/mean-client-prototype/blob/
 master/web-app/src/app/shared/lifecycle.service.ts">lifecycle.service.ts</a>.
 </p>
@@ -1020,7 +1020,7 @@ component.  This helped ensure all my components followed the coding conventions
 Angular framework.  It even helped me to make design decisions.  For example, when the test code for
 a component became really difficult or impossible to maintain, I'd create
 a new module to hold the component.  This is exactly what happened when I
-separated out the <code class="jarombek-inline-code">CatPictureComponent</code> into its own module.
+separated out the <code className="jarombek-inline-code">CatPictureComponent</code> into its own module.
 </p>
 <p>
 However, in general writing unit tests for Angular was a big pain.  On many occasions the

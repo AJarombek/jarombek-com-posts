@@ -34,7 +34,7 @@ Python exposes many MOP methods for use on objects.  The MOP API allows develope
 that interact with existing language features such as object construction, built-in functions, and
 operators<sup>3</sup>.  Python refers to these methods as "special methods".  You have likely seen
 them in Python code on a regular basis - they begin and end with two underscores (ex.
-<code class="jarombek-inline-code">__init__()</code>).
+<code className="jarombek-inline-code">__init__()</code>).
 </p>
 <SectionTitle title="Using Special Methods">Using Special Methods</SectionTitle>
 <p>
@@ -70,12 +70,12 @@ class Town:
             and self.districts == other.districts
 </CodeSnippet>
 <p>
-I use five special methods in the <code class="jarombek-inline-code">Town</code> class definition
-- <code class="jarombek-inline-code">__init__()</code>, <code class="jarombek-inline-code">
-__repr__()</code>, <code class="jarombek-inline-code">__len__()</code>,
-<code class="jarombek-inline-code">__getitem__()</code>, and <code class="jarombek-inline-code">
-__eq__()</code>.  <code class="jarombek-inline-code">__init__()</code> is pretty self explanatory,
-it initializes a new object.  When an object constructor is called, <code class="jarombek-inline-code">
+I use five special methods in the <code className="jarombek-inline-code">Town</code> class definition
+- <code className="jarombek-inline-code">__init__()</code>, <code className="jarombek-inline-code">
+__repr__()</code>, <code className="jarombek-inline-code">__len__()</code>,
+<code className="jarombek-inline-code">__getitem__()</code>, and <code className="jarombek-inline-code">
+__eq__()</code>.  <code className="jarombek-inline-code">__init__()</code> is pretty self explanatory,
+it initializes a new object.  When an object constructor is called, <code className="jarombek-inline-code">
 __init__()</code> is invoked behind the scenes.
 </p>
 <CodeSnippet language="Python">
@@ -83,10 +83,10 @@ __init__()</code> is invoked behind the scenes.
 greenwich = Town('Greenwich', 1640, 62396, ['Riverside', 'Cos Cob', 'Old Greenwich', 'Greenwich'])
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">__repr__()</code> is used to return a string representation of
-an object, <code class="jarombek-inline-code">__len__()</code> to get the length of an object,
-<code class="jarombek-inline-code">__getitem__()</code> to get an item at an index in an object,
-and <code class="jarombek-inline-code">__eq__()</code> to determine equality between two objects.
+<code className="jarombek-inline-code">__repr__()</code> is used to return a string representation of
+an object, <code className="jarombek-inline-code">__len__()</code> to get the length of an object,
+<code className="jarombek-inline-code">__getitem__()</code> to get an item at an index in an object,
+and <code className="jarombek-inline-code">__eq__()</code> to determine equality between two objects.
 </p>
 <CodeSnippet language="Python">
 # Calls to len() invoke the __len__() special method
@@ -112,17 +112,17 @@ assert (greenwich == greenwich_clone) is True
 <p>
 Its important to note that none of the special methods I defined are invoked directly.  All of them
 are indirectly invoked through language operators or built-in functions.  For example, the
-<code class="jarombek-inline-code">__len__()</code> special method is indirectly invoked when the
-built-in <code class="jarombek-inline-code">len()</code> function is called.
+<code className="jarombek-inline-code">__len__()</code> special method is indirectly invoked when the
+built-in <code className="jarombek-inline-code">len()</code> function is called.
 </p>
 <p>
 The Python data model creates a standard API across all objects<sup>4</sup>.  Any object
-that implements <code class="jarombek-inline-code">__getitem__()</code> can use the languages
+that implements <code className="jarombek-inline-code">__getitem__()</code> can use the languages
 indexing syntax.  To get the length of any object in Python, developers know they need to use the
-built-in <code class="jarombek-inline-code">len()</code> function.  This is a vast improvement over
-Java, where arrays use a <code class="jarombek-inline-code">length</code> property,
-<code class="jarombek-inline-code">ArrayList</code> uses a <code class="jarombek-inline-code">size()
-</code> method, and strings use a <code class="jarombek-inline-code">length()</code> method.  I had to
+built-in <code className="jarombek-inline-code">len()</code> function.  This is a vast improvement over
+Java, where arrays use a <code className="jarombek-inline-code">length</code> property,
+<code className="jarombek-inline-code">ArrayList</code> uses a <code className="jarombek-inline-code">size()
+</code> method, and strings use a <code className="jarombek-inline-code">length()</code> method.  I had to
 search through the Java documentation just to make sure I correctly remembered all these methods
 (and Java is the language I’ve used the most!).
 </p>

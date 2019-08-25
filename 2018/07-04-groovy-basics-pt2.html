@@ -10,8 +10,8 @@ This discovery post explores Groovy's object oriented features.  As
 far as existing object oriented libraries are concerned, Groovy extends the Java object libraries
 in what is commonly referred to as the GDK (Groovy Development Kit)<sup>1</sup>.  For example,
 the GDK gives more methods to the collections framework, specifically the
-<code class="jarombek-inline-code">Collection</code> interface.  All collections can use the
-GDK's <code class="jarombek-inline-code">each()</code> method to iterate over their contents with
+<code className="jarombek-inline-code">Collection</code> interface.  All collections can use the
+GDK's <code className="jarombek-inline-code">each()</code> method to iterate over their contents with
 a Groovy closure.  I utilize some of the GDK enhancements in this post.
 </p>
 <p>
@@ -46,11 +46,11 @@ along with libraries such as Lombok which favor annotations over getter/setter m
 all the work of getters and setters is done by default.
 </p>
 <p>
-Another thing to note about this class is the <code class="jarombek-inline-code">@ToString</code>
-annotation.  <code class="jarombek-inline-code">@ToString</code> allows for quick generation of a
-<code class="jarombek-inline-code">toString()</code> method for the class.  However if you wanted a
+Another thing to note about this class is the <code className="jarombek-inline-code">@ToString</code>
+annotation.  <code className="jarombek-inline-code">@ToString</code> allows for quick generation of a
+<code className="jarombek-inline-code">toString()</code> method for the class.  However if you wanted a
 sophisticated string representation you would have to implement the
-<code class="jarombek-inline-code">toString()</code> method yourself.  Groovy provides multiple
+<code className="jarombek-inline-code">toString()</code> method yourself.  Groovy provides multiple
 annotations to attach on classes and methods which either enforce rules or simplify the
 object/method creation process.  You will see more annotations throughout this post.
 </p>
@@ -65,7 +65,7 @@ Person tom = ['Thomas', 'Cauliflower']
 assert tom.toString() == 'Person(Thomas, Cauliflower)'
 </CodeSnippet>
 <p>
-The first object constructor with the <code class="jarombek-inline-code">new</code> keyword
+The first object constructor with the <code className="jarombek-inline-code">new</code> keyword
 will look familiar if you've used Java before.  For explicitly declared constructors in Groovy
  the notation to instantiate an object can be the same as Java.  I will show you an example
 of a class with an implicit constructor soon.
@@ -73,30 +73,30 @@ of a class with an implicit constructor soon.
 <p>
 You can also instantiate an object in Groovy by assigning a list to a variable of the object type.
 The second variable definition above assigns a list to a variable of type
-<code class="jarombek-inline-code">Person</code>.  Groovy is smart enough to instantiate a new
-<code class="jarombek-inline-code">Person</code> object, passing the list elements to the
+<code className="jarombek-inline-code">Person</code>.  Groovy is smart enough to instantiate a new
+<code className="jarombek-inline-code">Person</code> object, passing the list elements to the
 constructor as arguments (in order).  At first glance I still think the explicit constructor call
 is more readable, but it's cool that Groovy gives multiple options for object construction<sup>2</sup>.
 </p>
 <p>
 If you've read any of my other posts you will notice something a bit different about these
 examples.  In the past I always used print statements to display the results of my code samples.
-For this post I am using <code class="jarombek-inline-code">assert</code> statements.  This is
+For this post I am using <code className="jarombek-inline-code">assert</code> statements.  This is
 an idea I got from the book I'm reading on Groovy<sup>3</sup>.  So far I do really like using them, and hopefully they are easy to follow.
-Basically the assumption is that the condition in every <code class="jarombek-inline-code">
-assert</code> statement returns <code class="jarombek-inline-code">true</code>.  You can think
+Basically the assumption is that the condition in every <code className="jarombek-inline-code">
+assert</code> statement returns <code className="jarombek-inline-code">true</code>.  You can think
 of assertions as inline test code.
 </p>
 <p>
-One final thing about the code snippet above is the Groovy <code class="jarombek-inline-code">==</code> operator.
-In Java the <code class="jarombek-inline-code">==</code> operator tests for identity.
+One final thing about the code snippet above is the Groovy <code className="jarombek-inline-code">==</code> operator.
+In Java the <code className="jarombek-inline-code">==</code> operator tests for identity.
 For two objects this means that both are pointing to the same location
 in memory.  If you simply want to test for logical equality of object state in Java,
-the <code class="jarombek-inline-code">equals()</code> method inherited from the
-<code class="jarombek-inline-code">Object</code> class is used.
+the <code className="jarombek-inline-code">equals()</code> method inherited from the
+<code className="jarombek-inline-code">Object</code> class is used.
 </p>
 <p>
-Groovy does away with this form of equality check.  The <code class="jarombek-inline-code">
+Groovy does away with this form of equality check.  The <code className="jarombek-inline-code">
 ==</code> operator is simply used to test that two objects are of equal value, not that they
 are pointing to the same memory location<sup>4</sup>.  While I understand that
 equality in Java is confusing for newcomers, my first thought is Groovy's approach will be
@@ -124,9 +124,9 @@ class Cat {
 }
 </CodeSnippet>
 <p>
-A few quick details about this class.  The <code class="jarombek-inline-code">@ToString</code>
+A few quick details about this class.  The <code className="jarombek-inline-code">@ToString</code>
 annotation is passed an argument that modifies the string representations of objects.  The
-<code class="jarombek-inline-code">sayHello()</code> method is given no access modifier because
+<code className="jarombek-inline-code">sayHello()</code> method is given no access modifier because
 by default methods are declared as public.  Also there is no explicitly declared constructor.
 To construct an object of this class you have to pass named arguments to the default constructor.
 Let's construct this object and modify some of its properties.
@@ -148,23 +148,23 @@ joe.setBreed('Maine Coon')
 assert joe.breed == 'Maine Coon'
 </CodeSnippet>
 <p>
-Instances of <code class="jarombek-inline-code">Cat</code> are constructed above with named
+Instances of <code className="jarombek-inline-code">Cat</code> are constructed above with named
 arguments.  Also the getters/setters that were implicitly created by Groovy are called.
-Interestingly the calls to <code class="jarombek-inline-code">joe.getName()</code> and
-<code class="jarombek-inline-code">joe.name</code> perform the same exact operations behind the
-scenes.  <code class="jarombek-inline-code">joe.name</code> actually calls the getter method and
+Interestingly the calls to <code className="jarombek-inline-code">joe.getName()</code> and
+<code className="jarombek-inline-code">joe.name</code> perform the same exact operations behind the
+scenes.  <code className="jarombek-inline-code">joe.name</code> actually calls the getter method and
 does not access the instance variable directly<sup>6</sup>.  It is simply more concise syntax.
 </p>
 <p>
 The previous code samples show off Groovy's shortened syntax for objects and their blueprints.
 Annotations also play a major role in helping build classes.  I showed you the
-<code class="jarombek-inline-code">@ToString</code> annotation and how it automatically generates
-a <code class="jarombek-inline-code">toString()</code> method for you.  Annotations can also be used
+<code className="jarombek-inline-code">@ToString</code> annotation and how it automatically generates
+a <code className="jarombek-inline-code">toString()</code> method for you.  Annotations can also be used
 to completely change the behavior of classes and their instances.
 </p>
 <p>
 If you want to alter a class so all instances are immutable, all you have to do
-is declare the class with the <code class="jarombek-inline-code">@Immutable</code> annotation.
+is declare the class with the <code className="jarombek-inline-code">@Immutable</code> annotation.
 Note: for this to work, all the fields in the class must be immutable types and methods must
 not mutate any variables after construction<sup>7</sup>.
 </p>
@@ -200,7 +200,7 @@ try {
 }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">assert false</code> never gets called in the code above
+<code className="jarombek-inline-code">assert false</code> never gets called in the code above
 since I am trying to change a field value on an immutable class.  The annotation
 successfully made the object instance immutable!
 </p>
@@ -223,7 +223,7 @@ requirement for a code base.
 <p>
 Groovy sits in an interesting position because it supports both static type checking and dynamic
 type checking!  You can "activate" compile time (static) type checking on a method by method basis
-using the <code class="jarombek-inline-code">@TypeChecked</code> annotation<sup>8</sup>.  To
+using the <code className="jarombek-inline-code">@TypeChecked</code> annotation<sup>8</sup>.  To
 demonstrate this annotation, I created a method to compute factorial numbers.
 </p>
 <CodeSnippet language="Groovy">
@@ -259,16 +259,16 @@ static int computeFactorial(int number) {
 </CodeSnippet>
 <p>
 One quick thing to note about these methods.  You probably noticed I called the method
-<code class="jarombek-inline-code">upto()</code> directly on an integer literal.  Unlike Java
+<code className="jarombek-inline-code">upto()</code> directly on an integer literal.  Unlike Java
 which has primitive values, all values are objects in Groovy - including literals.  That change in
-behavior is what makes it completely valid to call <code class="jarombek-inline-code">
-upto()</code> on the literal <code class="jarombek-inline-code">2</code>
-(<code class="jarombek-inline-code">upto()</code> is also a method defined in the GDK).
+behavior is what makes it completely valid to call <code className="jarombek-inline-code">
+upto()</code> on the literal <code className="jarombek-inline-code">2</code>
+(<code className="jarombek-inline-code">upto()</code> is also a method defined in the GDK).
 </p>
 <p>
 With that quick explanation out of the way, what happens if
-<code class="jarombek-inline-code">factorial()</code> is written to return a
-<code class="jarombek-inline-code">String</code> by accident if the argument is less than 0?
+<code className="jarombek-inline-code">factorial()</code> is written to return a
+<code className="jarombek-inline-code">String</code> by accident if the argument is less than 0?
 </p>
 <CodeSnippet language="Groovy">
 static int factorial(int number) {
@@ -293,8 +293,8 @@ org.codehaus.groovy.runtime.typehandling.GroovyCastException:
 </CodeSnippet>
 <p>
 Ideally this mistake would be caught in the compile phase and the compilation would fail.  This
-behavior is possible if the <code class="jarombek-inline-code">@TypeChecked</code> annotation is
-added to the method <code class="jarombek-inline-code">factorial()</code>.
+behavior is possible if the <code className="jarombek-inline-code">@TypeChecked</code> annotation is
+added to the method <code className="jarombek-inline-code">factorial()</code>.
 </p>
 <CodeSnippet language="Groovy">
 @TypeChecked
@@ -315,7 +315,7 @@ static int factorial(int number) {
 Now the error is at compile time, and the code never runs:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-4-18-groovy-strict-type-check.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-4-18-groovy-strict-type-check.png"/>
 </figure>
 <p>
 I have never come across a language that supports both dynamic typing and static typing like

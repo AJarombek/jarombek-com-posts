@@ -13,14 +13,14 @@ Let's take a look at the code used to produce the D3 data visualization.  I crea
 representing the number of miles I ran each day.  The colors of the bars represent how I felt on each run.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-7-18-bar-chart.gif"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-7-18-bar-chart.gif"/>
 </figure>
 <p>
 I created two methods to handle the data visualization.  The first generates the initial graph and
 the second updates the graph based on data changes.  These two methods are called
-<code class="jarombek-inline-code">generateGraph()</code> and <code class="jarombek-inline-code">updateGraph()</code> respectively.
-Here is an outline of the <code class="jarombek-inline-code">Graph</code> component which holds
-<code class="jarombek-inline-code">generateGraph()</code> and <code class="jarombek-inline-code">updateGraph()</code>.
+<code className="jarombek-inline-code">generateGraph()</code> and <code className="jarombek-inline-code">updateGraph()</code> respectively.
+Here is an outline of the <code className="jarombek-inline-code">Graph</code> component which holds
+<code className="jarombek-inline-code">generateGraph()</code> and <code className="jarombek-inline-code">updateGraph()</code>.
 </p>
 <CodeSnippet language="JavaScript">
 class Graph extends React.Component {
@@ -68,7 +68,7 @@ class Graph extends React.Component {
 }
 </CodeSnippet>
 <p>
-Both <code class="jarombek-inline-code">generateGraph()</code> and <code class="jarombek-inline-code">
+Both <code className="jarombek-inline-code">generateGraph()</code> and <code className="jarombek-inline-code">
 updateGraph()</code> use component state variables.  State variables are created in the component
 constructor, holding information such as the height and width of the graph along with bar colors.
 </p>
@@ -101,7 +101,7 @@ constructor() {
 </CodeSnippet>
 <SectionTitle title="generateGraph()" isCode="true">generateGraph()</SectionTitle>
 <p>
-<code class="jarombek-inline-code">generateGraph()</code> is invoked once the React component is mounted.
+<code className="jarombek-inline-code">generateGraph()</code> is invoked once the React component is mounted.
 It binds an  initial D3 graph to an HTML element in the DOM.  The D3 graph is populated with data from
 the React component props.  Since React.js uses a virtual DOM, I'm using a npm module called
 <a href="https://github.com/Olical/react-faux-dom">react-faux-dom</a> that tricks D3 into thinking its
@@ -109,9 +109,9 @@ bound to the actual DOM.  In reality, it's bound to React's Virtual DOM.  I spok
 in my first <a href="https://jarombek.com/blog/nov-7-2018-react-d3-pt1">D3 and React</a> post.
 </p>
 <p>
-The first step of <code class="jarombek-inline-code">generateGraph()</code> uses the
-<code class="jarombek-inline-code">d3</code> object to create a container for D3 on react-faux-dom's
-"fake" DOM.  This is accomplished with the <code class="jarombek-inline-code">d3.select()</code> method.
+The first step of <code className="jarombek-inline-code">generateGraph()</code> uses the
+<code className="jarombek-inline-code">d3</code> object to create a container for D3 on react-faux-dom's
+"fake" DOM.  This is accomplished with the <code className="jarombek-inline-code">d3.select()</code> method.
 </p>
 <CodeSnippet language="JavaScript">
 const svg = d3.select(faux)
@@ -121,17 +121,17 @@ const svg = d3.select(faux)
 </CodeSnippet>
 <p>
 Once D3 is connected to the "fake" DOM, all the standard D3 methods can be used.  After
-<code class="jarombek-inline-code">select()</code> is invoked, other D3 methods are chained onto its
+<code className="jarombek-inline-code">select()</code> is invoked, other D3 methods are chained onto its
 returned value, forming a <a href="https://jarombek.com/blog/nov-6-2018-haskell-pt3">function composition</a>.
-<code class="jarombek-inline-code">append("svg")</code> creates a new SVG DOM element and appends it
-to the "fake" DOM<sup>2</sup>.  The last two <code class="jarombek-inline-code">attr()</code> methods
-set HTML attributes for the width and height of the SVG<sup>3</sup>. <code class="jarombek-inline-code">
-graphWidth</code>, <code class="jarombek-inline-code">graphHeight</code>, and <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">append("svg")</code> creates a new SVG DOM element and appends it
+to the "fake" DOM<sup>2</sup>.  The last two <code className="jarombek-inline-code">attr()</code> methods
+set HTML attributes for the width and height of the SVG<sup>3</sup>. <code className="jarombek-inline-code">
+graphWidth</code>, <code className="jarombek-inline-code">graphHeight</code>, and <code className="jarombek-inline-code">
 graphPaddingBottom</code> are all defined in the component state.
 </p>
 <p>
 The SVG created in this code forms a canvas for the D3 visualization.  In fact, an SVG element in HTML
-is basically the same as the <code class="jarombek-inline-code">&lt;canvas&gt;</code> element<sup>4</sup>.
+is basically the same as the <code className="jarombek-inline-code">&lt;canvas&gt;</code> element<sup>4</sup>.
 </p>
 <Definition word="Scalable Vector Graphics (SVG)">
 SVG is a vector image format written in XML.  SVG's are two dimensional graphics that are often drawn
@@ -159,16 +159,16 @@ svg.selectAll("rect")
   .text((d) => `${d.miles}`);
 </CodeSnippet>
 <p>
-This method chain starts with the variable <code class="jarombek-inline-code">svg</code> which contains the SVG canvas.  Next I
-selected all the SVG <code class="jarombek-inline-code">&lt;rect&gt;</code> elements that exist on
-the canvas with <code class="jarombek-inline-code">selectAll("rect")</code><sup>6</sup>.  These rectangles
-don't exist yet, but they will soon.  <code class="jarombek-inline-code">data(graphData)</code> takes
-in the running mileage data, <code class="jarombek-inline-code">enter()</code> declares that new
-elements are created for each piece of data, and <code class="jarombek-inline-code">append("rect")</code>
+This method chain starts with the variable <code className="jarombek-inline-code">svg</code> which contains the SVG canvas.  Next I
+selected all the SVG <code className="jarombek-inline-code">&lt;rect&gt;</code> elements that exist on
+the canvas with <code className="jarombek-inline-code">selectAll("rect")</code><sup>6</sup>.  These rectangles
+don't exist yet, but they will soon.  <code className="jarombek-inline-code">data(graphData)</code> takes
+in the running mileage data, <code className="jarombek-inline-code">enter()</code> declares that new
+elements are created for each piece of data, and <code className="jarombek-inline-code">append("rect")</code>
 binds the data to rectangle elements.
 </p>
 <p>
-All the calls to <code class="jarombek-inline-code">attr()</code> set the location, size, and color
+All the calls to <code className="jarombek-inline-code">attr()</code> set the location, size, and color
 of the rectangles depending on the data passed in.  For example, here is a piece of data representing
 a week of running:
 </p>
@@ -184,7 +184,7 @@ a week of running:
 ]
 </CodeSnippet>
 <p>
-The arrow functions passed as arguments to <code class="jarombek-inline-code">attr()</code> utilize
+The arrow functions passed as arguments to <code className="jarombek-inline-code">attr()</code> utilize
 D3 scales to help determine the size of the bar graph rectangles.  If you want to observe the scales
 in more detail you can check out the full <a href="https://github.com/AJarombek/jarombek-com-sources/
 blob/master/2018/11-Nov/11-07-react-d3/d3-demo/src/Graph.js">Graph.js</a> code on GitHub.
@@ -205,11 +205,11 @@ svg.selectAll("text")
 </CodeSnippet>
 <p>
 This method chain is extremely similar to the first one I showed.  In fact, the first four methods
-are exactly the same except replacing <code class="jarombek-inline-code">"rect"</code> with
-<code class="jarombek-inline-code">"text"</code>.  The fifth method invocation
-<code class="jarombek-inline-code">text((d) => d.miles)</code> inserts a value into a newly created
-text element, specifically the <code class="jarombek-inline-code">miles</code> property.  The
-<code class="jarombek-inline-code">attr()</code> methods set x and y coordinates for the text
+are exactly the same except replacing <code className="jarombek-inline-code">"rect"</code> with
+<code className="jarombek-inline-code">"text"</code>.  The fifth method invocation
+<code className="jarombek-inline-code">text((d) => d.miles)</code> inserts a value into a newly created
+text element, specifically the <code className="jarombek-inline-code">miles</code> property.  The
+<code className="jarombek-inline-code">attr()</code> methods set x and y coordinates for the text
 element and assign it a class attribute, which I reference in my CSS stylesheet.
 </p>
 <p>
@@ -225,12 +225,12 @@ svg.append("g")
   .call(xAxis);
 </CodeSnippet>
 <p>
-The SVG <code class="jarombek-inline-code">g</code> element is an invisible grouping object which holds
-other SVG elements.  <code class="jarombek-inline-code">call()</code> takes <code class="jarombek-inline-code">
-g</code> and passes it to an x-axis.  The x-axis is created inside <code class="jarombek-inline-code">g</code>.
+The SVG <code className="jarombek-inline-code">g</code> element is an invisible grouping object which holds
+other SVG elements.  <code className="jarombek-inline-code">call()</code> takes <code className="jarombek-inline-code">
+g</code> and passes it to an x-axis.  The x-axis is created inside <code className="jarombek-inline-code">g</code>.
 </p>
 <p>
-Here is the <code class="jarombek-inline-code">createXAxis()</code> function which creates a new D3 axis:
+Here is the <code className="jarombek-inline-code">createXAxis()</code> function which creates a new D3 axis:
 </p>
 <CodeSnippet language="JavaScript">
 /**
@@ -262,34 +262,34 @@ static createXAxis(data, width) {
 }
 </CodeSnippet>
 <p>
-The first operation in <code class="jarombek-inline-code">createXAxis()</code> builds a D3 scale.  In
+The first operation in <code className="jarombek-inline-code">createXAxis()</code> builds a D3 scale.  In
 the previous method chains I referred you to the source code when encountering scales, but here I'll
 give more explanation.  A scale maps a range of possible input values to a range of possible
 output values<sup>7</sup>.  Input values are called the domain and output values are called the range.
 </p>
 <p>
 For example, take a range of possible input values with 10 as the minimum and 40 as the maximum.  In
-other words, a domain of 10 to 40.  The list <code class="jarombek-inline-code">[10, 20, 40]</code>
+other words, a domain of 10 to 40.  The list <code className="jarombek-inline-code">[10, 20, 40]</code>
  fits into this domain.  This list is scaled to values between zero and one by creating
-a range of 0 to 1.  After the scale is executed over the data, <code class="jarombek-inline-code">
-[10, 20, 40]</code> becomes  <code class="jarombek-inline-code">[0.25, 0.5, 1]</code>.
+a range of 0 to 1.  After the scale is executed over the data, <code className="jarombek-inline-code">
+[10, 20, 40]</code> becomes  <code className="jarombek-inline-code">[0.25, 0.5, 1]</code>.
 </p>
 <p>
-D3 offers a bunch of different scales.  For the <code class="jarombek-inline-code">xAxisScale</code> I
-used a time scale called <code class="jarombek-inline-code">scaleTime()</code>.
-<code class="jarombek-inline-code">scaleTime()</code> maps time input values within
-<code class="jarombek-inline-code">domain()</code> to output values within <code class="jarombek-inline-code">
-range()</code>.  Both <code class="jarombek-inline-code">domain()</code> and
-<code class="jarombek-inline-code">range()</code> specify maximum and minimum values.
+D3 offers a bunch of different scales.  For the <code className="jarombek-inline-code">xAxisScale</code> I
+used a time scale called <code className="jarombek-inline-code">scaleTime()</code>.
+<code className="jarombek-inline-code">scaleTime()</code> maps time input values within
+<code className="jarombek-inline-code">domain()</code> to output values within <code className="jarombek-inline-code">
+range()</code>.  Both <code className="jarombek-inline-code">domain()</code> and
+<code className="jarombek-inline-code">range()</code> specify maximum and minimum values.
 </p>
 <p>
-With the help of <code class="jarombek-inline-code">xAxisScale</code> I created a D3 axis with
-<code class="jarombek-inline-code">d3.axisBottom()</code>.  The axis contains seven tick marks, one
+With the help of <code className="jarombek-inline-code">xAxisScale</code> I created a D3 axis with
+<code className="jarombek-inline-code">d3.axisBottom()</code>.  The axis contains seven tick marks, one
 for each day of the week.
 </p>
 <p>
-The final operation inside <code class="jarombek-inline-code">generateGraph()</code> modifies the
-component state to include the SVG container element.  <code class="jarombek-inline-code">svg</code> is
+The final operation inside <code className="jarombek-inline-code">generateGraph()</code> modifies the
+component state to include the SVG container element.  <code className="jarombek-inline-code">svg</code> is
 needed later on when updating the bar graph.
 </p>
 <CodeSnippet language="JavaScript">
@@ -300,9 +300,9 @@ this.setState({
 <SectionTitle title="updateGraph()" isCode="true">updateGraph()</SectionTitle>
 <p>
 Each time a user navigates between weeks, the bar graph must update.  When the user changes the week
-it wishes to view, the props sent to the <code class="jarombek-inline-code">Graph</code> component
-change.  In turn, <code class="jarombek-inline-code">updateGraph()</code> is invoked and passed the
-new props containing new graph data.  <code class="jarombek-inline-code">updateGraph()</code> also
+it wishes to view, the props sent to the <code className="jarombek-inline-code">Graph</code> component
+change.  In turn, <code className="jarombek-inline-code">updateGraph()</code> is invoked and passed the
+new props containing new graph data.  <code className="jarombek-inline-code">updateGraph()</code> also
 retrieves values from the component state and generates scales for the bar graph.
 </p>
 <CodeSnippet language="JavaScript">
@@ -320,9 +320,9 @@ updateGraph(props) {
 }
 </CodeSnippet>
 <p>
-The rest of the <code class="jarombek-inline-code">updateGraph()</code> function body is similar to
-<code class="jarombek-inline-code">generateGraph()</code> except without certain initialization methods.
-The biggest addition to <code class="jarombek-inline-code">updateGraph()</code> is the <code class="jarombek-inline-code">
+The rest of the <code className="jarombek-inline-code">updateGraph()</code> function body is similar to
+<code className="jarombek-inline-code">generateGraph()</code> except without certain initialization methods.
+The biggest addition to <code className="jarombek-inline-code">updateGraph()</code> is the <code className="jarombek-inline-code">
 transition()</code> function, which creates smooth transitions between different bar graphs!
 </p>
 <CodeSnippet language="JavaScript">

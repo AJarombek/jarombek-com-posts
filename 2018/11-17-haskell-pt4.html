@@ -6,10 +6,10 @@ explains the differences between the three mechanisms for creating types in Hask
 </p>
 <SectionTitle title="type" isCode="true">type</SectionTitle>
 <p>
-The first keyword for declaring types in Haskell is <code class="jarombek-inline-code">type</code>.
-<code class="jarombek-inline-code">type</code> creates an alias for an existing type (also commonly
+The first keyword for declaring types in Haskell is <code className="jarombek-inline-code">type</code>.
+<code className="jarombek-inline-code">type</code> creates an alias for an existing type (also commonly
 called a type synonym)<sup>1</sup>.  For example, the following code creates a type
-<code class="jarombek-inline-code">Song</code> which is an alias for a tuple containing a string and
+<code className="jarombek-inline-code">Song</code> which is an alias for a tuple containing a string and
 a list of strings.
 </p>
 <CodeSnippet language="Haskell">
@@ -49,17 +49,17 @@ main = do
 <p>
 Type aliases can also include type variables.  Type variables are represented by a lowercase letter
 or word and declare a type to be polymorphic<sup>2</sup>.  A polymorphic type can take many different
-forms.  The following type <code class="jarombek-inline-code">Week</code> creates an alias for a
+forms.  The following type <code className="jarombek-inline-code">Week</code> creates an alias for a
 polymorphic tuple containing seven elements.
 </p>
 <CodeSnippet language="Haskell">
 type Week a = (a,a,a,a,a,a,a)
 </CodeSnippet>
 <p>
-Any seven element tuple is a <code class="jarombek-inline-code">Week</code> as long as all the
-elements are of the same type.  The next code sample's <code class="jarombek-inline-code">main</code> function contains three tuples.  The first two are valid
-<code class="jarombek-inline-code">Week</code> types, while the third is not.  When invoking a function
-that takes in a <code class="jarombek-inline-code">Week</code> as an argument, the final tuple fails.
+Any seven element tuple is a <code className="jarombek-inline-code">Week</code> as long as all the
+elements are of the same type.  The next code sample's <code className="jarombek-inline-code">main</code> function contains three tuples.  The first two are valid
+<code className="jarombek-inline-code">Week</code> types, while the third is not.  When invoking a function
+that takes in a <code className="jarombek-inline-code">Week</code> as an argument, the final tuple fails.
 </p>
 <CodeSnippet language="Haskell">
 {-|
@@ -84,18 +84,18 @@ main = do
 </CodeSnippet>
 <SectionTitle title="data" isCode="true">data</SectionTitle>
 <p>
-The second keyword for declaring types in Haskell is <code class="jarombek-inline-code">data</code>.
-<code class="jarombek-inline-code">data</code> declares a completely new type, unlike
-<code class="jarombek-inline-code">type</code> which creates an alias for an existing type.  For
+The second keyword for declaring types in Haskell is <code className="jarombek-inline-code">data</code>.
+<code className="jarombek-inline-code">data</code> declares a completely new type, unlike
+<code className="jarombek-inline-code">type</code> which creates an alias for an existing type.  For
 example, the following data type represents different exercises:
 </p>
 <CodeSnippet language="Haskell">
 data ExerciseType = Run | Swim | Bike
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">ExerciseType</code> is read as "ExerciseType equals Run or Swim or
-Bike."  <code class="jarombek-inline-code">Run</code>, <code class="jarombek-inline-code">Swim</code>,
-and <code class="jarombek-inline-code">Bike</code> are called constructors.  Constructor names must
+<code className="jarombek-inline-code">ExerciseType</code> is read as "ExerciseType equals Run or Swim or
+Bike."  <code className="jarombek-inline-code">Run</code>, <code className="jarombek-inline-code">Swim</code>,
+and <code className="jarombek-inline-code">Bike</code> are called constructors.  Constructor names must
 be unique across all types, so the following code is illegal<sup>3</sup>:
 </p>
 <CodeSnippet language="Haskell">
@@ -132,22 +132,22 @@ ghci
 # Kilometers :: Float -> Distance
 </CodeSnippet>
 <p>
-Types created with the <code class="jarombek-inline-code">data</code> keyword can become instances
+Types created with the <code className="jarombek-inline-code">data</code> keyword can become instances
 of multiple classes.  Each class contains operations for use on instances, such
 as checking for equality between two values or converting a value to a string<sup>5</sup>.
 </p>
 <p>
 Haskell classes are beyond the scope of this post, but there is a shortcut for making instances
-of common classes in the <code class="jarombek-inline-code">Prelude</code> module.  The
-<code class="jarombek-inline-code">deriving</code> keyword makes a type an instance of common classes
-such as <code class="jarombek-inline-code">Eq</code>, <code class="jarombek-inline-code">Ord</code>,
-<code class="jarombek-inline-code">Show</code>, and <code class="jarombek-inline-code">Read</code><sup>6</sup>.
+of common classes in the <code className="jarombek-inline-code">Prelude</code> module.  The
+<code className="jarombek-inline-code">deriving</code> keyword makes a type an instance of common classes
+such as <code className="jarombek-inline-code">Eq</code>, <code className="jarombek-inline-code">Ord</code>,
+<code className="jarombek-inline-code">Show</code>, and <code className="jarombek-inline-code">Read</code><sup>6</sup>.
 </p>
 <p>
-I revised <code class="jarombek-inline-code">ExerciseType</code> so that its an instance of both
-<code class="jarombek-inline-code">Show</code> and <code class="jarombek-inline-code">Read</code>.
-<code class="jarombek-inline-code">Show</code> allows <code class="jarombek-inline-code">ExerciseType</code> to be converted into a string while
-<code class="jarombek-inline-code">Read</code> allows strings to be converted into an <code class="jarombek-inline-code">ExerciseType</code>.
+I revised <code className="jarombek-inline-code">ExerciseType</code> so that its an instance of both
+<code className="jarombek-inline-code">Show</code> and <code className="jarombek-inline-code">Read</code>.
+<code className="jarombek-inline-code">Show</code> allows <code className="jarombek-inline-code">ExerciseType</code> to be converted into a string while
+<code className="jarombek-inline-code">Read</code> allows strings to be converted into an <code className="jarombek-inline-code">ExerciseType</code>.
 </p>
 <CodeSnippet language="Haskell">
 data ExerciseType = Run | Swim | Bike
@@ -203,20 +203,20 @@ Nothing
 </CodeSnippet>
 <SectionTitle title="newtype" isCode="true">newtype</SectionTitle>
 <p>
-The third and final keyword for declaring types in Haskell is <code class="jarombek-inline-code">newtype</code>.
-<code class="jarombek-inline-code">newtype</code> creates a new type similar to
-<code class="jarombek-inline-code">data</code>.  It’s used in replacement for <code class="jarombek-inline-code">
-data</code> when the type has a single constructor function.  Replacing <code class="jarombek-inline-code">
-data</code> with <code class="jarombek-inline-code">newtype</code> is simply a performance optimization<sup>7</sup>.
+The third and final keyword for declaring types in Haskell is <code className="jarombek-inline-code">newtype</code>.
+<code className="jarombek-inline-code">newtype</code> creates a new type similar to
+<code className="jarombek-inline-code">data</code>.  It’s used in replacement for <code className="jarombek-inline-code">
+data</code> when the type has a single constructor function.  Replacing <code className="jarombek-inline-code">
+data</code> with <code className="jarombek-inline-code">newtype</code> is simply a performance optimization<sup>7</sup>.
 </p>
 <p>
-<code class="jarombek-inline-code">newtype</code> can also create a type based on an existing type
-similar to <code class="jarombek-inline-code">type</code>.  The difference is that
-<code class="jarombek-inline-code">newtype</code> creates a separate entity in the type system while
-<code class="jarombek-inline-code">type</code> is simply an alias (synonym) of an existing type<sup>8</sup>.
+<code className="jarombek-inline-code">newtype</code> can also create a type based on an existing type
+similar to <code className="jarombek-inline-code">type</code>.  The difference is that
+<code className="jarombek-inline-code">newtype</code> creates a separate entity in the type system while
+<code className="jarombek-inline-code">type</code> is simply an alias (synonym) of an existing type<sup>8</sup>.
 </p>
 <p>
-Here is some sample code using <code class="jarombek-inline-code">newtype</code>:
+Here is some sample code using <code className="jarombek-inline-code">newtype</code>:
 </p>
 <CodeSnippet language="Haskell">
 newtype Miles = Miles Float

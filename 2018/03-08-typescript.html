@@ -15,8 +15,8 @@ but it is a really cool language that brings a lot to the JavaScript ecosystem!
 The biggest argument for TypeScript over JavaScript is that its statically typed.  This can result in
 quicker development and for bugs that stem from type incompatibilities to never appear in the first
 place.  TypeScript does a great job of this!  Its also really nice that TypeScript doesn't force type definitions.
-If you don't explicitly give a variable a type it uses the default <code class="jarombek-inline-code">any</code> type.
-All types in TypeScript are subtypes of <code class="jarombek-inline-code">any</code>.  Variables of type <code class="jarombek-inline-code">any</code>
+If you don't explicitly give a variable a type it uses the default <code className="jarombek-inline-code">any</code> type.
+All types in TypeScript are subtypes of <code className="jarombek-inline-code">any</code>.  Variables of type <code className="jarombek-inline-code">any</code>
 can be assigned any value just like JavaScript<sup>1</sup>!  This allows developers to slowly
 incorporate TypeScript specific features into their code.
 </p>
@@ -25,7 +25,7 @@ incorporate TypeScript specific features into their code.
 There were many cool features of TypeScript that assisted my Angular development.  One of these
 features was access modifiers and constructors.  TypeScript allows you to use access modifiers on
 constructor arguments and then automatically adds these arguments as properties of the object.
-This reduces code and the use of <code class="jarombek-inline-code">this</code> in the constructor body.
+This reduces code and the use of <code className="jarombek-inline-code">this</code> in the constructor body.
 In fact almost none of my constructors even needed bodies!
 </p>
 <p>
@@ -82,7 +82,7 @@ sugar on top of Prototypes.
 <SectionTitle title="Interfaces">Interfaces</SectionTitle>
 <p>
 While JavaScript doesn't have interfaces, TypeScript gives developers an
-<code class="jarombek-inline-code">interface</code> keyword to work with.
+<code className="jarombek-inline-code">interface</code> keyword to work with.
 Interestingly TypeScript interfaces don't transpile into JavaScript code.  Instead they are used to
 enforce types among classes<sup>2</sup>.
 </p>
@@ -102,8 +102,8 @@ interface HttpService {
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">patch()</code> function defined in the interface
-is optional for classes to implement (as defined with the <code class="jarombek-inline-code">?</code>
+The <code className="jarombek-inline-code">patch()</code> function defined in the interface
+is optional for classes to implement (as defined with the <code className="jarombek-inline-code">?</code>
 token).  This allows my classes to still be flexible even with an interface!
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>

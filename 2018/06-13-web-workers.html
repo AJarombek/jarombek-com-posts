@@ -16,18 +16,18 @@ discusses the basics of what Web Workers are and gives sample code of their basi
 <p>
 JavaScript browser code is executed in two different phases.  The first phase occurs when a
 webpage is first loaded.  At this phase the DOM is built from the HTML template and all the
-associated JavaScript code - either inlined or in <code class="jarombek-inline-code">
-&lt;script&gt;</code> tags - is executed<sup>1</sup>.  <code class="jarombek-inline-code">
+associated JavaScript code - either inlined or in <code className="jarombek-inline-code">
+&lt;script&gt;</code> tags - is executed<sup>1</sup>.  <code className="jarombek-inline-code">
 &lt;script&gt;</code> tags are executed sequentially unless specified with the
-<code class="jarombek-inline-code">async</code> or <code class="jarombek-inline-code">defer</code>
+<code className="jarombek-inline-code">async</code> or <code className="jarombek-inline-code">defer</code>
 attributes<sup>2</sup>.  I'd guess this JavaScript code is executed in a single thread since order
 must not be violated, although its hard to say without seeing how the browsers work behind the
-scenes.  Either way, from the programmers view <code class="jarombek-inline-code">
+scenes.  Either way, from the programmers view <code className="jarombek-inline-code">
 &lt;script&gt;</code> tags are executed synchronously.
 </p>
 <p>
 During the first stage all event handlers are set up.  These event handlers use
-<code class="jarombek-inline-code">addEventListener()</code> from the DOM API to respond
+<code className="jarombek-inline-code">addEventListener()</code> from the DOM API to respond
 to DOM events<sup>3</sup>.  This is where JavaScripts asynchronous nature comes into play - you
 never know when an event such as a mouse click or scroll will occur.  Responding to these events
 is what the second execution phase is for.
@@ -62,7 +62,7 @@ click or if animations on the webpage were lagging?  End users would not be happ
 When using Web Workers you no longer have to worry about an operation using too much of the
 event queues capacity.  Web Workers function in an entirely separate thread.  The code for
 a web worker exists in a separate file from the main threads JavaScript code.  In order to use a
-Web Worker, a new <code class="jarombek-inline-code">Worker</code> instance is created and the
+Web Worker, a new <code className="jarombek-inline-code">Worker</code> instance is created and the
 main thread passes messages to the worker thread.
 </p>
 <p>
@@ -97,15 +97,15 @@ The first thing I do in this code is access two DOM elements - the note input an
 The input is where users enter a new note and the output displays the note with a timestamp.
 </p>
 <p>
-Next the code checks if the global <code class="jarombek-inline-code">window</code> object has
-a <code class="jarombek-inline-code">Worker</code> property.  If this property exists, the
+Next the code checks if the global <code className="jarombek-inline-code">window</code> object has
+a <code className="jarombek-inline-code">Worker</code> property.  If this property exists, the
 current browser supports Web Workers.  Almost all major browsers
 <a href="https://caniuse.com/#feat=webworkers">support Web Workers</a> these days, so unless
 the user is using an old browser this check should pass.
 </p>
 <p>
-Inside the <code class="jarombek-inline-code">window</code> object check, I created a web
-worker by invoking the <code class="jarombek-inline-code">Worker(path)</code> constructor function.
+Inside the <code className="jarombek-inline-code">window</code> object check, I created a web
+worker by invoking the <code className="jarombek-inline-code">Worker(path)</code> constructor function.
 The path parameter contains the location of the worker code<sup>6</sup>.
 In this case I use a local <a href="https://github.com/AJarombek/
 jarombek-com-sources/blob/master/2018/06-Jun/6-13-Web-Workers/worker.js">worker.js</a> file.
@@ -144,21 +144,21 @@ the Web Worker.
 </CodeSnippet>
 <p>
 Learning the DOM API is beyond the scope of this post, but basically the first listener waits
-for <code class="jarombek-inline-code">"keyup"</code> events on the input field.  Whenever a key
+for <code className="jarombek-inline-code">"keyup"</code> events on the input field.  Whenever a key
 press is released, the event is added to the event loop queue and the event handler function
-(defined in the <code class="jarombek-inline-code">addEventListener()</code> function) is
+(defined in the <code className="jarombek-inline-code">addEventListener()</code> function) is
 triggered.
 </p>
 <p>
 The event handler function is implemented to check if the key pressed has the code
-<code class="jarombek-inline-code">13</code>, which corresponds to the enter key.  If the enter
+<code className="jarombek-inline-code">13</code>, which corresponds to the enter key.  If the enter
 key is pressed, I get the input value and clear the value from the DOM.  The input value is
 then sent as a message body to the Web Worker.  Messages are sent to the worker via the
-<code class="jarombek-inline-code">postMessage()</code> method on the Web Worker object.
+<code className="jarombek-inline-code">postMessage()</code> method on the Web Worker object.
 </p>
 <p>
 The second event listener waits for messages back from the Web Worker.  This listener is
-implemented as a function on the Web Worker <code class="jarombek-inline-code">
+implemented as a function on the Web Worker <code className="jarombek-inline-code">
 onmessage</code> property.  My implementation takes the message contents and adds them into the
 output portion of the webpage.
 </p>
@@ -176,12 +176,12 @@ onmessage = (e) => {
 };
 </CodeSnippet>
 <p>
-All the Web Worker does is listen for the <code class="jarombek-inline-code">onmessage</code>
+All the Web Worker does is listen for the <code className="jarombek-inline-code">onmessage</code>
 event and then respond to it.  Before responding, my worker adds a timestamp to the data sent in
-the message.  The response itself is handled in the <code class="jarombek-inline-code">
+the message.  The response itself is handled in the <code className="jarombek-inline-code">
 postMessage(data)</code> function, which is defined in the global scope of the web worker.  A
-web workers global scope is the worker itself, which is why <code class="jarombek-inline-code">
-postMessage()</code> and <code class="jarombek-inline-code">onmessage</code> are not called on an
+web workers global scope is the worker itself, which is why <code className="jarombek-inline-code">
+postMessage()</code> and <code className="jarombek-inline-code">onmessage</code> are not called on an
 object variable directly<sup>7</sup>.
 </p>
 <p>
@@ -213,14 +213,14 @@ serve
 Once the server is deployed, you can watch the Web Workers in action:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-13-18-writing-notes.gif"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-13-18-writing-notes.gif"/>
 </figure>
 <p>
 If you look at the network sources in chrome, you will see a few files in the main thread and the
 worker file in the Web Worker thread.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-13-18-network-files.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-13-18-network-files.png"/>
 </figure>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>

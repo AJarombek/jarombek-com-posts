@@ -3,7 +3,7 @@
 While reading a book on Groovy recently I came across two different definitions that apply to
 the languages type system.  The first states that Groovy is an optionally typed language.
 Optional typing in Groovy allows certain variables defined without a type (using the
-<code class="jarombek-inline-code">def</code> keyword) and others with a type similar to Java.
+<code className="jarombek-inline-code">def</code> keyword) and others with a type similar to Java.
 The second definition given to Groovy's type system is that it is dynamically typed.  In the
 past I always associated dynamic typing with not having to explicitly declare types in code (in
 languages like Python and JavaScript).  So how can Groovy have dynamic typing along with
@@ -56,15 +56,15 @@ Quickly before moving further, here is a refresher of what I mean by types and t
 A type consists of certain characteristics that describe a piece of data<sup>4</sup>.  The
 characteristics alter how the compiler/interpreter handles the data's value<sup>5</sup>.  Developers
 can perform different operations with a value depending of the characteristics defined in its type.
-Examples of data types are integers and objects (<code class="jarombek-inline-code">int</code> in
-Java and instances of <code class="jarombek-inline-code">Object</code> in Groovy/Java).
+Examples of data types are integers and objects (<code className="jarombek-inline-code">int</code> in
+Java and instances of <code className="jarombek-inline-code">Object</code> in Groovy/Java).
 </Definition>
 <Definition word="Type Safety">
 Type safety defines the handling of type errors and type mismatches in a programming language.
 Enforcement of type safety can occur at compile time or runtime.  An example of a compile time
 type safety check in a statically typed language is failing the compilation stage if an
-object defined as type <code class="jarombek-inline-code">Integer</code> is given a value of type
-<code class="jarombek-inline-code">String</code>.  Type safety in a dynamic programming language
+object defined as type <code className="jarombek-inline-code">Integer</code> is given a value of type
+<code className="jarombek-inline-code">String</code>.  Type safety in a dynamic programming language
 is handled at runtime, which is arguably a less elegant solution then failing before the code gets
 a chance to execute.
 </Definition>
@@ -96,15 +96,15 @@ Groovy's ability to use type definitions leads to the definition of optionally t
 <SectionTitle title="Optionally Typed">Optionally Typed</SectionTitle>
 <p>
 As explored in my <a href="https://jarombek.com/blog/jul-2-2018-groovy-basics-pt1">first Groovy
-discovery</a> the <code class="jarombek-inline-code">def</code> keyword actually just assigns a
-value to type <code class="jarombek-inline-code">Object</code>.
-<code class="jarombek-inline-code">def</code> does not define a value without a type - the type is
+discovery</a> the <code className="jarombek-inline-code">def</code> keyword actually just assigns a
+value to type <code className="jarombek-inline-code">Object</code>.
+<code className="jarombek-inline-code">def</code> does not define a value without a type - the type is
 just not explicitly declared.  Everything in Groovy is an object, so everything has a type at
 runtime<sup>6</sup>.
 </p>
 <p>
 The phrase "optionally typed" comes from the fact that syntactically declaring types in code is
-optional in Groovy.  Developers can use the <code class="jarombek-inline-code">def</code>
+optional in Groovy.  Developers can use the <code className="jarombek-inline-code">def</code>
 keyword, allowing for implicit type declarations.  Let's officially define optional typing and
 show some example Groovy code.
 </p>
@@ -143,16 +143,16 @@ The general phrase that applies to duck typing is "If it walks like a duck and i
 duck, then it must be a duck<sup>8</sup>."  At its core this phrase is a conditional statement.
 If a value
 is able to quack, then the value must be a duck.  In other words, if a values type definition has
-a method <code class="jarombek-inline-code">quack()</code>, then we can safely assume that it is
-an instance of <code class="jarombek-inline-code">Duck</code> or another compatible object with a
-<code class="jarombek-inline-code">quack()</code> method.  Bringing it all together, if an object
-has the <code class="jarombek-inline-code">quack()</code> method it can be treated as a duck
+a method <code className="jarombek-inline-code">quack()</code>, then we can safely assume that it is
+an instance of <code className="jarombek-inline-code">Duck</code> or another compatible object with a
+<code className="jarombek-inline-code">quack()</code> method.  Bringing it all together, if an object
+has the <code className="jarombek-inline-code">quack()</code> method it can be treated as a duck
 without even checking the type definition at all.
 </Definition>
 <p>
 The following code takes advantage of Groovy's dynamic type system and duck typing.  The value
-passed to <code class="jarombek-inline-code">outputAll()</code> can be of any type with the
-assumption that its type definition has a <code class="jarombek-inline-code">each()</code> method.
+passed to <code className="jarombek-inline-code">outputAll()</code> can be of any type with the
+assumption that its type definition has a <code className="jarombek-inline-code">each()</code> method.
 </p>
 <CodeSnippet language="Groovy">
 def static outputAll(item) {
@@ -177,10 +177,10 @@ println outputList
 <SectionTitle title="Changing Groovy's Type System">Changing Groovy's Type System</SectionTitle>
 <p>
 Groovy is unique because it allows for static typing with the use of annotations.  I explored the
-<code class="jarombek-inline-code">@TypeChecked</code> annotation in my
+<code className="jarombek-inline-code">@TypeChecked</code> annotation in my
 <a href="https://jarombek.com/blog/jul-4-2018-groovy-basics-pt2">second Groovy discovery</a> and
 its ability to enable static typing on methods.  Groovy can even take things to the next level
-with the <code class="jarombek-inline-code">@CompileStatic</code> annotation.  This annotation
+with the <code className="jarombek-inline-code">@CompileStatic</code> annotation.  This annotation
 takes away even more of Groovy's dynamic language features.  These annotations deserve an article
 of their own and I still don't understand them fully, but they seem to give even more flexibility
 to the Groovy programmer.

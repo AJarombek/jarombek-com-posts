@@ -10,36 +10,36 @@ programming languages I use and how they enforce multiple inheritance or availab
 <p>
 In object oriented programming, inheritance is when a class takes properties and methods from another
 existing class.  With inheritance, hierarchies of class relationships are formed.  For example, class
-<code class="jarombek-inline-code">B</code> which inherits properties and methods from class
-<code class="jarombek-inline-code">A</code> forms an is-a relationship, such that
-<code class="jarombek-inline-code">B</code> is an <code class="jarombek-inline-code">A</code>.  All
-the properties and methods from <code class="jarombek-inline-code">A</code> are passed along to
-<code class="jarombek-inline-code">B</code>.  If another class <code class="jarombek-inline-code">
-C</code> inherits class <code class="jarombek-inline-code">B</code>, its concluded that
-<code class="jarombek-inline-code">C</code> is a <code class="jarombek-inline-code">B</code> and
-<code class="jarombek-inline-code">C</code> is an <code class="jarombek-inline-code">A</code>.
+<code className="jarombek-inline-code">B</code> which inherits properties and methods from class
+<code className="jarombek-inline-code">A</code> forms an is-a relationship, such that
+<code className="jarombek-inline-code">B</code> is an <code className="jarombek-inline-code">A</code>.  All
+the properties and methods from <code className="jarombek-inline-code">A</code> are passed along to
+<code className="jarombek-inline-code">B</code>.  If another class <code className="jarombek-inline-code">
+C</code> inherits class <code className="jarombek-inline-code">B</code>, its concluded that
+<code className="jarombek-inline-code">C</code> is a <code className="jarombek-inline-code">B</code> and
+<code className="jarombek-inline-code">C</code> is an <code className="jarombek-inline-code">A</code>.
 Therefore the following class hierarchy is formed:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-22-18-hierarchy1.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-22-18-hierarchy1.png"/>
 </figure>
 <Definition word="Multiple Inheritance">
 When a class takes properties and methods from more than one existing class.  For example, class
-<code class="jarombek-inline-code">C</code> might inherit from classes <code class="jarombek-inline-code">
-A</code> and <code class="jarombek-inline-code">B</code>. This is known as 'extending multiple classes.'
+<code className="jarombek-inline-code">C</code> might inherit from classes <code className="jarombek-inline-code">
+A</code> and <code className="jarombek-inline-code">B</code>. This is known as 'extending multiple classes.'
 Most languages have specialized syntax to extend (inherit) a class. Multiple inheritance is unavailable
 in many languages due to its complexity and ambiguity, although certain languages such as C++ and
 Python enable it.
 </Definition>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-22-18-hierarchy2.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-22-18-hierarchy2.png"/>
 </figure>
 <p>
-To understand the pitfalls of multiple inheritance, take the case where classes <code class="jarombek-inline-code">
-A</code> and <code class="jarombek-inline-code">B</code> both have a method named
-<code class="jarombek-inline-code">execute()</code>.  When an instance of class <code class="jarombek-inline-code">
-C</code> invokes <code class="jarombek-inline-code">execute()</code>, is the method in
-<code class="jarombek-inline-code">A</code> or <code class="jarombek-inline-code">B</code> called?
+To understand the pitfalls of multiple inheritance, take the case where classes <code className="jarombek-inline-code">
+A</code> and <code className="jarombek-inline-code">B</code> both have a method named
+<code className="jarombek-inline-code">execute()</code>.  When an instance of class <code className="jarombek-inline-code">
+C</code> invokes <code className="jarombek-inline-code">execute()</code>, is the method in
+<code className="jarombek-inline-code">A</code> or <code className="jarombek-inline-code">B</code> called?
 This is an ambiguous situation, and determining which one is invoked often comes down to documented rules.
 </p>
 <p>
@@ -115,25 +115,25 @@ public:
 };
 </CodeSnippet>
 <p>
-At the top is a generic <code class="jarombek-inline-code">Tree</code> class, which is extended by
-the <code class="jarombek-inline-code">ChristmasTree</code> and <code class="jarombek-inline-code">
-EvergreenTree</code> classes.  Finally the <code class="jarombek-inline-code">BalsamFir</code> class
-extends both <code class="jarombek-inline-code">ChristmasTree</code> and <code class="jarombek-inline-code">
+At the top is a generic <code className="jarombek-inline-code">Tree</code> class, which is extended by
+the <code className="jarombek-inline-code">ChristmasTree</code> and <code className="jarombek-inline-code">
+EvergreenTree</code> classes.  Finally the <code className="jarombek-inline-code">BalsamFir</code> class
+extends both <code className="jarombek-inline-code">ChristmasTree</code> and <code className="jarombek-inline-code">
 EvergreenTree</code>.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-22-18-hierarchy3.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/12-22-18-hierarchy3.png"/>
 </figure>
 <p>
-This code works fine except for the <code class="jarombek-inline-code">type()</code> method defined
-in <code class="jarombek-inline-code">ChristmasTree</code> and <code class="jarombek-inline-code">
-EvergreenTree</code>.  Invoking <code class="jarombek-inline-code">type()</code> on an instance of
-<code class="jarombek-inline-code">BalsamFir</code> is ambiguous since it could come from either
-<code class="jarombek-inline-code">ChristmasTree</code> or <code class="jarombek-inline-code">
+This code works fine except for the <code className="jarombek-inline-code">type()</code> method defined
+in <code className="jarombek-inline-code">ChristmasTree</code> and <code className="jarombek-inline-code">
+EvergreenTree</code>.  Invoking <code className="jarombek-inline-code">type()</code> on an instance of
+<code className="jarombek-inline-code">BalsamFir</code> is ambiguous since it could come from either
+<code className="jarombek-inline-code">ChristmasTree</code> or <code className="jarombek-inline-code">
 EvergreenTree</code>.  If you try to, the code won't compile.
 </p>
 <p>
-The following is printed to stdout when invoking the <code class="jarombek-inline-code">BalsamFir</code>
+The following is printed to stdout when invoking the <code className="jarombek-inline-code">BalsamFir</code>
 constructor.
 </p>
 <CodeSnippet language="C++">
@@ -155,9 +155,9 @@ BalsamFir()
 <p>
 Notice that each class constructor is called once.  This isn't actually the default behavior of the
 diamond problem in C++.  It's the result of virtual inheritance, which is implemented using the
-<code class="jarombek-inline-code">virtual</code> keyword on the <code class="jarombek-inline-code">
-ChristmasTree</code> and <code class="jarombek-inline-code">EvergreenTree</code> class definitions
-where <code class="jarombek-inline-code">Tree</code> is extended.
+<code className="jarombek-inline-code">virtual</code> keyword on the <code className="jarombek-inline-code">
+ChristmasTree</code> and <code className="jarombek-inline-code">EvergreenTree</code> class definitions
+where <code className="jarombek-inline-code">Tree</code> is extended.
 </p>
 <CodeSnippet language="C++">
 class ChristmasTree: virtual public Tree {...}
@@ -168,7 +168,7 @@ class EvergreenTree: virtual public Tree {...}
 </CodeSnippet>
 <p>
 If the virtual keyword is removed from these class definitions, the code doesn't even compile.  What
-impact does the <code class="jarombek-inline-code">virtual</code> keyword have?
+impact does the <code className="jarombek-inline-code">virtual</code> keyword have?
 </p>
 <p>
 When a class inherits another class in C++, the subclass retains a copy of all the properties and
@@ -177,20 +177,20 @@ methods from inherited classes of the parent class.  This process of copying pro
 all the way up the class hierarchy.
 </p>
 <p>
-As a result of these copies, an interesting issue forms in the diamond problem.  Subclass <code class="jarombek-inline-code">
-BalsamFir</code> stores copies of the properties and methods in <code class="jarombek-inline-code">
-ChristmasTree</code> and its parent class <code class="jarombek-inline-code">Tree</code>.
-<code class="jarombek-inline-code">BalsamFir</code> also stores copies of the properties and methods in
-<code class="jarombek-inline-code">EvergreenTree</code> and its parent class <code class="jarombek-inline-code">
-Tree</code>.  Notice that <code class="jarombek-inline-code">BalsamFir</code> receives copies from
-<code class="jarombek-inline-code">Tree</code> twice - once from <code class="jarombek-inline-code">
-ChristmasTree</code> and once from <code class="jarombek-inline-code">EvergreenTree</code>.  This is a
+As a result of these copies, an interesting issue forms in the diamond problem.  Subclass <code className="jarombek-inline-code">
+BalsamFir</code> stores copies of the properties and methods in <code className="jarombek-inline-code">
+ChristmasTree</code> and its parent class <code className="jarombek-inline-code">Tree</code>.
+<code className="jarombek-inline-code">BalsamFir</code> also stores copies of the properties and methods in
+<code className="jarombek-inline-code">EvergreenTree</code> and its parent class <code className="jarombek-inline-code">
+Tree</code>.  Notice that <code className="jarombek-inline-code">BalsamFir</code> receives copies from
+<code className="jarombek-inline-code">Tree</code> twice - once from <code className="jarombek-inline-code">
+ChristmasTree</code> and once from <code className="jarombek-inline-code">EvergreenTree</code>.  This is a
 source of conflict that causes errors.
 </p>
 <p>
-The fix to this issue is virtual inheritance, which is implemented using the <code class="jarombek-inline-code">
-virtual</code> keyword.  With virtual inheritance, <code class="jarombek-inline-code">BalsamFir</code>
-only receives one copy of <code class="jarombek-inline-code">Tree</code>.
+The fix to this issue is virtual inheritance, which is implemented using the <code className="jarombek-inline-code">
+virtual</code> keyword.  With virtual inheritance, <code className="jarombek-inline-code">BalsamFir</code>
+only receives one copy of <code className="jarombek-inline-code">Tree</code>.
 </p>
 <SectionTitle title="Java">Java</SectionTitle>
 <p>
@@ -287,8 +287,8 @@ an additional construct called a trait, which is designed with composition in mi
 Classes implement traits, which give them additional functionality.  Classes can implement multiple
 traits, simulating a multiple inheritance model just like Java interfaces with default methods.
 In the case of naming conflicts for methods in traits, the method from the last trait declared after
-the <code class="jarombek-inline-code">implements</code> keyword is used in the class<sup>4</sup>.
-You can see this rule at work in the <code class="jarombek-inline-code">BalsamFir</code> class.
+the <code className="jarombek-inline-code">implements</code> keyword is used in the class<sup>4</sup>.
+You can see this rule at work in the <code className="jarombek-inline-code">BalsamFir</code> class.
 </p>
 <CodeSnippet language="Groovy">
 trait Tree {
@@ -368,8 +368,8 @@ method names must be unique across all traits.  While this is stricter than Groo
 inherit multiple traits are very predictable because of this enforcement.
 </p>
 <p>
-I commented out the <code class="jarombek-inline-code">type()</code> method in
-<code class="jarombek-inline-code">ChristmasTree</code> in order for the example to work.
+I commented out the <code className="jarombek-inline-code">type()</code> method in
+<code className="jarombek-inline-code">ChristmasTree</code> in order for the example to work.
 </p>
 <CodeSnippet language="PHP">
 interface Tree
@@ -442,9 +442,9 @@ The Swift implementation is quite unique.  Swift does not support multiple inher
 support protocols (equivalent to interfaces in Java, Groovy, and PHP).  Swift also has extensions,
 which allow you to add functionality to an existing class or protocol.  One restriction enforced by extensions is that names
 of variables and methods must be unique across all extensions for a class or protocol.
-Therefore I couldn't create two extensions for the <code class="jarombek-inline-code">Tree</code> protocol
-called <code class="jarombek-inline-code">ChristmasTree</code> and <code class="jarombek-inline-code">
-EvergreenTree</code> that both contain a variable named <code class="jarombek-inline-code">type</code>.  Here
+Therefore I couldn't create two extensions for the <code className="jarombek-inline-code">Tree</code> protocol
+called <code className="jarombek-inline-code">ChristmasTree</code> and <code className="jarombek-inline-code">
+EvergreenTree</code> that both contain a variable named <code className="jarombek-inline-code">type</code>.  Here
 is my attempt at simulating multiple inheritance:
 </p>
 <CodeSnippet language="Swift">
@@ -597,7 +597,7 @@ assert(balsam.leafPersistence);
 </CodeSnippet>
 <p>
 Another option is to use mixins.  Mixins pass their contents to another object.  Here is the mixin approach
-(everything stays the same except for the <code class="jarombek-inline-code">balsamFir</code> object):
+(everything stays the same except for the <code className="jarombek-inline-code">balsamFir</code> object):
 </p>
 <CodeSnippet language="JavaScript">
 /**
@@ -623,13 +623,13 @@ assert(balsam.leafPersistence);
 <p>
 Python shares the most similarities with C++ in regards to multiple inheritance.  Like C++, Python enables multiple
 inheritance for classes, although it does not require virtual inheritance to function.  Unlike C++, the method
-<code class="jarombek-inline-code">type()</code> works fine in Python.  <code class="jarombek-inline-code">type()</code> didn't work in C++ because it was defined in two
+<code className="jarombek-inline-code">type()</code> works fine in Python.  <code className="jarombek-inline-code">type()</code> didn't work in C++ because it was defined in two
 different inherited classes.  Python objects maintain a method resolution order
 that moves through the inherited classes in the order they are defined.  As soon as it encounters the
-first <code class="jarombek-inline-code">type()</code> method in an inherited class, it gets invoked from
-that class.  In the following example, <code class="jarombek-inline-code">type()</code> in class
-<code class="jarombek-inline-code">BalsamFir</code> always delegates to <code class="jarombek-inline-code">
-ChristmasTree</code> because its declared as the first superclass of <code class="jarombek-inline-code">
+first <code className="jarombek-inline-code">type()</code> method in an inherited class, it gets invoked from
+that class.  In the following example, <code className="jarombek-inline-code">type()</code> in class
+<code className="jarombek-inline-code">BalsamFir</code> always delegates to <code className="jarombek-inline-code">
+ChristmasTree</code> because its declared as the first superclass of <code className="jarombek-inline-code">
 BalsamFir</code>.
 </p>
 <CodeSnippet language="Python">

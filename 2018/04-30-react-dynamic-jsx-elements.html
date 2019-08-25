@@ -51,13 +51,13 @@ export default Link;
 </CodeSnippet>
 <p>
 This React component is very simple, creating a new React element corresponding to the HTML
-<code class="jarombek-inline-code">&lt;a&gt;</code> element.  This element has a
-<code class="jarombek-inline-code">href</code> attribute, linking it to a URL.  The URL is passed to the component via the
-<code class="jarombek-inline-code">link</code> property.  The <code class="jarombek-inline-code">&lt;a&gt;</code> element
-also displays text passed to the component by the <code class="jarombek-inline-code">name</code> property.
+<code className="jarombek-inline-code">&lt;a&gt;</code> element.  This element has a
+<code className="jarombek-inline-code">href</code> attribute, linking it to a URL.  The URL is passed to the component via the
+<code className="jarombek-inline-code">link</code> property.  The <code className="jarombek-inline-code">&lt;a&gt;</code> element
+also displays text passed to the component by the <code className="jarombek-inline-code">name</code> property.
 </p>
 <p>
-The function <code class="jarombek-inline-code">React.createElement()</code> creates the React element
+The function <code className="jarombek-inline-code">React.createElement()</code> creates the React element
 corresponding to an HTML element.  You can image how tiresome and verbose it would be to type out this
 function for every single HTML element in a webpage.  Luckily there is an
 alternative called JSX.  JSX creates React elements in a syntax that looks like HTML.  Here is an
@@ -84,13 +84,13 @@ If you want more background information on React.js, check out the discovery pos
 <p>
 Now lets get to the issue I faced when building my website.  I wanted to dynamically choose the JSX element type
 at runtime based on some JSON I received from a server.  For example, if the JSON had a property
-<code class="jarombek-inline-code">tag</code> with the value <code class="jarombek-inline-code">div</code>,
-I wanted the JSX element to represent an HTML <code class="jarombek-inline-code">&lt;div&gt;</code>.  With this
+<code className="jarombek-inline-code">tag</code> with the value <code className="jarombek-inline-code">div</code>,
+I wanted the JSX element to represent an HTML <code className="jarombek-inline-code">&lt;div&gt;</code>.  With this
 implemented, I could store a JSON representation of HTML and have my React code render it on the fly.
 </p>
 <p>
 The code used by my website is quite involved but the following is the basic process.  First I import
-React and the <code class="jarombek-inline-code">Link</code> component I created prior.
+React and the <code className="jarombek-inline-code">Link</code> component I created prior.
 I also create a JavaScript object representing some HTML I want to display:
 </p>
 <CodeSnippet language="JavaScript">
@@ -120,12 +120,12 @@ const elements = [
 ];
 </CodeSnippet>
 <p>
-The object representation of HTML has three properties.  <code class="jarombek-inline-code">tag</code>
-defines the HTML element type, <code class="jarombek-inline-code">attributes</code> lists the HTML
-attributes, and <code class="jarombek-inline-code">value</code> contains the content shown inside the HTML tag.
+The object representation of HTML has three properties.  <code className="jarombek-inline-code">tag</code>
+defines the HTML element type, <code className="jarombek-inline-code">attributes</code> lists the HTML
+attributes, and <code className="jarombek-inline-code">value</code> contains the content shown inside the HTML tag.
 </p>
 <p>
-Next I loop through the <code class="jarombek-inline-code">elements</code> array and generate some
+Next I loop through the <code className="jarombek-inline-code">elements</code> array and generate some
 JSX for each object.  This JSX is rendered in the websites HTML.
 </p>
 <CodeSnippet language="JavaScript">
@@ -149,25 +149,25 @@ const App = () =>
 render(&lt;App /&gt;, document.getElementById("root"));
 </CodeSnippet>
 <p>
-I created a variable <code class="jarombek-inline-code">Tag</code> on the
+I created a variable <code className="jarombek-inline-code">Tag</code> on the
 third line representing the JSX element.  Remember that a JSX element is simply syntactic sugar for a
 React element, and a React element is a JavaScript object sent to the virtual DOM.
 </p>
 <p>
-Native HTML elements are passed to <code class="jarombek-inline-code">React.createElement()</code> as a
-string.  This is why the code above works for <code class="jarombek-inline-code">h1</code> and
-<code class="jarombek-inline-code">p</code> elements.  If you tried assigning the string <code class="jarombek-inline-code">"Link"</code> to
-<code class="jarombek-inline-code">Tag</code> it would not render.  The reason is because
-<code class="jarombek-inline-code">&lt;Link&gt;</code> is not a valid HTML element!  It is a React component
-that I created!  <code class="jarombek-inline-code">React.createElement()</code> takes React
+Native HTML elements are passed to <code className="jarombek-inline-code">React.createElement()</code> as a
+string.  This is why the code above works for <code className="jarombek-inline-code">h1</code> and
+<code className="jarombek-inline-code">p</code> elements.  If you tried assigning the string <code className="jarombek-inline-code">"Link"</code> to
+<code className="jarombek-inline-code">Tag</code> it would not render.  The reason is because
+<code className="jarombek-inline-code">&lt;Link&gt;</code> is not a valid HTML element!  It is a React component
+that I created!  <code className="jarombek-inline-code">React.createElement()</code> takes React
 components as arguments also, which is perfect for custom components.  This is the reason for the
-<code class="jarombek-inline-code">if</code> clause in the code above.
+<code className="jarombek-inline-code">if</code> clause in the code above.
 </p>
 <p>
 Here is the end result:
 </p>
 <figure>
-    <img class="jarombek-blog-image" src="https://asset.jarombek.com/dynamic-jsx.png">
+    <img className="jarombek-blog-image" src="https://asset.jarombek.com/dynamic-jsx.png">
 </figure>
 <p>
 I still have a lot of learning and work to do with React.  So far I am really enjoying it despite a few

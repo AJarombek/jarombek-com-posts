@@ -48,7 +48,7 @@ it to be more detrimental than beneficial.
 <p>
 Supposedly TypeScript is a true superset of JavaScript, meaning all JavaScript code is valid TypeScript
 code.  However, in my first hacks at the language I had trouble using JavaScript features in TypeScript.
-For example, when using a <code class="jarombek-inline-code">RegExp</code> in TypeScript I got errors saying
+For example, when using a <code className="jarombek-inline-code">RegExp</code> in TypeScript I got errors saying
 that its JavaScript functions did not exist.  This may be simply user error, but so far TypeScript has
 not been the smooth transition it is advertised to be.
 </p>
@@ -86,13 +86,13 @@ import { ValidDevDirective } from './valid-dev.directive';
 export class AppModule { }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">@NgModule</code> annotation specifies that this class is an Angular
+The <code className="jarombek-inline-code">@NgModule</code> annotation specifies that this class is an Angular
 module.  Note that just like ES6 classes, TypeScript classes are not true classes.  They are transpiled
 into JavaScript prototypes and are simply syntactic sugar.
 </p>
 <p>
-The annotations object has a <code class="jarombek-inline-code">declarations</code> property that specifies all the members of the module<sup>4</sup>.
-The first module member is a Component named <code class="jarombek-inline-code">DeveloperComponent</code>.
+The annotations object has a <code className="jarombek-inline-code">declarations</code> property that specifies all the members of the module<sup>4</sup>.
+The first module member is a Component named <code className="jarombek-inline-code">DeveloperComponent</code>.
 Each component has a TypeScript class that defines model data and a view (which is usually HTML).
 </p>
 <CodeSnippet language="TypeScript">
@@ -114,9 +114,9 @@ export class DeveloperComponent {
 </CodeSnippet>
 <p>
 The awesome thing about components is they define a reusable HTML tag.  Each HTML tag is named after the
-<code class="jarombek-inline-code">@Component</code> annotations
-<code class="jarombek-inline-code">selector</code> property.  The contents of a HTML tag are defined in the <code class="jarombek-inline-code">@Component</code> annotations
-<code class="jarombek-inline-code">template</code> or <code class="jarombek-inline-code">templateUrl</code>
+<code className="jarombek-inline-code">@Component</code> annotations
+<code className="jarombek-inline-code">selector</code> property.  The contents of a HTML tag are defined in the <code className="jarombek-inline-code">@Component</code> annotations
+<code className="jarombek-inline-code">template</code> or <code className="jarombek-inline-code">templateUrl</code>
 properties.  The HTML contents render on a webpage at runtime, replacing the components HTML tag.
 </p>
 <p>
@@ -128,7 +128,7 @@ For example my code has an index.html file like so:
 &lt;/body&gt;
 </CodeSnippet>
 <p>
-When rendered in the browser, the <code class="jarombek-inline-code">&lt;developer&gt;</code> tag is
+When rendered in the browser, the <code className="jarombek-inline-code">&lt;developer&gt;</code> tag is
 replaced with the markup defined in my component:
 </p>
 <CodeSnippet language="HTML">
@@ -143,16 +143,16 @@ replaced with the markup defined in my component:
 &lt;/div&gt;
 </CodeSnippet>
 <p>
-The characters <code class="jarombek-inline-code">{{dev}}</code> in the HTML document
-are replaced with the <code class="jarombek-inline-code">dev</code> variables value in the <code class="jarombek-inline-code">DeveloperComponent</code> class.  This binding between
+The characters <code className="jarombek-inline-code">{{dev}}</code> in the HTML document
+are replaced with the <code className="jarombek-inline-code">dev</code> variables value in the <code className="jarombek-inline-code">DeveloperComponent</code> class.  This binding between
 HTML and TypeScript creates many possibilities for dynamic webpages that I can't wait to explore!
 </p>
 <SectionTitle title="Directives">Directives</SectionTitle>
 <p>
-The second module member is a directive called <code class="jarombek-inline-code">ValidDevDirective</code>.
+The second module member is a directive called <code className="jarombek-inline-code">ValidDevDirective</code>.
 A directive is like a component except it has no view and is placed on an existing HTML element
-<sup>5</sup>.  If you look at the HTML <code class="jarombek-inline-code">input</code> element in my component above you will see an attribute called
-<code class="jarombek-inline-code">valid-dev</code>.  This attribute is defined in my directive, which right
+<sup>5</sup>.  If you look at the HTML <code className="jarombek-inline-code">input</code> element in my component above you will see an attribute called
+<code className="jarombek-inline-code">valid-dev</code>.  This attribute is defined in my directive, which right
 now changes the border color of the input field when a value is entered.
 </p>
 <CodeSnippet language="TypeScript">

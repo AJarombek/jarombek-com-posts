@@ -36,8 +36,8 @@ This time around I experimented with more complex Sass features.  I will discuss
 <SectionTitle title="Mixins">Mixins</SectionTitle>
 <p>
 Mixins are an extremely powerful Sass property that create reusable style blocks.
-Mixins are created with the <code class="jarombek-inline-code">@mixin</code> directive and are used
-in a style declaration with the <code class="jarombek-inline-code">@include</code>
+Mixins are created with the <code className="jarombek-inline-code">@mixin</code> directive and are used
+in a style declaration with the <code className="jarombek-inline-code">@include</code>
 directive<sup>2</sup>.  For example, in my application I created a mixin for each of my fonts:
 </p>
 <CodeSnippet language="Sass">
@@ -79,13 +79,13 @@ mixin that I created to apply a transition to a property:
 }
 </CodeSnippet>
 <p>
-This mixin creates a transition style for the <code class="jarombek-inline-code">$property</code> parameter.  If no
-<code class="jarombek-inline-code">$time</code> argument is passed to the mixin, the default 0.3 seconds is used.
+This mixin creates a transition style for the <code className="jarombek-inline-code">$property</code> parameter.  If no
+<code className="jarombek-inline-code">$time</code> argument is passed to the mixin, the default 0.3 seconds is used.
 </p>
 <p>
-Another cool piece of this code is the ampersand (<code class="jarombek-inline-code">&amp;</code>)
+Another cool piece of this code is the ampersand (<code className="jarombek-inline-code">&amp;</code>)
 placeholder.  This placeholder is a reference to the parent selector<sup>3</sup>.  The
-<code class="jarombek-inline-code">:hover</code> pseudo-class is applied to the parent
+<code className="jarombek-inline-code">:hover</code> pseudo-class is applied to the parent
 selector that the mixin is included in!
 </p>
 <p>
@@ -116,8 +116,8 @@ span {
 }
 </CodeSnippet>
 <p>
-Now all the styles in the <code class="jarombek-inline-code">.span-style</code> class are used in
-the <code class="jarombek-inline-code">span</code> element.  The best part is that this class can be
+Now all the styles in the <code className="jarombek-inline-code">.span-style</code> class are used in
+the <code className="jarombek-inline-code">span</code> element.  The best part is that this class can be
 extended into other CSS selectors as well!  It is yet another great way to create reusable styling.
 </p>
 <p>

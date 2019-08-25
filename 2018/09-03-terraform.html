@@ -94,36 +94,36 @@ variable "server_port" {
 </CodeSnippet>
 <p>
 Variables are used as inputs in terraform scripts for flexibility across executions.
-Variables are defined with the <code class="jarombek-inline-code">variable</code> keyword
+Variables are defined with the <code className="jarombek-inline-code">variable</code> keyword
 followed by a block of configuration items.
 </p>
 <p>
-The first variable <code class="jarombek-inline-code">region</code> defines the AWS region, which
-is a geographic area to host cloud components<sup>4</sup>.  <code class="jarombek-inline-code">
-region</code> has three pieces of configuration - <code class="jarombek-inline-code">description
-</code>, <code class="jarombek-inline-code">default</code>, and <code class="jarombek-inline-code">
+The first variable <code className="jarombek-inline-code">region</code> defines the AWS region, which
+is a geographic area to host cloud components<sup>4</sup>.  <code className="jarombek-inline-code">
+region</code> has three pieces of configuration - <code className="jarombek-inline-code">description
+</code>, <code className="jarombek-inline-code">default</code>, and <code className="jarombek-inline-code">
 type</code>.
 </p>
 <p>
-<code class="jarombek-inline-code">description</code> documents an input variable both in code
-and when using the Terraform CLI<sup>5</sup>.  <code class="jarombek-inline-code">default</code>
+<code className="jarombek-inline-code">description</code> documents an input variable both in code
+and when using the Terraform CLI<sup>5</sup>.  <code className="jarombek-inline-code">default</code>
 gives input variables a value to fall back on if one isn't provided.  There are a couple ways
 to provide input variables in Terraform, all which utilize command line flags or environment
-variables.  <code class="jarombek-inline-code">type</code> explicitly binds variables to a type.
+variables.  <code className="jarombek-inline-code">type</code> explicitly binds variables to a type.
 If type isn't specified in a variable configuration, HCL will implicitly guess what the type is.
 </p>
 <p>
 The other three variables also assist in making the Terraform configuration dynamic.
-<code class="jarombek-inline-code">instance_type</code> specifies the EC2 instance type.  Each
+<code className="jarombek-inline-code">instance_type</code> specifies the EC2 instance type.  Each
 instance type has a different configuration of resources, such as CPU and memory.
-<code class="jarombek-inline-code">instance_type</code> defaults to
-<code class="jarombek-inline-code">t2.micro</code>, which exists on Amazon’s free tier of instances.
+<code className="jarombek-inline-code">instance_type</code> defaults to
+<code className="jarombek-inline-code">t2.micro</code>, which exists on Amazon’s free tier of instances.
 </p>
 <p>
-<code class="jarombek-inline-code">ami</code> determines the Amazon Machine Image for an EC2
+<code className="jarombek-inline-code">ami</code> determines the Amazon Machine Image for an EC2
 instance. An AMI is a blueprint for EC2 instances (virtual machines), and in the Terraform script
 I specified one of the official Ubuntu AMIs as the default<sup>6,7</sup>.  Finally,
-<code class="jarombek-inline-code">server_port</code> determines the port to host the web server.
+<code className="jarombek-inline-code">server_port</code> determines the port to host the web server.
 </p>
 <SectionTitle title="Providers">Providers</SectionTitle>
 <p>
@@ -136,7 +136,7 @@ provider "aws" {
 }
 </CodeSnippet>
 <p>
-Input variables are accessed as properties on <code class="jarombek-inline-code">var</code>.  HCL
+Input variables are accessed as properties on <code className="jarombek-inline-code">var</code>.  HCL
 supports string interpolation, so the values of variables can be written inside strings.
 </p>
 <SectionTitle title="Resources">Resources</SectionTitle>
@@ -173,8 +173,8 @@ resource "&lt;resource-type&gt;" "&lt;user-defined-resource-name&gt;" {
 </CodeSnippet>
 <p>
 The AMI and instance type of the EC2 instance are defined in input variables.  The
-<code class="jarombek-inline-code">tags</code> code block
-displays a name for the instance in the AWS UI<sup>8</sup>.  <code class="jarombek-inline-code">
+<code className="jarombek-inline-code">tags</code> code block
+displays a name for the instance in the AWS UI<sup>8</sup>.  <code className="jarombek-inline-code">
 user_data</code> is interesting because any statements written in its body are executed when
 the instance starts up.  In my config, a batch script executes and starts a basic web server.
 </p>
@@ -267,25 +267,25 @@ terraform apply
 terraform destroy
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">terraform init</code> is mandatory in order to designate a working
+<code className="jarombek-inline-code">terraform init</code> is mandatory in order to designate a working
 directory for Terraform.  A crucial part of the working directory is the Terraform state file, which
 maintains the current infrastructure deployed.
 </p>
 <p>
-<code class="jarombek-inline-code">terraform plan</code> shows what changes Terraform will make to
+<code className="jarombek-inline-code">terraform plan</code> shows what changes Terraform will make to
 your infrastructure, and executing a Terraform script is done with
-<code class="jarombek-inline-code">terraform apply</code>.  After running
-<code class="jarombek-inline-code">terraform apply</code>, I navigated to the AWS console and saw
+<code className="jarombek-inline-code">terraform apply</code>.  After running
+<code className="jarombek-inline-code">terraform apply</code>, I navigated to the AWS console and saw
 the EC2 instance up and running:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-3-18-aws.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-3-18-aws.png"/>
 </figure>
 <p>
 Using the elastic IP, I viewed the web server in my browser.
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-3-18-web.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-3-18-web.png"/>
 </figure>
 <p>
 With just a few simple commands, I created a web server on AWS!

@@ -21,7 +21,7 @@ closure.
 </p>
 <p>
 Closures in Groovy are objects containing code to be executed.  Their syntax starts with a curly
-brace and ends with a curly brace (<code class="jarombek-inline-code">{ … }</code>).  Here is a
+brace and ends with a curly brace (<code className="jarombek-inline-code">{ … }</code>).  Here is a
 very basic closure that prints out a list:
 </p>
 <CodeSnippet language="Groovy">
@@ -30,27 +30,27 @@ def list = ["Tod's Point", "Waveny Park", "GHS", "Mianus River Park", "Rockefell
 list.each { println it }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">each()</code> method is invoked on variable
-<code class="jarombek-inline-code">list</code>, looping through each list element.
-<code class="jarombek-inline-code">each()</code> takes in one argument - a closure object which also
+The <code className="jarombek-inline-code">each()</code> method is invoked on variable
+<code className="jarombek-inline-code">list</code>, looping through each list element.
+<code className="jarombek-inline-code">each()</code> takes in one argument - a closure object which also
 has a single argument.  That single argument represents a list element.  Thanks to some shortened
-Groovy syntax, the parenthesis around the closure argument to <code class="jarombek-inline-code">
+Groovy syntax, the parenthesis around the closure argument to <code className="jarombek-inline-code">
 each()</code> are omitted.
 </p>
 <p>
-You may be wondering about the seemingly magical <code class="jarombek-inline-code">it</code> variable
+You may be wondering about the seemingly magical <code className="jarombek-inline-code">it</code> variable
 that is never explicitly defined.  If a closure takes in a single parameter, it does not need to be
-explicitly declared in the code.  Instead the default <code class="jarombek-inline-code">it</code>
+explicitly declared in the code.  Instead the default <code className="jarombek-inline-code">it</code>
 variable is used to access the closure’s argument.  If you want to rewrite this closure with an
-explicit argument variable, you could write <code class="jarombek-inline-code">
+explicit argument variable, you could write <code className="jarombek-inline-code">
 { item -> println item }</code>
 </p>
 <p>
-When you see the closure <code class="jarombek-inline-code">{ … }</code> syntax in Groovy code
+When you see the closure <code className="jarombek-inline-code">{ … }</code> syntax in Groovy code
 remember that this only defines the closure.  If you want to run the code inside the closure, it
 must be invoked later on.  Think of a closure definition like a method definition - it is a
 blueprint of what logic will occur when executed.  Closures are invoked like methods with the
-<code class="jarombek-inline-code">closureName()</code> syntax:
+<code className="jarombek-inline-code">closureName()</code> syntax:
 </p>
 <CodeSnippet language="Groovy">
 int number = 1
@@ -62,11 +62,11 @@ timesTen()
 assert number == 10
 </CodeSnippet>
 <p>
-Look at the assertions before and after the <code class="jarombek-inline-code">timesTen</code>
-closure is invoked.  After the closure is defined the value of <code class="jarombek-inline-code">
-number</code> is still <code class="jarombek-inline-code">1</code> because the code in the closure
+Look at the assertions before and after the <code className="jarombek-inline-code">timesTen</code>
+closure is invoked.  After the closure is defined the value of <code className="jarombek-inline-code">
+number</code> is still <code className="jarombek-inline-code">1</code> because the code in the closure
 hasn't executed yet.  Once the closure is invoked, the value of
-<code class="jarombek-inline-code">number</code> jumps to <code class="jarombek-inline-code">10
+<code className="jarombek-inline-code">number</code> jumps to <code className="jarombek-inline-code">10
 </code> as expected.
 </p>
 <p>
@@ -82,7 +82,7 @@ similarly to Java lambda functions.
 Lambda functions can access variables from their lexical scope, but can not manipulate
 them.  All variables used inside a lambda that are defined in the functions outer scope must be
 effectively final (meaning they can either be explicitly declared final with the
-<code class="jarombek-inline-code">final</code> keyword or be
+<code className="jarombek-inline-code">final</code> keyword or be
 <a href="https://jarombek.com/blog/may-23-2018-javascript-immutable">implicitly immutable</a>).
 If this rule is broken Java will not compile.
 </p>
@@ -108,7 +108,7 @@ throughout their lifetime.
 </Definition>
 <p>
 To demonstrate a closures birthday context here is a simple closure that prints out an
-<code class="jarombek-inline-code">age</code> variable.
+<code className="jarombek-inline-code">age</code> variable.
 </p>
 <CodeSnippet language="Groovy">
 class BirthdayContext {
@@ -127,35 +127,35 @@ assert birthObject.closure.delegate == birthObject
 birthObject.closure()
 </CodeSnippet>
 <p>
-Note that the birthday context of <code class="jarombek-inline-code">closure</code> is the class
-<code class="jarombek-inline-code">BirthdayContext</code>.  Since the birthday context is maintained
-by the closure throughout its lifetime, the only <code class="jarombek-inline-code">age</code> variable
-it is aware of exists in <code class="jarombek-inline-code">BirthdayContext</code>, equaling
-<code class="jarombek-inline-code">0</code>.
+Note that the birthday context of <code className="jarombek-inline-code">closure</code> is the class
+<code className="jarombek-inline-code">BirthdayContext</code>.  Since the birthday context is maintained
+by the closure throughout its lifetime, the only <code className="jarombek-inline-code">age</code> variable
+it is aware of exists in <code className="jarombek-inline-code">BirthdayContext</code>, equaling
+<code className="jarombek-inline-code">0</code>.
 </p>
 <p>
 I also accessed three different properties on the closure (remember closures are simply objects).
 The first two properties are
-<code class="jarombek-inline-code">owner</code> and <code class="jarombek-inline-code">thisObject
-</code>.  <code class="jarombek-inline-code">thisObject</code> is what the closure
-currently uses as <code class="jarombek-inline-code">this</code> (which may change over the lifetime
-of the closure) and <code class="jarombek-inline-code">owner</code> always refers to the direct
+<code className="jarombek-inline-code">owner</code> and <code className="jarombek-inline-code">thisObject
+</code>.  <code className="jarombek-inline-code">thisObject</code> is what the closure
+currently uses as <code className="jarombek-inline-code">this</code> (which may change over the lifetime
+of the closure) and <code className="jarombek-inline-code">owner</code> always refers to the direct
 enclosing class or closure in which the closure was defined<sup>2,3</sup>.  These two properties
 aren't very important to this posts discussion, just note that their values don’t change throughout
 the following examples.
 </p>
 <p>
-The <code class="jarombek-inline-code">delegate</code> property is where things get very
+The <code className="jarombek-inline-code">delegate</code> property is where things get very
 interesting.  Groovy allows the programmer to determine how outer scope variables are resolved
 inside a closure<sup>4</sup>.  By default closures will resolve variables from the closures lexical scope
-(the <code class="jarombek-inline-code">owner</code> property).  However, a user can create an object and
-assign it to the <code class="jarombek-inline-code">delegate</code> property to change this
+(the <code className="jarombek-inline-code">owner</code> property).  However, a user can create an object and
+assign it to the <code className="jarombek-inline-code">delegate</code> property to change this
 behavior<sup>5</sup>.
 </p>
 <p>
-Changing the <code class="jarombek-inline-code">delegate</code> property will not yet have an
+Changing the <code className="jarombek-inline-code">delegate</code> property will not yet have an
 effect on how variables are resolved (the code below will still print
-<code class="jarombek-inline-code">0</code>).
+<code className="jarombek-inline-code">0</code>).
 </p>
 <CodeSnippet language="Groovy">
 class BirthdayContext {
@@ -181,14 +181,14 @@ assert birthObject.closure.delegate == otherObject
 birthObject.closure()
 </CodeSnippet>
 <p>
-The reason <code class="jarombek-inline-code">age</code> in <code class="jarombek-inline-code">
+The reason <code className="jarombek-inline-code">age</code> in <code className="jarombek-inline-code">
 OtherContext</code> was not used is because of the closures delegation strategy.  Delegation
 strategies determine how closures resolve variables.  By default the delegation strategy is set to
-<code class="jarombek-inline-code">OWNER_FIRST</code>, meaning a variable will be searched on the
-<code class="jarombek-inline-code">owner</code> property before it checks the
-<code class="jarombek-inline-code">delegate</code> property.  If we change the delegation strategy
-to <code class="jarombek-inline-code">DELEGATE_FIRST</code>, invoking the closure will finally print
-<code class="jarombek-inline-code">21</code> (not that I really want to relive being 21).
+<code className="jarombek-inline-code">OWNER_FIRST</code>, meaning a variable will be searched on the
+<code className="jarombek-inline-code">owner</code> property before it checks the
+<code className="jarombek-inline-code">delegate</code> property.  If we change the delegation strategy
+to <code className="jarombek-inline-code">DELEGATE_FIRST</code>, invoking the closure will finally print
+<code className="jarombek-inline-code">21</code> (not that I really want to relive being 21).
 </p>
 <CodeSnippet language="Groovy">
 birthObject.closure.resolveStrategy = Closure.DELEGATE_FIRST
@@ -208,9 +208,9 @@ variable would be a classes instance variable accessed from inside a method.
 <p>
 The <a href="https://jarombek.com/blog/nov-11-2017-js-this">closest equivalent</a> to Groovy’s
 delegation strategy I can think of is the ability to explicitly define
-<code class="jarombek-inline-code">this</code> in a JavaScript function invocation with
-<code class="jarombek-inline-code">call()</code>, <code class="jarombek-inline-code">apply()</code>
-and <code class="jarombek-inline-code">bind()</code>.
+<code className="jarombek-inline-code">this</code> in a JavaScript function invocation with
+<code className="jarombek-inline-code">call()</code>, <code className="jarombek-inline-code">apply()</code>
+and <code className="jarombek-inline-code">bind()</code>.
 </p>
 <SectionTitle title="Conclusions">Conclusion</SectionTitle>
 <p>

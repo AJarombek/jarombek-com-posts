@@ -18,23 +18,23 @@ My software development journey began just two years ago in 2016 - so for the fi
 CSS lifespan I was not around.  Recently however I had to write some HTML and CSS for an email
 template.  The HTML email I created is sent from this website when someone subscribes.   When I first began
 development on the email I thought it would be an easy task - create a few
-<code class="jarombek-inline-code">&lt;div&gt;</code> elements, write some CSS Grid styling, and
+<code className="jarombek-inline-code">&lt;div&gt;</code> elements, write some CSS Grid styling, and
 call it a day.  Little did I know that creating an HTML and CSS email is like building a website
 in 1999.
 </p>
 <p>
 In order to get the email layout to work on all clients, the HTML had to be formatted using
-<code class="jarombek-inline-code">&lt;table&gt;</code> elements<sup>1</sup>.  None of the layout
+<code className="jarombek-inline-code">&lt;table&gt;</code> elements<sup>1</sup>.  None of the layout
 could be handled in CSS.  The worst offender of all email clients was Outlook, which didn't even
-support the CSS <code class="jarombek-inline-code">width</code> property<sup>2</sup>!  You can
+support the CSS <code className="jarombek-inline-code">width</code> property<sup>2</sup>!  You can
 checkout the <a href="https://gist.github.com/AJarombek/5e8df26bcb3ca8f8f6b4d66640381141">gnarly
 HTML and CSS code for my email</a> in all its beauty.
 </p>
 <p>
 Luckily in recent years we didn't have to create layouts with HTML tables or define element
 widths as HTML attributes.  We did it all in CSS!  Before CSS Grid (and after the 90's) creating
-layouts consisted of either playing around with the CSS <code class="jarombek-inline-code">
-position</code> and <code class="jarombek-inline-code">float</code> declarations or giving up and
+layouts consisted of either playing around with the CSS <code className="jarombek-inline-code">
+position</code> and <code className="jarombek-inline-code">float</code> declarations or giving up and
 using a library such as Bootstrap to handle layout creation for you.
 </p>
 <p>
@@ -42,10 +42,10 @@ When I started developing my first website <a href="https://www.saintsxctf.com/"
 the fall of 2016, CSS Grid did not yet exist.  At that point I was a beginner and
 didn't know bootstrap existed.  If you look at most of the
 <a href="https://github.com/AJarombek/saints-xctf/blob/master/views/style.css">websites code</a>
-all the layouts are created by floating <code class="jarombek-inline-code">&lt;div&gt;</code>
-elements around the page and manipulating the <code class="jarombek-inline-code">position</code>
+all the layouts are created by floating <code className="jarombek-inline-code">&lt;div&gt;</code>
+elements around the page and manipulating the <code className="jarombek-inline-code">position</code>
 attribute.  I won't go in detail of how to use this technique here, but it's safe to say it
-was challenging and confusing.  Clearly the <code class="jarombek-inline-code">float</code>
+was challenging and confusing.  Clearly the <code className="jarombek-inline-code">float</code>
 attribute wasn't meant for designing layouts<sup>3</sup>.
 </p>
 <p>
@@ -65,21 +65,21 @@ To demonstrate how CSS grid works I designed a UI which displays different runs 
 this past week.  Before using CSS Grid, here is what the UI looked like:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-18-grid-0.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-18-grid-0.png"/>
 </figure>
 <p>
 Now let's start working with CSS Grid.  In order to create a grid, a container HTML element must
-be given the <code class="jarombek-inline-code">display: grid</code> CSS definition.  The columns
-in the grid are defined with <code class="jarombek-inline-code">grid-template-columns</code> declarations and
-the rows are defined with <code class="jarombek-inline-code">grid-template-rows</code> declarations.
+be given the <code className="jarombek-inline-code">display: grid</code> CSS definition.  The columns
+in the grid are defined with <code className="jarombek-inline-code">grid-template-columns</code> declarations and
+the rows are defined with <code className="jarombek-inline-code">grid-template-rows</code> declarations.
 </p>
 <p>
-The following <code class="jarombek-inline-code">.container</code> class holds all the runs
+The following <code className="jarombek-inline-code">.container</code> class holds all the runs
 I went on:
 </p>
 <CodeSnippet language="HTML">
 &lt;body&gt;
-  &lt;div class="container"&gt;
+  &lt;div className="container"&gt;
     ...
   &lt;/div&gt;
 &lt;/body&gt;
@@ -92,15 +92,15 @@ I went on:
 }
 </CodeSnippet>
 <p>
-Two additional things to note about the <code class="jarombek-inline-code">.container</code> class.
-You will notice that I use the <code class="jarombek-inline-code">fr</code> unit, which represents
-a fraction of the space in a CSS Grid container.  The <code class="jarombek-inline-code">
+Two additional things to note about the <code className="jarombek-inline-code">.container</code> class.
+You will notice that I use the <code className="jarombek-inline-code">fr</code> unit, which represents
+a fraction of the space in a CSS Grid container.  The <code className="jarombek-inline-code">
 grid-template-columns</code> declaration specifies two columns with equal widths.  The
-<code class="jarombek-inline-code">grid-gap</code> declaration specifies the space between grid
+<code className="jarombek-inline-code">grid-gap</code> declaration specifies the space between grid
 items.
 </p>
 <p>
-Inside the container there are seven HTML <code class="jarombek-inline-code">&lt;div&gt;</code>
+Inside the container there are seven HTML <code className="jarombek-inline-code">&lt;div&gt;</code>
 elements for the running logs.
 </p>
 <CodeSnippet language="HTML">
@@ -157,7 +157,7 @@ In the initial CSS Grid layout I designed, the columns and rows are specified in
 The result:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-18-grid-1.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-18-grid-1.png"/>
 </figure>
 <p>
 Notice that nothing is filling the grid space with column #2 and row #4.  CSS
@@ -165,8 +165,8 @@ Grid allows for easy declarations of whitespace in a layout.
 </p>
 <p>
 One issue with the above code is it's quite lengthy for such a simple layout.  To make a grid
-definition less verbose, the CSS properties <code class="jarombek-inline-code">grid-area</code>
-and <code class="jarombek-inline-code">grid-template-areas</code> are used.  The following
+definition less verbose, the CSS properties <code className="jarombek-inline-code">grid-area</code>
+and <code className="jarombek-inline-code">grid-template-areas</code> are used.  The following
 code creates the same exact layout as the previous one:
 </p>
 <CodeSnippet language="CSS">
@@ -192,14 +192,14 @@ code creates the same exact layout as the previous one:
 .run-6-13-0 { grid-area: g; }
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">grid-area</code> gives each grid item a unique identifier and
-<code class="jarombek-inline-code">grid-template-areas</code> defines the pattern for the grid.
+<code className="jarombek-inline-code">grid-area</code> gives each grid item a unique identifier and
+<code className="jarombek-inline-code">grid-template-areas</code> defines the pattern for the grid.
 Note that the grid area with column #2 and row #4 is declared with the
-<code class="jarombek-inline-code">.</code> token, denoting an empty grid space.
+<code className="jarombek-inline-code">.</code> token, denoting an empty grid space.
 </p>
 <p>
-<code class="jarombek-inline-code">grid-template-columns</code> and
-<code class="jarombek-inline-code">grid-template-rows</code> are powerful because
+<code className="jarombek-inline-code">grid-template-columns</code> and
+<code className="jarombek-inline-code">grid-template-rows</code> are powerful because
 you can give unique identifiers to each line in between grid items.  These unique
 identifiers are used within the grid items CSS declaration block for placement in the grid.
 Here are unique grid edge identifiers in action:
@@ -252,15 +252,15 @@ Here are unique grid edge identifiers in action:
 The result:
 </p>
 <figure>
-<img class="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-18-grid-2.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-18-grid-2.png"/>
 </figure>
 <p>
 From all these examples, you may have noticed that each grid item stretches to fit its grid
-position.  This behavior comes from each items <code class="jarombek-inline-code">align-self</code>
-and <code class="jarombek-inline-code">justify-self</code> properties, which default to
-<code class="jarombek-inline-code">stretch</code><sup>5</sup>.  You can declare these properties
+position.  This behavior comes from each items <code className="jarombek-inline-code">align-self</code>
+and <code className="jarombek-inline-code">justify-self</code> properties, which default to
+<code className="jarombek-inline-code">stretch</code><sup>5</sup>.  You can declare these properties
 with different values to change their behavior<sup>6</sup> (I often use
-<code class="jarombek-inline-code">center</code> which retains the shape of the original HTML
+<code className="jarombek-inline-code">center</code> which retains the shape of the original HTML
 element).
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
