@@ -1,34 +1,34 @@
 <div>
 <p>
 Last summer, I wrote an article about <a href="https://jarombek.com/blog/jun-18-2018-css-grid">CSS Grid</a>.
-CSS Grid is a new web page layout module introduced in 2017.  Today I’m writing about Flexbox, another new
+CSS Grid is a new web page layout module introduced in 2017.  Today I'm writing about Flexbox, another new
 web page layout module released to new browsers in 2017<sup>1</sup>.  While CSS Grid is a two-dimensional
 system used to create rigid layouts, Flexbox is a one-dimensional system used to create flexible layouts with
-dynamic resizing of elements.  Let’s go over the basics!
+dynamic resizing of elements.  Let's go over the basics!
 </p>
 <SectionTitle title="What is Flexbox">What is Flexbox?</SectionTitle>
 <Definition word="Flexbox">
-Flexbox is a one-dimensional layout system that allows a container element’s children to dynamically resize and
+Flexbox is a one-dimensional layout system that allows a container element's children to dynamically resize and
 order themselves based on their parents size<sup>2</sup>.  Flexbox can be used to create vertical and horizontal
 layouts with one or many rows.  While CSS Grid is better at creating rigid grids, Flexbox excels when items
 need to be dynamically resized.  Along with CSS Grid, Flexbox was introduced in 2017.
 </Definition>
 <p>
 Flexbox is currently supported by all major desktop and mobile browsers, covering 98.6% of online traffic
-(as of August 2019)<sup>3</sup>.  It’s browser integration is further along than CSS Grid, which covers 93.2%
+(as of August 2019)<sup>3</sup>.  It's browser integration is further along than CSS Grid, which covers 93.2%
 of online traffic.
 </p>
 <p>
 Flexbox layouts consist of a flex container and one or more flex items.  The parent element in a Flexbox layout
-is the flex container.  Flex containers contain the <code className="jarombek-inline-code">display: flex</code>
-CSS declaration.  Direct children of the flex container are called flex items.  The next section walks through
+is called a flex container.  Flex containers contain the <code className="jarombek-inline-code">display: flex</code>
+CSS declaration.  Direct children of flex containers are called flex items.  The next section walks through
 some simple Flexbox layouts.
 </p>
 <SectionTitle title="Flexbox Layout Examples">Flexbox Layout Examples</SectionTitle>
 <p>
 I created a simple HTML blueprint called <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/
 2019/08-Aug/8-24-flexbox/flex.html">flex.html</a> to help demonstrate Flexbox layouts.  It displays a list
-of the top ten programming languages based on the number of lines I’ve coded in 2019.  Here is the first
+of the top ten programming languages based on the number of lines I've coded in 2019.  Here is the first
 Flexbox layout:
 </p>
 <figure>
@@ -68,11 +68,11 @@ To create this layout, I used the following styles.  I omitted all the styles fo
 }
 </CodeSnippet>
 <p>
-I’m using Sass for my stylesheets to better represent the hierarchy of flex containers and flex items,
+I'm using Sass for my stylesheets to better represent the hierarchy of flex containers and flex items,
 along with the help of mixins and <code className="jarombek-inline-code">for</code> loops.  I also included
-CSS declarations with <code className="jarombek-inline-code">-ms-*</code> prefixes so that Flexbox can work
-with Internet Explorer<sup>4</sup>.  IE versions 10 and 11 supports an older spec of Flexbox which is
-specified with these declaration prefixes.
+CSS declarations with <code className="jarombek-inline-code">-ms-</code> prefixes so that Flexbox can work
+with Internet Explorer<sup>4</sup>.  IE versions 10 and 11 support an older spec of Flexbox which is
+specified with these prefixes.
 </p>
 <p>
 The outer flex container specifies the y-axis as the main axis, so the languages are displayed vertically.
@@ -132,7 +132,7 @@ Here are the new styles for this layout:
 </CodeSnippet>
 <p>
 <code className="jarombek-inline-code">flex-direction</code> was altered from <code className="jarombek-inline-code">column</code>
-to <code className="jarombek-inline-code">row</code> in order to use the x-axis.  I made sure that the flex items
+to <code className="jarombek-inline-code">row</code> in order to display the items horizontally.  I made sure that the flex items
 went off the screen instead of moving onto the next line with the <code className="jarombek-inline-code">flex-wrap: nowrap</code>
 declaration.  In the flex item, I added new flex attributes which determine the size of the flex item.
 The next layout simply allows flex items to move onto the next line inside the flex container.
@@ -177,7 +177,7 @@ The next layout simply allows flex items to move onto the next line inside the f
 <p>
 If you change the screen size with these styles applied, you will notice how the flex items move around
 and resize to find room.  The following layout changes the way spacing is distributed around flex items
-and don’t allow them to grow in size above their natural width:
+and prohibits flex items from growing in size above their natural width:
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-24-19-flexbox-4.png"/>
@@ -189,9 +189,9 @@ and don’t allow them to grow in size above their natural width:
   overflow-x: hidden;
 
   // The attribute 'flex-flow' is shorthand for flex-direction and flex-wrap.  Define the main axis
-  // as the x-axis and allow flex item to wrap onto multiple lines.
+  // as the x-axis and allow flex items to wrap onto multiple lines.
   flex-flow: row wrap;
-  // Define the flex items alignment along the main axis, in this case x-axis.  space-around
+  // Define the flex items alignment along the main axis, in this case the x-axis.  space-around
   // specifies that items are evenly distributed in the line they appear on.
   justify-content: space-around;
 
