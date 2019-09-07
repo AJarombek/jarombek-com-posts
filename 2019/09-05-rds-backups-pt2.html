@@ -119,14 +119,14 @@ resource "aws_lambda_function" "rds-backup-lambda-function" {
 </CodeSnippet>
 <p>
 The first thing you will notice is that my <a href="https://jarombek.com/blog/sep-3-2018-terraform#infrastructure-as-code-(iac)">IaC</a>
-is applied to my production and development environments depending on the <code class="jarombek-inline-code">
+is applied to my production and development environments depending on the <code className="jarombek-inline-code">
 var.prod</code> variable.  Both production and development databases live in the same VPC and subnets, so
-I grab the VPC and subnet information with the <code class="jarombek-inline-code">data</code> code blocks.
+I grab the VPC and subnet information with the <code className="jarombek-inline-code">data</code> code blocks.
 I also grab the database information for the specified environment.
 </p>
 <p>
 When the <a href="https://jarombek.com/blog/jun-17-2019-terraform-module">Terraform module</a> first executes,
-the <code class="jarombek-inline-code">archive_file</code> code blocks executes.  <code class="jarombek-inline-code">archive_file</code>
+the <code className="jarombek-inline-code">archive_file</code> code blocks executes.  <code className="jarombek-inline-code">archive_file</code>
 zips the functions code because AWS Lambda expects source code to be uploaded in a <strong>zip</strong> file.
 This zip file includes a <strong>lambda.py</strong> file containing the entry point to the lambda function, a
 <strong>backup.sh</strong> file which creates a SQL backup file from the RDS instance, and a <strong>mysqldump</strong>
@@ -134,8 +134,8 @@ binary which connects to MySQL and dumps the database contents into a SQL file. 
 and Bash files momentarily.
 </p>
 <p>
-The <code class="jarombek-inline-code">resource</code> block in the Terraform code defines the AWS lambda function.
-In my production environment the lambda function is named <code class="jarombek-inline-code">SaintsXCTFMySQLBackupPROD</code>
+The <code className="jarombek-inline-code">resource</code> block in the Terraform code defines the AWS lambda function.
+In my production environment the lambda function is named <code className="jarombek-inline-code">SaintsXCTFMySQLBackupPROD</code>
 and it uses the Python 3 runtime.  I pass the RDS instance domain name as an environment variable to the
 functions runtime environment.  This is used to connect to the database.  The domain name can also be obtained
 programmatically in the lambda function, however a <a href="https://docs.aws.amazon.com/vpc/latest/userguide/
@@ -170,8 +170,8 @@ resource "aws_iam_role_policy_attachment" "lambda-role-policy-attachment" {
 }
 </CodeSnippet>
 <p>
-The <code class="jarombek-inline-code">rds-backup-lambda-policy</code> IAM policy is attached to the
-<code class="jarombek-inline-code">saints-xctf-rds-backup-lambda-role</code> IAM role, which in turn is
+The <code className="jarombek-inline-code">rds-backup-lambda-policy</code> IAM policy is attached to the
+<code className="jarombek-inline-code">saints-xctf-rds-backup-lambda-role</code> IAM role, which in turn is
 bound to the lambda function.  The IAM policy grants the lambda function access to Secrets Manager, S3,
 RDS, and Network Interfaces in the VPC.  The Network Interface access is required for the lambda function
 to connect to my VPC<sup>4</sup>.
@@ -293,8 +293,8 @@ def create_backup(event, context):
   return True
 </CodeSnippet>
 <p>
-<code class="jarombek-inline-code">subprocess.check_call()</code> invokes the Bash script which creates the
-database backup SQL file.  The bash script only backs up the <code class="jarombek-inline-code">saintsxctf</code>
+<code className="jarombek-inline-code">subprocess.check_call()</code> invokes the Bash script which creates the
+database backup SQL file.  The bash script only backs up the <code className="jarombek-inline-code">saintsxctf</code>
 database within my MySQL RDS instance:
 </p>
 <CodeSnippet language="Bash">
@@ -380,7 +380,7 @@ Protecting sensitive data is paramount when developing software.  To avoid hard 
 in my source code, I utilized AWS Secrets Manager to store my database credentials.  As I previously showed,
 the Python lambda function grabs the RDS database credentials from Secrets Manager via the AWS SDK.  The
 following IaC stores RDS credentials in Secrets Manager through a command line variable
-<code class="jarombek-inline-code">rds_secrets</code>.
+<code className="jarombek-inline-code">rds_secrets</code>.
 </p>
 <CodeSnippet language="HCL">
 locals {
