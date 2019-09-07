@@ -1,14 +1,14 @@
 <div>
 <p>
 In my <a href="https://jarombek.com/blog/sep-3-2019-rds-backups-pt1">previous article</a> I discussed my
-existing AWS infrastructure and the additional resources needed to automate RDS instance backups using a
-lambda function.  In this article I create those additional resources and further explain my design decisions.
-Finally, I test the lambda function and show the backup file in my S3 bucket.
+existing AWS infrastructure and the additional resources needed to automate backups for a RDS MySQL instance using a
+lambda function.  In this article I'll create those additional resources and further explain my design decisions.
+Finally, I'll test the lambda function and show the backup file in my S3 bucket.
 </p>
 <SectionTitle title="Building the Additional Infrastructure">Building the Additional Infrastructure</SectionTitle>
 <p>
-The lambda function for RDS backups is currently implemented for my <a href="https://github.com/AJarombek/
-saints-xctf-infrastructure">SaintsXCTF</a> application.  Before creating the lambda function, all my application
+The lambda function for RDS backups is currently implemented for my <a href="https://www.saintsxctf.com">SaintsXCTF</a>
+  application.  Before creating the lambda function, all my application
 infrastructure was in place.  This includes a VPC with four subnets - two public and two private.  It also
 includes web servers behind a load balancer and a highly available RDS MySQL database.  Here is a diagram
 of my existing infrastructure:
@@ -19,8 +19,8 @@ of my existing infrastructure:
 <p>
 As I discussed in my <a href="https://jarombek.com/blog/sep-3-2019-rds-backups-pt1">last article</a>, there are
 four additional resources needed to implement the lambda function.  The first is the lambda function itself,
-which is placed in the private subnets alongside the RDS instances.  The second is an S3 bucket to store the
-database backup files.  The third is credentials for the database stored in Secrets Manager.  The fourth and
+which is placed in the VPC alongside the RDS instances.  The second is an S3 bucket to store the
+database backup files.  The third is credentials for the database which are stored in Secrets Manager.  The fourth and
 final resource is a VPC endpoint allowing the lambda function to access S3 and Secrets Manager.  We actually
 need two separate VPC endpoints to complete this task.  Here is the infrastructure diagram with the new resources:
 </p>
@@ -120,7 +120,7 @@ resource "aws_lambda_function" "rds-backup-lambda-function" {
 <p>
 The first thing you will notice is that my <a href="https://jarombek.com/blog/sep-3-2018-terraform#infrastructure-as-code-(iac)">IaC</a>
 is applied to my production and development environments depending on the <code className="jarombek-inline-code">
-var.prod</code> variable.  Both production and development databases live in the same VPC and subnets, so
+var.prod</code> variable.  Production and development databases live in the same VPC and subnets, so
 I grab the VPC and subnet information with the <code className="jarombek-inline-code">data</code> code blocks.
 I also grab the database information for the specified environment.
 </p>
@@ -136,7 +136,7 @@ and Bash files momentarily.
 <p>
 The <code className="jarombek-inline-code">resource</code> block in the Terraform code defines the AWS lambda function.
 In my production environment the lambda function is named <code className="jarombek-inline-code">SaintsXCTFMySQLBackupPROD</code>
-and it uses the Python 3 runtime.  I pass the RDS instance domain name as an environment variable to the
+and uses the Python 3 runtime.  I pass the RDS instance domain name as an environment variable to the
 functions runtime environment.  This is used to connect to the database.  The domain name can also be obtained
 programmatically in the lambda function, however a <a href="https://docs.aws.amazon.com/vpc/latest/userguide/
 vpc-nat-gateway.html">NAT Gateway</a> would be required because the lambda function lives in my applications
@@ -173,7 +173,7 @@ resource "aws_iam_role_policy_attachment" "lambda-role-policy-attachment" {
 The <code className="jarombek-inline-code">rds-backup-lambda-policy</code> IAM policy is attached to the
 <code className="jarombek-inline-code">saints-xctf-rds-backup-lambda-role</code> IAM role, which in turn is
 bound to the lambda function.  The IAM policy grants the lambda function access to Secrets Manager, S3,
-RDS, and Network Interfaces in the VPC.  The Network Interface access is required for the lambda function
+RDS, and the Network Interfaces in the VPC.  Network Interface access is required for the lambda function
 to connect to my VPC<sup>4</sup>.
 </p>
 <CodeSnippet language="JSON">
@@ -197,10 +197,10 @@ to connect to my VPC<sup>4</sup>.
 }
 </CodeSnippet>
 <p>
-Further improvement can be done to this policy by restricting RDS and S3 access to certain operations.
+Further improvement can be made to this policy by restricting RDS and S3 access to certain operations.
 </p>
 <p>
-The final piece of my lambda function infrastructure is a CloudWatch trigger<sup>5</sup>.  The following IaC
+The final piece of lambda function infrastructure is a CloudWatch trigger<sup>5</sup>.  The following IaC
 configures a CloudWatch event that invokes the lambda function every morning at 7:00am UTC.
 </p>
 <CodeSnippet language="HCL">
@@ -236,7 +236,7 @@ In the previous section I discussed all the infrastructure required to configure
 Now let’s explore the function source code!
 </p>
 <p>
-The lambda function is written in Python and utilizes the boto3 AWS SDK.  It grabs the database credentials
+The lambda function is written in Python and utilizes the <strong>boto3</strong> AWS SDK.  It grabs the database credentials
 from Secrets Manager, runs a Bash script which calls the <strong>mysqldump</strong> command line utility,
 and uploads the resulting SQL file to an S3 bucket.
 </p>
@@ -324,7 +324,7 @@ updated with a new SQL file.
 <p>
 I configured an S3 bucket in my production and development environments to hold database backups.  The following
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/database/modules/s3">S3
-  infrastructure and IAM policy</a> creates the buckets and gives other AWS resources read and write access
+  infrastructure and IAM policy</a> create the buckets and give other AWS resources read and write access
 to bucket objects (files).
 </p>
 <CodeSnippet language="HCL">
@@ -377,7 +377,7 @@ resource "aws_s3_bucket" "saints-xctf-db-backups" {
 <SectionTitle title="Secrets Manager Credentials">Secrets Manager Credentials</SectionTitle>
 <p>
 Protecting sensitive data is paramount when developing software.  To avoid hard coding credentials anywhere
-in my source code, I utilized AWS Secrets Manager to store my database credentials.  As I previously showed,
+in my source code, I utilized AWS Secrets Manager to store database credentials.  As I previously showed,
 the Python lambda function grabs the RDS database credentials from Secrets Manager via the AWS SDK.  The
 following IaC stores RDS credentials in Secrets Manager through a command line variable
 <code className="jarombek-inline-code">rds_secrets</code>.
@@ -417,7 +417,7 @@ terraform apply -auto-approve -var 'rds_secrets={ username = "saintsxctfprod", p
 A consequence of my AWS Lambda function living in my application VPC (so it can connect to my RDS instance)
 is that it has no access to the internet.  This is a problem when using the AWS SDK, which requires an internet
 connection to access other AWS resources.  Fortunately, Amazon created a solution to this problem called VPC
-endpoints.  VPC endpoints enable access to other AWS services without the need for an internet connection.
+endpoints.  VPC endpoints provide access to other AWS services without the need for an internet connection.
 I use them to connect to Secrets Manager and S3 from my lambda function.
 </p>
 <p>
@@ -501,12 +501,12 @@ lambda function.
 </figure>
 <p>
 There are multiple options for invoking the AWS Lambda function.  One option is to test the function directly
-in the AWS Console.  It can also be invoked programmatically using the AWS CLI or SDKs.  I could enhance the
+in the AWS Console.  Another is to invoke it programmatically using the AWS CLI or SDKs.  I could enhance the
 lambda function by placing it behind API Gateway.  Or I can just wait until 7:00am UTC for the function to be
 invoked via the CloudWatch event.
 </p>
 <p>
-After testing the functions a few times manually, I checked my S3 bucket and saw my <strong>backup.sql</strong>
+After testing the function a few times manually, I checked my S3 bucket and saw the <strong>backup.sql</strong>
 file as expected:
 </p>
 <figure>
@@ -527,7 +527,7 @@ restore the database contents.
 <p>
 Creating an AWS Lambda function that handles RDS MySQL backups involved a lot of moving parts and was more
 complex than I initially anticipated.  The biggest hurdle was getting the function to connect to an RDS instance
-living in a private subnet while simultaneously granting it access to S3 and SecretsManager.  You can view
+living in a private subnet while simultaneously granting it access to S3 and Secrets Manager.  You can view
 the code from this discovery post along with the rest of my application infrastructure on
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure">GitHub</a>.
 </p>
