@@ -1,8 +1,8 @@
 <div>
 <p>
-During free time at work, I’ve been reading a book called <a href="http://shop.oreilly.com/product/0636920083634.do">
+During free time at work, I've been reading a book called <a href="http://shop.oreilly.com/product/0636920083634.do">
 C# 7.0 In a Nutshell</a>.  When I get home, I write <a href="https://jarombek.com/blog?query=c#&page=1">C#</a>
-<a href="https://github.com/AJarombek/misc-code-samples/tree/master/C%23/base">programs</a> based on
+ <a href="https://github.com/AJarombek/misc-code-samples/tree/master/C%23/base">programs</a> based on
 what I learned.  One of the really interesting topics I read about was LINQ (Language Integrated Query),
 which is the integration of query functions and keywords in the C# language<sup>1</sup>.  LINQ can be used
 to query remote data sources such as an RDBMS or local data structures.
@@ -12,18 +12,18 @@ LINQ reminds me of writing PL/SQL, which is a procedural language provided for t
 PL/SQL is a superset of SQL, allowing for looping, variable declarations, conditional logic, error
 handling, and more.  The best feature of PL/SQL is the integration of SQL queries directly into an
 imperative programming language.  Unfortunately, PL/SQL is strictly tied to the Oracle database and
-in my opinion has clunky syntax.  LINQ on the other hand can be used on multiple different databases
-along with local data structures.  C# also has much nicer syntax in my opinion.
+ has clunky syntax in my opinion.  LINQ on the other hand can be used with multiple different databases
+along with local data structures.  Also, in my opinion, C# has much nicer syntax.
 </p>
 <p>
-I’ll save my exploration of integrating LINQ with a remote database for a future article.  Today,
-I’m focusing on LINQ basics with local data structures.
+I'll save my exploration of integrating LINQ with a remote database for a future article.  Today,
+I'm focusing on LINQ basics with local data structures.
 </p>
 <SectionTitle title="Introduction to LINQ">Introduction to LINQ</SectionTitle>
 <p>
-Linq is found in the <code className="jarombek-inline-code">System.Linq</code> namespace in C#.  It
-provides the ability to query enumerable data in local data structures or remote data sources.  LINQ
-queries take in an input sequence and produce an output sequence.  For example, LINQ is available for
+LINQ is found in the <code className="jarombek-inline-code">System.Linq</code> namespace in C#.  LINQ
+ queries consume an input sequence and produce an output sequence.  They provide the ability to query
+ enumerable data in local data structures or remote data sources.  For example, LINQ is available for
 a locally defined dictionary.
 </p>
 <CodeSnippet language="C#">
@@ -35,13 +35,13 @@ Dictionary&lt;string, int> deerSpottedToday = new Dictionary&lt;string, int>
 </CodeSnippet>
 <p>
 This dictionary represents the number of deer I saw walking and driving.  There are two approaches
-for using LINQ with this dictionary.  The first is called fluent syntax, which utilizes chainable
+for using LINQ with this dictionary.  The first approach is called fluent syntax, which utilizes chainable
 static extension methods defined on the <code className="jarombek-inline-code">IEnumerable</code>
 interface<sup>2</sup>.  An extension method is a method added to an existing type without modifying
-the type definition.  The second is called query syntax, which uses native keywords to build queries.
+the type definition.  The second approach is called query syntax, which uses native keywords to build queries.
 </p>
 <p>
-Here is a filtering query performed on the <code className="jarombek-inline-code">deerSpottedToday</code>
+Below is a filtering query performed on the <code className="jarombek-inline-code">deerSpottedToday</code>
 dictionary.  It uses fluent syntax and the <code className="jarombek-inline-code">Where()</code> extension method.
 </p>
 <CodeSnippet language="C#">
@@ -56,11 +56,11 @@ Assert(multipleDeer.Count() == 1);
 <code className="jarombek-inline-code">Where()</code> accepts a delegate (lambda function) as an argument.
 It checks each element in <code className="jarombek-inline-code">deerSpottedToday</code> to see if they
 match the delegate predicate.  Only <code className="jarombek-inline-code">"Mianus River Park"</code>
-matches the predicate because it’s the only dictionary element with a value greater than 1.
+matches the predicate because it's the only dictionary element with a value greater than 1.
 </p>
 <p>
 In this code sample, I called <code className="jarombek-inline-code">Where()</code> directly on the
-<code className="jarombek-inline-code">Enumerable</code> class.  However, it can also be invoked directly
+<code className="jarombek-inline-code">Enumerable</code> class.  However, it's also invokable directly
 on the dictionary instance.  This is because <code className="jarombek-inline-code">Dictionary</code>
 implements <code className="jarombek-inline-code">IEnumerable</code>.  The code above can be shortened
 to use the <code className="jarombek-inline-code">IEnumerable</code> extension method.
@@ -71,7 +71,7 @@ Assert(multipleDeer.Count() == 1);
 </CodeSnippet>
 <p>
 Query syntax uses C# keywords instead of method calls.  This is my favorite aspect of LINQ.  Rewriting
-the fluent syntax method chain above into query syntax results in the following statement:
+the fluent syntax method chain in query syntax results in the following statement:
 </p>
 <CodeSnippet language="C#">
 var multipleDeer =
@@ -82,20 +82,21 @@ var multipleDeer =
 Assert(multipleDeer.Count() == 2);
 </CodeSnippet>
 <p>
-Query syntax is more reminiscent of SQL, although LINQ and SQL have some major differences (as I’ll
-explore in my next article).  Let’s quickly run through the different pieces of this query.
+Query syntax is more reminiscent of SQL, although LINQ and SQL have some major differences (as I'll
+explore in my next article).  Let's quickly run through the different pieces of this query.
 <code className="jarombek-inline-code">from {x} in {y}</code> defines the input sequence for the query
 (<code className="jarombek-inline-code">y</code>) and loops through its contents, which are assigned
 to a variable (<code className="jarombek-inline-code">x</code>). <code className="jarombek-inline-code">
-where {condition}</code> defines a filter for the data, in my case a dictionary item with a value greater
-than 1.  Finally, <code className="jarombek-inline-code">select {z}</code> defines a variable
-(<code className="jarombek-inline-code">z</code>) to hold the output sequence of the query.
+where {condition}</code> defines a filter for the data, in my case a dictionary item must have a value greater
+than 1.  Finally, <code className="jarombek-inline-code">select {z}</code> defines which items
+ (<code className="jarombek-inline-code">z</code>) to will be present in the output sequence of the query.
 </p>
 <p>
-Let’s look at some other operators offered in LINQ.  <code className="jarombek-inline-code">orderby</code>
+Let's look at some other operators offered by LINQ.  <code className="jarombek-inline-code">orderby</code>
 provides the ability to sort the output sequence of the query before returning it.
 </p>
 <CodeSnippet language="C#">
+
 double[] walksPastWeek = { 3.5, 2.48, 3.6, 3.98, 3.59, 1.74, 1.54 };
 
 // Linq query with additional OrderBy() and Select() query operator methods.
@@ -107,7 +108,7 @@ var greaterThanTwoMiles = walksPastWeek.Where(miles => miles > 2)
 Assert(greaterThanTwoMiles.Count() == 5);
 Assert(greaterThanTwoMiles.First() == 2);
 
-// The same fluent syntax query above can be rewritten in query syntax:
+// The fluent syntax query above can be rewritten in query syntax:
 var greaterThanTwoMilesAgain =
   from distance in walksPastWeek
   where distance > 2
@@ -121,6 +122,7 @@ Assert(greaterThanTwoMilesAgain.First() == 2);
 <code className="jarombek-inline-code">orderby {x} descending</code> is used to sort in reverse order.
 </p>
 <CodeSnippet language="C#">
+
 var greaterThanTwoMilesDesc = greaterThanTwoMiles.OrderByDescending(miles => miles);
 
 Assert(greaterThanTwoMilesDesc.First() == 4);
@@ -133,7 +135,7 @@ var greaterThanTwoMilesDescAgain =
 Assert(greaterThanTwoMilesDescAgain.First() == 4);
 </CodeSnippet>
 <p>
-One interesting aspect of LINQ queries is that they don’t produce output sequences when defined.
+One interesting aspect of LINQ queries is that they don't produce output sequences when defined.
 They exhibit deferred execution<sup>3</sup>.  Deferred execution results in some interesting behavior.
 </p>
 <p>
@@ -154,15 +156,16 @@ Assert(deerQuery.Count() == 1);
 // I saw another deer on Cognewaugh Road today.
 deerSpottedThisWeek["Cognewaugh Road"] = 2;
 
-// Due to delayed execution, now there are two locations where more than one deer was spotted.
+// Due to deferred execution, now there are two locations where more than one deer was spotted.
 Assert(deerQuery.Count() == 2);
 </CodeSnippet>
 <p>
-Deferred execution makes LINQ queries reusable on a mutating data structure.  Deferred execution also
+Deferred execution makes LINQ queries reusable for a mutating data structure.  Deferred execution also
 allows LINQ queries to contain local variables that can change between executions.  For example, the
 following query has a configurable <code className="jarombek-inline-code">where</code> clause.
 </p>
 <CodeSnippet language="C#">
+
 // If the values of lexical scope variables referenced in a query change before execution,
 // the query will honor that change.
 int numOfDeer = 2;
@@ -180,8 +183,8 @@ numOfDeer = 3;
 Assert(sameDeerQuery.Count() == 0);
 </CodeSnippet>
 <p>
-If you are curious about learning more about LINQ queries, check out my code on <a href="https://github.com/
-AJarombek/misc-code-samples/blob/master/C%23/base/linq_basics/Queries.cs">GitHub</a>.  There I explore
+If you are curious to learn more about LINQ queries, check out the full code on <a href="https://github.com/
+AJarombek/misc-code-samples/blob/master/C%23/base/linq_basics/Queries.cs">GitHub</a>.  I explore
 grouping, nested queries, combined queries, anonymous types in queries, and more.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
@@ -189,7 +192,7 @@ grouping, nested queries, combined queries, anonymous types in queries, and more
 This article introduced LINQ, a framework that integrates queries into C#.  I decided to write about
 LINQ because it's a feature I believe more programming languages should consider adopting.  So much code
 is based around filtering, mapping, and reducing data.  The more options developers have to accomplish
-that task the better.  Check out my next LINQ article where I discuss integrated queries with LINQ
+these task the better.  Check out my next LINQ article where I discuss integrated queries with LINQ
 and SQL Server.
 </p>
 </div>
