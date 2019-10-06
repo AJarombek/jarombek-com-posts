@@ -1,19 +1,19 @@
 <div>
 <p>
-My <a href="https://jarombek.com/blog/sep-15-2019-linq">previous article</a> explored LINQ, which is
-a module that brings query syntax to C#.  All the LINQ examples in that article queried local data
+My <a href="https://jarombek.com/blog/sep-15-2019-linq">previous article</a> explored LINQ,
+ a module that brings query syntax to C#.  All the examples in that article queried local data
 structures.  While using LINQ on local data is valuable in itself, LINQ can do much more.  LINQ really
-shines when querying remote data sources.  Queries using remote data sources such as a relational
-database are known as integrated queries.  In this article, I'm exploring integrated queries with a
-SQL Server database.  First I'll create the SQL Server database instance with Docker and then query
-it with LINQ.
+shines when used to query remote data sources.  Queries on remote data sources such as relational
+databases are known as integrated queries.  In this article, I explore integrated queries with a
+SQL Server database.  First I create the SQL Server database instance with Docker and then query
+it using LINQ.
 </p>
 <SectionTitle title="SQL Server with Docker">SQL Server with Docker</SectionTitle>
 <p>
 SQL Server is a relational database created and maintained by Microsoft.  It's an enterprise centric
 database comparable to the Oracle database.  In order to work with integrated queries, I set up a SQL
-Server database instance on a Docker container.  This Docker container is run on my local machine and
-queried from my C# code.
+Server database instance on a Docker container.  This Docker container runs on my local machine and is
+ queried from my C# code.
 </p>
 <p>
 Microsoft provides SQL Server Docker container images on their DockerHub repository<sup>1</sup>.
@@ -22,9 +22,9 @@ empty SQL Server database with exposed environment variables that configure pass
 agreements, and more.
 </p>
 <p>
-While this Docker image provides most of the functionality I need, I also want the database to be
-pre-populated with some data.  I found a repository on GitHub created by a Microsoft employee who
-built a similar Docker image with pre-populated SQL Server data<sup>2</sup>.  With this repository
+While this Docker image provides most of the functionality I need, I also want to pre-populate SQL Server
+ with some data.  I found a Microsoft employee's GitHub repository that
+ builds a similar Docker image with pre-populated data<sup>2</sup>.  With this repository
 and the official SQL Server Docker image as my base, I created the following <a href="https://github.com/
 AJarombek/misc-code-samples/blob/master/C%23/base/linq_basics/database/Dockerfile">Dockerfile</a>:
 </p>
@@ -46,7 +46,7 @@ CMD ["bash", "setup-db.sh"]
 </CodeSnippet>
 <p>
 Since this SQL Server database is only used for demo purposes, I have the database password hard-coded
-in the Dockerfile.  Most of the heavy lifting is done in the base <code>mcr.microsoft.com/mssql/server:2017-latest-ubuntu</code>
+in the Dockerfile.  Most of the heavy lifting is done in the base <code className="jarombek-inline-code">mcr.microsoft.com/mssql/server:2017-latest-ubuntu</code>
 image and the <a href="https://github.com/AJarombek/misc-code-samples/blob/master/C%23/base/linq_basics/
 database/setup-db.sh">setup-db.sh</a> Bash script.  The Bash script starts the database and populates it with data.
 </p>
@@ -72,7 +72,7 @@ fg %1
 The final piece is <a href="https://github.com/AJarombek/misc-code-samples/blob/master/C%23/base/linq_basics/
 database/createDB.sql">createDB.sql</a> which creates database tables and populates them with data.  For
 this demo, I'm using programming language statistics for my data.  There are two tables in the database -
-one describing a programming language and another containing the number of lines coded in a language over
+one describing programming languages and another containing the number of lines coded in a language over
 the course of a year.  Here is an abbreviated version of the SQL script:
 </p>
 <CodeSnippet language="SQL">
@@ -136,12 +136,12 @@ database instance.
 </p>
 <SectionTitle title="Establishing a Connection Between SQL Server and C#">Establishing a Connection Between SQL Server and C#</SectionTitle>
 <p>
-  To work with SQL Server in C#, we first need to open a connection to the database.  For .NET Core,
-  the package used to establish this connection is <code className="jarombek-inline-code">Microsoft.EntityFrameworkCore.SqlServer</code>.
-  You can easily install this package with nuget.  The class in this package used to create a database
-  session and query the tables is <code className="jarombek-inline-code">DbContext</code>.  I created a
-  custom <code className="jarombek-inline-code">LanguageContext</code> class which extends
-  <code className="jarombek-inline-code">DbContext</code>:
+To work with SQL Server in C#, we first need to open a connection to the database.  For .NET Core,
+the package used to establish this connection is <code className="jarombek-inline-code">Microsoft.EntityFrameworkCore.SqlServer</code>.
+You can easily install this package with nuget.  The class in this package used to create a database
+session and query the tables is <code className="jarombek-inline-code">DbContext</code>.  I created a
+custom <code className="jarombek-inline-code">LanguageContext</code> class which extends
+<code className="jarombek-inline-code">DbContext</code>:
 </p>
 <CodeSnippet language="C#">
 /// &lt;summary>
@@ -217,12 +217,12 @@ public class CodeWritten
 </CodeSnippet>
 <p>
 Model objects are relatively simple, holding the columns in their respective tables.  However, they
-also hold their tables relationships such as its foreign keys.  This allows for table join operations
+also hold their tables relationships such as foreign keys.  This allows for table join operations
 to be performed in C#.
 </p>
 <p>
 One potential source of confusion is that <code className="jarombek-inline-code">DbSet</code> caches a
-tables contents after performing a query.  This means that it may not reflect changes made to the
+tables contents after performing a query.  This means that querying <code className="jarombek-inline-code">DbSet</code> may not reflect changes made to the
 database during the lifetime of a <code className="jarombek-inline-code">LanguageContext</code> instance.
 I won't be inserting, updating, or deleting any data in SQL Server during the following examples, so
 we don't need to worry about this scenario.
@@ -244,11 +244,23 @@ using (var context = new LanguageContext())
 </CodeSnippet>
 <p>
 <code className="jarombek-inline-code">using</code> will properly instantiate and tear down the database
-context.  From <code className="jarombek-inline-code">context</code> the <code className="jarombek-inline-code">LanguageSet</code>
-and <code className="jarombek-inline-code">CodeWrittenSet</code> properties are accessible.  The following
+context.  <code className="jarombek-inline-code">LanguageSet</code>
+ and <code className="jarombek-inline-code">CodeWrittenSet</code> are accessible from <code className="jarombek-inline-code">context</code>.  The following
 code confirms that both contain the expected data counts (each language has lines written statistics for six years).
 </p>
 <CodeSnippet language="C#">
+var languages = context.LanguageSet.ToList();
+var codeWritten = context.CodeWrittenSet.ToList();
+
+Assert(languages.Count == 18);
+Assert(codeWritten.Count == 18 * 6);
+</CodeSnippet>
+<p>
+Now let's begin using LINQ.  The following queries get the newest and oldest languages in the
+ <code className="jarombek-inline-code">Language</code> table.
+</p>
+<CodeSnippet language="C#">
+
 var oldestLanguage = context.LanguageSet.OrderBy(language => language.ReleaseYear).First();
 Assert(oldestLanguage.Name == "SQL");
 
@@ -288,6 +300,7 @@ Assert(languageCodedMostThisYear.Language == "Python");
 Assert(languageCodedMostThisYear.LanguageReference.ReleaseYear == 1991);
 </CodeSnippet>
 <CodeSnippet language="SQL">
+
 -- Retrieve the code written statistics for this year, ordered by the most coded languages.
 SELECT * FROM CodeWritten
 WHERE Year = 2019
@@ -328,6 +341,7 @@ var javaLanguages =
   select codeWritten;
 </CodeSnippet>
 <CodeSnippet language="SQL">
+
 -- Get all the code written statistics for languages that start with the letter J.
 SELECT * FROM CodeWritten WHERE Language LIKE 'J%';
 
@@ -338,6 +352,7 @@ SELECT * FROM CodeWritten WHERE Language IN ('Java', 'JavaScript');
 LINQ also has equivalent methods for SQL aggregate functions such as <code className="jarombek-inline-code">SUM()</code>.
 </p>
 <CodeSnippet language="C#">
+
 // Query the code written statistics and group by the language name.  Retrieve the sum of the
 // lines of code written for each language.
 var languageTotalStats =
