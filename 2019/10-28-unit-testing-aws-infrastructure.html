@@ -1,24 +1,24 @@
 <div>
 <p>
-From October 2018 to May 2019, I converted moved the infrastructure for both my websites to
+From October 2018 to May 2019, I moved the infrastructure for both my websites to
 <a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a>.   The process for building and tearing
 down this infrastructure is automated with IaC, specifically <a href="https://jarombek.com/
-blog?query=terraform&page=1">Terraform</a>.  I’ve had a lot of fun working with Terraform and learning
+blog?query=terraform&page=1">Terraform</a>.  I've had a lot of fun working with Terraform and learning
 the different design patterns for infrastructure in the cloud.
 </p>
 <p>
 After my infrastructure was built, I realized I needed a way to test that my IaC was behaving as
-expected.  The obvious solution to this requirement was to build a unit test suite.  I implemented
+expected.  The obvious solution to this requirement was a unit test suite.  I implemented
 this unit test suite in <a href="https://jarombek.com/blog?query=python&page=1">Python</a> with the
-help of the AWS SDK.  This article first explains why I took the time to write unit tests, followed
-by a walkthrough the basics of testing AWS infrastructure in Python.
+help of the AWS SDK.  This article explains why I took the time to write unit tests and
+ walks through of the basics of testing AWS infrastructure in Python.
 </p>
 <SectionTitle title="Why Build Unit Tests">Why Build Unit Tests?</SectionTitle>
 <p>
-Over the three and a half years I’ve been a software engineer, I’ve slowly realized how valuable unit
+Over the three and a half years I've been a software engineer, I've slowly realized how valuable unit
 tests are.  In my early applications, unit tests were noticeably absent.  Unit tests finally started
-appearing in my repositories this spring.  I made it mandatory for new applications to have full unit
-test coverage and began adding tests to older applications still being maintained.
+appearing in my repositories this spring.  Now it is mandatory for new applications to have full unit
+test coverage and I've begun adding tests to older applications.
 </p>
 <Definition word="Unit Test">
 A Unit Test is an assertion that a unit of code is working as expected<sup>1</sup>.  Units of code
@@ -28,7 +28,7 @@ This includes (but is not limited to) code commits, application deployments, and
 <p>
 There are three main reasons why I hopped on the unit test bandwagon.  The first reason is that writing
 unit tests helps catch poorly written or useless code.  When I write code, my brain tends to wander and
-get sidetracked.  Often I write a section of code over the course of days or weeks.  I usually don’t
+get sidetracked.  Often I write a section of code over the course of days or weeks.  I usually don't
 have the time to go back through every line of code and make sure its well written or still being used.
 However, when I write unit tests and have to formulate test scenarios for every line of a program, smelly
 code becomes easy to identify.
@@ -49,12 +49,12 @@ I firmly believe the upfront costs of building unit tests are worthwhile in the 
 <SectionTitle title="Unit Testing AWS Infrastructure">Unit Testing AWS Infrastructure</SectionTitle>
 <p>
 I wrote unit tests for my Terraform infrastructure using Python and the <strong>boto3</strong> AWS SDK.
-I took two separate approaches to setting up these unit tests.  For my <a href="https://github.com/AJarombek/
+I took two different approaches for setting up these unit tests.  For my <a href="https://github.com/AJarombek/
 global-aws-infrastructure">global</a> and <a href="https://github.com/AJarombek/saints-xctf-infrastructure">
 SaintsXCTF</a> AWS infrastructure, I reinvented the wheel and created custom test suites.  By the time I
 wrote my <a href="https://github.com/AJarombek/jarombek-com-infrastructure">jarombek.com</a> infrastructure,
-I figured there must be a better approach.  I decided to scrap the custom test suite and used Python’s
-built-in <strong>unittest</strong> library instead.  I’ll demonstrate both approaches next, followed by
+I figured there must be a better approach.  I decided to scrap the custom test suite and used Python's
+built-in <strong>unittest</strong> library instead.  I'll demonstrate both approaches next, followed by
 some unit test function examples.
 </p>
 <SectionTitle title="Custom Approach">Custom Approach</SectionTitle>
@@ -65,6 +65,8 @@ AJarombek/saints-xctf-infrastructure/blob/master/test/src/masterTestSuite.py">Py
 the unit tests I wrote:
 </p>
 <CodeSnippet language="Python">
+# masterTestSuite.py
+
 import masterTestFuncs as Test
 from bastion import bastionTestSuite as Bastion
 from acm import acmTestSuite as ACM
@@ -87,13 +89,15 @@ tests = [
 Test.testsuite(tests, "Master Test Suite")
 </CodeSnippet>
 <p>
-This entrypoint file is referred to as the “master test suite.”  The master test suite invokes child test
+This entrypoint file is referred to as the "master test suite."  The master test suite invokes child test
 suites which are grouped by AWS resource type.  For example, all my <a href="https://github.com/AJarombek/
 saints-xctf-infrastructure/blob/master/test/src/acm/acmTestSuite.py">ACM (AWS Certificate Manager)
 infrastructure tests</a> are found in <code className="jarombek-inline-code">acmTestSuite</code> and are
 invoked by calling <code className="jarombek-inline-code">ACM.acm_test_suite</code>.
 </p>
 <CodeSnippet language="Python">
+# acmTestSuite.py
+
 import masterTestFuncs as Test
 from acm import acmTestFuncs as Func
 
@@ -113,7 +117,7 @@ def acm_test_suite() -> bool:
 </CodeSnippet>
 <p>
 Notice that the master test suite and ACM test suite have the same structure.  Both test suites contain
-a list of unit tests and a function which executes the tests.  The main difference is that the master test
+a list of tests and a function which executes the tests.  The main difference is that the master test
 suite executes a list of <strong>test suites</strong> while the ACM test suite executes a list of
 <strong>unit tests</strong>.  Test suites are executed with the <code className="jarombek-inline-code">
 Test.testsuite()</code> function and unit tests are executed with the <code className="jarombek-inline-code">
@@ -170,7 +174,7 @@ A nice aspect of my <a href="https://github.com/AJarombek/saints-xctf-infrastruc
 masterTestFuncs.py">custom approach</a> is that a child test suite can be run as if it's the master test suite.  In this scenario, only the tests within the child test suite will execute.
 </p>
 <p>
-However, reinventing the unit test wheel didn’t add much value to my tests.  Therefore, I decided to try
+However, reinventing the unit test wheel didn't add much value to my tests.  Therefore, I decided to try
 a different approach for my <strong>jarombek.com</strong> infrastructure tests.
 </p>
 <SectionTitle title="unittest Approach">unittest Approach</SectionTitle>
@@ -324,11 +328,11 @@ If I could start my infrastructure unit tests over from scratch, I would write t
 <strong>unittest</strong> framework.  I believe that developers should only reinvent the wheel under two
 scenarios - as a learning experience or if they think they can improve the existing technology.  While it
 was a good learning experience creating a unit test suite from scratch, it was very barebones functionality
-wise.  Because of this, it didn’t assist me in learning the underworkings of test frameworks such as
+wise.  Because of this, it didn't assist me in learning the underworkings of test frameworks such as
 <strong>unittest</strong>.
 </p>
 <p>
-I should’ve spent more time exploring the different approaches to Python unit tests before jumping into
+I should've spent more time exploring the different approaches to Python unit tests before jumping into
 a custom solution.  There a many different unit testing frameworks for each programming language, and I
 will make sure to explore all my options before choosing one in future projects.
 </p>
