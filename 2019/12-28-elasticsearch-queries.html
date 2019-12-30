@@ -3,15 +3,15 @@
 <a href="https://jarombek.com/blog/sep-15-2019-elasticsearch#elasticsearch">Elasticsearch</a> is a
 search and analytics engine.  It's also a NoSQL database that holds JSON documents.  These documents
 are stored in an <a href="https://jarombek.com/blog/oct-18-2019-elasticsearch-analyzer#inverted-index">
-inverted index</a> and can be queried with JSON syntax.  In my <a href="https://jarombek.com/blog/
+inverted index</a> and are queried with JSON syntax.  In my <a href="https://jarombek.com/blog/
 oct-18-2019-elasticsearch-analyzer">previous article</a> I explored analyzers and the process of storing
-documents in an inverted index.  This article focuses on querying these documents.
+documents in an inverted index.  This article focuses on querying documents with JSON.
 </p>
 <SectionTitle title="Components of Analyzers">Basic Queries</SectionTitle>
 <p>
 I wrote twenty queries based on the knowledge I gained reading <a href="https://www.packtpub.com/
 big-data-and-business-intelligence/learning-elastic-stack-60">“Learning Elastic Stack 6.0"</a> by Pranav
-Shukla.  All twenty query an index called <code className="jarombek-inline-code">race</code> which contains
+Shukla.  All twenty queries search an index called <code className="jarombek-inline-code">race</code>, which contains
 races I ran along with upcoming races I'm planning to run.  The documents in this index are listed below:
 </p>
 <CodeSnippet language="JSON" scroll="Y">
@@ -310,7 +310,7 @@ Result:
 <SectionTitle title="Date Range Query">3) Date Range Query</SectionTitle>
 <p>
 Range queries can also work with date types.  Date types have a special keyword
-<code className="jarombek-inline-code">now</code> that can be used in range queries.
+<code className="jarombek-inline-code">now</code> that is used in range queries.
 <code className="jarombek-inline-code">now</code> represents the current date, and time can be added
 or deleted from <code className="jarombek-inline-code">now</code><sup>1</sup>.
 </p>
@@ -372,8 +372,9 @@ Result:
 <SectionTitle title="Term Query Constant Score">6) Term Query Constant Score</SectionTitle>
 <p>
 You may have noticed that the prior query result gave the resulting document a score.  This is helpful
-for text searches, however for term searches there isn't much benefit.  The following query is the same
-as the last one, except it gives the documents returned a constant score.
+for text searches, since it determines which results are most relevant.  However, for term searches there
+ isn't much benefit, because every document contains the exact same term.  The following query is the same
+ as the last one, except it gives the documents returned a constant score.
 </p>
 <CodeSnippet language="JSON">
 {
@@ -474,7 +475,7 @@ Result:
 </CodeSnippet>
 <SectionTitle title="Match Query with Two Words">9) Match Query with Two Words</SectionTitle>
 <p>
-When a full text search is performed with multiple words in the query, resulting documents will contain at
+When a full text search is performed with multiple words in the query, resulting documents must contain at
 least one of the words.  You can imagine the query containing <strong>OR</strong> operators between each word.
 </p>
 <CodeSnippet language="JSON">
@@ -551,7 +552,7 @@ to query #9, which implicitly OR'd the words in the query.
 Text searches provide a <code className="jarombek-inline-code">minimum_should_match</code> parameter that
 specifies the number of terms in the query that must match terms in a field.  The following query requires
 documents to have a <code className="jarombek-inline-code">name</code> field containing two of the words
-in <strong>NYRR #1 #2 #3</strong>.
+in <strong>["NYRR", "#1", "#2", "#3"]</strong>.
 </p>
 <CodeSnippet language="JSON">
 {
@@ -586,9 +587,9 @@ that fuzzy matches are an expensive operation in Elasticsearch<sup>2</sup>.
 </CodeSnippet>
 <SectionTitle title="Match Phrase Query">14) Match Phrase Query</SectionTitle>
 <p>
-Match phrase queries require that an entire phrase must exist in a document.  The following query will
-match all documents that have <code className="jarombek-inline-code">location</code> fields whose values
-end with <strong>"York, NY"</strong>.  It matches all races run in New York, NY.
+Match phrase queries require that an entire phrase exists in a document.  The following query
+ matches all documents with a <code className="jarombek-inline-code">location</code> field whose value
+ends with <strong>"York, NY"</strong>.  It matches all races in New York, NY.
 </p>
 <CodeSnippet language="JSON">
 {
@@ -603,10 +604,10 @@ end with <strong>"York, NY"</strong>.  It matches all races run in New York, NY.
 </CodeSnippet>
 <SectionTitle title="Slop Match Phrase Query">15) Slop Match Phrase Query</SectionTitle>
 <p>
-When using match phrase queries, you can be lenient about missing words with the
+When using match phrase queries, leniency towards missing words is possible with the
 <code className="jarombek-inline-code">slop</code> parameter.  For example, the following query matches
 documents even if their <code className="jarombek-inline-code">name</code> field contains two terms missing
-in the phrase query.
+in the phrase query.  The missing terms are <strong>"at"</strong> and <strong>"the"</strong>.
 </p>
 <CodeSnippet language="JSON">
 {
@@ -694,7 +695,7 @@ Result:
 </CodeSnippet>
 <SectionTitle title="Bool Must Query">17) Bool Must Query</SectionTitle>
 <p>
-Bool queries allow for complex document querying.  They are the SQL equivalents are the
+Bool queries allow for complex document querying.  They are the SQL equivalents of the
 <code className="jarombek-inline-code">WHERE</code> clause along with <code className="jarombek-inline-code">AND</code>
 and <code className="jarombek-inline-code">OR</code> operands<sup>3</sup>.  The following query uses a
 <code className="jarombek-inline-code">must</code> clause, which contains a list of queries that a document
@@ -758,9 +759,9 @@ Result:
 </CodeSnippet>
 <SectionTitle title="Bool Filter Query">18) Bool Filter Query</SectionTitle>
 <p>
-When using bool queries, the <code className="jarombek-inline-code">filter</code> clause is the same as
-the <code className="jarombek-inline-code">must</code> clause except that it doesn't score the returned
-documents.  All documents will have a score of zero.
+When using bool queries, the <code className="jarombek-inline-code">filter</code> clause is equivalent to
+ the <code className="jarombek-inline-code">must</code> clause except that it doesn't score the returned
+documents.  All documents are given a score of zero.
 </p>
 <CodeSnippet language="JSON">
 {
@@ -811,9 +812,9 @@ Result:
 </CodeSnippet>
 <SectionTitle title="Bool Must and Should Query">19) Bool Must and Should Query</SectionTitle>
 <p>
-While the <code className="jarombek-inline-code">must</code> clause is equivalent to a SQL
-<code className="jarombek-inline-code">AND</code>, the <code className="jarombek-inline-code">should</code>
-clause is equivalent to a SQL <code className="jarombek-inline-code">OR</code>.
+While <code className="jarombek-inline-code">must</code> is equivalent to a SQL
+<code className="jarombek-inline-code">AND</code>, <code className="jarombek-inline-code">should</code>
+ is equivalent to a SQL <code className="jarombek-inline-code">OR</code>.
 </p>
 <CodeSnippet language="JSON">
 {
@@ -879,8 +880,8 @@ This is accomplished with the <code className="jarombek-inline-code">must_not</c
 </CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-This article discusses some of the building blocks for querying Elasticsearch.  In my next
-Elasticsearch article I'll wrap up my exploration of the Elasticsearch portion of the ELK stack by discussing
+This article discussed some of the building blocks for querying Elasticsearch.  In my next
+Elasticsearch article, I'll wrap up the Elasticsearch portion of the ELK stack by discussing
 data aggregations.  All the code from this article is available on <a href="https://github.com/AJarombek/
 jarombek-com-sources/tree/master/2019/12-Dec/12-28-elasticsearch-queries">GitHub</a>.
 </p>
