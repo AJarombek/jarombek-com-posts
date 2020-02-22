@@ -1,14 +1,14 @@
 <div>
 <p>
 <a href="https://jarombek.com/blog?query=s3&page=1">Amazon S3</a> (Simple Storage Service) is an AWS service
-for storing objects.  Since objects are files, S3 can be viewed as a filesystem accessible over HTTP.
-I often use S3 for storing images, fonts, and other assets for my applications.  Some examples include my
+for storing objects.  Since objects are files, S3 can be viewed as a filesystem accessible over HTTP.  I often
+ use S3 for storing images, fonts, and other assets for my applications.  Some examples include my
 <a href="https://github.com/AJarombek/jarombek-com-infrastructure/tree/master/jarombek-com-assets">
 jarombek.com assets</a> and my <a href="https://github.com/AJarombek/global-aws-infrastructure/tree/
 master/s3">global shared assets</a>.
 </p>
 <p>
-Since Amazon S3 stores files and acts as a filesystem, it can also be used to host a static website.
+Since Amazon S3 stores files and acts as a filesystem, it can also be used to host static websites.
 </p>
 <ComparisonTable title="Static vs. Dynamic Websites">
 <ComparisonTableEntry>
@@ -24,10 +24,10 @@ receives.  In general, whatever exists in the front-end source code is what gets
 </p>
 <p>
 Thanks to cloud storage systems like Amazon S3, static websites can be an easy and inexpensive option for
-hosting a website.  One downside of static websites is that any logic to make the site dynamic must be
+hosting a website.  One downside of static websites is that any logic which makes a site dynamic must be
 performed on the client-side, not the server-side<sup>1</sup>.  Database and API requests can still be
 made, but they must be performed by the front-end and not delegated to a back-end server.  This can help
-reduce complexity at the cost of less flexibility.  Static websites that provide dynamic logic with
+reduce complexity at the cost of less flexibility.  Static websites providing dynamic logic with
 front-end JavaScript code are sometimes called client-side dynamic websites<sup>2</sup>.
 </p>
 </div>
@@ -46,9 +46,9 @@ while a new user might receive HTML for the applications home page.  Asset deliv
 the back-end code, which might be Node.js/Express, Java Spring, or another server-side web framework.
 </p>
 <p>
-Dynamic websites are hosted on a web server, which nowadays are often hosted on the cloud in a VM or
-container architecture.  This can often be more costly and takes more effort to maintain (especially
-in the case of a VM) than a static website cloud storage system counterpart like S3.  However, this
+Dynamic websites are hosted on a web server, which nowadays often live on the cloud in a VM or
+container architecture.  This is often more costly and takes more effort to maintain (especially
+in the case of a VM) than a static website's cloud storage system.  However, this
 increased complexity also provides applications more flexibility.
 </p>
 </div>
@@ -58,7 +58,7 @@ increased complexity also provides applications more flexibility.
 In a <a href="https://jarombek.com/blog/jan-31-2020-react-16-3">previous article</a> I wrote about new
 features introduced in React 16.3.  To demonstrate the new features, I created a <a href="https://
 react16-3.demo.jarombek.com/">demo React application</a>.  Since the demo only contained client-side
-code (React.js flavor of JavaScript, CSS, HTML, PNGs) I decided it was a perfect candidate to be hosted
+code (JavaScript, CSS, HTML, PNGs) I decided it was a perfect candidate to be hosted
 on Amazon S3.  For the remainder of this article I'll discuss the process of hosting my demo application
 on Amazon S3 along with the challenges I faced.
 </p>
@@ -154,7 +154,7 @@ base URL (<strong>react16-3.demo.jarombek.com</strong> instead of
 <p>
 One layer up from the S3 bucket is a CloudFront distribution.  A CloudFront distribution is a CDN that
 delivers static assets through edge nodes hosted throughout the world<sup>3</sup>.  CloudFront speeds
-up access times to static assets for clients with the premise of data locality.  With assets stored on
+up access times to static assets for clients under the premise of data locality.  With assets stored on
 edge nodes closer to your geographical location than the S3 bucket (in my case hosted in an AWS data
 center in North Carolina, USA), assets can be accessed quicker.
 </p>
@@ -265,7 +265,7 @@ this demo is that it optimizes the retrieval of S3 objects.
 The final piece of the static website infrastructure is Route53 DNS records for the domains and ACM
 certificates for using HTTPS.  The Route53 records are shown below and the ACM certificate infrastructure
 is viewable in my <a href="https://github.com/AJarombek/jarombek-com-infrastructure">
-jarombek-com-infrastructure</a> and <a href="https://github.com/AJarombek/terraform-modules">
+jarombek-com-infrastructure</a> and <a href="https://github.com/AJarombek/terraform-modules/tree/master/acm-certificate">
 terraform-modules</a> repositories.
 </p>
 <CodeSnippet language="HCL">
@@ -305,13 +305,13 @@ jarombek-com-infrastructure/blob/master/jarombek-com-react16-3-demo">GitHub</a>.
 <p>
 One of the biggest issues I faced when setting up S3 to host a static website was redirecting
 <strong>www</strong> prefixed HTTPS requests to my S3 bucket.  I read tutorials mentioning that two S3
-buckets should be created, one with the main domain (react16-3.demo.jarombek.com) and another with the
-www prefixed subdomain (www.react16-3.demo.jarombek.com)<sup>4</sup>.  Unfortunately this solution didn't
+buckets should be created, one with the main domain (<strong>react16-3.demo.jarombek.com</strong>) and another with the
+www prefixed subdomain (<strong>www.react16-3.demo.jarombek.com</strong>)<sup>4</sup>.  Unfortunately this solution didn't
 work due to my configuration using CloudFront.
 </p>
 <p>
 Since CloudFront creates proxy servers which retrieve and cache assets from S3, a different approach is
-needed to route www prefixed traffic to the same assets as main domain traffic.  The solution is actually
+needed to route www prefixed traffic to the same assets as base domain traffic.  The solution is actually
 quite simple.  Two CloudFront distributions are created instead of two S3 buckets.  Both CloudFront
 distributions retrieve assets from the same underlying S3 bucket.
 </p>
@@ -319,7 +319,7 @@ distributions retrieve assets from the same underlying S3 bucket.
 Another challenge arose when navigating through the React application and refreshing the page in a browser.
 CloudFront and S3's default behavior is to return whatever static asset is located at the path provided
 by the request.  For example, if a browser navigates to <a href="https://react16-3.demo.jarombek.com/
-styles.css">react16-3.demo.jarombek.com/styles.css</a>, CloudFront access the
+styles.css">react16-3.demo.jarombek.com/styles.css</a>, CloudFront accesses the
 <code className="jarombek-inline-code">styles.css</code> object from the S3 bucket.
 </p>
 <p>
