@@ -247,7 +247,186 @@ np.arange(0, 23, 2).reshape(3, 4)
 # Out[11]: [[0, 2, 4, 6], [8, 10, 12, 14], [16, 18, 20, 22]]
 </CodeSnippet>
 <SectionTitle title="Enhanced Slicing">Enhanced Slicing</SectionTitle>
+<p>
+Python lists already provide pretty nice slicing capabilities.  Numpy takes slicing to another level.
+Numpy extends the indexing and slicing syntax in Python single-dimension lists for use in
+multi-dimensional arrays.  The following examples demonstrate multi-dimensional indexing and slicing.
+</p>
+<CodeSnippet language="Python">
+# Unlike Python lists, numpy array indexes accept comma separated values.
+# Each value is a slice for a dimension of the array.
+arr = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+arr[1, 1]
+
+# Out[12]: 4
+
+arr[:, :]
+
+# Out[13]: array([[0, 1, 2],
+                  [3, 4, 5],
+                  [6, 7, 8]])
+
+arr[1:, :1]
+
+# Out[14]: array([[3],
+                  [6]])
+
+arr[:, 2]
+
+# Out[15]: array([2, 5, 8])
+
+arr[:, 2] = 10
+arr
+
+# Out[16]: array([[ 0,  1, 10],
+                  [ 3,  4, 10],
+                  [ 6,  7, 10]])
+</CodeSnippet>
+<p>
+Numpy indexing and slicing operations can contain conditional logic.  Here are some more advanced
+indexing and slicing operations on the same numpy array instance.
+</p>
+<CodeSnippet language="Python">
+arr
+
+# Out[17]: array([[ 0,  1, 10],
+                  [ 3,  4, 10],
+                  [ 6,  7, 10]])
+
+arr[2, arr[2] == 6]
+
+# Out[18]: array([6])
+
+arr[1, arr[1] > 3]
+
+# Out[19]: array([ 4, 10])
+
+arr[arr > 3]
+
+# Out[20]: array([10,  4, 10,  6,  7, 10])
+
+arr[~(arr > 5)]
+
+# Out[21]: array([0, 1, 3, 4])
+
+arr[(arr < 2) | (arr > 8)]
+
+# Out[22]: array([ 0,  1, 10, 10, 10])
+
+arr[(arr > 2) & (arr < 8)]
+
+# Out[23]: array([3, 4, 6, 7])
+
+arr[(arr > 3) & (arr < 7)] = 20
+arr
+
+# Out[24]: array([[ 0,  1, 10],
+                  [ 3, 20, 10],
+                  [20,  7, 10]])
+</CodeSnippet>
 <SectionTitle title="Reshaping Arrays">Reshaping Arrays</SectionTitle>
+<p>
+Reshaping and numpy arrays is easy with a variety of functions for altering data arrangements.  Some
+of the basic ones include <code className="jarombek-inline-code">reshape(shape)</code>,
+<code className="jarombek-inline-code">flatten()</code>, and <code className="jarombek-inline-code">T</code>
+(short for transpose).
+</p>
+<CodeSnippet language="Python">
+arr = np.arange(12, 36, 2)
+arr
+
+# Out[25]: array([12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34])
+
+arr = np.arange(12, 36, 2).reshape(3, 4)
+arr
+
+# Out[26]: array([[12, 14, 16, 18],
+                  [20, 22, 24, 26],
+                  [28, 30, 32, 34]])
+
+arr.flatten()
+
+# Out[27]: array([12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34])
+
+arr.T
+
+# Out[28]: array([[12, 20, 28],
+                  [14, 22, 30],
+                  [16, 24, 32],
+                  [18, 26, 34]])
+</CodeSnippet>
 <SectionTitle title="Custom Functions">Custom Functions</SectionTitle>
+<p>
+While vectorization and built-in numpy functions are extremely helpful when transforming numpy arrays,
+sometimes they aren’t flexible enough for our needs.  In this case, custom functions can be created.
+For example, I created the following function which converts miles to kilometers:
+</p>
+<CodeSnippet language="Python">
+# Custom functions can be created with frompyfunc().  Note that these functions take a performance hit
+# compared to their numpy counterparts.  There is a way to speed up custom functions to numpy-like performance
+# with the numba library.
+def miles_to_kilometers(miles):
+  return miles * 1.609
+
+# Create a custom unary ufunc (takes a single argument) that converts miles to kilometers
+mile2km = np.frompyfunc(miles_to_kilometers, 1, 1)
+</CodeSnippet>
+<p>
+This function can be applied to each item in an array.
+</p>
+<CodeSnippet language="Python">
+arr = np.array([1, 3, 5])
+mile2km(arr)
+
+# Out[29]: array([1.609, 4.827, 8.045])
+</CodeSnippet>
+<p>
+Unfortunately, this custom function method is very slow.  The following test shows the time taken by
+the custom function versus vectorization.
+</p>
+<CodeSnippet language="Python">
+%timeit mile2km(arr)
+
+# Out[30]: 6.75 µs ± 107 ns per loop
+
+%timeit arr * 1.609
+
+# Out[31]: 1.04 µs ± 11.3 ns per loop
+</CodeSnippet>
+<p>
+The problem is these custom function implementations live in Python instead of C, which is much faster.
+Luckily it is possible to write fast custom numpy functions using a library called <strong>numba</strong>.
+Numba uses LLVM to convert Python code to assembly code<sup>7</sup>.  The mile to kilometer function
+is easily rewritten with numba.
+</p>
+<CodeSnippet language="Python">
+@nb.jit
+def miles_to_kilometers(miles):
+  return miles * 1.609
+
+arr = np.array([1, 3, 5])
+miles_to_kilometers(arr)
+
+# Out[32]: array([1.609, 4.827, 8.045])
+</CodeSnippet>
+<p>
+Best of all, the numba function is extremely fast.  In fact, numba functions are often faster than
+their numpy vectorization counterparts.
+</p>
+<CodeSnippet language="Python">
+%timeit miles_to_kilometers(np.arange(100))
+
+# Out[33]: 1.18 µs ± 13.9 ns per loop
+
+%timeit np.arange(100) * 1.609
+
+# Out[34]: 1.89 µs ± 53.2 ns per loop
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Numpy is an array object library that exposes an elegant API which is fun to use.  I’ve used it often
+at work and will likely find usages for it in my personal Python code.  If you would like to see more
+numpy code samples, check out my data analytics repository on <a href="https://github.com/AJarombek/
+data-analytics-prototypes/tree/master/Python/numpy">GitHub</a>.
+</p>
 </div>
