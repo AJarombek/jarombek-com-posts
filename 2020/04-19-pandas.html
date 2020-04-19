@@ -435,8 +435,298 @@ Luckily, the date and time API used in pandas is easy to understand and use.  To
 native Python <code className="jarombek-inline-code">datetime.datetime</code> objects are used.
 </p>
 <CodeSnippet language="Python">
+import pandas as pd
+import numpy as np
+from datetime import datetime
 
+mile_races = pd.Series(
+  np.array(['4:54', '4:47', '4:52', '4:48']),
+  [datetime(2019, 12, 20), datetime(2020, 2, 13), datetime(2020, 2, 27), datetime(2020, 3, 5)]
+)
+mile_races
+
+# Out[28]:
+# 2019-12-20    4:54
+# 2020-02-13    4:47
+# 2020-02-27    4:52
+# 2020-03-05    4:48
+# dtype: object
+</CodeSnippet>
+<p>
+Filtering data with a time series index is very easy.  The following examples retrieve data from
+my <code className="jarombek-inline-code">mile_races</code> series at certain indexes or slices.
+</p>
+<CodeSnippet language="Python">
+mile_races['2/27/2020']
+
+# Out[29]: '4:52'
+
+mile_races['20200227']
+
+# Out[30]: '4:52'
+
+mile_races['2020']
+
+# Out[31]:
+# 2020-02-13    4:47
+# 2020-02-27    4:52
+# 2020-03-05    4:48
+# dtype: object
+
+mile_races['2020-02']
+
+# Out[32]:
+# 2020-02-13    4:47
+# 2020-02-27    4:52
+# dtype: object
+
+mile_races['12/1/2019':'2/29/2020']
+
+# Out[33]:
+# 2019-12-20    4:54
+# 2020-02-13    4:47
+# 2020-02-27    4:52
+# dtype: object
+</CodeSnippet>
+<p>
+As you can see, indexing and slicing is very flexible amongst many common date formats.  One of my
+biggest annoyances of most data libraries is they expect dates to be in certain formats and fail
+otherwise.  Pandas is much more lenient.
+</p>
+<p>
+Beyond the basics, the aspect I found most interesting about pandas time series functionality is resampling.
+Resampling is when the frequency of time series data is changed<sup>11</sup>.  For example, daily
+time series data can be converted to weekly.
+</p>
+<p>
+There are two forms of resampling - downsampling and upsampling.  Downsampling is when a higher
+frequency is converted to a lower frequency.  An example of downsampling is converting weekly time
+series data to monthly.  Downsampling can be thought of as data compression<sup>12</sup>.  Upsampling
+is when a lower frequency is converted to a higher frequency.  An example of upsampling is converting
+monthly time series data to weekly.  Upsampling can be thought of as data expansion<sup>13</sup>.
+</p>
+<p>
+To demonstrate downsampling, I created a data frame with all my runs in the month of February.  Then,
+I resampled it to show weekly average run length and weekly mileage.
+</p>
+<CodeSnippet language="Python">
+feb_days = pd.date_range('2020-02-01', periods=29, freq='D')
+run_lengths = np.array([
+  11.56, 12,
+  2.34, 3.63, 2.85, 3.06, 3.92, 7.87, 12.5,
+  2.81, 3.8, 2.65, 7.5, 2.63, 14, 13.21,
+  1.28, 1.88, 2.64, 5.20, 3.76, 7.87, 12.59,
+  2.81, 2.81, 3.45, 2.6, 2.91, 5.2
+])
+feb_runs = pd.Series(run_lengths, feb_days)
+
+# Downsampling to find the average length of a run each week.
+feb_runs.resample('W').mean()
+
+# Out[34]:
+# 2020-02-02    11.780000
+# 2020-02-09     5.167143
+# 2020-02-16     6.657143
+# 2020-02-23     5.031429
+# 2020-03-01     3.296667
+# Freq: W-SUN, dtype: float64
+
+# Downsampling to find the total running mileage each week.
+feb_runs.resample('W', label='left').sum()
+
+# Out[35]:
+# 2020-01-26    23.56
+# 2020-02-02    36.17
+# 2020-02-09    46.60
+# 2020-02-16    35.22
+# 2020-02-23    19.78
+# Freq: W-SUN, dtype: float64
+</CodeSnippet>
+<p>
+To demonstrate upsampling, I created a data frame with my mile times per quarter (example: Q3 2019).
+Then, I resampled it to display data for missing quarters.
+</p>
+<CodeSnippet language="Python">
+quarters = [pd.Period('2013Q1'), pd.Period('2014Q1'), pd.Period('2014Q4'), pd.Period('2015Q1'), pd.Period('2016Q1'), pd.Period('2016Q2'), pd.Period('2020Q1')]
+times_in_sec = [295, 280, 283, 280, 281, 267, 287]
+mile_progression = pd.Series(times_in_sec, quarters)
+mile_progression
+
+# Out[36]:
+# 2013Q1    295
+# 2014Q1    280
+# 2014Q4    283
+# 2015Q1    280
+# 2016Q1    281
+# 2016Q2    267
+# 2020Q1    287
+# Freq: Q-DEC, dtype: int64
+
+mile_progression.resample('Q').asfreq()
+
+# Out[37]:
+# 2013Q1    295.0
+# 2013Q2      NaN
+# 2013Q3      NaN
+# 2013Q4      NaN
+# 2014Q1    280.0
+# 2014Q2      NaN
+# 2014Q3      NaN
+# 2014Q4    283.0
+# 2015Q1    280.0
+# 2015Q2      NaN
+# 2015Q3      NaN
+# 2015Q4      NaN
+# 2016Q1    281.0
+# 2016Q2    267.0
+# 2016Q3      NaN
+# 2016Q4      NaN
+# 2017Q1      NaN
+# 2017Q2      NaN
+# 2017Q3      NaN
+# 2017Q4      NaN
+# 2018Q1      NaN
+# 2018Q2      NaN
+# 2018Q3      NaN
+# 2018Q4      NaN
+# 2019Q1      NaN
+# 2019Q2      NaN
+# 2019Q3      NaN
+# 2019Q4      NaN
+# 2020Q1    287.0
+# Freq: Q-DEC, dtype: float64
+</CodeSnippet>
+<p>
+Missing data can be filled in with the <code className="jarombek-inline-code">ffill()</code> function.
+</p>
+<CodeSnippet language="Python">
+mile_progression.resample('Q').ffill()
+
+# Out[38]:
+# 2013Q1    295
+# 2013Q2    295
+# 2013Q3    295
+# 2013Q4    295
+# 2014Q1    280
+# 2014Q2    280
+# 2014Q3    280
+# ...
 </CodeSnippet>
 <SectionTitle title="Advanced Data Manipulation with Group By">Advanced Data Manipulation with Group By</SectionTitle>
+<p>
+The final aspect of pandas I'll talk about is its "group by" capabilities.  In a basic sense, pandas
+<code className="jarombek-inline-code">groupby()</code> function is analogous to SQL’s
+<code className="jarombek-inline-code">GROUP BY</code> clause.  In pandas,
+<code className="jarombek-inline-code">groupby()</code> groups rows by given column(s) and performs
+aggregations on remaining columns.  I’ll walk you through one example to give an idea of how it works,
+but to fully understand <code className="jarombek-inline-code">groupby()</code> you will have to
+experiment with it yourself.
+</p>
+<p>
+I started by creating a data frame which includes my programming language usage statistics (as of March 2020).
+</p>
+<CodeSnippet language="Python">
+lines_coded = pd.DataFrame({
+    '2014': [0, 4282, 0, 0, 0, 0, 0, 0, 0, 0],
+    '2015': [0, 1585, 931, 0, 0, 0, 0, 0, 325, 0],
+    '2016': [2008, 12962, 1122, 1413, 0, 5433, 0, 0, 942, 179],
+    '2017': [6663, 12113, 1288, 2289, 10726, 3670, 163, 0, 812, 113],
+    '2018': [16414, 4769, 1975, 10833, 698, 356, 4198, 3801, 1392, 2164],
+    '2019': [13354, 4439, 20192, 4855, 2208, 357, 4468, 4089, 2622, 2324],
+    '2020': [5022, 1664, 3666, 36, 0, 0, 727, 1332, 156, 652]
+  },
+  index=['JavaScript', 'Java', 'Python', 'HTML', 'Swift', 'PHP', 'Sass', 'HCL', 'SQL', 'Groovy']
+)
+lines_coded
+
+# Out[39]:
+# |            | 2014   | 2015   | 2016   | 2017   | 2018   | 2019   | 2020   |
+# +------------+--------+--------+--------+--------+--------+--------+--------+
+# | JavaScript | 0      | 0      | 2008   | 6663   | 16414  | 13354  | 5022   |
+# | Java       | 4282   | 1585   | 12962  | 12113  | 4769   | 4439   | 1664   |
+# | Python     | 0      | 931    | 1122   | 1288   | 1975   | 20192  | 3666   |
+# | HTML       | 0      | 0      | 1413   | 2289   | 10833  | 4855   | 36     |
+# | Swift      | 0      | 0      | 0      | 10726  | 698    | 2208   | 0      |
+# | PHP        | 0      | 0      | 5433   | 3670   | 356    | 357    | 0      |
+# | Sass       | 0      | 0      | 0      | 163    | 4198   | 4468   | 727    |
+# | HCL        | 0      | 0      | 0      | 0      | 3801   | 4089   | 1332   |
+# | SQL        | 0      | 325    | 942    | 812    | 1392   | 2622   | 156    |
+# | Groovy     | 79.21  | 0      | 179    | 113    | 2164   | 2324   | 652    |
+</CodeSnippet>
+<p>
+Next, I reset the data frame’s index.  This makes the programming language names their own column.
+In the final data transformation before using <code className="jarombek-inline-code">groupby()</code>,
+I melted the data frame on the programming language names column.  Melting on this column results in a
+new data frame with a row for every language and year combination.
+</p>
+<CodeSnippet language="Python">
+lines_coded_v2 = lines_coded.reset_index()
+melted = pd.melt(lines_coded_v2, ['index'])
+melted
+
+# Out[40]:
+# |    | index      | var    | value  |
+# +----+------------+--------+--------+
+# | 0  | JavaScript | 2014   | 0      |
+# | 1  | Java       | 2014   | 4282   |
+# | 2  | Python     | 2014   | 0      |
+# | 3  | HTML       | 2014   | 0      |
+# | 4  | Swift      | 2014   | 0      |
+# | .. | ...        | ...    | ...    |
+# | 65 | PHP        | 2020   | 0      |
+# | 66 | Sass       | 2020   | 727    |
+# | 67 | HCL        | 2020   | 1332   |
+# | 68 | SQL        | 2020   | 156    |
+# | 69 | Groovy     | 2020   | 652    |
+</CodeSnippet>
+<p>
+Finally, it's time to use <code className="jarombek-inline-code">groupby()</code>!  In my examples, I
+group on the <code className="jarombek-inline-code">index</code> column (which contains programming
+language names).  <code className="jarombek-inline-code">groupby()</code> returns a grouping object
+which aggregation functions are performed upon.  My examples use the
+<code className="jarombek-inline-code">sum()</code> and <code className="jarombek-inline-code">mean()</code>
+aggregation functions to find the total lines coded all time and average lines coded per year, respectively.
+</p>
+<CodeSnippet language="Python">
+grouping = melted.groupby('index')
+grouping.sum()
+
+# Out[41]:
+# | index      | value  |
+# +------------+--------+
+# | Groovy     | 5432   |
+# | HCL        | 9222   |
+# | HTML       | 19426  |
+# | Java       | 41814  |
+# | JavaScript | 43461  |
+# | PHP        | 9816   |
+# | Python     | 29174  |
+# | SQL        | 6249   |
+# | Sass       | 9556   |
+# | Swift      | 13632  |
+
+grouping.mean()
+
+# Out[42]:
+# | index      | value  |
+# +------------+--------+
+# | Groovy     | 776.0  |
+# | HCL        | 1317.4 |
+# | HTML       | 2775.1 |
+# | Java       | 5973.4 |
+# | JavaScript | 6208.7 |
+# | PHP        | 1402.3 |
+# | Python     | 4167.7 |
+# | SQL        | 892.7  |
+# | Sass       | 1365.1 |
+# | Swift      | 1947.4 |
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Pandas is a really great library for tabular data, and fits into the Python ecosystem nicely.  I use
+pandas all the time at work, especially when interacting with data coming from a relational database.
+I plan on incorporating into my personal projects as well, which is a sign that pandas is both fun
+for personal use and powerful enough for use at the enterprise level.  You can find all my pandas
+code samples on <a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Python/pandas">GitHub</a>.
+</p>
 </div>
