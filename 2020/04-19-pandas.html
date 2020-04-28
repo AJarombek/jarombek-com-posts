@@ -12,9 +12,9 @@ pandas has two main data structures: <code className="jarombek-inline-code">Seri
 manipulating and analysing time series or table data (think SQL table or excel spreadsheet)<sup>1</sup>.
 </p>
 <p>
-Just like numpy, I wanted to write an article about the interesting aspects of pandas.  I’ve read
-thoroughly about pandas and coded with it at my job, and want to share some of my favorite features.
-This article isn’t meant to teach pandas basics, instead highlighting what makes pandas unique and
+Just like numpy, I wanted to write an article about the interesting aspects of pandas.  I read
+thoroughly about pandas and coded with it at my job, so I wanted to share some of my favorite features.
+This article isn't meant to teach pandas basics, instead highlighting what makes pandas unique and
 special compared to other libraries and languages.
 </p>
 <SectionTitle title="What is Pandas">What is Pandas?</SectionTitle>
@@ -25,10 +25,12 @@ Software engineering fields that use pandas include machine learning, economics,
 and big data<sup>3</sup>.
 </p>
 <p>
-Pandas has two main data types - <code>Series</code> and <code>DataFrame</code>.  A series is a
+Pandas has two main data types - <code className="jarombek-inline-code">Series</code> and
+ <code className="jarombek-inline-code">DataFrame</code>.  A series is a
 single-dimensional data structure containing an array of data and an array of labels<sup>4</sup>.  Each
-label is associated with an element in the data array.  This array of labels is called the index, and
-is of type <code>Index</code>.  Listed below are two examples of the <code>Series</code> data structure,
+label is associated with an element in the data array.  The array of labels is called the index, and
+is of type <code className="jarombek-inline-code">Index</code>.  Listed below are two examples of
+ the <code className="jarombek-inline-code">Series</code> data structure,
 along with ways to access their indexes.
 </p>
 <CodeSnippet language="Python">
@@ -39,10 +41,10 @@ series
 
 # Out[1]:
 #    0    1
-#	   1    2
+#    1    2
 #    2    3
-#	   3    4
-#	   4    5
+#    3    4
+#    4    5
 #	   dtype: int64
 
 series.index
@@ -63,18 +65,18 @@ series.index
 # Out[4]: Index(['c', 'b', 'a'], dtype='object')
 </CodeSnippet>
 <p>
-The first series implicitly defines the index while the second series explicitly passes the
+The first series implicitly defines an index while the second series explicitly passes an
 <code className="jarombek-inline-code">index</code> argument to the
-<code className="jarombek-inline-code">Series()</code> constructor.  The first series’
+<code className="jarombek-inline-code">Series()</code> constructor.  The first series'
 <code className="jarombek-inline-code">RangeIndex</code> is a subtype of
 <code className="jarombek-inline-code">Index</code> which holds a range of integers.
 </p>
 <p>
-A data frame contains columns and rows of data, just like a table<sup>5</sup>.  Data frames also have
-an index for the rows and column names for the columns.  There are many ways to create
-<code className="jarombek-inline-code">DataFrame</code> objects, with the most basic method being to
-pass its constructor a dictionary.  The following <code className="jarombek-inline-code">DataFrame</code>
-represents some workouts I did back in February.
+A data frame contains columns and rows of data, just like a table<sup>5</sup>.  Data frames have
+indexes for rows and names for columns.  There are many ways to create
+<code className="jarombek-inline-code">DataFrame</code> objects, the most basic of which
+passes its constructor a dictionary.  The following <code className="jarombek-inline-code">DataFrame</code>
+represents some of my workouts in February.
 </p>
 <CodeSnippet language="Python">
 runs = {
@@ -94,15 +96,17 @@ frame
 # | 2 | andy | run  | 02-18-2020 | 16:00 |
 </CodeSnippet>
 <p>
-The remainder of this article discusses aspects of pandas that I found most interesting.
+The full pandas library builds upon the <code className="jarombek-inline-code">Series</code> and
+<code className="jarombek-inline-code">DataFrame</code> objects. The remainder of this article
+ discusses aspects of pandas that I found most interesting.
 </p>
 <SectionTitle title="Similarities to R">Similarities to R</SectionTitle>
 <p>
 Pandas has many similarities to the R programming language, most noticeably its
 <code className="jarombek-inline-code">DataFrame</code> object.  In R,
 <code className="jarombek-inline-code">data.frame</code> is a fundamental built-in object with similar
-functionality to pandas’ <code className="jarombek-inline-code">DataFrame</code><sup>6,7</sup>.  The
-following data frame in R is nearly identical to the one in Python with pandas.
+functionality to pandas' <code className="jarombek-inline-code">DataFrame</code><sup>6,7</sup>.  The
+following data frame in R is nearly identical to the one in pandas.
 </p>
 <CodeSnippet language="R">
 user <- c("andy", "andy", "andy")
@@ -170,14 +174,14 @@ Pandas takes this concept to another level.  Not only does the
 methods accept multiple Python data structures as arguments, they also accept many different file formats.
 For example, CSV files can be turned into a data frame with <code className="jarombek-inline-code">
 read_csv()</code> and database tables can be turned into a data frame with
-<code className="jarombek-inline-code">read_sql_table</code>.  Other file formats that are easily turned
+<code className="jarombek-inline-code">read_sql_table()</code>.  Other file formats that are easily turned
 into a data frame include Excel spreadsheets, HTML, and JSON.  A full list of
 <code className="jarombek-inline-code">DataFrame</code> input formats is found in the
 <a href="https://pandas.pydata.org/pandas-docs/stable/reference/io.html">pandas documentation</a>.
 </p>
 <SectionTitle title="Indexing Slicing and Manipulation">Indexing, Slicing, and Manipulation</SectionTitle>
 <p>
-In my previous article on <a href="https://jarombek.com/blog/mar-31-2020-numpy#enhanced-slicing">numpy</a>
+In my previous article on <a href="https://jarombek.com/blog/mar-31-2020-numpy#enhanced-slicing">numpy</a>,
 I discussed its advanced slicing and indexing mechanics.  Pandas has similar functionality for its
 <code className="jarombek-inline-code">Series</code> and
 <code className="jarombek-inline-code">DataFrame</code> objects.  First, here are some indexing and slicing examples on <code className="jarombek-inline-code">Series</code> data structures.
@@ -243,7 +247,7 @@ data_xctf = {
 run_dataframe = pd.DataFrame(data_xctf, index=['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek'])
 run_dataframe
 
-Out[13]:
+# Out[13]:
 # |                  | 8K       | 6K       | 5K       | 10000m   | 5000m    | 3000m   | 1 Mile  | 1500m   |
 # +------------------+----------+----------+----------+----------+----------+---------+---------+---------+
 # | Thomas Caulfield | 24:20.80 | 18:58.80 | 15:32.00 | None     | 14:23.21 | 8:32.83 | 4:20.59 | 3:54.67 |
@@ -411,22 +415,22 @@ run_seconds_dataframe.loc['5K'].div(25)
 </CodeSnippet>
 <p>
 There are so many examples of pandas <code className="jarombek-inline-code">DataFrame</code> manipulation
-operations, but these are some of the most basic ones.  I’m trying to demonstrate that
+operations, but these are some basic ones.  By showing these code samples, I'm trying to demonstrate that
 <code className="jarombek-inline-code">DataFrame</code> objects aren't simply for holding data, but also
-transforming it and analyzing it in whatever way suits an application's needs.  Pandas provides plenty
-of statistical operations as well, such as finding the sum or standard deviation of data.  Math isn’t
-my strong suit so I won’t go over any statistical functions, but they are readily available and easy to use.
+transforming and analyzing data to suit an application's needs.  Pandas provides plenty
+of statistical operations as well, such as finding the sum or standard deviation of data.  Math isn't
+my strong suit so I won't go over any statistical functions, but they are readily available and easy to use.
 </p>
 <SectionTitle title="Time Series Data">Time Series Data</SectionTitle>
 <p>
 Along with tabular data, another common use case for pandas is holding time series data.  Pandas has the
-strongest time-series functionality I’ve ever seen in a language or library, which is quite exciting!
+strongest time-series functionality I've ever seen in a language or library, which is quite exciting!
 </p>
 <p>
 Dealing with dates and times in programming languages is often a frustrating experience.  When creating a
 library that handles dates and times, it's crucial that the basic API is easy to use and intuitive.
 Otherwise, date and time complexities such as timezones and daylight savings time become a nightmare to
-deal with.  For an example of a poorly made date library, see the original Java
+deal with.  An example of a poorly made date API is the original Java
 <code className="jarombek-inline-code">Date</code> class<sup>9, 10</sup>.
 </p>
 <p>
@@ -489,21 +493,21 @@ mile_races['12/1/2019':'2/29/2020']
 # dtype: object
 </CodeSnippet>
 <p>
-As you can see, indexing and slicing is very flexible amongst many common date formats.  One of my
-biggest annoyances of most data libraries is they expect dates to be in certain formats and fail
-otherwise.  Pandas is much more lenient.
+As you can see, indexing and slicing is very flexible and is achievable with many common date formats.  One of the
+ annoyances of most date libraries is their expectation of dates to be in certain formats.  These libraries
+ often fail and throw errors if formats don't meet expectations.  Pandas is much more lenient.
 </p>
 <p>
 Beyond the basics, the aspect I found most interesting about pandas time series functionality is resampling.
 Resampling is when the frequency of time series data is changed<sup>11</sup>.  For example, daily
-time series data can be converted to weekly.
+time series data can be converted to weekly time series data.
 </p>
 <p>
 There are two forms of resampling - downsampling and upsampling.  Downsampling is when a higher
 frequency is converted to a lower frequency.  An example of downsampling is converting weekly time
-series data to monthly.  Downsampling can be thought of as data compression<sup>12</sup>.  Upsampling
+series data to monthly time series data.  Downsampling can be thought of as data compression<sup>12</sup>.  Upsampling
 is when a lower frequency is converted to a higher frequency.  An example of upsampling is converting
-monthly time series data to weekly.  Upsampling can be thought of as data expansion<sup>13</sup>.
+monthly time series data to weekly time series data.  Upsampling can be thought of as data expansion<sup>13</sup>.
 </p>
 <p>
 To demonstrate downsampling, I created a data frame with all my runs in the month of February.  Then,
@@ -615,10 +619,10 @@ mile_progression.resample('Q').ffill()
 <SectionTitle title="Advanced Data Manipulation with Group By">Advanced Data Manipulation with Group By</SectionTitle>
 <p>
 The final aspect of pandas I'll talk about is its "group by" capabilities.  In a basic sense, pandas
-<code className="jarombek-inline-code">groupby()</code> function is analogous to SQL’s
+<code className="jarombek-inline-code">groupby()</code> function is analogous to SQL's
 <code className="jarombek-inline-code">GROUP BY</code> clause.  In pandas,
 <code className="jarombek-inline-code">groupby()</code> groups rows by given column(s) and performs
-aggregations on remaining columns.  I’ll walk you through one example to give an idea of how it works,
+aggregations on remaining columns.  I'll walk you through one example to give an idea of how it works,
 but to fully understand <code className="jarombek-inline-code">groupby()</code> you will have to
 experiment with it yourself.
 </p>
@@ -651,10 +655,10 @@ lines_coded
 # | Sass       | 0      | 0      | 0      | 163    | 4198   | 4468   | 727    |
 # | HCL        | 0      | 0      | 0      | 0      | 3801   | 4089   | 1332   |
 # | SQL        | 0      | 325    | 942    | 812    | 1392   | 2622   | 156    |
-# | Groovy     | 79.21  | 0      | 179    | 113    | 2164   | 2324   | 652    |
+# | Groovy     | 0      | 0      | 179    | 113    | 2164   | 2324   | 652    |
 </CodeSnippet>
 <p>
-Next, I reset the data frame’s index.  This makes the programming language names their own column.
+Next, I reset the data frame's index.  This makes the programming language names their own column.
 In the final data transformation before using <code className="jarombek-inline-code">groupby()</code>,
 I melted the data frame on the programming language names column.  Melting on this column results in a
 new data frame with a row for every language and year combination.
@@ -725,7 +729,7 @@ grouping.mean()
 <p>
 Pandas is a really great library for tabular data, and fits into the Python ecosystem nicely.  I use
 pandas all the time at work, especially when interacting with data coming from a relational database.
-I plan on incorporating into my personal projects as well, which is a sign that pandas is both fun
+I plan on incorporating pandas into my personal projects as well, which is a sign that pandas is both fun
 for personal use and powerful enough for use at the enterprise level.  You can find all my pandas
 code samples on <a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Python/pandas">GitHub</a>.
 </p>
