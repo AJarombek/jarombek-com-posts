@@ -1,0 +1,67 @@
+<div>
+<p>
+Back in 2018, I created a <a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins</a> server
+which automated tasks for my applications.  Jenkins is a <a href="https://jarombek.com/blog/
+sep-21-2018-jenkins#continuous-integration">continuous integration</a> and <a href="https://jarombek.com/
+blog/sep-21-2018-jenkins#continuous-delivery">continuous delivery</a> (CI/CD) tool which I’ve written
+about in the past.  When I first created the Jenkins server I had a few jobs which ran unit tests,
+but I never took full advantage of them.  Over the past two years I’ve gained a greater appreciation
+for CI/CD tools and their ability to save time deploying code and building confidence in codebases
+by automating tests.  Nowadays all my applications have automated test and deployment jobs on Jenkins.
+</p>
+<p>
+Over this time the Jenkins ecosystem has evolved along with my understanding of cloud concepts.  My
+original Jenkins server was hosted on an AWS EC2 instance which utilized AWS EFS for persistent storage.
+In the spring of 2020, I decided to rewrite the infrastructure of the Jenkins server.  With my added
+knowledge of containerization with <a href="https://jarombek.com/blog?query=Docker&page=1">Docker</a>
+and container orchestration with <a href="https://jarombek.com/blog?query=Kubernetes&page=1">Kubernetes</a>,
+I decided to host the Jenkins server on AWS EKS as part of the Kubernetes deployment.  In this article,
+I discuss the original EC2 Jenkins server and its creation process with Terraform.  In an
+<a href=https://jarombek.com/blog/sep-29-2020-jenkins-kubernetes"">upcoming article</a>, I’ll discuss
+the Kubernetes Jenkins server infrastructure.
+</p>
+<SectionTitle title="AWS EC2 Jenkins Architecture">AWS EC2 Jenkins Architecture</SectionTitle>
+<p>
+While designing the AWS architecture for a Jenkins server, I wanted the server configuration to persist
+between virtual machine restarts.  This way I could schedule my EC2 instance to only run during the day
+(which optimizes energy consumption and cost) and not lose any data.  The solution to persisting data
+between EC2 instances is to store the Jenkins server configuration files on AWS EFS and mount it onto
+the instances.  When the EC2 instance is shut down at night, the filesystem in EFS is not destroyed,
+allowing it to be remounted onto another instance in the morning.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-27-20-ec2-efs-architecture.png"/>
+</figure>
+<Definition word="AWS EFS">
+<p>
+AWS Elastic File Storage (EFS) is a filesystem that is highly available and scalable<sup>1</sup>.  It
+can be mounted on multiple EC2 instances<sup>2</sup>.  The filesystem of EFS uses the Network File
+System (NFS) protocol, which is distributed (located on a different server than the server which
+communicates with it)<sup>3</sup>.  From a users perspective EFS behaves like any non-distributed
+filesystem, making it easy to work with.
+</p>
+</Definition>
+<p>
+Besides for EC2 and EFS, the infrastructure utilizes Route53 for DNS records, AMI for a custom Jenkins
+virtual machine image, auto scaling for shutting down the EC2 instance at night, and Elastic Load
+Balancer (ELB) for load balancing to the EC2 instance(s) running Jenkins.  All of this infrastructure
+is configured and created with <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a>,
+except for the custom AMI which is created with <a href="https://www.packer.io/">Packer</a>.
+</p>
+<SectionTitle title="Terraform IaC for the Jenkins Server">Terraform IaC for the Jenkins Server</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Creating a Custom AMI with Packer">Creating a Custom AMI with Packer</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Reflections on the Initial Infrastructure Design">Reflections on the Initial Infrastructure Design</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+
+</p>
+</div>

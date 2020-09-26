@@ -367,7 +367,7 @@ resource "aws_s3_bucket" "saints-xctf-db-backups" {
     {
       "Sid": "Permissions",
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": { "AWS": "xxxx" },
       "Action": ["s3:PutObject", "s3:GetObject"],
       "Resource": ["arn:aws:s3:::saints-xctf-db-backups-prod/*"]
     }
