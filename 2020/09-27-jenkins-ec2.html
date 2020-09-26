@@ -3,9 +3,9 @@
 Back in 2018, I created a <a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins</a> server
 which automated tasks for my applications.  Jenkins is a <a href="https://jarombek.com/blog/
 sep-21-2018-jenkins#continuous-integration">continuous integration</a> and <a href="https://jarombek.com/
-blog/sep-21-2018-jenkins#continuous-delivery">continuous delivery</a> (CI/CD) tool which I’ve written
+blog/sep-21-2018-jenkins#continuous-delivery">continuous delivery</a> (CI/CD) tool which I've written
 about in the past.  When I first created the Jenkins server I had a few jobs which ran unit tests,
-but I never took full advantage of them.  Over the past two years I’ve gained a greater appreciation
+but I never took full advantage of them.  Over the past two years I've gained a greater appreciation
 for CI/CD tools and their ability to save time deploying code and building confidence in codebases
 by automating tests.  Nowadays all my applications have automated test and deployment jobs on Jenkins.
 </p>
@@ -17,7 +17,7 @@ knowledge of containerization with <a href="https://jarombek.com/blog?query=Dock
 and container orchestration with <a href="https://jarombek.com/blog?query=Kubernetes&page=1">Kubernetes</a>,
 I decided to host the Jenkins server on AWS EKS as part of the Kubernetes deployment.  In this article,
 I discuss the original EC2 Jenkins server and its creation process with Terraform.  In an
-<a href=https://jarombek.com/blog/sep-29-2020-jenkins-kubernetes"">upcoming article</a>, I’ll discuss
+<a href="https://jarombek.com/blog/sep-29-2020-jenkins-kubernetes">upcoming article</a>, I'll discuss
 the Kubernetes Jenkins server infrastructure.
 </p>
 <SectionTitle title="AWS EC2 Jenkins Architecture">AWS EC2 Jenkins Architecture</SectionTitle>
@@ -86,7 +86,7 @@ resource "aws_launch_configuration" "jenkins-server-lc" {
 The two aspects of the launch configuration I want to focus on are the <code className="jarombek-inline-code">image_id</code>
 and <code className="jarombek-inline-code">user_data</code>.  The image id specifies a custom Amazon
 Machine Image (AMI) for the Jenkins server.  An AMI is a template for creating a virtual machine in AWS.
-I’m creating (baking) the AMI with Packer, which I will discuss later.  In Terraform its important to
+I'm creating (baking) the AMI with Packer, which I will discuss later.  In Terraform its important to
 note that I use a data object to find the custom AMI that I created.
 </p>
 <CodeSnippet language="HCL">
@@ -109,7 +109,7 @@ data "aws_ami" "jenkins-ami" {
 </CodeSnippet>
 <p>
 The user data specified on the launch configuration is a Bash script that runs when the virtual machine
-boots up.  It’s in this script that I mount the EFS filesystem onto the EC2 instance.  This script is
+boots up.  It's in this script that I mount the EFS filesystem onto the EC2 instance.  This script is
 passed parameters from Terraform and is found in <a href="https://github.com/AJarombek/global-aws-infrastructure/
 blob/v1.0.0/jenkins/jenkins-setup.sh">jenkins-setup.sh</a>
 </p>
@@ -305,7 +305,7 @@ resource "aws_route53_record" "jenkins-jarombek-io-a" {
 <SectionTitle title="Creating a Custom AMI with Packer">Creating a Custom AMI with Packer</SectionTitle>
 <p>
 Packer is a tool which allows developers to configure and create custom machine images<sup>4</sup>.  It
-has the ability to create images for multiple different platforms, but the image I’m creating is specifically
+has the ability to create images for multiple different platforms, but the image I'm creating is specifically
 for AWS (an Amazon Machine Image).  To build an image with Packer, the first task is to create a JSON
 template which configures the image.  I created a JSON template called <a href="https://github.com/AJarombek/
 global-aws-infrastructure/blob/v1.0.0/jenkins/ami/jenkins-image.json">jenkins-image.json</a>, which has
@@ -412,10 +412,39 @@ the <code className="jarombek-inline-code">packer validate jenkins-image.json</c
 </p>
 <SectionTitle title="Reflections on the Initial Infrastructure Design">Reflections on the Initial Infrastructure Design</SectionTitle>
 <p>
-
+One of the nice aspects of this infrastructure design was that I had a functional Jenkins server to work
+with but didn't have to pay for a constantly running server due to the autoscaling schedules.  It was
+also all configured as code, so destroying and rebuilding the infrastructure was as simple as running
+<code className="jarombek-inline-code">terraform destroy</code> and
+<code className="jarombek-inline-code">terraform apply</code> commands, along with
+<code className="jarombek-inline-code">packer build jenkins-image.json</code> if the AMI changed.
+</p>
+<p>
+However, with time I realized there were better approaches to building a Jenkins server on the cloud.
+One of the biggest reasons I needed to use EFS was to avoid manually reconfiguring the Jenkins server
+and reinstalling Jenkins plugins every time I wanted to make an infrastructure change.  Luckily Jenkins
+provides a plugin called Jenkins Configuration as Code (JCasC), which automates all the Jenkins configuration<sup>7</sup>.
+Jenkins also allows plugins to be pre-installed with a <strong>plugins.txt</strong> file.  I'll discuss
+both of these approaches in my <a href="https://jarombek.com/blog/sep-29-2020-jenkins-kubernetes">follow-up article</a>,
+but the end result of both these approaches is that I no longer need to use EFS.
+</p>
+<p>
+The JCasC plugin was in its infancy when I created the original EC2/EFS Jenkins infrastructure in 2018,
+so I can't really blame myself for lack of knowledge about it.  One of the things I should have known
+at the time was the power of using containers instead of virtual machines for cloud infrastructure.
+After using Docker and Kubernetes a good amount in the past year and a half, I decided to move my Jenkins
+server to a Docker container, which is orchestrated by Kubernetes on EKS in production.  The
+<a href="https://jarombek.com/blog/apr-1-2019-docker-pt1">benefits of containers over virtual machines</a>
+are well documented, but in short containers are more lightweight, energy efficient, and require less
+maintenance (since you are virtualizing the operating system only, not an entire server).  I also find
+Dockerfiles easier to work with and read than Packer templates, but that is more of a personal preference.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-
+The EC2 and EFS infrastructure discussed in this article was a good foundation to improve upon with Docker
+and Kubernetes.  While this infrastructure no longer exists in my cloud, the repository is tagged at the
+time of its existence and its code can be found on <a href="https://github.com/AJarombek/global-aws-infrastructure/
+tree/v1.0.0">GitHub</a>.  In a <a href="https://jarombek.com/blog/sep-29-2020-jenkins-kubernetes">follow-up article</a>
+I will discuss the Kubernetes Jenkins server infrastructure that I'm using in my cloud today.
 </p>
 </div>
