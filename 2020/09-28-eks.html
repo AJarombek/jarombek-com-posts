@@ -140,14 +140,100 @@ I often keep the YAML documents in a folder alongside my Terraform infrastructur
 </p>
 <SectionTitle title="ALB Ingress Controller and External DNS">ALB Ingress Controller and External DNS</SectionTitle>
 <p>
-
+Kubernetes provides multiple ways to configure networking capabilities.  Three options are available
+to make applications on Kubernetes accessible outside the cluster - a <code className="jarombek-inline-code">NodePort</code>
+service, a <code className="jarombek-inline-code">LoadBalancer</code> service, or an
+<code className="jarombek-inline-code">Ingress</code> object<sup>3</sup>.  <code className="jarombek-inline-code">NodePort</code>
+and <code className="jarombek-inline-code">LoadBalancer</code> services have limitations -
+<code className="jarombek-inline-code">NodePort</code> services can only use ports
+<strong>30000</strong>-<strong>32767</strong> and <code>LoadBalancer</code> services can only direct
+traffic to a single application<sup>4</sup>.  Due to these limitations, I use
+<code className="jarombek-inline-code">Ingress</code> objects and ingress controllers for directing
+traffic to my applications.
+</p>
+<p>
+Ingress objects take network requests and forward them to services defined in the Kubernetes cluster.
+In order for an ingress to work, an ingress controller must be running in the cluster.  An ingress
+controller is simply a pod.  There are many different ingress controller implementations.  AWS has its
+own implementation called the ALB Ingress Controller.  The ALB Ingress Controller watches for Ingress
+objects and creates AWS infrastructure such as Application Load Balancers (ALBs) if the Ingress objects
+have the proper tags<sup>5</sup>.  For example, my Jenkins server has the following Ingress object:
+</p>
+<CodeSnippet language="YAML">
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: jenkins-ingress
+  namespace: jenkins
+  annotations:
+    kubernetes.io/ingress.class: alb
+    external-dns.alpha.kubernetes.io/hostname: jenkins.jarombek.io,www.jenkins.jarombek.io
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: ${ACM_CERT_ARNS}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/healthcheck-path: '/login'
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/security-groups: ${SECURITY_GROUPS_ID}
+    alb.ingress.kubernetes.io/subnets: ${SUBNET_IDS}
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/tags: Name=jenkins-load-balancer,Application=jenkins,Environment=${ENV}
+  labels:
+    version: v1.0.0
+    environment: production
+    application: jenkins-server
+  spec:
+    rules:
+      - host: jenkins.jarombek.io
+        http:
+          paths:
+            - path: /*
+              backend:
+                serviceName: jenkins-service
+                servicePort: 80
+      - host: www.jenkins.jarombek.io
+        http:
+          paths:
+            - path: /*
+            backend:
+              serviceName: jenkins-service
+              servicePort: 80
+</CodeSnippet>
+<p>
+This Ingress object routes traffic from the <strong>jenkins.jarombek.io</strong> and
+<strong>www.jenkins.jarombek.io</strong> domains to a Jenkins server on my Kubernetes cluster.  Take
+note of all the tags on the Ingress object with the <code className="jarombek-inline-code">alb.ingress.kubernetes.io</code>
+prefix.  The ALB Ingress controller uses these annotations to determine the configuration of the load
+balancer it builds on AWS<sup>6</sup>.  Also notice there is an additional annotation with the
+<code className="jarombek-inline-code">external-dns.alpha.kubernetes.io</code> prefix.  Although the
+ALB Ingress Controller builds the load balancer AWS infrastructure, it does not build any AWS Route53
+DNS records for the domain names that the load balancer takes in traffic from.  To build these DNS
+records, an additional pod called External DNS needs to run on the Kubernetes cluster<sup>7</sup>.
+External DNS is not strictly tied to AWS, but in my use cases I ask it to configure AWS Route53 records.
+To start the ALB Ingress Controller and External DNS, I added more Terraform Kubernetes resources.  The
+configuration is a bit long, so you can view it in <a href="https://github.com/AJarombek/global-aws-infrastructure/
+blob/master/eks/main.tf#L359-L595">main.tf</a> on GitHub.
 </p>
 <SectionTitle title="Debugging with kubectl">Debugging with kubectl</SectionTitle>
 <p>
-
+One of the things I’ve noticed is that sometimes the ALB Ingress Controller and External DNS don’t work
+as I expect them to.  Luckily this is pretty easy to debug.  When The Terraform EKS module creates the
+cluster, it also creates a <strong>kubeconfig</strong> file which can be used for <strong>kubectl</strong>
+authentication.  Since the ALB Ingress Controller and External DNS are simply Kubernetes pods, their
+logs can be viewed with <strong>kubectl</strong>.  Doing this is as simple as the following commands:
 </p>
+<CodeSnippet language="Bash">
+export KUBECONFIG=/path/to/kubeconfig
+
+# My ALB Ingress Controller and External DNS pods are in the kube-system namespace.
+kubectl get po -n kube-system
+kubectl logs -f ${alb-ingress-controller-pod-name} -n kube-system
+kubectl logs -f ${external-dns-pod-name} -n kube-system
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-
+I’ve always enjoyed using Kubernetes to orchestrate application infrastructure, so I’m happy to have
+my own cluster in AWS.  All the code I use to build the EKS cluster is available on <a href="https://github.com/
+AJarombek/global-aws-infrastructure/tree/master/eks">GitHub</a>.
 </p>
 </div>
