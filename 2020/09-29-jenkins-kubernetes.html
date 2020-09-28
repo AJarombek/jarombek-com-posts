@@ -1,0 +1,282 @@
+<div>
+<p>
+In a <a href="https://jarombek.com/blog/sep-27-2020-jenkins-e2">prior article</a>, I discussed a
+<a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins</a> server I created on AWS EC2 and
+EFS.  In this article I’ll discuss the second generation of that infrastructure, which uses
+<a href="https://jarombek.com/blog?query=Docker&page=1">Docker</a> containers orchestrated by
+<a href="https://jarombek.com/blog?query=Kubernetes&page=1">Kubernetes</a> on an
+<a href="https://jarombek.com/blog/sep-28-2020-eks">EKS cluster</a>.
+</p>
+<SectionTitle title="Kubernetes Infrastructure with Terraform">Kubernetes Infrastructure with Terraform</SectionTitle>
+<p>
+The Jenkins server infrastructure consists of AWS resources and Kubernetes objects.  On the AWS side,
+there is an Application Load Balancer (ALB) and an ECR repository for the Jenkins Docker image.  On
+the Kubernetes side, there is an Ingress object, <code className="jarombek-inline-code">NodePort</code>
+service, and a Deployment for Pods.  These Kubernetes objects all live on an EKS cluster.
+</p>
+<figure>
+  <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-29-20-k8s-architecture.png"/>
+</figure>
+<p>
+All this infrastructure is written as code in a <code className="jarombek-inline-code">jenkins-kubernetes</code>
+module.  I’ll discuss some important parts of the infrastructure here, with the full code available on
+<a href="https://github.com/AJarombek/global-aws-infrastructure/tree/master/jenkins-kubernetes">GitHub</a>.
+The first part of the infrastructure to point out is the Amazon Elastic Container Registry (ECR) repository.
+ECR provides the ability to create private repositories for Docker containers.  I created a single repository
+for the Jenkins server Docker image.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_ecr_repository" "jenkins-jarombek-io-repository" {
+  name = "jenkins-jarombek-io"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = {
+    Name = "jenkins-jarombek-io-container-repository"
+    Application = "jenkins"
+    Environment = "all"
+  }
+}
+</CodeSnippet>
+<p>
+The Kubernetes Deployment object then references this repository for Pod creation.
+</p>
+<CodeSnippet language="HCL">
+resource "kubernetes_deployment" "deployment" {
+  metadata {
+    name = "jenkins-deployment"
+    namespace = local.namespace
+
+    labels = {
+      version = local.version
+      environment = local.env
+      application = "jenkins-server"
+    }
+  }
+
+  spec {
+    replicas = 1
+    min_ready_seconds = 10
+
+    strategy {
+      type = "RollingUpdate"
+
+      rolling_update {
+        max_surge = "1"
+        max_unavailable = "0"
+      }
+    }
+
+    selector {
+      match_labels = {
+        application = "jenkins-server"
+        environment = local.env
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          version = local.version
+          environment = local.env
+          application = "jenkins-server"
+        }
+      }
+
+      spec {
+        container {
+          name = "jenkins-server"
+          image = "${local.account_id}.dkr.ecr.us-east-1.amazonaws.com/jenkins-jarombek-io:${local.short_version}"
+
+          volume_mount {
+            mount_path = "/var/run/docker.sock"
+            name = "dockersock"
+          }
+
+          volume_mount {
+            mount_path = "/usr/bin/docker"
+            name = "dockercli"
+          }
+
+          readiness_probe {
+            period_seconds = 5
+            initial_delay_seconds = 20
+
+            http_get {
+              path = "/login"
+              port = 8080
+            }
+          }
+
+          port {
+            name = "http-port"
+            container_port = 8080
+            protocol = "TCP"
+          }
+
+          port {
+            name = "jnlp-port"
+            container_port = 50000
+          }
+        }
+
+        volume {
+          name = "dockersock"
+
+          host_path {
+            path = "/var/run/docker.sock"
+          }
+        }
+
+        volume {
+          name = "dockercli"
+
+          host_path {
+            path = "/usr/bin/docker"
+          }
+        }
+
+        automount_service_account_token = true
+        service_account_name = "jenkins-server"
+      }
+    }
+  }
+}
+</CodeSnippet>
+<p>
+One thing you may have noticed in this deployment is the Docker socket mounted as a volume on the Pod
+container.  The reason for this is I have Jenkins jobs which build Docker images (and often push them
+to ECR repositories).  Since the Jenkins server is already a Docker container, there are two ways to
+use Docker commands within it - to install and run Docker-in-Docker, or expose the Docker socket.
+Running Docker-in-Docker is documented as a bad, bug-ridden approach by Docker developers, making the
+Docker socket approach the obvious choice<sup>1</sup>.
+</p>
+<p>
+The last two Kubernetes objects for the Jenkins server are the Ingress and the Service.  The Ingress
+utilizes the ALB Ingress Controller to create a load balancer AWS for the Jenkins server.  It also used
+ExternalDNS to create a Route53 DNS record for <strong>jenkins.jarombek.io</strong> and
+<strong>www.jenkins.jarombek.io</strong>.  I discussed ALB Ingress Controllers and  ExternalDNS in my
+previous article on <a href="https://jarombek.com/blog/sep-28-2020-eks">AWS EKS</a>.
+</p>
+<CodeSnippet language="HCL">
+resource "kubernetes_ingress" "ingress" {
+  metadata {
+    name = "jenkins-ingress"
+    namespace = local.namespace
+
+    annotations = {
+      "kubernetes.io/ingress.class" = "alb"
+      "external-dns.alpha.kubernetes.io/hostname" = "jenkins.jarombek.io,www.jenkins.jarombek.io"
+      "alb.ingress.kubernetes.io/backend-protocol" = "HTTP"
+      "alb.ingress.kubernetes.io/certificate-arn" = "${local.cert_arn},${local.wildcard_cert_arn}"
+      "alb.ingress.kubernetes.io/healthcheck-path" = "/login"
+      "alb.ingress.kubernetes.io/listen-ports" = "[{\"HTTP\":80}, {\"HTTPS\":443}]"
+      "alb.ingress.kubernetes.io/healthcheck-protocol": "HTTP"
+      "alb.ingress.kubernetes.io/scheme" = "internet-facing"
+      "alb.ingress.kubernetes.io/security-groups" = aws_security_group.jenkins-lb-sg.id
+      "alb.ingress.kubernetes.io/subnets" = "${local.subnet1},${local.subnet2}"
+      "alb.ingress.kubernetes.io/target-type" = "instance"
+      "alb.ingress.kubernetes.io/tags" = "Name=jenkins-load-balancer,Application=jenkins,Environment=${local.env}"
+    }
+
+    labels = {
+      version = local.version
+      environment = local.env
+      application = "jenkins-server"
+    }
+  }
+
+  spec {
+    rule {
+      host = "jenkins.jarombek.io"
+
+      http {
+        path {
+          path = "/*"
+
+          backend {
+            service_name = "jenkins-service"
+            service_port = 80
+          }
+        }
+      }
+    }
+
+    rule {
+      host = "www.jenkins.jarombek.io"
+
+      http {
+        path {
+          path = "/*"
+
+          backend {
+            service_name = "jenkins-service"
+            service_port = 80
+          }
+        }
+      }
+    }
+  }
+}
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">NodePort</code> service reserves a port on the EKS cluster
+nodes for the Jenkins server.
+</p>
+<CodeSnippet language="HCL">
+resource "kubernetes_service" "service" {
+  metadata {
+    name = "jenkins-service"
+    namespace = local.namespace
+
+    labels = {
+      version = local.version
+      environment = local.env
+      application = "jenkins-server"
+    }
+  }
+
+  spec {
+    type = "NodePort"
+
+    port {
+      port = 80
+      target_port = 8080
+      protocol = "TCP"
+    }
+
+    selector = {
+      application = "jenkins-server"
+    }
+  }
+}
+</CodeSnippet>
+<p>
+There is also one additional service for the Java Network Launch Protocol (JNLP) on the Jenkins server,
+which Jenkins uses to create agents<sup>2</sup>.  In my case, I’m using JNLP to create Kubernetes Pod
+agents for my jobs.  The code for the service is on <a href="https://github.com/AJarombek/
+global-aws-infrastructure/blob/master/jenkins-kubernetes/modules/kubernetes/main.tf#L289-L320">GitHub</a>.
+</p>
+<SectionTitle title="Jenkins Dockerfile">Jenkins Dockerfile</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="JCasC Plugin and Secrets Manager">JCasC Plugin and Secrets Manager</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Initialization Jenkins Job">Initialization Jenkins Job</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Future Improvements">Future Improvements</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+</p>
+</div>
