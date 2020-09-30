@@ -1,0 +1,286 @@
+<div>
+<p>
+I recently built a new <a href="https://jarombek.com/blog/sep-28-2020-eks">Jenkins server hosted using Kubernetes on EKS</a>.
+My main use of the Jenkins server is to automate application and infrastructure tests, deployments, and
+miscellaneous tasks.  I get email notifications if these jobs fail, so I know when there is an issue
+with my software.
+</p>
+<p>
+Many of my Jenkins jobs work with the AWS CLI and Terraform to interact with and manipulate my cloud
+infrastructure.  I believe these jobs may be useful as templates for others wishing to achieve similar
+results.
+</p>
+<SectionTitle title="Cost Detection">Cost Detection</SectionTitle>
+<p>
+One issue I often faced with my AWS account was inadvertently keeping infrastructure running, using
+energy and costing me money.  To help safeguard against this, I decided to create a Jenkins job which
+would run on a daily schedule, checking the costs incurred on my account. If the daily costs are under
+a certain amount, the job passes.  If the costs hit a certain threshold, the job throws a warning, and
+if the costs are way too high it fails.
+</p>
+<p>
+The Jenkins pipeline is named <code className="jarombek-inline-code">cost-detection</code>.  The full
+Jenkinsfile is listed below, with the code also available on <a href="https://github.com/AJarombek/
+global-jenkins-jobs/tree/master/global-aws/cost-detection">GitHub</a>.
+</p>
+<CodeSnippet language="Groovy">
+@Library(['global-jenkins-library@master']) _
+
+pipeline {
+  agent {
+    label 'master'
+  }
+  triggers {
+    cron('H 7 * * *')
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 1, unit: 'HOURS')
+    buildDiscarder(
+      logRotator(daysToKeepStr: '10', numToKeepStr: '5')
+    )
+  }
+  stages {
+    stage("Clean Workspace") {
+      steps {
+        script {
+          cleanWs()
+        }
+      }
+    }
+    stage("Checkout Repository") {
+      steps {
+        script {
+          checkoutRepo()
+        }
+      }
+    }
+    stage("Setup Environment") {
+      steps {
+        script {
+          setupEnvironment()
+        }
+      }
+    }
+    stage("Detect AWS Costs") {
+      steps {
+        script {
+          detectAWSCosts()
+        }
+      }
+    }
+  }
+  post {
+    always {
+      script {
+        postScript()
+      }
+    }
+  }
+}
+
+def checkoutRepo() {
+  dir('repos/global-aws-infrastructure') {
+    git.basicClone('global-aws-infrastructure', 'master')
+  }
+}
+
+def setupEnvironment() {
+  infrastructuresteps.setupEnvironment('repos/global-aws-infrastructure/scripts')
+}
+
+def detectAWSCosts() {
+  dir('repos/global-aws-infrastructure/scripts') {
+    String cost_string = sh (
+      script: "pipenv run python costDetection.py",
+      returnStdout: true
+    )
+
+    println cost_string
+    float cost = cost_string as float
+
+    if (cost <= 8.5) {
+      currentBuild.result = "SUCCESS"
+    } else if (cost > 8.5 && cost <= 9.5) {
+      currentBuild.result = "UNSTABLE"
+    } else {
+      currentBuild.result = "FAILURE"
+    }
+
+    env.AVG_COST = cost_string
+  }
+}
+
+def postScript() {
+  def bodyTitle = "Detect AWS Costs"
+  def bodyContent = "3-Day Moving Cost Average: $env.AVG_COST"
+  def jobName = env.JOB_NAME
+  def buildStatus = currentBuild.result
+  def buildNumber = env.BUILD_NUMBER
+  def buildUrl = env.BUILD_URL
+
+  genericsteps.postScript(bodyTitle, bodyContent, jobName, buildStatus, buildNumber, buildUrl)
+}
+</CodeSnippet>
+<p>
+The first thing to notice is that the Jenkins job imports a shared library named <strong>global-jenkins-library</strong>.
+Functions from this library are used throughout the Jenkinsfile, such as <code className="jarombek-inline-code">git.basicClone()</code>,
+<code className="jarombek-inline-code">infrastructuresteps.setupEnvironment()</code>, and
+<code className="jarombek-inline-code">genericsteps.postScript()</code>.  The code for these functions is in my
+<a href="https://github.com/AJarombek/global-jenkins-library">global-jenkins-library</a> repository.
+</p>
+<p>
+The job runs on my master Jenkins agent (the Jenkins server’s container) and is triggered every morning
+sometime between 7 and 8 am.  The job has three stages - <code className="jarombek-inline-code">checkoutRepo</code>,
+<code className="jarombek-inline-code">setupEnvironment</code>, and <code className="jarombek-inline-code">detectAWSCosts</code>.
+These stages checkout the repository, create a Python virtual environment from a Pipfile, and run a Python
+script which performs the AWS account cost detection, respectively.  In the <code className="jarombek-inline-code">detectAWSCosts</code>
+stage you can also see the cost ranges and their respective build results.
+</p>
+<p>
+Once all the stages are completed, the <code className="jarombek-inline-code">postScript</code> function
+is called.  This function cleans the Jenkins workspace and sends me an email notification with the job
+results.
+</p>
+<p>
+The most important part of the Jenkins job is the Python script which calculates the average cost of
+my AWS infrastructure over the past three days.  The script uses <strong>boto3</strong>, an AWS SDK for
+Python.  Specifically, it uses the cost explorer API to get cost and usage statistics.
+</p>
+<CodeSnippet language="Python">
+from datetime import datetime, timedelta
+from typing import List
+from functools import reduce
+
+import boto3
+from boto3_type_annotations.ce import Client as CEClient
+
+
+def main():
+  cost_explorer: CEClient = boto3.client('ce')
+
+  end = datetime.now()
+  start = end - timedelta(days=3)
+
+  cost_statistics: dict = cost_explorer.get_cost_and_usage(
+    TimePeriod={
+      'Start': start.strftime('%Y-%m-%d'),
+      'End': end.strftime('%Y-%m-%d')
+    },
+    Granularity='DAILY',
+    Metrics=['AmortizedCost']
+  )
+
+  costs: List[float] = [
+    float(cost.get('Total').get('AmortizedCost').get('Amount'))
+    for cost in cost_statistics.get('ResultsByTime')
+  ]
+
+  avg_cost = reduce(lambda x, y: x + y, costs) / 3
+  avg_cost = round(avg_cost, 2)
+  print(avg_cost)
+
+
+if __name__ == '__main__':
+  exit(main())
+</CodeSnippet>
+<SectionTitle title="Scheduling RDS Databases">Scheduling RDS Databases</SectionTitle>
+<p>
+My <a href="https://www.saintsxctf.com/">SaintsXCTF application</a> uses an <a href="https://jarombek.com/
+blog?query=AWS%20RDS&page=1">Amazon RDS</a> database, running MySQL, to hold application data.  The
+application has a production environment and a development environment.  Each environment has its own
+RDS database instance.  When my development environment is running, I try to cut costs by shutting down
+its RDS database at night.  I created a Jenkins job called <code className="jarombek-inline-code">scheduling-dev-database</code>.
+The full Jenkinsfile is listed below, with the code also available on <a href="https://github.com/AJarombek/
+global-jenkins-jobs/tree/master/saints-xctf/infrastructure/scheduling-dev-database">GitHub</a>.
+</p>
+<CodeSnippet language="Groovy">
+@Library(['global-jenkins-library@master']) _
+
+pipeline {
+  agent {
+    label 'master'
+  }
+  parameters {
+    choice(
+      name: 'action',
+      choices: ['start', 'stop'],
+      description: 'Whether to start or stop the database.'
+    )
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 1, unit: 'HOURS')
+    timestamps()
+    buildDiscarder(
+      logRotator(daysToKeepStr: '10', numToKeepStr: '5')
+    )
+  }
+  triggers {
+    parameterizedCron('''
+      15 11 * * * %action=start
+      45 1 * * * %action=stop
+    ''')
+  }
+  stages {
+    stage("Clean Workspace") {
+      steps {
+        script {
+          cleanWs()
+        }
+      }
+    }
+    stage("Schedule Database") {
+      steps {
+        script {
+          if (params.action == 'stop') {
+            sh '''
+              export AWS_DEFAULT_REGION=us-east-1
+              aws rds stop-db-instance --db-instance-identifier saints-xctf-mysql-database-dev
+            '''
+          } else {
+            sh '''
+              export AWS_DEFAULT_REGION=us-east-1
+              aws rds start-db-instance --db-instance-identifier saints-xctf-mysql-database-dev
+            '''
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      script {
+        postScript()
+      }
+    }
+  }
+}
+
+def postScript() {
+  def bodyTitle = "Schedule SaintsXCTF Development Database."
+  def bodyContent = "Action: ${params.action.capitalize()}"
+  def jobName = env.JOB_NAME
+  def buildStatus = currentBuild.result
+  def buildNumber = env.BUILD_NUMBER
+  def buildUrl = env.BUILD_URL
+
+  genericsteps.postScript(bodyTitle, bodyContent, jobName, buildStatus, buildNumber, buildUrl)
+}
+</CodeSnippet>
+<p>
+
+</p>
+<SectionTitle title="Create & Destroy Infrastructure">Create & Destroy Infrastructure</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Push Images to ECR">Push Images to ECR</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+
+</p>
+</div>
