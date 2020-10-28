@@ -7,27 +7,28 @@ were hosted using different methods.  <strong>saintsxctf.com</strong> was hosted
 <a href="https://jarombek.com/blog?query=AWS%20EC2&page=1">AWS EC2</a> instances and <strong>jarombek.com</strong>
 was hosted on AWS ECS.  I also had prototypes using different hosting methods and a
 <a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins</a> server which was hosted on EC2
-instances.  Moving all applications to Kubernetes unifies the deployment process and allows me to take
+instances.  Moving all these applications to Kubernetes unifies the deployment process and allows me to take
 advantage of <a href="https://jarombek.com/blog/apr-1-2019-docker-pt1">containerization</a> and
 <a href="https://jarombek.com/blog/may-13-2019-kubernetes-pt1">container orchestration</a>.
 </p>
 <p>
-In this article, I’ll discuss the process for setting up my EKS cluster with Terraform.  I’ll also
+In this article, I'll discuss the process for setting up my EKS cluster with Terraform.  I'll also
 detail my experience deploying ALB Ingress Controller and External DNS pods on the cluster.
 </p>
 <SectionTitle title="EKS Cluster Terraform Infrastructure">EKS Cluster Terraform Infrastructure</SectionTitle>
 <p>
-One thing I’ve noticed with EKS is that it's very difficult to create Terraform infrastructure for a
+One thing I've noticed with EKS is that it's very difficult to create Terraform infrastructure for a
 cluster from scratch.  This difficulty is also true for CloudFormation, so it seems to be an EKS specific
 weakness.  Because of this, I decided to use a community made <a href="https://registry.terraform.io/
-modules/terraform-aws-modules/eks/aws/12.1.0">EKS module</a> from the Terraform registry.  I’ve found
-this module to be very reliable and considering EKS seems to get updated rather frequently, it helps me
-avoid spending time on breaking changes to the Terraform configuration.
+modules/terraform-aws-modules/eks/aws/12.1.0">EKS module</a> from the Terraform registry.  I've found
+this module to be very reliable, and because EKS is updated rather frequently, it helps me
+avoid spending time fixing my Terraform configuration.
 </p>
 <p>
-With the community Terraform module, the configuration for the cluster is very simple.  Besides calling
-the module, the only resource needed to get the cluster set up for my pods is an IAM policy for worker
-nodes in the cluster.
+With the community Terraform module, configuration for a cluster is very simple.  Besides calling
+the module, the only resource needed to get the cluster set up is an IAM policy for worker
+nodes in the cluster (depending on your use case, this can be omitted as well).  The following code snippet configures
+ the cluster.
 </p>
 <CodeSnippet language="HCL">
 module "andrew-jarombek-eks-cluster" {
@@ -65,10 +66,10 @@ resource "aws_iam_role_policy_attachment" "worker-pods-role-policy" {
 </CodeSnippet>
 <SectionTitle title="Creating Cluster-Wide Objects">Creating Cluster-Wide Objects</SectionTitle>
 <p>
-Once the cluster is running, there are Kubernetes objects and resources created that can be utilized by
-all applications.  The first resources I create are namespaces, which provide logical separation of the
+Once the cluster is running, I create Kubernetes objects and resources that can be utilized by
+all applications.  The first resources I create are namespaces, which provide a logical separation of the
 cluster for different applications and environments.  Namespaces act as virtual clusters with object
-and resource name scoping<sup>1</sup>.  This means there can be two objects (for example, a pod) with
+and resource name scoping<sup>1</sup>.  This means there can be two objects (for example, two pods) with
 the same name in different namespaces.
 </p>
 <p>
@@ -81,15 +82,18 @@ has two namespaces - <code className="jarombek-inline-code">jarombek-com</code> 
 <p>
 There are multiple ways to automate the creation of these Kubernetes objects.  Some approaches include
 using the <code className="jarombek-inline-code">kubectl</code> CLI or using a high-level programming
-language API such as the Go client<sup>2</sup>.  The approach I decided to take was to just use Terraform!
+language API such as the Kubernetes Go client<sup>2</sup>.  The approach I decided to take was to just use Terraform!
 Terraform has a provider which allows you to provision Kubernetes objects and resources on a cluster.
 </p>
 <p>
-The biggest benefit of using Terraform is that I get to use the same language and CLI commands to build
+The biggest benefit of using Terraform is that the same language and CLI commands are used to build
 the cluster and the Kubernetes objects.  The <a href="https://registry.terraform.io/providers/hashicorp/
 kubernetes/latest/docs/guides/getting-started#why-terraform">Terraform documentation</a> lists out some
-other reasons to use Terraform for Kubernetes object management as well.  For example, the following
-Terraform snippet defines a namespace in my cluster.
+other reasons to use Terraform for Kubernetes object management.
+</p>
+<p>
+Below is an example of a Kubernetes object defined in Terraform.  It defines a namespace for my <strong>jarombek.com</strong>
+application.
 </p>
 <CodeSnippet language="HCL">
 data "aws_eks_cluster" "cluster" {
@@ -120,11 +124,11 @@ resource "kubernetes_namespace" "jarombek-com-namespace" {
 </CodeSnippet>
 <p>
 The Kubernetes provider needs to be configured once before building any Kubernetes resources with Terraform.
-As you can see in the code snippet, I simply pass parameters to the <code className="jarombek-inline-code">provider</code>
+As you can see in the code snippet, I pass parameters to the <code className="jarombek-inline-code">provider</code>
 object from the existing <code className="jarombek-inline-code">aws_eks_cluster</code> and
 <code className="jarombek-inline-code">aws_eks_cluster_auth</code> data sources on AWS.  Then I can create
-a new <code className="jarombek-inline-code">kubernetes_namespace</code> resource.  For reference, the
-corresponding YAML file for this resource looks like this:
+a new <code className="jarombek-inline-code">kubernetes_namespace</code> resource.  For reference, an
+ equivalent YAML file for this resource looks like this:
 </p>
 <CodeSnippet language="YAML">
 apiVersion: v1
@@ -216,7 +220,7 @@ blob/master/eks/main.tf#L359-L595">main.tf</a> on GitHub.
 </p>
 <SectionTitle title="Debugging with kubectl">Debugging with kubectl</SectionTitle>
 <p>
-One of the things I’ve noticed is that sometimes the ALB Ingress Controller and External DNS don’t work
+One of the things I've noticed is that sometimes the ALB Ingress Controller and External DNS don't work
 as I expect them to.  Luckily this is pretty easy to debug.  When The Terraform EKS module creates the
 cluster, it also creates a <strong>kubeconfig</strong> file which can be used for <strong>kubectl</strong>
 authentication.  Since the ALB Ingress Controller and External DNS are simply Kubernetes pods, their
@@ -232,7 +236,7 @@ kubectl logs -f ${external-dns-pod-name} -n kube-system
 </CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-I’ve always enjoyed using Kubernetes to orchestrate application infrastructure, so I’m happy to have
+I've always enjoyed using Kubernetes to orchestrate application infrastructure, so I'm happy to have
 my own cluster in AWS.  All the code I use to build the EKS cluster is available on <a href="https://github.com/
 AJarombek/global-aws-infrastructure/tree/master/eks">GitHub</a>.
 </p>
