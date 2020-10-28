@@ -113,7 +113,7 @@ def detectAWSCosts() {
 
 def postScript() {
   def bodyTitle = "Detect AWS Costs"
-  def bodyContent = "3-Day Moving Cost Average: $env.AVG_COST"
+  def bodyContent = "3-Day Cost Average: $env.AVG_COST"
   def jobName = env.JOB_NAME
   def buildStatus = currentBuild.result
   def buildNumber = env.BUILD_NUMBER
@@ -130,7 +130,7 @@ Functions from this library are used throughout the Jenkinsfile, such as <code c
 <a href="https://github.com/AJarombek/global-jenkins-library">global-jenkins-library</a> repository.
 </p>
 <p>
-The job runs on my master Jenkins agent (the Jenkins server’s container) and is triggered every morning
+The job runs on my master Jenkins agent (the Jenkins server's container) and is triggered every morning
 sometime between 7 and 8 AM UTC.  The job has three stages - <code className="jarombek-inline-code">checkoutRepo</code>,
 <code className="jarombek-inline-code">setupEnvironment</code>, and <code className="jarombek-inline-code">detectAWSCosts</code>.
 These stages checkout the repository, create a Python virtual environment from a Pipfile, and run a Python
@@ -188,7 +188,7 @@ if __name__ == '__main__':
 <p>
 My <a href="https://www.saintsxctf.com/">SaintsXCTF application</a> uses an <a href="https://jarombek.com/
 blog?query=AWS%20RDS&page=1">Amazon RDS</a> database, running MySQL, to hold application data.  The
-application has a production environment and a development environment.  Each environment has its own
+application has a production environment and a development environment.  Both environments have their own
 RDS database instance.  When my development environment is running, I try to cut costs by shutting down
 its RDS database at night.  I created a Jenkins job called <code className="jarombek-inline-code">scheduling-dev-database</code>.
 The full Jenkinsfile is listed below, with the code also available on <a href="https://github.com/AJarombek/
@@ -272,7 +272,7 @@ def postScript() {
 The job takes in a parameter named <code className="jarombek-inline-code">action</code>, which determines
 whether the RDS database is stopped or started.  It also runs on a schedule, utilizing the Parameterized
 Scheduler plugin<sup>1</sup>.  This plugin allows the database to be stopped every night and started
-back up every morning.
+ up again every morning.
 </p>
 <p>
 The AWS CLI is utilized to start or stop the database, depending on the action specified.  Just like
@@ -282,14 +282,14 @@ the cost detection job, the results are emailed to me after all the stages are c
 <p>
 Most of my AWS Infrastructure is written as code using Terraform.  I decided to write Jenkins jobs for
 all my Terraform modules which create and destroy infrastructure.  This has two benefits.  The first
-benefit is that the creation and deletion of infrastructure is automated, so I don’t need to manually
+benefit is that the creation and deletion of infrastructure is automated, so I don't need to manually
 type out Terraform CLI commands.  The second benefit is that the Jenkins job code is a form of documentation
 for how to build certain infrastructure modules, similarly to how a Dockerfile is documentation for how
 to host an application on a server.  With the Jenkins jobs in place, I can refer to their Jenkinsfiles
 in case I forget the steps for building infrastructure in the future.
 </p>
 <p>
-Let’s go over an example.   I created a Jenkins job called <code className="jarombek-inline-code">create-database</code>
+Let's go over an example.   I created a Jenkins job called <code className="jarombek-inline-code">create-database</code>
 to build an applications RDS infrastructure and a Jenkins job called <code className="jarombek-inline-code">destroy-database</code>
 to tear down an applications RDS infrastructure.  The full Jenkinsfile for <code className="jarombek-inline-code">create-database</code>
 is listed below, with the code also available on <a href="https://github.com/AJarombek/global-jenkins-jobs/
@@ -432,13 +432,13 @@ The Jenkins job takes two parameters - <code className="jarombek-inline-code">au
 <code className="jarombek-inline-code">environment</code>.  If <code className="jarombek-inline-code">autoApply</code>
 is false, then manual intervention is needed to approve the Terraform plan which builds AWS infrastructure.
 <code className="jarombek-inline-code">environment</code> provides a choice of environments to create
-the RDS database in.  I then have a series of stages which first checkout the repository containing the
-RDS Terraform scripts and then attempt to apply them.  The module that is checked out comes from my
+the RDS database in.  I then have a series of stages which checkout the repository containing the
+RDS Terraform scripts and attempt to apply them.  The Terraform module that is checked out comes from my
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/database">saints-xctf-infrastructure</a>
 repository.
 </p>
 <p>
-The Terraform stages utilize some reusable functions I’ve created.  These functions, which initialize a
+The Terraform stages utilize some reusable functions I've created.  These functions, which initialize a
 Terraform module, validate it, generate a plan for the changes, and apply the changes, are listed below.
 </p>
 <CodeSnippet language="Groovy">
@@ -519,7 +519,7 @@ def terraformApply(String directory, boolean autoApply) {
 }
 </CodeSnippet>
 <p>
-Once some infrastructure is created with Terraform, the <code className="jarombek-inline-code">destroy-database</code>
+Once the database infrastructure is created with Terraform, the <code className="jarombek-inline-code">destroy-database</code>
 Jenkins job can be run to tear it down.  The Jenkinsfile is listed below and is also available on
 <a href="https://github.com/AJarombek/global-jenkins-jobs/tree/master/saints-xctf/infrastructure/
 destroy-database">GitHub</a>.
@@ -845,15 +845,15 @@ The Jenkins job takes two parameters which are used for labeling the Docker imag
 defines the numbered version of the image and <code className="jarombek-inline-code">isLatest</code>
 determines if this image should also be labelled with <strong>latest</strong>.  The stages of the pipeline
 checkout the repository containing the Dockerfile, build the image, and push it to an ECR repository.
-I also perform some cleanup work, deleting the Docker image after it’s pushed.  Finally, just like my
-other Jenkins jobs, I send myself an email with the results.
+It also performs some cleanup work, such as deleting the Docker image after it's pushed.  Finally, just like my
+other Jenkins jobs, it sends me an email with the results.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 Jenkins jobs and other CI/CD scripts are great ways to automate deployments, testing, and infrastructure.
 I use Jenkins extensively to help my AWS cloud workloads.  You can view more of my Jenkins jobs in the
 <a href="https://github.com/AJarombek/global-jenkins-jobs">global-jenkins-jobs</a> repository and my
-reusable Groovy function library in the <a href="https://github.com/AJarombek/global-jenkins-library">global-jenkins-library</a>
+reusable Jenkins function library in the <a href="https://github.com/AJarombek/global-jenkins-library">global-jenkins-library</a>
 repository.
 </p>
 </div>
