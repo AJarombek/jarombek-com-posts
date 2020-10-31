@@ -16,7 +16,7 @@ Sequential code executes one task (instruction) after another.  Each sequential 
 is an instance of a computer program.  In theory, a process running sequential code executes in its entirety on a
 single core of a CPU without giving up control and allowing other processes to run concurrently (during the same time
 period).  In reality, the operating system managing computer processes will likely perform context switches during a
-program's execution, allowing other processes to use the CPU concurrently<sup>2</sup>.  For the purposes of this
+program's execution, allowing other processes to use the CPU concurrently<sup>1</sup>.  For the purposes of this
 article I won’t focus on the operating system level concurrency of our processes, just the code written in our program.
 </p>
 <p>
@@ -60,17 +60,143 @@ could be spent executing other tasks, such as another API call.
 A better approach is to utilize concurrency, which Python provides multiple ways to achieve.
 </p>
 <SectionTitle title="Python Concurrency">Python Concurrency</SectionTitle>
+<p>
+Concurrent programming is when multiple computations are executed during the same time period<sup>2</sup>.  Programs
+running concurrently are sometimes also running in parallel, but not always.  Programs running in parallel are
+executing at the same time, either on separate CPUs or on different cores of a single CPU.  Programs written to
+utilize parallelism can also be described as running concurrently (just not necessarily vice-versa).
+</p>
+<ComparisonTable title="Concurrency vs. Parallelism">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Concurrency
+</h5>
+<div className="jarombek-cte-body">
+<p>
+In programming, concurrency is when two or more programs are executing during the same time period.  In a single CPU
+architecture these programs share the CPU, so that their executions are interleaved.  For example, program A runs for
+one second, then gives up the CPU to program B, which runs for two seconds.  In a multiprocessor or multi-core
+architecture, these processes can run in parallel.
+</p>
+<p>
+It’s important to note that concurrency does not imply parallelism.  Computers are able to give the illusion that
+multiple programs are running simultaneously (in parallel) on the CPU without actually doing so.  This is achieved with
+time sharing and context switching.  On some architectures with a single CPU and single core it is simply impossible to
+perform tasks in parallel.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Parallelism
+</h5>
+<div className="jarombek-cte-body">
+<p>
+In programming, parallel computing is when two or more programs are executing simultaneously.  For example, program A
+and program B start at the same time on different processors, with program A completing in one second and program B
+completing in two seconds.  Computer programs can spawn additional processes or threads which can run in parallel on a
+separate processor from the main process/thread.
+</p>
+<p>
+By definition, computations which run in parallel are also run concurrently.  Parallel processing is hardware dependent.
+Therefore, just because software creates separate threads or processes designed to run on separate processors, does
+not mean that it actually does so.  If a computer's hardware is limited to a single CPU or core, these threads and
+processes will simply run concurrently on the same processor.
+</p>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
+<p>
+With the concepts of concurrency and parallelism in mind, I began refactoring the Python code which makes API calls.
+Python provides a <code className="jarombek-inline-code">concurrency.futures</code> library, which allows computations
+to be executed asynchronously using either threads or processes.
+</p>
+<Definition word="Asynchronous Programming">
+<p>
+Asynchronous programming is a form of concurrent programming that awaits events in a non-blocking fashion.  In other
+words, asynchronous code allows other pieces of code to execute concurrently (and potentially in parallel) while it
+awaits external events to occur (such as API calls, filesystem I/O events, mouse clicks, long mathematical computations,
+etc.).  Many high-level programming languages have built-in support for asynchronous programming.
+</p>
+</Definition>
+<p>
+<code className="jarombek-inline-code">concurrency.futures</code> contains a <code className="jarombek-inline-code">
+ThreadPoolExecutor</code> class which can run asynchronous tasks in separate threads (although not actually - because
+of CPython’s Global Interpreter Lock [GIL] - which I will explain in a second).  Using
+<code className="jarombek-inline-code">ThreadPoolExecutor</code> can significantly speed up the sequential API calls
+I wrote previously.
+</p>
+<CodeSnippet language="Python">
+import time
+import os
+from concurrent import futures
 
+import requests
+
+domain = 'https://jsonplaceholder.typicode.com/'
+endpoints = ['posts', 'comments', 'albums', 'photos', 'todos', 'users']
+
+def make_request(endpoint: str) -> requests.Response:
+    """
+    Make an API request to and endpoint on the globally defined domain name.  Throws an exception if the response has an
+    error status code.
+    :param endpoint: The endpoint on the API to make a GET request to.
+    :return: The response object of the API call.
+    """
+    url = f'{domain}{endpoint}'
+    response: requests.Response = requests.get(url)
+    print(response)
+
+    # Raise an error if the HTTP code is 4XX or 500.
+    response.raise_for_status()
+    return response
+
+
+def make_requests() -> int:
+    """
+    Make requests to the API from a pool of threads running concurrently (although not actually, because of Python's
+    Global Interpreter Lock [GIL] only allows Python code to run in a single thread at a time.  However, I/O bound tasks
+    release the GIL while they wait, allowing ThreadPoolExecutor to be faster than making the API calls synchronously).
+    On my machine, this is approximately 2.5x faster than using requests to make API calls sequentially.
+    """
+    workers = 5
+    with futures.ThreadPoolExecutor(workers) as executor:
+        # make_request() calls will be made concurrently.
+        res = executor.map(make_request, endpoints)
+
+    return len(list(res))
+
+def main() -> None:
+    start = time.time()
+    make_requests()
+    end = time.time()
+    print(f'API calls from worker threads made in: {end - start}')
+
+
+if __name__ == '__main__':
+    main()
+</CodeSnippet>
+<p>
+This code creates a thread pool with five workers, so that five API calls can be made concurrently.
+</p>
+<p>
+As I mentioned, the CPython interpreter has a Global Interpreter Lock (GIL).  The GIL allows only a single thread to
+run Python bytecode at a time, meaning that Python code is unable to create multiple threads.  Therefore, when using the
+default CPython interpreter, the naming of the <code className="jarombek-inline-code">ThreadPoolExecutor</code> class
+is a bit misleading.  All five of the workers we created in the prior example actually run on the same thread, not a
+pool of threads.  This also means that the <code className="jarombek-inline-code">ThreadPoolExecutor</code> example
+runs concurrently but not in parallel.
+</p>
+<Definition word="Thread">
+<p>
+
+</p>
+</Definition>
+<p>
+
+</p>
 
 <p>
-Concurrent programming is when multiple computations are executed during the same time period<sup>1</sup>.  Programs
-running concurrently are sometimes also run in parallel, but not always.  Programs running in parallel are executing
-at the same time, either on separate CPUs or on different cores of a single CPU.  Each program (process) can run
-multiple threads, which are able to take advantage of a multiprocessor architecture (a computer with multiple central
-processing units) or a multi-core architecture (where processors implement multiple processing units).  In other
-words, multithreaded programs are able to run tasks in parallel if a computer's hardware supports it.  Some programs
-run multiple processes instead of threads (not to be confused with multiprocessing, which is the use of multiple CPUs
-or CPU cores).  Asynchronous code is non-blocking (it frees up the CPU before it completes), allowing other tasks to be
-executed concurrently.  Asynchronous can also be run in parallel with other code if a machine’s architecture enables it.
+Each program (process) can run multiple threads, which are able to take advantage of a multiprocessor architecture (a computer with multiple central processing units) or a multi-core architecture (where processors implement multiple processing units).  In other words, multithreaded programs are able to run tasks in parallel if a computer's hardware supports it.  Some programs run multiple processes instead of threads (not to be confused with multiprocessing, which is the use of multiple CPUs or CPU cores).  Asynchronous code is non-blocking (it frees up the CPU before it completes), allowing other tasks to be executed concurrently.  Asynchronous can also be run in parallel with other code if a machine’s architecture enables it.
 </p>
 </div>
