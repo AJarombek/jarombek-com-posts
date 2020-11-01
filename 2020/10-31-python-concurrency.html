@@ -180,23 +180,155 @@ if __name__ == '__main__':
 This code creates a thread pool with five workers, so that five API calls can be made concurrently.
 </p>
 <p>
-As I mentioned, the CPython interpreter has a Global Interpreter Lock (GIL).  The GIL allows only a single thread to
-run Python bytecode at a time, meaning that Python code is unable to create multiple threads.  Therefore, when using the
-default CPython interpreter, the naming of the <code className="jarombek-inline-code">ThreadPoolExecutor</code> class
-is a bit misleading.  All five of the workers we created in the prior example actually run on the same thread, not a
-pool of threads.  This also means that the <code className="jarombek-inline-code">ThreadPoolExecutor</code> example
-runs concurrently but not in parallel.
+As I mentioned, the CPython interpreter has a Global Interpreter Lock (GIL).  The GIL allows only a single thread to run
+Python bytecode at a time, meaning that Python code is able to create multiple threads, but not run them in
+parallel<sup>3</sup>.  A thread will acquire the lock when it wants to run Python code, and release it once it completes.
+Therefore, when using the default CPython interpreter, the <code className="jarombek-inline-code">ThreadPoolExecutor</code>
+class can be a bit misleading.  Due to the GIL, the <code className="jarombek-inline-code">ThreadPoolExecutor</code>
+example runs concurrently but not in parallel.
 </p>
 <Definition word="Thread">
 <p>
-
+A thread, also known as a lightweight process, is the most basic unit of scheduling in most computers<sup>4</sup>.  A
+computer process is initially created with a single thread of execution, known as the main thread.  The main thread has
+the ability to split and create one or more other threads.  Threads can be thought of as subsets of a
+process<sup>5</sup>.  Threads share the memory space of their parent process, which is both beneficial and dangerous when
+writing multithreaded programs.  The benefit is that variables which are global to the process can be utilized by all
+threads. The danger is there can be race conditions when multiple threads are accessing and modifying values in their
+shared memory space.
 </p>
 </Definition>
 <p>
-
+For I/O bound tasks like making API calls, using asynchronous programming approaches like
+<code className="jarombek-inline-code">ThreadPoolExecutor</code> can still speed up the code<sup>6</sup>.  This is
+because while the asynchronous call is awaiting an event, it releases the GIL.  Therefore other threads can run Python
+code by acquiring the GIL.  This allows API calls made with the <code className="jarombek-inline-code">ThreadPoolExecutor</code>
+to run faster than sequential code.  Unfortunately for CPU-bound programs, using multiple threads does not speed up
+execution times.
 </p>
-
 <p>
-Each program (process) can run multiple threads, which are able to take advantage of a multiprocessor architecture (a computer with multiple central processing units) or a multi-core architecture (where processors implement multiple processing units).  In other words, multithreaded programs are able to run tasks in parallel if a computer's hardware supports it.  Some programs run multiple processes instead of threads (not to be confused with multiprocessing, which is the use of multiple CPUs or CPU cores).  Asynchronous code is non-blocking (it frees up the CPU before it completes), allowing other tasks to be executed concurrently.  Asynchronous can also be run in parallel with other code if a machine’s architecture enables it.
+Python does provide a way to optimize CPU-bound tasks.  Instead of creating multiple threads and running tasks in each,
+multiple processes can be created.  <code className="jarombek-inline-code">concurrency.futures</code> has a
+<code className="jarombek-inline-code">ProcessPoolExecutor</code> class which provides this functionality.  The API code
+can be rewritten again to use <code className="jarombek-inline-code">ProcessPoolExecutor</code> (note: using processes
+instead of threads is less useful for I/O-bound tasks like API calls).
 </p>
+<CodeSnippet language="Python">
+import time
+import os
+from concurrent import futures
+
+import requests
+
+domain = 'https://jsonplaceholder.typicode.com/'
+endpoints = ['posts', 'comments', 'albums', 'photos', 'todos', 'users']
+
+def make_request(endpoint: str) -> requests.Response:
+    url = f'{domain}{endpoint}'
+    response: requests.Response = requests.get(url)
+    print(response)
+
+    # Raise an error if the HTTP code is 4XX or 500.
+    response.raise_for_status()
+    return response
+
+
+def make_requests_processes() -> int:
+    cpu_cores = os.cpu_count()
+    print(f'Number of CPU cores: {cpu_cores}')
+
+    with futures.ProcessPoolExecutor() as executor:
+        res = executor.map(make_request, endpoints)
+
+    return len(list(res))
+
+def main() -> None:
+    start = time.time()
+    make_requests_processes()
+    end = time.time()
+    print(f'API calls from worker processes made in: {end - start}')
+
+
+if __name__ == '__main__':
+    main()
+</CodeSnippet>
+<p>
+Python provides many libraries for asynchronous programming, but one of the newer and more significant libraries is
+<code className="jarombek-inline-code">asyncio</code>.
+</p>
+<SectionTitle title="Concurrent Programming with asyncio">Concurrent Programming with asyncio</SectionTitle>
+<p>
+With the <strong>asyncio</strong> library, the keywords <code className="jarombek-inline-code">async</code> and
+<code className="jarombek-inline-code">await</code> can be used.  <strong>asyncio</strong> is a high-level library,
+abstracting away implementation details (such as its usage of coroutines).  This design decision makes it easy to use and a
+preferred way to implement asynchronous programs.
+</p>
+<Definition word="Coroutine">
+<p>
+A Python coroutine is a function defined with the <code className="jarombek-inline-code">async def</code> keywords.
+Coroutines can be suspended and restarted many times throughout their lifecycle, making them ideal for asynchronous
+programming<sup>7</sup>.  They can also receive data and return data throughout their lifecycle.
+</p>
+</Definition>
+<p>
+<strong>asyncio</strong> is a massive library and deserves its own article, but the following code snippet demonstrates
+the basics.
+</p>
+<CodeSnippet language="Python">
+import asyncio
+import time
+from typing import Tuple, List, Any
+
+
+async def predicted_sunday_run_length() -> float:
+    """
+    Simulate a long running operation that predicts the length of my Sunday long run.
+    """
+    await asyncio.sleep(1)
+    return 12.31
+
+
+async def predicted_weekly_mileage() -> float:
+    """
+    Simulate a long running operation that predicts my weekly running mileage.
+    """
+    await asyncio.sleep(2)
+    return 44
+
+
+async def running_predictions() -> Tuple[float, float]:
+    """
+    Using async/await, call both the simulated functions.
+    """
+    sunday_run = await predicted_sunday_run_length()
+    weekly_mileage = await predicted_weekly_mileage()
+    return sunday_run, weekly_mileage
+
+
+async def running_predictions_concurrent() -> List[float]:
+    """
+    The same as running_predictions() above, except it uses asyncio.gather() instead of two await statements.
+    """
+    return await asyncio.gather(predicted_weekly_mileage(), predicted_sunday_run_length())
+
+
+def main() -> None:
+    start = time.time()
+    sunday_run, weekly_mileage = asyncio.run(running_predictions())
+    end = time.time()
+    print(sunday_run)
+    print(weekly_mileage)
+
+    # Two awaits completes in 3 seconds.
+    print(f'two awaits completes in: {end - start}')
+
+    start = time.time()
+    predictions = asyncio.run(running_predictions_concurrent())
+    end = time.time()
+    print(predictions[0])
+    print(predictions[1])
+
+    # await asyncio.gather completes in 2 seconds.
+    print(f'await asyncio.gather() completes in: {end - start}')
+</CodeSnippet>
 </div>
