@@ -256,7 +256,9 @@ if __name__ == '__main__':
 Python provides many libraries for asynchronous programming, but one of the newer and more significant libraries is
 <code className="jarombek-inline-code">asyncio</code>.
 </p>
-<SectionTitle title="Concurrent Programming with asyncio">Concurrent Programming with asyncio</SectionTitle>
+<SectionTitle title="Concurrent Programming with asyncio">
+Concurrent Programming with <code className="jarombek-header-code">asyncio</code>
+</SectionTitle>
 <p>
 With the <strong>asyncio</strong> library, the keywords <code className="jarombek-inline-code">async</code> and
 <code className="jarombek-inline-code">await</code> can be used.  <strong>asyncio</strong> is a high-level library,
@@ -331,4 +333,80 @@ def main() -> None:
     # await asyncio.gather completes in 2 seconds.
     print(f'await asyncio.gather() completes in: {end - start}')
 </CodeSnippet>
+<p>
+This code demonstrates how asynchronous tasks created with <strong>asyncio</strong> can be run sequentially
+(<code className="jarombek-inline-code">running_predictions()</code>) or concurrently
+(<code className="jarombek-inline-code">running_predictions_concurrent()</code>).  Coroutines defined with
+<code className="jarombek-inline-code">async def</code> can be executed by passing them to
+<code className="jarombek-inline-code">asyncio.run()</code>.
+</p>
+<SectionTitle title="Building on asyncio with aiohttp">
+Building on <code className="jarombek-header-code">asyncio</code> with <code className="jarombek-header-code">aiohttp</code>
+</SectionTitle>
+<p>
+Beyond the base Python language and standard libraries, third-party modules are freely available for use.  There are
+many great third-party libraries which build upon <strong>asyncio</strong>.  One such library is <strong>aiohttp</strong>,
+an asynchronous library for making HTTP requests<sup>8</sup>.  With <strong>aiohttp</strong>, the Python API code I’ve
+shown throughout this article can receive one final refactoring.
+</p>
+<CodeSnippet language="Python">
+import asyncio
+import time
+from typing import Tuple
+
+import aiohttp
+
+
+async def make_request(session: aiohttp.ClientSession, endpoint: str) -> Tuple[str, int]:
+    """
+    Make an API request to and endpoint on a mocked REST API.
+    :param session: An aiohttp session interface for making HTTP requests.
+    :param endpoint: The endpoint on the API to make a GET request to.
+    :return: The response JSON of the API call and the HTTP status code.
+    """
+    url = f'https://jsonplaceholder.typicode.com/{endpoint}'
+    async with session.get(url) as response:
+        return await response.json(), response.status
+
+
+async def make_requests() -> int:
+    """
+    Make HTTP requests using aiohttp.
+    :return: The number of successful API calls made (with 200 HTTP codes).
+    """
+    endpoints = ['posts', 'comments', 'albums', 'photos', 'todos', 'users']
+    success_count = 0
+
+    async with aiohttp.ClientSession() as session:
+        for endpoint in endpoints:
+            response: Tuple[str, int] = await make_request(session, endpoint)
+            print(response[1])
+
+            if response[1] == 200:
+                success_count += 1
+
+    return success_count
+
+
+def main() -> None:
+    start = time.time()
+    loop = asyncio.get_event_loop()
+    success_count = loop.run_until_complete(make_requests())
+    end = time.time()
+    print(f'API calls completed in: {end - start}')
+    print(f'Success count: {success_count}')
+
+
+if __name__ == '__main__':
+    main()
+</CodeSnippet>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+There are a vast number of libraries available in Python to help with concurrency and parallelism.  Many of the
+lower-level classes that Python provides (including <code className="jarombek-header-code">Thread</code>,
+<code className="jarombek-header-code">Task</code>, and <code className="jarombek-header-code">Semaphore</code>) were
+omitted from this article in favor of higher-level libraries.  While going over everything concurrency related in Python
+would require a multi-hundred page book, in this article I explored how certain concurrent programming terminologies can
+translate into Python code.  The full code for this article is available on <a href="">GitHub</a>.
+</p>
 </div>
