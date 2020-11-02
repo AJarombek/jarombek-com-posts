@@ -1,0 +1,50 @@
+<div>
+<p>
+Front-end applications, specifically those created with <a href="https://jarombek.com/blog?query=React&page=1">React</a>,
+are built with small reusable JavaScript functions called <a href="https://jarombek.com/blog/may-31-2018-react-seed#react-component">
+components</a>.  Each component renders and handles the business logic for a small chunk of the application.  Components
+have props, state, and elements that render on the screen.
+</p>
+<p>
+When working on multiple React applications or being part of an organization, it's beneficial to create a reusable
+component library.  This library is shared amongst applications and contains generic components such as buttons,
+accordions, and form elements.  Besides the obvious benefit of code reuse, component libraries help to enforce
+organizational style guides and allow developers to easily iterate on components used in all their applications.  Setup
+of a component library is easy and can save a lot of front-end development time in the long run.
+</p>
+<SectionTitle title="Library Structure">Library Structure</SectionTitle>
+<span className="code-span">
+jarombek-react-components
+|-- .storybook
+|-- components
+|    |-- src
+|    |-- stories
+|    +-- test
++-- dist
+</span>
+<p>
+The directory structure shown above matches the one for my <a href="https://github.com/AJarombek/jarombek-react-components">
+reusable component library</a>.  There are three top level directories.  <strong>.storybook</strong> holds configuration
+for <a href="https://storybook.js.org/">storybook</a>, a visualization tool for components.  I use storybook to both view
+and test the functionality of my reusable components.  <strong>components</strong> holds the React component source code,
+tests, and storybook stories.  Storybook stories display and document a component.  <strong>dist</strong> is the bundled
+and minimized code of the reusable component library.  This code is used by applications that utilize the component
+library.
+</p>
+<SectionTitle title="Reusable Component Example">Reusable Component Example</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Viewing Components with Storybook">Viewing Components with Storybook</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="TypeScript/IDE Support">TypeScript/IDE Support</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+
+</p>
+</div>
