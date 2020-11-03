@@ -33,13 +33,102 @@ library.
 </p>
 <SectionTitle title="Reusable Component Example">Reusable Component Example</SectionTitle>
 <p>
+Inside the <strong>components</strong> directory of my <a href="https://github.com/AJarombek/jarombek-react-components">
+reusable component library</a> is an <strong>index.js</strong> file which exports all the components in the
+<strong>src</strong> directory.  <strong>index.js</strong> is the entry point for the library.
+</p>
+<p>
+Inside the <a href="https://github.com/AJarombek/jarombek-react-components/tree/master/components/src">src</a>
+directory, each component has its own directory.  Components are split into multiple files:
+<strong>&lt;ComponentName&gt;.js</strong>, <strong>styles.js</strong>, and <strong>index.js</strong>.
+</p>
+<p>
+For example, I have a reusable component called <code className="jarombek-inline-code">AJSwitch</code>.  All my reusable
+components are prefixed with <strong>AJ</strong> so that they are easy to recognize in application code.  A switch is a
+toggle with an on and off state, just like a typical light switch in a home.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-5-20-aj-switch.gif"/>
+</figure>
+<p>
+<code className="jarombek-inline-code">AJSwitch</code> has three source code files: <strong>AJSwitch.js</strong>,
+<strong>styles.js</strong>, and <strong>index.js</strong>.  <a href="https://github.com/AJarombek/jarombek-react-components/
+blob/master/components/src/AJSwitch/AJSwitch.js">AJSwitch.js</a> contains the <code className="jarombek-inline-code">AJSwitch</code>
+component function.  <a href="https://github.com/AJarombek/jarombek-react-components/blob/master/components/src/AJSwitch/
+styles.js">styles.js</a> defines the styles for the component written in JSS.  <a href="https://github.com/AJarombek/
+jarombek-react-components/blob/master/components/src/AJSwitch/index.js">index.js</a> exports the component function to
+the rest of the library.
+</p>
+<p>
+Below is an abbreviated code snippet of the component function declared in <strong>AJSwitch.js</strong>.  Most of the
+omitted code determines which styles and classes are applied to the switch (depending on whether it's toggled on/off).
+</p>
+<CodeSnippet language="JavaScript">
+import React, {useState} from 'react';
+import PropTypes from 'prop-types';
+import {createUseStyles} from 'react-jss';
 
+import styles from './styles';
+
+const useStyles = createUseStyles(styles);
+
+/**
+ * Component representing an off and on switch.  The user can plug in custom logic which will occur
+ * when the off/on state changes.
+ * @param onChange Function that is called when the switch is toggled.  The function takes a single
+ * boolean argument, whose value is {@code true} if the switch is on and {@code false} if the
+ * switch is off.
+ * @param initialState The initial on/off state of the switch.
+ * @param disabled Whether clicking on the switch changes its state.
+ * @param className Custom class attribute(s) attached to the component.
+ * @return {*} React elements representing a toggleable switch.
+ */
+const AJSwitch = ({onChange, initialState=false, disabled=false, className}) => {
+  const classes = useStyles();
+  const [state, setState] = useState(initialState);
+
+  const onClick = () => {
+    if (!disabled) {
+      const newState = !state;
+      setState(newState);
+
+      if (typeof onChange === 'function') {
+        onChange(newState);
+      }
+    }
+  };
+
+  return (
+    &lt;div className={mainClass} onClick={onClick}>
+      &lt;div className={headClass}> &lt;/div>
+      &lt;div className={tailClass}> &lt;/div>
+    &lt;/div>
+  );
+};
+
+AJSwitch.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  initialState: PropTypes.bool,
+  disabled: PropTypes.bool,
+  className: PropTypes.string
+};
+
+export default AJSwitch;
+</CodeSnippet>
+<p>
+The JSS styles for the component are imported from <strong>styles.js</strong> and created with
+<code className="jarombek-inline-code">createUseStyles()</code> and a <code className="jarombek-inline-code">
+useStyles()</code> React hook<sup>1</sup>.
 </p>
 <SectionTitle title="Viewing Components with Storybook">Viewing Components with Storybook</SectionTitle>
 <p>
 
 </p>
 <SectionTitle title="TypeScript/IDE Support">TypeScript/IDE Support</SectionTitle>
+<p>
+
+</p>
+<SectionTitle title="Handling Releases">Handling Releases</SectionTitle>
 <p>
 
 </p>
