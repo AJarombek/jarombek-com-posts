@@ -118,13 +118,122 @@ export default AJSwitch;
 <p>
 The JSS styles for the component are imported from <strong>styles.js</strong> and created with
 <code className="jarombek-inline-code">createUseStyles()</code> and a <code className="jarombek-inline-code">
-useStyles()</code> React hook<sup>1</sup>.
+useStyles()</code> React hook<sup>1</sup>.  Below is the stylesheet for <code className="jarombek-inline-code">AJSwitch</code>.
 </p>
+<CodeSnippet language="JavaScript">
+export default {
+  ajSwitch: {
+    display: 'flex',
+    height: '20px',
+    width: '36px',
+    cursor: 'pointer'
+  },
+  ajSwitchDisabled: {
+    cursor: 'default'
+  },
+  ajSwitchActive: {
+    flexDirection: 'row-reverse'
+  },
+  ajSwitchInactive: {
+    flexDirection: 'row'
+  },
+  ajSwitchHead: {
+    position: 'absolute',
+    height: '20px',
+    width: '20px',
+    borderRadius: '50%',
+    boxShadow: '0 2px 2px 0 rgba(0, 0, 0, 0.24)'
+  },
+  ajSwitchHeadActive: {
+    backgroundColor: '#4b6cc9'
+  },
+  ajSwitchHeadInactive: {
+    backgroundColor: '#f5f5f5'
+  },
+  ajSwitchTail: {
+    height: '100%',
+    width: '100%',
+    borderRadius: '10px'
+  },
+  ajSwitchTailActive: {
+    backgroundColor: 'rgba(75, 108, 201, 0.5)'
+  },
+  ajSwitchTailInactive: {
+    backgroundColor: '#ccc'
+  }
+};
+</CodeSnippet>
+<p>
+JSS is a library for writing CSS styles in JavaScript code.  I've found JSS to be a very flexible framework, with its
+greatest strength being the ability to adjust styles dynamically.  With JSS, any JavaScript value or object can be
+passed to the stylesheet object.  This process is further simplified with the React-JSS library; state,
+props, or other variables can be passed to the JSS object, allowing the styles to change as the React component updates<sup>2</sup>.
+I plan to dedicate a future article to JSS where I will discuss its benefits and drawbacks compared to more traditional
+approaches like CSS or a CSS preprocessor.
+</p>
+<p>
+The final file, <strong>index.js</strong>, simply exports the component using ES6 modules.
+</p>
+<CodeSnippet language="JavaScript">
+import AJSwitch from './AJSwitch';
+
+export default AJSwitch;
+</CodeSnippet>
 <SectionTitle title="Viewing Components with Storybook">Viewing Components with Storybook</SectionTitle>
 <p>
+<a href="https://storybook.js.org/docs/react/get-started/introduction">Storybook</a> is a visualization tool which
+allows components to be tested, viewed, and documented in isolation from the rest of an application.  It can be
+customized and re-styled to match your company brand or personal taste.
+</p>
+<p>
+I use Storybook for a couple of reasons.  First, Storybook is helpful during a components development process for
+debugging and testing out styles.  Second, it is useful for trying all the different props that a component can take
+in.  Third, it is a helpful reference when returning to the component library and searching for components to use in
+other applications.
+</p>
+<p>
+Storybook contains multiple stories, with each story visualizing different configurations of a single component.  For
+example, I have a story for the <code className="jarombek-inline-code">AJSwitch</code> component defined in a
+<a href="https://github.com/AJarombek/jarombek-react-components/tree/master/components/stories">stories</a> directory
+in <a href="https://github.com/AJarombek/jarombek-react-components/blob/master/components/stories/storiesAJSwitch.js">
+storiesAJSwitch.js</a>.  It shows two different <code className="jarombek-inline-code">AJSwitch</code> component
+configurations.
+</p>
+<CodeSnippet language="JavaScript">
+import React, {useState} from 'react';
+import {storiesOf} from '@storybook/react';
+import {AJSwitch} from '../src';
 
+storiesOf('AJSwitch', module)
+  .add('default', () =>
+    &lt;AJSwitch
+      onChange={state => console.info(`AJSwitch state: ${state}`)}
+      disabled={false}
+    />
+  )
+  .add('disabled', () =>
+    &lt;AJSwitch
+      onChange={state => console.info(`Disabled AJSwitch state: ${state}`)}
+      initialState={true}
+      disabled={true}
+    />
+  );
+</CodeSnippet>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-5-20-aj-switch.png"/>
+</figure>
+<p>
+Storybook is easily started locally on its own server with the <code className="jarombek-inline-code">start-storybook -p 6006</code>
+command (the port can be changed to your liking).
 </p>
 <SectionTitle title="TypeScript/IDE Support">TypeScript/IDE Support</SectionTitle>
+<p>
+Although I decided to write my React component library in JavaScript, many of the applications that use it are written
+in TypeScript.  To avoid any type errors when using the component library in a TypeScript application, I created an
+<a href="https://github.com/AJarombek/jarombek-react-components/blob/master/index.d.ts">index.d.ts</a> file.
+<strong>*.d.ts</strong> files are used by TypeScript to provide type information for JavaScript files<sup>2</sup>.  They
+also help IDEs to properly autocomplete component imports and props when used in applications.
+</p>
 <p>
 
 </p>
