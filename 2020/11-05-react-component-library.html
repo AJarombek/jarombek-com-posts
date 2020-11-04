@@ -235,14 +235,62 @@ in TypeScript.  To avoid any type errors when using the component library in a T
 also help IDEs to properly autocomplete component imports and props when used in applications.
 </p>
 <p>
-
+For example, the <code className="jarombek-inline-code">AJSwitch</code> component has the following type information
+defined in <strong>index.d.ts</strong>.
 </p>
+<CodeSnippet language="JavaScript">
+import {FunctionComponent} from "react";
+
+// AJSwitch component
+
+export interface AJSwitchProps {
+    onChange: Function;
+    initialState?: boolean;
+    disabled?: boolean;
+    className?: string;
+}
+
+export const AJSwitch: FunctionComponent&lt;AJSwitchProps>;
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">AJSwitchProps</code> interface provides type information for the props passed
+to the <code className="jarombek-inline-code">AJSwitch</code> component.
+</p>
+<p>
+Finally, component typing information must be made available to applications that utilize the library.  This is
+accomplished by adding a <code className="jarombek-inline-code">typings</code> (or
+<code className="jarombek-inline-code">types</code>) field to <a href="https://github.com/AJarombek/
+jarombek-react-components/blob/master/package.json">package.json</a>.  <code className="jarombek-inline-code">typings
+</code> points to the type declaration file, which in my case is <strong>index.d.ts</strong><sup>3</sup>.
+</p>
+<CodeSnippet language="JSON">
+{
+    ...
+    "typings": "./index.d.ts"
+}
+</CodeSnippet>
 <SectionTitle title="Handling Releases">Handling Releases</SectionTitle>
 <p>
-
+When I release a new version of the component library, I add a <a href="https://github.com/AJarombek/jarombek-react-components/
+tags">tag</a> to its GitHub repository.  This tag is then referenced in an applications <strong>package.json</strong>
+file.  For example, my SaintsXCTF web application’s <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+package.json">package.json</a> file has a dependency listed for my component library with a specific tag.  Here is how
+that dependency definition looks:
 </p>
+<CodeSnippet language="JSON">
+{
+    ...
+    "dependencies": {
+        "jarombek-react-components": "git://github.com/ajarombek/jarombek-react-components.git#v0.3.7",
+        ...
+    }
+}
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-
+Creating reusable component libraries reduces a developers workload when they are programming multiple UI applications.
+I’ve found my reusable React components to be very helpful in my frontend applications and prototypes that I wish to
+spin up quickly.  You can find the full code of my component library on <a href="https://github.com/AJarombek/
+jarombek-react-components">GitHub</a>.
 </p>
 </div>
