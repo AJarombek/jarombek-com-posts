@@ -4,8 +4,8 @@ Parallelism, multithreading, multi-process programming, and asynchronous program
 are often the most difficult to learn when learning a new programming language.  There are often many different
 approaches available and it’s hard to know the best approach (look no further than <strong>Java: Concurrency in
 Practice</strong>, a 350 page book on writing proper concurrency code in Java).  Python is no different, with multiple
-evolving libraries and, for added confusion, a global interpreter lock (GIL) which restricts Python code to a single
-thread when running on its default CPython interpreter.  In this article I will attempt to demystify concurrent
+evolving libraries, and, for added confusion, a global interpreter lock (GIL) which restricts Python code to a single
+thread when running on its default CPython interpreter.  In this article, I attempt to demystify concurrent
 programming in Python and work with libraries such as <code className="jarombek-inline-code">concurrent.futures</code>,
 <code className="jarombek-inline-code">asyncio</code>, and <code className="jarombek-inline-code">aiohttp</code>.
 </p>
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     main()
 </CodeSnippet>
 <p>
-There are a few issues with this approach.  The most glaring problem is that time is wasted while the program awaits a
+There are a few issues with this approach.  The most glaring problem being that time is wasted while the program awaits a
 response from the API.  Since the API call is a network I/O task to a remote server (potentially located thousands of
 miles away), the response could take anywhere from milliseconds to minutes.  Either way, that is a lot of time that
 could be spent executing other tasks, such as another API call.
@@ -74,14 +74,14 @@ Concurrency
 <div className="jarombek-cte-body">
 <p>
 In programming, concurrency is when two or more programs are executing during the same time period.  In a single CPU
-architecture these programs share the CPU, so that their executions are interleaved.  For example, program A runs for
+architecture these programs share the CPU, so their executions are interleaved.  For example, program A runs for
 one second, then gives up the CPU to program B, which runs for two seconds.  In a multiprocessor or multi-core
 architecture, these processes can run in parallel.
 </p>
 <p>
 It’s important to note that concurrency does not imply parallelism.  Computers are able to give the illusion that
 multiple programs are running simultaneously (in parallel) on the CPU without actually doing so.  This is achieved with
-time sharing and context switching.  On some architectures with a single CPU and single core it is simply impossible to
+time sharing and context switching.  On architectures with a single CPU and single core it is simply impossible to
 perform tasks in parallel.
 </p>
 </div>
@@ -99,8 +99,8 @@ separate processor from the main process/thread.
 </p>
 <p>
 By definition, computations which run in parallel are also run concurrently.  Parallel processing is hardware dependent.
-Therefore, just because software creates separate threads or processes designed to run on separate processors, does
-not mean that it actually does so.  If a computer's hardware is limited to a single CPU or core, these threads and
+Therefore, software with separate threads or processes designed to run on separate processors don't
+necessarily do so.  If a computer's hardware is limited to a single CPU or core, these threads and
 processes will simply run concurrently on the same processor.
 </p>
 </div>
@@ -121,7 +121,7 @@ etc.).  Many high-level programming languages have built-in support for asynchro
 </Definition>
 <p>
 <code className="jarombek-inline-code">concurrency.futures</code> contains a <code className="jarombek-inline-code">
-ThreadPoolExecutor</code> class which can run asynchronous tasks in separate threads (although not actually - because
+ThreadPoolExecutor</code> class which can run asynchronous tasks in separate threads (although with limitations - because
 of CPython’s Global Interpreter Lock [GIL] - which I will explain in a second).  Using
 <code className="jarombek-inline-code">ThreadPoolExecutor</code> can significantly speed up the sequential API calls
 I wrote previously.
@@ -154,7 +154,7 @@ def make_request(endpoint: str) -> requests.Response:
 
 def make_requests() -> int:
     """
-    Make requests to the API from a pool of threads running concurrently (although not actually, because of Python's
+    Make requests to the API from a pool of threads running concurrently (although with limitations, because Python's
     Global Interpreter Lock [GIL] only allows Python code to run in a single thread at a time.  However, I/O bound tasks
     release the GIL while they wait, allowing ThreadPoolExecutor to be faster than making the API calls synchronously).
     On my machine, this is approximately 2.5x faster than using requests to make API calls sequentially.
@@ -190,8 +190,8 @@ example runs concurrently but not in parallel.
 <Definition word="Thread">
 <p>
 A thread, also known as a lightweight process, is the most basic unit of scheduling in most computers<sup>4</sup>.  A
-computer process is initially created with a single thread of execution, known as the main thread.  The main thread has
-the ability to split and create one or more other threads.  Threads can be thought of as subsets of a
+computer process is initially created with a single thread of execution, known as the main thread.  Main threads have
+the ability to split and create one or more additional threads.  A thread can be thought of as a subset of a
 process<sup>5</sup>.  Threads share the memory space of their parent process, which is both beneficial and dangerous when
 writing multithreaded programs.  The benefit is that variables which are global to the process can be utilized by all
 threads. The danger is there can be race conditions when multiple threads are accessing and modifying values in their
@@ -260,7 +260,7 @@ Python provides many libraries for asynchronous programming, but one of the newe
 Concurrent Programming with <code className="jarombek-header-code">asyncio</code>
 </SectionTitle>
 <p>
-With the <strong>asyncio</strong> library, the keywords <code className="jarombek-inline-code">async</code> and
+With <strong>asyncio</strong>, the keywords <code className="jarombek-inline-code">async</code> and
 <code className="jarombek-inline-code">await</code> can be used.  <strong>asyncio</strong> is a high-level library,
 abstracting away implementation details (such as its usage of coroutines).  This design decision makes it easy to use and a
 preferred way to implement asynchronous programs.
@@ -403,10 +403,11 @@ if __name__ == '__main__':
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 There are a vast number of libraries available in Python to help with concurrency and parallelism.  Many of the
-lower-level classes that Python provides (including <code className="jarombek-header-code">Thread</code>,
-<code className="jarombek-header-code">Task</code>, and <code className="jarombek-header-code">Semaphore</code>) were
-omitted from this article in favor of higher-level libraries.  While going over everything concurrency related in Python
-would require a multi-hundred page book, in this article I explored how certain concurrent programming terminologies can
-translate into Python code.  The full code for this article is available on <a href="">GitHub</a>.
+lower-level classes that Python provides (including <code className="jarombek-inline-code">Thread</code>,
+<code className="jarombek-inline-code">Task</code>, and <code className="jarombek-inline-code">Semaphore</code>) were
+omitted from this article in favor of higher-level libraries.  While going over everything related to concurrency in Python
+ requires a multi-hundred page book, in this article I explored how certain concurrent programming terminologies can
+translate into Python code.  The full code for this article is available on
+ <a href="https://github.com/AJarombek/misc-code-samples/tree/master/Python/base/concurrency">GitHub</a>.
 </p>
 </div>
