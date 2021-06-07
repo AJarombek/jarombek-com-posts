@@ -1,0 +1,55 @@
+<div>
+<p>
+On December 24th 2016, I released my first website <a href="https://saintsxctf.com/">saintsxctf.com</a>.  I was still a
+senior in college at the time, and used my limited software development knowledge from classes and a summer internship
+to build the application.  SaintsXCTF is a running training log designed for my college Cross Country and Track & Field
+teams at St. Lawrence University.  Competitively running in college had a major impact on my life, and I was really
+proud to create the website to assist my teammates and coaches.  Shortly after releasing the
+<a href="https://github.com/AJarombek/saints-xctf">website</a>, I created an
+<a href="https://github.com/AJarombek/saints-xctf-android">Android application</a> and an
+<a href="https://github.com/AJarombek/saints-xctf-ios">iOS application</a> for SaintsXCTF.  With SaintsXCTF accessible
+via web browsers and mobile applications, I felt my development work was complete and moved on to other programming
+projects.
+</p>
+<p>
+As I began my professional software engineering career in the summer of 2017, I gradually learned industry best
+practices and became more well rounded as a developer.  At this point, certain shortcomings and misguided assumptions
+about my SaintsXCTF applications became apparent.  First, the core web application and API did not follow the latest
+industry standards.  Second, all three applications were not properly tested and were prone to degradation when left
+unchecked.  Third, the security & infrastructure of the application was very basic and not fault tolerant. Lastly, my
+assumption that releasing the applications meant my work was done proved to be incorrect. As all software engineers
+know, the work is only just beginning when an application is initially released.
+</p>
+<p>
+These realizations resulted in a multi-year effort to create a new version of SaintsXCTF which checked off all the boxes
+that the original missed.  I decided upon a two step process to get the original version of SaintsXCTF converted to a
+new version.  The first step began in December 2018 and was completed in February 2019.  This step moved the website,
+API, and database infrastructure to AWS.  All the infrastructure was written as code using Terraform.  The second step
+began in June 2019 and was completed in May 2021.  This two year development step rewrote the SaintsXCTF application.
+</p>
+<p>
+This article explores the architectural changes to the SaintsXCTF application across these iterations.  Subsequent
+articles discuss certain components, technologies, and design decisions in SaintsXCTF 2.0.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><strong>Architectural Overview</strong></li>
+<li>AWS Infrastructure</li>
+<li>Kubernetes Infrastructure</li>
+<li>React Web Application Overview</li>
+<li>Web Application Redux State Configuration</li>
+<li>Web Application Cypress E2E Tests</li>
+<li>Web Application JSS Modular Design</li>
+<li>Web Application Docker & Nginx Configuration</li>
+<li>Flask Python API</li>
+<li>Flask API Testing</li>
+<li>Flask API Docker & Docker Compose Configuration</li>
+<li>Function API Using API Gateway & Lambda</li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>IOS Application Updates and Learning Experiences</li>
+<li>Post-Deployment Challenges & Future Improvements</li>
+</ul>
+<SectionTitle title="Initial Architecture">Initial Architecture</SectionTitle>
+</div>
