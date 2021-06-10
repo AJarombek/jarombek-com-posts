@@ -52,4 +52,58 @@ articles discuss certain components, technologies, and design decisions in Saint
 <li>Post-Deployment Challenges & Future Improvements</li>
 </ul>
 <SectionTitle title="Initial Architecture">Initial Architecture</SectionTitle>
+<p>
+The initial release of SaintsXCTF had a very basic infrastructure consisting of a single hosted linux server. This
+server, a virtual machine hosted by Linode, ran the web application, API, and database.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-14-21-initial-architecture.png"/>
+</figure>
+<p>
+There are many flaws with this architecture design.  The most obvious issue is that the linux server is a single point
+of failure.  If the server goes down, so does the website, API, and database.  Worst of all, in the case of a
+catastrophic failure where the virtual machine’s file system isn’t recoverable, all the application data is lost.  For
+an application with user information and exercise logs uploaded every day, this is an unacceptable level of risk.
+</p>
+<p>
+The initial UI and API code was tightly coupled into a single codebase. The API was written in PHP without the use of
+any server framework. The UI code was written in JavaScript using the JQuery library.
+</p>
+<p>
+These technologies have their fair share of issues as well.  In the UI technology ecosystem, JQuery is infamous for
+resulting in difficult to read spaghetti code.  With modern front-end frameworks and libraries such as React and
+Angular, UI code has become more modular, clean, and reusable.  In college I wasn’t aware of these libraries, so
+JQuery was a logical starting point.  An additional problem with the UI code was the stylesheet.  The UI consisted of
+one single CSS file for the entire application.  This resulted in hard to identify styling issues, especially when
+adding new styles to one page negatively impacted another page.  Once again, modern CSS preprocessors and CSS in
+JavaScript libraries have greatly improved the modularity of stylesheets as modern frameworks and libraries have for
+JavaScript code.
+</p>
+<p>
+In the API technology ecosystem, the lack of a server-side framework resulted in hard to read code.  Also, certain
+actions such as creating classes that represent HTTP request objects were written by me.  If I had used a back-end
+framework, these classes would have been provided.  I was reinventing the wheel without realizing it.  Another issue
+with the API was that it shared the same codebase and build process (a manual SFTP upload to the linux server) as the
+front-end code.  This meant if the website went down, the API would as well.  If new UI code was deployed, the API was
+redeployed as well.  This logical separation is achieved in the second version of the application.
+</p>
+<p>
+Due to all these flaws in the website’s technology stack and infrastructure, I began reconsidering any ideas of
+enhancing the functionality of the application.  Instead, I began planning an iterative process of refurbishing the
+application up to industry standards.
+</p>
+<SectionTitle title="Lift and Shift AWS Architecture">Lift and Shift AWS Architecture</SectionTitle>
+<p>
+Before starting on entirely new codebases for the UI and API, I fixed any potentially fatal flaws with the initial
+version of the application.  The major flaw of the initial design was its linux server, which was a single point of
+failure.  If that server went down, everything would have been lost.
+</p>
+<p>
+To remedy this issue I redesigned the infrastructure on AWS and wrote it all as code using Terraform.  As a result, I
+could build infrastructure in a repeatable manner.  I also designed the infrastructure without any single points of
+failure.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-14-21-aws-lift-shift-architecture.png"/>
+</figure>
 </div>
