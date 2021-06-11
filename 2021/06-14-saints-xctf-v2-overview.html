@@ -49,6 +49,7 @@ articles discuss certain components, technologies, and design decisions in Saint
 <li>Database Deployments Using Jenkins</li>
 <li>Database Client on Kubernetes</li>
 <li>IOS Application Updates and Learning Experiences</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
 <li>Post-Deployment Challenges & Future Improvements</li>
 </ul>
 <SectionTitle title="Initial Architecture">Initial Architecture</SectionTitle>
@@ -66,13 +67,14 @@ catastrophic failure where the virtual machine’s file system isn’t recoverab
 an application with user information and exercise logs uploaded every day, this is an unacceptable level of risk.
 </p>
 <p>
-The initial UI and API code was tightly coupled into a single codebase. The API was written in PHP without the use of
-any server framework. The UI code was written in JavaScript using the JQuery library.
+The initial UI and API code was tightly coupled into a single codebase. The API was written in
+<a href="https://jarombek.com/blog?query=PHP&page=1">PHP</a> without the use of any server framework. The UI code was
+written in <a href="https://jarombek.com/blog?query=JavaScript&page=1">JavaScript</a> using the JQuery library.
 </p>
 <p>
 These technologies have their fair share of issues as well.  In the UI technology ecosystem, JQuery is infamous for
 resulting in difficult to read spaghetti code.  With modern front-end frameworks and libraries such as React and
-Angular, UI code has become more modular, clean, and reusable.  In college I wasn’t aware of these libraries, so
+Angular, UI code has become more modular, clean, and reusable.  In college I wasn't aware of these libraries, so
 JQuery was a logical starting point.  An additional problem with the UI code was the stylesheet.  The UI consisted of
 one single CSS file for the entire application.  This resulted in hard to identify styling issues, especially when
 adding new styles to one page negatively impacted another page.  Once again, modern CSS preprocessors and CSS in
@@ -99,11 +101,46 @@ version of the application.  The major flaw of the initial design was its linux 
 failure.  If that server went down, everything would have been lost.
 </p>
 <p>
-To remedy this issue I redesigned the infrastructure on AWS and wrote it all as code using Terraform.  As a result, I
+To remedy this issue I redesigned the infrastructure on <a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a>
+and wrote it all as code using <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a>.  As a result, I
 could build infrastructure in a repeatable manner.  I also designed the infrastructure without any single points of
 failure.
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-14-21-aws-lift-shift-architecture.png"/>
 </figure>
+<p>
+From the end user perspective, nothing changed when using the application after these changes.  However, the
+reliability of the application increased greatly.  First, in a worst case scenario where the infrastructure breaks,
+Terraform scripts are capable of recreating the infrastructure in a matter of minutes.  Second,  I implemented an AWS
+Lambda function (not shown in the infrastructure diagram) which takes
+ <a href="https://jarombek.com/blog/sep-3-2019-rds-backups-pt1">database backups</a> daily and uploads them to S3.
+Therefore, a worst case scenario would result in one day of lost data.
+</p>
+<p>
+Luckily, this scenario is extremely unlikely.  <a href="https://jarombek.com/blog?query=aws%20rds&page=1">AWS RDS</a>
+(the MySQL database) and <a href="https://jarombek.com/blog?query=aws%20ec2&page=1">AWS EC2</a> (the API and web application
+server) have impressive uptime percentages of 99.95% and 99.99%, respectively<sup>1,2</sup>.  RDS also takes snapshots
+on a regular basis for disaster recovery purposes.  With these impressive reliability, I never had to use my database
+backup files to restore the database.  Nevertheless, the peace of mind it gave me was worth it.
+</p>
+<SectionTitle title="Version 2.0 Architecture">Version 2.0 Architecture</SectionTitle>
+<p>
+With the application infrastructure in a reliable state, I took my time creating a second version of the web
+application and API.  With increased knowledge of cloud infrastructure, containers, and container orchestrators, I
+also decided to rewrite the application infrastructure for a third time.  I released this new codebase at the end of
+May 2021.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-14-21-v2-architecture.png"/>
+</figure>
+<p>
+The updated infrastructure for the new version of the application is still hosted on AWS and written as code with
+Terraform.  The biggest infrastructure change was moving to Kubernetes on EKS.  Both the API and web application are
+deployed Kubernetes pods, with traffic routed to them from an AWS load balancer.  All the Kubernetes infrastructure is
+created with Terraform as well.  With the combined ease of Terraform and elegance of Kubernetes deployments, updating
+or reverting a website or API version is as easy as building Docker images and applying Terraform changes.  I will go
+into all the technical details of this process in the article on SaintsXCTF Kubernetes Infrastructure.
+</p>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
