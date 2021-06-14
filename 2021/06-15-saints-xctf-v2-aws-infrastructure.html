@@ -1,0 +1,61 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.
+</Note>
+<p>
+The infrastructure for my website <a href="https://saintsxctf.com/">saintsxctf.com</a> is hosted on
+<a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a>.  SaintsXCTF
+had AWS infrastructure prior to version 2.0, but it was redesigned and rewritten for the new version.  This article
+outlines the infrastructure and walks through <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a>
+code which configures and builds the infrastructure.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><strong>AWS Infrastructure</strong></li>
+<li>Kubernetes Infrastructure</li>
+<li>React Web Application Overview</li>
+<li>Web Application Redux State Configuration</li>
+<li>Web Application Cypress E2E Tests</li>
+<li>Web Application JSS Modular Design</li>
+<li>Web Application Docker & Nginx Configuration</li>
+<li>Flask Python API</li>
+<li>Flask API Testing</li>
+<li>Flask API Docker & Docker Compose Configuration</li>
+<li>Function API Using API Gateway & Lambda</li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>IOS Application Updates and Learning Experiences</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
+<li>Post-Deployment Challenges & Future Improvements</li>
+</ul>
+<SectionTitle title="Initial Architecture">Infrastructure Overview</SectionTitle>
+<p>
+SaintsXCTF application infrastructure can be grouped into two categories - AWS and Kubernetes.  This article only
+discusses the AWS infrastructure, which has a green background in the diagram below.  The Kubernetes infrastructure,
+which has a red background in the diagram, is discussed in the next article.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-15-21-aws-architecture.png"/>
+</figure>
+<p>
+In Terraform code, the SaintsXCTF AWS infrastructure in logically grouped into modules.  These modules include (but are
+not limited to) a load balancer to the Kubernetes infrastructure, an application asset S3 bucket, a user asset S3
+bucket, an authentication REST API, an AWS Lambda function REST API, and a MySQL RDS database.  The other Terraform
+modules in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">SaintsXCTF infrastructure repository</a>
+perform smaller tasks such as debugging, database backups, and configuring SSL/TLS certificates.  These are not
+discussed in this article.
+</p>
+<SectionTitle title="Development and Production Infrastructure">Development and Production Infrastructure</SectionTitle>
+<p>
+</p>
+<SectionTitle title="Load Balancer to EKS">Load Balancer to EKS</SectionTitle>
+<SectionTitle title="Application Asset S3 Bucket">Application Asset S3 Bucket</SectionTitle>
+<SectionTitle title="User Asset S3 Bucket">User Asset S3 Bucket</SectionTitle>
+<SectionTitle title="Authentication REST API">Authentication REST API</SectionTitle>
+<SectionTitle title="Lambda Function REST API">Lambda Function REST API</SectionTitle>
+<SectionTitle title="MySQL RDS Database">MySQL RDS Database</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>

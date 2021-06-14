@@ -25,7 +25,12 @@ These realizations resulted in a multi-year effort to create a new version of Sa
 that the original missed.  I decided upon a two step process to get the original version of SaintsXCTF converted to a
 new version.  The first step began in December 2018 and was completed in February 2019.  This step moved the website,
 API, and database infrastructure to AWS.  All the infrastructure was written as code using Terraform.  The second step
-began in June 2019 and was completed in May 2021.  This two year development step rewrote the SaintsXCTF application.
+began in June 2019 and was completed in May 2021.  This two year development step rewrote the SaintsXCTF
+<a href="https://github.com/AJarombek/saints-xctf-web">web application</a>,
+<a href="https://github.com/AJarombek/saints-xctf-api">API</a>, and
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure">infrastructure</a>.  It also created a new
+<a href="https://github.com/AJarombek/saints-xctf-auth">authentication API</a> and
+<a href="https://github.com/AJarombek/saints-xctf-functions">AWS Lambda Function API</a>.
 </p>
 <p>
 This article explores the architectural changes to the SaintsXCTF application across these iterations.  Subsequent
@@ -34,7 +39,7 @@ articles discuss certain components, technologies, and design decisions in Saint
 <SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
 <ul>
 <li><strong>Architectural Overview</strong></li>
-<li>AWS Infrastructure</li>
+<li><a href="https://jarombek.com/blog/jun-15-2021-saints-xctf-v2-aws-infrastructure">AWS Infrastructure</a></li>
 <li>Kubernetes Infrastructure</li>
 <li>React Web Application Overview</li>
 <li>Web Application Redux State Configuration</li>
