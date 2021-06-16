@@ -1,0 +1,154 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.
+</Note>
+<p>
+The infrastructure for my website <a href="https://saintsxctf.com/">saintsxctf.com</a> is hosted on
+<a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a>.  SaintsXCTF
+had AWS infrastructure prior to version 2.0, but it was redesigned and rewritten for the new version.  This article
+outlines the infrastructure and walks through <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a>
+code which configures and builds the infrastructure.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><strong>AWS Infrastructure</strong></li>
+<li>Kubernetes Infrastructure</li>
+<li>React Web Application Overview</li>
+<li>Web Application Redux State Configuration</li>
+<li>Web Application Cypress E2E Tests</li>
+<li>Web Application JSS Modular Design</li>
+<li>Web Application Docker & Nginx Configuration</li>
+<li>Flask Python API</li>
+<li>Flask API Testing</li>
+<li>Flask API Docker & Docker Compose Configuration</li>
+<li>Function API Using API Gateway & Lambda</li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>IOS Application Updates and Learning Experiences</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
+<li>Post-Deployment Challenges & Future Improvements</li>
+</ul>
+<SectionTitle title="Initial Architecture">Infrastructure Overview</SectionTitle>
+<p>
+SaintsXCTF application infrastructure can be grouped into two categories - AWS and Kubernetes.  This article only
+discusses the AWS infrastructure, which has a green background in the diagram below.  The Kubernetes infrastructure,
+which has a red background in the diagram, is discussed in the next article.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-aws-architecture.png"/>
+</figure>
+<p>
+In Terraform code, the SaintsXCTF AWS infrastructure is logically grouped into modules.  These modules include (but are
+not limited to) a load balancer to the Kubernetes infrastructure, an application asset S3 bucket, a user asset S3
+bucket, an authentication REST API, an AWS Lambda function REST API, and a MySQL RDS database.  The other Terraform
+modules in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">SaintsXCTF infrastructure repository</a>
+perform smaller tasks such as debugging, database backups, and configuring SSL/TLS certificates.  These are not
+discussed in this article.
+</p>
+<SectionTitle title="Development and Production Infrastructure">Development and Production Infrastructure</SectionTitle>
+<p>
+While designing the SaintsXCTF version 2.0 infrastructure, I put a major emphasis on creating separate production and
+development environments.  Since the initial website version was live during development of version 2.0, I needed a
+separate non-production configuration to test.  Besides for the domain names and AWS resource names, the infrastructure
+between the production and development environments was designed to be identical.  This allowed for predictable behavior
+when building the production environment once the development environment was fully tested.  I plan to continue using
+the development environment for testing new infrastructure changes going forward.
+</p>
+<p>
+Under normal circumstances, the development environment isn’t running in order to save money.  However, setting it up
+only requires some <code className="jarombek-inline-code">terraform apply</code> commands invoked from
+<a href="https://github.com/AJarombek/global-jenkins-jobs/tree/master/saints-xctf/infrastructure">Jenkins jobs</a>.
+When running, the web application, main API, authentication API, and function API are accessible from
+<strong>dev.saintsxctf.com</strong>, <strong>dev.api.saintsxctf.com</strong>, <strong>dev.auth.saintsxctf.com</strong>,
+and <strong>dev.fn.saintsxctf.com</strong>.  Their respective production equivalents are accessible from
+<strong>saintsxctf.com</strong>, <strong>api.saintsxctf.com</strong>, <strong>auth.saintsxctf.com</strong>, and
+<strong>fn.saintsxctf.com</strong>.
+</p>
+<p>
+As previously mentioned, the SaintsXCTF AWS Terraform infrastructure is logically grouped into modules.  All these
+modules are directories at the top level of the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a> repository.  Many of
+these modules are configured differently for the development and production environments.  For example, the
+authentication API module has the following directory structure.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-terraform-module.png"/>
+</figure>
+<p>
+There are three environmental configurations in this module - one for resources shared across all environments, one
+for production, and one for development.  These environmental configurations invoke the submodules, which in the case
+of the authentication API are <code className="jarombek-inline-code">api-gateway</code>,
+<code className="jarombek-inline-code">lambda</code>, and <code className="jarombek-inline-code">secrets-manager</code>.
+For example, inside <strong>saints-xctf-com-auth/env/prod</strong> is a
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com-auth/env/prod/main.tf">main.tf</a>
+file which provisions the production infrastructure through the submodules.
+</p>
+<CodeSnippet language="HCL">
+provider "aws" {
+  region = "us-east-1"
+}
+
+terraform {
+  required_version = ">= 0.15.0"
+
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = ">= 3.42.0"
+    }
+  }
+
+  backend "s3" {
+    bucket = "andrew-jarombek-terraform-state"
+    encrypt = true
+    key = "saints-xctf-infrastructure/saints-xctf-com-auth/env/prod"
+    region = "us-east-1"
+  }
+}
+
+module "lambda" {
+  source = "../../modules/lambda"
+  prod = true
+}
+
+module "api-gateway" {
+  source = "../../modules/api-gateway"
+  prod = true
+
+  authenticate-lambda-name = module.lambda.authenticate-function-name
+  authenticate-lambda-invoke-arn = module.lambda.authenticate-function-invoke-arn
+  token-lambda-name = module.lambda.token-function-name
+  token-lambda-invoke-arn = module.lambda.token-function-invoke-arn
+}
+
+module "secrets-manager" {
+  source = "../../modules/secrets-manager"
+  prod = true
+
+  rotation-lambda-arn = module.lambda.rotate-function-arn
+
+  secret_rotation_depends_on = [
+    module.lambda.rotate-function-arn,
+    module.lambda.rotate-secrets-manager-permission-id,
+    module.lambda.rotate-log-group-id
+  ]
+}
+</CodeSnippet>
+<p>
+The Terraform submodules are invoked with certain input variables, including a
+<code className="jarombek-inline-code">prod</code> flag.  This variable determines whether the infrastructure needs to
+be built in the production environment (<code className="jarombek-inline-code">true</code>) or the development
+environment (<code className="jarombek-inline-code">false</code>). Most of the modules I talk about in the upcoming
+segments follow this environment/submodule pattern.
+</p>
+<SectionTitle title="Load Balancer to EKS">Load Balancer to EKS</SectionTitle>
+<SectionTitle title="Application Asset S3 Bucket">Application Asset S3 Bucket</SectionTitle>
+<SectionTitle title="User Asset S3 Bucket">User Asset S3 Bucket</SectionTitle>
+<SectionTitle title="Authentication REST API">Authentication REST API</SectionTitle>
+<SectionTitle title="Lambda Function REST API">Lambda Function REST API</SectionTitle>
+<SectionTitle title="MySQL RDS Database">MySQL RDS Database</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
