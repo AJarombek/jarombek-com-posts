@@ -145,7 +145,47 @@ environment (<code className="jarombek-inline-code">false</code>). Most of the m
 segments follow this environment/submodule pattern.
 </p>
 <SectionTitle title="Load Balancer to EKS">Load Balancer to EKS</SectionTitle>
+<p>
+The Terraform module which creates an AWS Application Load Balancer to route traffic to
+<a href="https://jarombek.com/blog?query=aws%20eks&page=1">AWS EKS</a> is unique compared to the other modules
+discussed in this article.  Instead of using the AWS Terraform provider to build the infrastructure, the load balancer
+is created by the Kubernetes Terraform provider.  Specifically, the EKS cluster has an
+<a href="https://jarombek.com/blog/sep-28-2020-eks#alb-ingress-controller-and-external-dns">ALB Ingress Controller</a>
+(now known as an <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/">AWS Load Balancer
+Controller</a>) running in a pod.  This ingress controller is capable of building load balancers that route traffic to
+Kubernetes services. Using the Kubernetes Terraform provider, an <code className="jarombek-inline-code">Ingress</code>
+object is created with certain annotations, resulting in the ingress controller provisioning load balancer
+infrastructure in AWS.
+</p>
+<p>
+In the context of SaintsXCTF, both the web application and main API are hosted on Kubernetes.  The load balancer
+created by the ingress controller routes traffic to Kubernetes for both the <strong>saintsxctf.com</strong> and
+<strong>api.saintsxctf.com</strong> domains.  The Terraform module for the load balancer and Kubernetes Ingress object
+exists in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-ingress">
+saints-xctf-com-ingress</a> directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">
+saints-xctf-infrastructure</a> repository.  I will provide more details about this code in my upcoming article on
+SaintsXCTF Kubernetes infrastructure.
+</p>
 <SectionTitle title="Application Asset S3 Bucket">Application Asset S3 Bucket</SectionTitle>
+<p>
+SaintsXCTF contains images and videos which are hosted in an S3 bucket behind a CloudFront distribution. I refer to
+this bucket as the "application asset S3 bucket", and it is accessible from <strong>asset.saintsxctf.com</strong>.  I
+wrote an <a href="https://jarombek.com/blog/feb-15-2020-s3-react">article</a> about hosting static websites on S3 and
+CloudFront, and the concept is similar for <strong>asset.saintsxctf.com</strong>. S3 holds the images and videos as
+objects, and the CloudFront CDN speeds up the retrieval of these assets.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-saints-xctf-com-asset.png"/>
+</figure>
+<p>
+The Terraform module for the application asset S3 bucket exists in the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-asset">
+saints-xctf-com-asset</a> directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">
+saints-xctf-infrastructure</a> repository.  In this module there is just one production environment configuration.
+There is no separate development configuration since the assets are the same for both development and production
+environments.  Also, during development, there is no harm in adding additional assets that aren't yet accessible on
+the production website.
+</p>
 <SectionTitle title="User Asset S3 Bucket">User Asset S3 Bucket</SectionTitle>
 <SectionTitle title="Authentication REST API">Authentication REST API</SectionTitle>
 <SectionTitle title="Lambda Function REST API">Lambda Function REST API</SectionTitle>
