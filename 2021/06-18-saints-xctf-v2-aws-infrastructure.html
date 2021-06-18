@@ -186,8 +186,92 @@ There is no separate development configuration since the assets are the same for
 environments.  Also, during development, there is no harm in adding additional assets that aren't yet accessible on
 the production website.
 </p>
+<p>
+At a high level, the <strong>asset.saintsxctf.com</strong> module contains a
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com-asset/main.tf">main.tf</a>
+file with the following resources.
+</p>
+<CodeSnippet language="HCL">
+#-----------------------
+# Existing AWS Resources
+#-----------------------
+
+data "aws_acm_certificate" "wildcard-saintsxctf-com-cert" {
+  domain = "*.saintsxctf.com"
+}
+
+data "aws_acm_certificate" "wildcard-asset-saintsxctf-com-cert" {
+  domain = "*.asset.saintsxctf.com"
+}
+
+data "aws_route53_zone" "saintsxctf" {
+  name = "saintsxctf.com."
+}
+
+#--------------------------------------
+# New AWS Resources for S3 & CloudFront
+#--------------------------------------
+
+resource "aws_s3_bucket" "asset-saintsxctf" {...}
+
+resource "aws_cloudfront_distribution" "asset-saintsxctf-distribution" {...}
+
+resource "aws_cloudfront_origin_access_identity" "origin-access-identity" {...}
+
+resource "aws_cloudfront_distribution" "www-asset-saintsxctf-distribution" {...}
+
+resource "aws_route53_record" "asset-saintsxctf-a" {...}
+
+resource "aws_route53_record" "www-asset-saintsxctf-a" {...}
+
+#-------------------
+# S3 Bucket Contents
+#-------------------
+
+resource "aws_s3_bucket_object" "saintsxctf-png" {...}
+</CodeSnippet>
+<p>
+First, existing ACM certificates are retrieved so that HTTPS requests to <strong>asset.saintsxctf.com</strong> are
+secured by SSL/TLS certificates. These certificates are used in the
+<code className="jarombek-inline-code">aws_cloudfront_distribution</code> resources for building CloudFront
+distributions.  Next, the existing <strong>saintsxctf.com</strong> Route53 zone is retrieved for use in creating DNS A
+records for <strong>asset.saintsxctf.com</strong> and <strong>www.asset.saintsxctf.com</strong>.
+</p>
+<p>
+Next comes the new AWS resources.  The S3 bucket containing SaintsXCTF assets is created with the
+<code className="jarombek-inline-code">aws_s3_bucket</code> resource. There are two CloudFront distributions created
+for the S3 bucket - one for <strong>asset.saintsxctf.com</strong> and another for
+<strong>www.asset.saintsxctf.com</strong>. These are created with the
+<code className="jarombek-inline-code">aws_cloudfront_distribution</code> resource. Each CloudFront distribution
+also gets a Route53 A record, created by the <code className="jarombek-inline-code">aws_route53_record</code>
+resources. The final resources are the S3 bucket objects, which are images and videos. These are created with
+<code className="jarombek-inline-code">aws_s3_bucket_object</code> resources.
+</p>
 <SectionTitle title="User Asset S3 Bucket">User Asset S3 Bucket</SectionTitle>
+<p>
+Similarly to how the <strong>asset.saintsxctf.com</strong> S3 bucket contains application assets for the SaintsXCTF
+website, the <strong>uasset.saintsxctf.com</strong> S3 bucket contains user assets. These assets include profile
+pictures and group pictures. The Terraform module for the user asset S3 bucket is nearly identical to the application
+asset S3 bucket. One main difference is user assets (S3 objects) are not declared as resources in the Terraform code.
+Instead, they are uploaded by users through the website. I will discuss this process in a future article when going
+over the SaintsXCTF Lambda Function API.
+</p>
+<p>
+The Terraform module for the application user asset S3 bucket exists in the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-uasset">saints-xctf-com-uasset</a>
+directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a>
+repository.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-saints-xctf-com-uasset.png"/>
+</figure>
 <SectionTitle title="Authentication REST API">Authentication REST API</SectionTitle>
+<p>
+The SaintsXCTF application has four AWS Lambda functions related to authentication, two of which are exposed through a
+REST API set up with API Gateway.  The general premise of the API is that SaintsXCTF uses
+<a href="https://jarombek.com/blog/mar-11-2018-jwt">JWTs</a> to authenticate users.  With a proper JWT, users can make
+API calls and operate within the website and mobile applications.
+</p>
 <SectionTitle title="Lambda Function REST API">Lambda Function REST API</SectionTitle>
 <SectionTitle title="MySQL RDS Database">MySQL RDS Database</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
