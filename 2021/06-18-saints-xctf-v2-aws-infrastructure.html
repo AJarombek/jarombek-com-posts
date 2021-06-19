@@ -332,7 +332,74 @@ last until the next rotation.
 In a future article I will discuss all the authentication functions in more detail and step through their code.
 </p>
 <SectionTitle title="Function REST API">Function REST API</SectionTitle>
-<SectionTitle title="Lambda Function REST API">Lambda Function REST API</SectionTitle>
+<p>
+The SaintsXCTF application has another REST API created with API Gateway and AWS Lambda called the "Function REST API".
+This API is accessible from <strong>https://fn.saintsxctf.com</strong>. It includes endpoints for sending emails and
+uploading pictures.  The AWS Lambda functions used by the REST API endpoints are written in Python and JavaScript.
+</p>
+<p>
+The Terraform module for the function API exists in the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-fn">saints-xctf-com-fn</a>
+directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a>
+repository.  The function API also has a separate
+<a href="https://github.com/AJarombek/saints-xctf-functions">saints-xctf-functions</a> repository for the AWS Lambda
+function source code.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-saints-xctf-com-fn.png"/>
+</figure>
+<p>
+As will be the case with the authentication API, a future article will be dedicated to the function API.
+</p>
 <SectionTitle title="MySQL RDS Database">MySQL RDS Database</SectionTitle>
+<p>
+The one main piece of infrastructure that didn’t change in SaintsXCTF version 2.0 was the RDS MySQL database.  This
+database holds all the persistent data used by the application, such as user information and exercise logs.
+</p>
+<p>
+The Terraform module for the RDS MySQL database exists in the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/database">database</a>
+directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a>
+repository.  I also have a private repository which holds SQL scripts for database deployments.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-saints-xctf-database.png"/>
+</figure>
+<p>
+At a high level, the <strong>database</strong> module contains a
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/database/modules/rds/main.tf">main.tf</a>
+file with the following resources.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_security_group" "saints-xctf-database-security" {...}
+
+resource "aws_db_instance" "saints-xctf-mysql-database" {...}
+
+/* The subnets to use for a highly available database */
+resource "aws_db_subnet_group" "saints-xctf-mysql-database-subnet" {...}
+
+/* An alarm is set up in case the database is running out of storage space.  This will signal an upgrade is needed. */
+resource "aws_cloudwatch_metric_alarm" "saints-xctf-mysql-database-storage-low-alarm" {...}
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">aws_db_instance</code> is the main AWS resource that creates the RDS MySQL
+database.  <code className="jarombek-inline-code">aws_security_group</code> provides other subnets in the SaintsXCTF
+VPC access to make connections to the database, while <code className="jarombek-inline-code">aws_db_subnet_group</code>
+specifies two subnets that the database exists within.  Since both subnets are housed in different AWS AZs
+(Availability Zones), this configuration makes the database highly available, in the case that one AWS AZ goes down.
+Finally, the <code className="jarombek-inline-code">aws_cloudwatch_metric_alarm</code> resource creates a CloudWatch
+alarm in case the RDS instance runs low on storage.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+In many ways, an application is only as good as the foundation it is built upon.  The AWS infrastructure for SaintsXCTF
+keeps the application running with little downtime, which is key for a good user experience  It also is
+modularized, allowing me to add new components and drop old ones easily. This enables future application updates to
+be smaller in scope than version 2.0, which completely rewrote the entire codebase.
+</p>
+<p>
+In my next SaintsXCTF article I’ll discuss the other crucial piece of infrastructure for the application: Kubernetes
+on EKS.  All the AWS infrastructure code for SaintsXCTF can be found on
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure">GitHub</a>.
+</p>
 </div>
