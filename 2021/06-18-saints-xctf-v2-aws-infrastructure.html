@@ -268,10 +268,70 @@ repository.
 <SectionTitle title="Authentication REST API">Authentication REST API</SectionTitle>
 <p>
 The SaintsXCTF application has four AWS Lambda functions related to authentication, two of which are exposed through a
-REST API set up with API Gateway.  The general premise of the API is that SaintsXCTF uses
+REST API set up with API Gateway.  The general premise of the authentication API is that SaintsXCTF uses
 <a href="https://jarombek.com/blog/mar-11-2018-jwt">JWTs</a> to authenticate users.  With a proper JWT, users can make
 API calls and operate within the website and mobile applications.
 </p>
+<p>
+The Terraform module for the authentication API exists in the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-auth">saints-xctf-com-auth</a>
+directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a>
+repository.  The authentication API also has a separate
+<a href="https://github.com/AJarombek/saints-xctf-auth">saints-xctf-auth</a> repository for the AWS Lambda function
+source code.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-saints-xctf-com-auth.png"/>
+</figure>
+<p>
+The infrastructure diagram above shows the four authentication-based AWS Lambda functions. They are
+<code className="jarombek-inline-code">SaintsXCTFAuthenticate</code>, <code className="jarombek-inline-code">SaintsXCTFToken</code>,
+<code className="jarombek-inline-code">SaintsXCTFAuthorizer</code>, and <code className="jarombek-inline-code">SaintsXCTFRotate</code>.
+<code className="jarombek-inline-code">SaintsXCTFAuthenticate</code> and <code className="jarombek-inline-code">SaintsXCTFToken</code>
+are exposed through the authentication API, while <code className="jarombek-inline-code">SaintsXCTFAuthorizer</code> and
+<code className="jarombek-inline-code">SaintsXCTFRotate</code> are only for internal use.
+</p>
+<p>
+All four AWS Lambda functions are written in Python.  Their general use is as follows:
+</p>
+<ol>
+<li>
+Upon sign in, the <strong>https://auth.saintsxctf.com/token</strong> endpoint is invoked, which calls the
+<code className="jarombek-inline-code">SaintsXCTFToken</code> function. The user’s credentials are passed with this
+request and the response contains a JWT if the credentials are valid.
+</li>
+<li>
+Every time an API call is made to <strong>https://api.saintsxctf.com</strong> which requires authentication, the
+<strong>https://auth.saintsxctf.com/authenticate</strong> endpoint is invoked behind the scenes by the API.  This
+endpoint calls the <code>SaintsXCTFAuthenticate</code> function. The JWT token received from
+<strong>https://auth.saintsxctf.com/token</strong> is passed in the request body of
+<strong>https://auth.saintsxctf.com/authenticate</strong>, and if the JWT is valid the endpoint returns
+<code className="jarombek-inline-code">true</code>. Otherwise, it returns <code className="jarombek-inline-code">false</code>.
+The SaintsXCTF API handles the response from <strong>https://auth.saintsxctf.com/authenticate</strong> by proceeding
+with the request if the response is <code className="jarombek-inline-code">true</code>. Otherwise, it returns an HTTP
+403 Forbidden error code.
+</li>
+<li>
+When requests are made to the <strong>https://fn.saintsxctf.com</strong> API Gateway REST API which require
+authorization, they use the <code className="jarombek-inline-code">SaintsXCTFAuthorizer</code> as a lambda authorizer.
+The JWT token received from <strong>https://auth.saintsxctf.com/token</strong> is passed in the
+<code className="jarombek-inline-code">Authorization</code> request header to <strong>https://fn.saintsxctf.com</strong>.
+If the authorizer function determines that the JWT is valid, it gives the API Gateway endpoint permission to call its
+corresponding AWS Lambda function.  If the JWT is invalid, invoking the AWS Lambda function is forbidden.
+</li>
+<li>
+The JWT tokens created by the <code className="jarombek-inline-code">SaintsXCTFToken</code> AWS Lambda function are
+signed using an RS256 (RSA Signature with SHA-256) algorithm. To perform this signing, a public key and private key
+are stored in AWS SecretsManager. For additional security, these public and private keys are rotated on a regular
+basis with the <code className="jarombek-inline-code">SaintsXCTFRotate</code> AWS Lambda function. This limits the
+damage if an unwanted user gains access to the public and private keys, since their ability to sign tokens would only
+last until the next rotation.
+</li>
+</ol>
+<p>
+In a future article I will discuss all the authentication functions in more detail and step through their code.
+</p>
+<SectionTitle title="Function REST API">Function REST API</SectionTitle>
 <SectionTitle title="Lambda Function REST API">Lambda Function REST API</SectionTitle>
 <SectionTitle title="MySQL RDS Database">MySQL RDS Database</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
