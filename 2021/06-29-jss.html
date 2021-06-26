@@ -1,0 +1,71 @@
+<div>
+<p>
+In my relatively short time as a software engineer, I’ve used many different approaches to writing stylesheets for
+web applications.  My initial naive approach was writing a single CSS stylesheet per application, such as the
+<a href="https://github.com/AJarombek/saints-xctf/blob/master/views/style.css">styles.css</a> file for my SaintsXCTF
+application that I wrote in college.  Although this was a common practice in the early days of web development, lumping
+an entire website's styles into a single file has many downsides.  First, a single stylesheet is difficult to read and
+gets very long.  Second, it doesn’t follow programming principles like
+<a href="https://jarombek.com/blog/jun-17-2019-terraform-module#dry-principal">DRY (Don’t Repeat Yourself)</a>,
+<a href="https://jarombek.com/blog/sep-20-2018-intro-programming#abstraction">abstraction</a>, and encapsulation.
+Third, CSS lacks many programming language features which enable scalable and reusable code, such as functions,
+conditional statements, and variables.
+</p>
+<UpdateInfo date="June 29th, 2021">
+While writing this article I learned that CSS recently added variables into its specification<sup>1</sup>.  Variable
+support is a great new addition (although, unsurprisingly, it is not supported byInternet Explorer). If CSS continues
+to improve, I may consider its use in certain future applications.
+</UpdateInfo>
+<p>
+To help bring order to the chaos of CSS stylesheets, different CSS methodologies were introduced.  These ensured that
+CSS code followed certain conventions, thus making it easier to read. One of the common CSS methodologies is BEM, which
+sets naming conventions for HTML element classes, which are used in CSS code<sup>2</sup>.  I never used these
+conventions since I believed there was a better alternative: <a href="https://jarombek.com/blog/mar-10-2018-sass">Sass</a>.
+</p>
+<p>
+Sass is a CSS preprocessor that adds features such as mixins, conditionals, extensions, variables, and more. I’ve used
+Sass in both prototype code and <a href="https://github.com/AJarombek/jarombek-com">production level code</a>. In fact,
+Sass is the stylesheet language used for this website!
+</p>
+<p>
+The Sass code for this website (which is written in React) is structured so that each component has its own stylesheet
+file.  Reusable Sass code is achieved with <a href="https://jarombek.com/blog/mar-10-2018-sass#mixins">mixins</a>;
+mixins are groups of styles that are “mixed in” with other styles. While Sass is nice to work with, it’s not without
+its shortcomings.
+</p>
+<p>
+For starters, there is no easy way to dynamically change styles based on application state.  You can’t pass JavaScript
+variables containing values to Sass to determine which styles to show.  Also, even though Sass code can be split into
+many files, it still creates styles in a global namespace, which can result in unexpected conflicts between
+stylesheets.  One way to remedy this is to give each stylesheet a unique root level CSS selector and make all other
+styles exist in child CSS selectors.
+</p>
+<p>
+For example, in a UI component called <code className="jarombek-inline-code">Note</code>, you can have a Sass
+stylesheet <a href="https://github.com/AJarombek/jarombek-com/blob/master/src/client/Note.scss">Note.scss</a> with a
+root level <code className="jarombek-inline-code">.jarbek-note</code> CSS selector and two child CSS selectors:
+<code className="jarombek-inline-code">.jarbek-note-icon</code> and
+<code className="jarombek-inline-code">.jarbek-note-body</code>.
+</p>
+<CodeSnippet language="Sass">
+@import "./styles/mixins/elegantIcons";
+@import "./styles/mixins/sylexiads";
+@import "./styles/variables";
+
+.jarbek-note {
+  display: flex;
+  background-color: lighten($color-warning, 10%);
+
+  .jarbek-note-icon {
+    @include elegantIcons;
+    font-size: 32px;
+    padding: 10px 30px 10px 10px;
+    color: #555;
+  }
+
+  .jarbek-note-body {
+    @include sylexiad;
+  }
+}
+</CodeSnippet>
+</div>

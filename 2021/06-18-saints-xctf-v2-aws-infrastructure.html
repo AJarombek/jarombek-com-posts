@@ -321,7 +321,7 @@ corresponding AWS Lambda function.  If the JWT is invalid, invoking the AWS Lamb
 </li>
 <li>
 The JWT tokens created by the <code className="jarombek-inline-code">SaintsXCTFToken</code> AWS Lambda function are
-signed using an RS256 (RSA Signature with SHA-256) algorithm. To perform this signing, a public key and private key
+signed using an RS256 (RSA Signature with SHA-256) algorithm<sup>1</sup>. To perform this signing, a public key and private key
 are stored in AWS SecretsManager. For additional security, these public and private keys are rotated on a regular
 basis with the <code className="jarombek-inline-code">SaintsXCTFRotate</code> AWS Lambda function. This limits the
 damage if an unwanted user gains access to the public and private keys, since their ability to sign tokens would only
@@ -375,10 +375,8 @@ resource "aws_security_group" "saints-xctf-database-security" {...}
 
 resource "aws_db_instance" "saints-xctf-mysql-database" {...}
 
-/* The subnets to use for a highly available database */
 resource "aws_db_subnet_group" "saints-xctf-mysql-database-subnet" {...}
 
-/* An alarm is set up in case the database is running out of storage space.  This will signal an upgrade is needed. */
 resource "aws_cloudwatch_metric_alarm" "saints-xctf-mysql-database-storage-low-alarm" {...}
 </CodeSnippet>
 <p>
