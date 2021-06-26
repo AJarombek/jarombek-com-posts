@@ -68,4 +68,131 @@ root level <code className="jarombek-inline-code">.jarbek-note</code> CSS select
   }
 }
 </CodeSnippet>
+<p>
+These Sass shortcomings are remedied in JSS, my new favorite stylesheet approach for React applications.  Although JSS
+isn’t perfect, it has many great qualities which are worth discussing.
+</p>
+<SectionTitle title="What is JSS">What is JSS?</SectionTitle>
+<p>
+JSS, sometimes referred to as “CSS in JavaScript”, is a JavaScript library which allows stylesheets to be authored in
+JavaScript code.  These stylesheets can take advantage of the JavaScript language and its ability to create reusable
+code.  JSS also creates unique class names from your stylesheet code, removing any worries of conflicting stylesheet
+selectors<sup>3</sup>. As for all those fancy Sass features such as functions, conditional statements, and
+variables - JSS uses JavaScript, which has all these features and more.  In my opinion, JavaScript has a far superior
+syntax to Sass as well.
+</p>
+<p>
+The greatest advantage of JSS is its ability to conditionally change styles depending on application state. Application
+state for UI applications written in JavaScript is stored in variables, containing primitive or object data types.
+I’ll demonstrate this ability in this article, along with my followup article on React JSS.
+</p>
+<SectionTitle title="Writing JSS Stylesheets">Writing JSS Stylesheets</SectionTitle>
+<p>
+JSS code is written with the <a href="https://www.npmjs.com/package/jss">jss</a> npm module. JSS also supports plugins,
+although I utilize the default plugins provided by the <a href="https://www.npmjs.com/package/jss-preset-default">
+jss-preset-default</a> npm module<sup>4</sup>.
+</p>
+<p>
+I created an npm project which uses JSS to style some basic HTML elements.  The code for this project, located on
+GitHub, consists of an <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2021/06-Jun/06-29-jss/index.html">
+index.html</a> application entrypoint file, an
+<a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2021/06-Jun/06-29-jss/index.js">index.js</a> file
+which adds additional elements and styles them with JSS, and a
+<a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2021/06-Jun/06-29-jss/server.js">server.js</a>
+file which starts a server with Express to host the webpage.
+</p>
+<p>
+The JSS application displays a running exercise log, similar to those shown on my
+<a href="https://saintsxctf.com">SaintsXCTF</a> website. When viewed in the browser, the UI looks like the following
+screenshot:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-29-21-jss-demo.png"/>
+</figure>
+<p>
+The JSS code in <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2021/06-Jun/06-29-jss/index.js">
+index.js</a> will be our main focus going forward.  At the
+<a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2021/06-Jun/06-29-jss/index.js#L7-L10">
+top of the file</a>, I install JSS and initialize it with the default plugin preset.
+</p>
+<CodeSnippet language="JavaScript">
+import jss from "jss";
+import preset from "jss-preset-default";
+
+jss.setup(preset());
+</CodeSnippet>
+<p>
+Next, I <a href="https://github.com/AJarombek/jarombek-com-sources/blob/master/2021/06-Jun/06-29-jss/index.js#L33-L99">
+create all the JSS styles</a>.
+</p>
+<CodeSnippet language="JavaScript">
+const styles = {
+    '@global': {
+        body: {
+            backgroundColor: '#000',
+            margin: 0
+        }
+    },
+    page: {
+        width: '100%',
+        height: '100vh',
+        minHeight: 500,
+        backgroundColor: '#222',
+        margin: 0,
+        paddingTop: 25
+    },
+    exerciseLog: {
+        width: '70%',
+        backgroundColor: FeelColors[currentFeel],
+        border: '2px solid rgb(136, 136, 136)',
+        margin: '0 auto',
+        padding: 7,
+        boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.2)',
+        borderRadius: 3
+    },
+    headerSection: {
+        display: 'flex'
+    },
+    titles: {
+        display: 'block'
+    },
+    titleLink: {
+        color: 'rgb(51, 51, 51)',
+        fontSize: 16,
+        textDecoration: 'none',
+        ...robotoSlabMixin
+    },
+    title: {
+        fontSize: 16,
+        margin: 0,
+        textDecoration: 'underline',
+        ...robotoSlabMixin
+    },
+    metadata: {
+        display: 'block',
+        margin: '0 0 0 auto',
+
+        '& > p': {
+            margin: 0,
+            fontSize: 14,
+            textAlign: 'right',
+            ...robotoSlabMixin
+        }
+    },
+    bodySection: {
+        marginTop: 20
+    },
+    dataField: {
+        margin: 0,
+        fontSize: 14,
+        ...robotoSlabMixin
+    },
+    description: {
+        marginTop: 10,
+        fontSize: 14,
+        ...robotoSlabMixin
+    },
+};
+</CodeSnippet>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
