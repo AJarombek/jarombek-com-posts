@@ -1,0 +1,54 @@
+<div>
+<p>
+In my <a href="https://jarombek.com/blog/jun-29-2021-jss">previous article on JSS</a>, I discussed the improvements
+it makes over traditional <a href="https://jarombek.com/blog?query=CSS&page=1">CSS</a> and CSS preprocessors such as
+<a href="https://jarombek.com/blog?query=Sass&page=1">Sass</a>.  <a href="https://jarombek.com/blog?query=JSS&page=1">JSS</a>
+utilizes the highly expressive <a href="https://jarombek.com/blog?query=JavaScript&page=1">JavaScript</a> syntax,
+enables style reusability, dynamic styling, and provides naming conflict resolution.  While JSS can work with any
+front-end framework or library, it really shines when used with React. In this article, I begin by discussing the
+basics of using JSS in a React application. Then, I show sample code from my <a href="https://saintsxctf.com">SaintsXCTF</a>
+application, which is running in production and <a href="https://github.com/AJarombek/saints-xctf-web">
+utilizes JSS for its stylesheets</a>.
+</p>
+<SectionTitle title="React JSS Basics">React JSS Basics</SectionTitle>
+<p>
+To use JSS in React applications, the <a href=https://www.npmjs.com/package/react-jss/v/10.6.0>react-jss</a> npm module
+is used instead of the <a href="https://www.npmjs.com/package/jss">jss</a> and
+<a href="https://www.npmjs.com/package/jss-preset-default">jss-preset-default</a> modules used in my prior article.
+Behind the scenes, React JSS uses both these modules, but exposes a React hook API for application code to use<sup>1</sup>.
+</p>
+<p>
+The main exported method of the React JSS library is <code className="jarombek-inline-code">createUseStyles()</code>,
+which takes in a JavaScript object representing JSS styles and returns a React hook which is used in components. This
+React hook, commonly named <code className="jarombek-inline-code">useStyles()</code>, returns a
+<code className="jarombek-inline-code">classes</code> object which can be attached to JSX/HTML elements as their class
+attribute.
+</p>
+<p>
+For example, my SaintsXCTF application has a basic
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/components/shared/CheckBox/CheckBox.tsx">CheckBox</a>
+component represented by the following function:
+</p>
+<CodeSnippet language="TypeScript">
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import styles from './styles';
+
+const useStyles = createUseStyles(styles);
+
+const CheckBox: React.FunctionComponent&lt;Props> = ({ id, checked, onChange, className }) => {
+  const classes = useStyles();
+
+  return (
+    &lt;div className={classes.checkBox} onClick={onChange}>
+      &lt;input type="checkbox" id={id} className={classes.input} checked={checked} />
+      &lt;span>{checked && &lt;p>&#x4e;&lt;/p>}&lt;/span>
+    &lt;/div>
+  );
+};
+
+export default CheckBox;
+</CodeSnippet>
+<SectionTitle title="React JSS Production Code Examples">React JSS Production Code Examples</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
