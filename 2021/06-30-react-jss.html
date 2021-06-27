@@ -122,7 +122,116 @@ code examples shown come from my <a href="https://saintsxctf.com">SaintsXCTF</a>
 code maintained in my <a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
 </p>
 <SubTitle title="Variables for Colors">Variables for Colors</SubTitle>
+<p>
+In web applications, the same color schemes are often used throughout the UI components.  In traditional CSS (before
+variables were added to the specification), these colors were copy pasted throughout the stylesheets whenever they were
+needed.  Maintaining colors in a singular location and referencing them in stylesheets is a solid approach for writing
+clean code and easing future refactoring.
+</p>
+<p>
+In my application, I maintain a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/styles/colors.ts">colors.ts</a>
+file which contains all the commonly reused colors.
+</p>
+<CodeSnippet language="TypeScript">
+const Colors = {
+  sxctfRed: '#990000',
+  spotPaletteBrown: '#a96a5b',
+  spotPaletteCream: '#ffe6d9',
+  spotPaletteBlue: '#58b7d2',
+  statusSuccess: '#28a745',
+  statusWarning: '#ffc107',
+  statusFailure: '#dc3545',
+  lightestBackground: '#fdfdfd',
+  lightBackground: '#f5f5f5'
+};
+
+export const FeelColors = [
+  '#EA9999',
+  '#FFAD99',
+  '#EAC199',
+  '#FFD699',
+  '#FFFFAD',
+  '#E3E3E3',
+  '#C7F599',
+  '#99D699',
+  '#99C199',
+  '#A3A3FF'
+];
+
+export default Colors;
+</CodeSnippet>
+<p>
+By default this file exports the <code className="jarombek-inline-code">Colors</code> object, which contains properties
+with hex color codes.  There is also a <code className="jarombek-inline-code">FeelColors</code> list, which is used for
+application specific logic dealing with how user’s felt on their exercises.
+<code className="jarombek-inline-code">FeelColors</code> will look familiar if you read my
+<a href="https://jarombek.com/blog/jun-29-2021-jss">prior article on JSS</a>.
+</p>
+<p>
+In component stylesheets, the <code className="jarombek-inline-code">Colors</code> object is simply
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/components/shared/NotFound/styles.ts">
+imported and its properties are referenced</a>.  A simplified example is shown below, where a
+<code className="jarombek-inline-code">container</code> class with a
+<code className="jarombek-inline-code">backgroundColor</code> style.
+</p>
+<CodeSnippet language="TypeScript">
+import Colors from '../../../styles/colors';
+
+export default {
+  container: {
+    backgroundColor: Colors.lightBackground
+  }
+};
+</CodeSnippet>
 <SubTitle title="Mixins for Reusable Styles">Mixins for Reusable Styles</SubTitle>
+<p>
+In some cases, there are groups of styles that are reused in multiple stylesheets.  In Sass these groups of styles are
+called mixins, since they can be “mixed in” with other styles.  In my JSS code, I followed the same naming convention.
+My application has a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/styles/mixins.ts">mixins.ts</a>
+file with all the style mixins.  Mixins are simply JavaScript functions that return an object with CSS styles as properties.
+</p>
+<p>
+As an example, one of the mixins <code className="jarombek-inline-code">blueLink()</code> is reused for many of the
+text links on the website.
+</p>
+<CodeSnippet language="TypeScript">
+class Mixins {
+  static blueLink = (): object => ({
+    ...FontMixins.robotoBold(),
+    fontSize: 14,
+    textDecoration: 'none',
+    color: Colors.spotPaletteBlue,
+    cursor: 'pointer',
+
+    '&:hover': {
+      textDecoration: 'underline'
+    }
+  });
+}
+</CodeSnippet>
+<p>
+These mixins are “mixed in” to JSS classes by importing the JavaScript class containing mixin functions and using the
+spread notation on the mixin function.  The following code mixes in
+<code className="jarombek-inline-code">blueLink()</code> with the <code className="jarombek-inline-code">link</code>
+JSS class.
+</p>
+<CodeSnippet language="TypeScript">
+import Mixins from './styles/mixins';
+
+export default {
+  link: {
+    ...Mixins.blueLink(),
+    marginTop: 15
+  }
+}
+</CodeSnippet>
 <SubTitle title="Modules for Reusable Classes">Modules for Reusable Classes</SubTitle>
+<p>
+Sometimes multiple components contain matching groups of classes.  In terms of reusability, this pattern goes above the
+scope of mixins.  In my code I call this pattern “modules”.  While mixins return an object with styles in them, modules
+return an object with JSS classes.  All the modules in my application exist in a
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/styles/modules.ts">modules.ts</a> file
+</p>
+<SubTitle title="Dynamic Styling with React State and Props">Dynamic Styling with React State and Props</SubTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
