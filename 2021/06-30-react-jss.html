@@ -49,6 +49,80 @@ const CheckBox: React.FunctionComponent&lt;Props> = ({ id, checked, onChange, cl
 
 export default CheckBox;
 </CodeSnippet>
+<p>
+I simplified this code a bit to focus on the parts that utilize JSS.  The code starts by importing the
+<code className="jarombek-inline-code">createUseStyles()</code> function from the React JSS library with the line
+<code className="jarombek-inline-code">import { createUseStyles } from 'react-jss'</code>.
+<code className="jarombek-inline-code">createUseStyles()</code> is used outside of the component function, taking a JSS
+styles object as an argument and returning a React hook definition, in my case named
+<code className="jarombek-inline-code">useStyles()</code>. The first line of the component function,
+<code className="jarombek-inline-code">const classes = useStyles()</code>, invokes the React hook to retrieve all the
+stylesheet classes. The JSS classes are properties on the <code className="jarombek-inline-code">classes</code> object.
+In the components return statement, JSS classes are passed to JSX elements via the
+<code className="jarombek-inline-code">className</code> prop. For example, the
+<code className="jarombek-inline-code">&lt;div&gt;</code> elements
+<code className="jarombek-inline-code">className</code> prop is passed the
+<code className="jarombek-inline-code">checkBox</code> JSS class.
+</p>
+<p>
+In this code sample, the <code className="jarombek-inline-code">styles</code> object passed as an argument to
+<code className="jarombek-inline-code">createUseStyles()</code> is imported from a separate file. I generally follow
+this practice to logically separate component code from stylesheet code. The
+<code className="jarombek-inline-code">styles</code> object, located in the
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/components/shared/CheckBox/styles.ts">styles.ts</a>
+file, has the following code:
+</p>
+<CodeSnippet language="TypeScript">
+import Colors from '../../../styles/colors';
+import { FontMixins } from '../../../styles/mixins';
+
+export default {
+  checkBox: {
+    display: 'flex',
+    cursor: 'pointer'
+  },
+  input: {
+    display: 'none',
+
+    '& + span': {
+      ...FontMixins.elegantIcons(),
+      display: 'inline-block',
+      border: '2px solid #999',
+      borderRadius: 2,
+      width: 16,
+      height: 16,
+      position: 'relative',
+
+      '& > p': {
+        color: '#FFF',
+        position: 'absolute',
+        margin: 0,
+        top: -1,
+        left: -3
+      }
+    },
+
+    '&:checked + span': {
+      backgroundColor: Colors.sxctfRed,
+      border: `2px solid ${Colors.sxctfRed}`
+    }
+  }
+};
+</CodeSnippet>
+<p>
+At a basic level, this object has two properties representing two classes:
+<code className="jarombek-inline-code">checkBox</code> and <code className="jarombek-inline-code">input</code>.  These
+properties are objects themselves, containing CSS styles as properties.  I’m also importing additional code for
+reusability purposes, which I will discuss next.
+</p>
 <SectionTitle title="React JSS Production Code Examples">React JSS Production Code Examples</SectionTitle>
+<p>
+In this section, I discuss different approaches for creating reusable and dynamic stylesheet code with JSS.  All of the
+code examples shown come from my <a href="https://saintsxctf.com">SaintsXCTF</a> application, with the front-end source
+code maintained in my <a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
+</p>
+<SubTitle title="Variables for Colors">Variables for Colors</SubTitle>
+<SubTitle title="Mixins for Reusable Styles">Mixins for Reusable Styles</SubTitle>
+<SubTitle title="Modules for Reusable Classes">Modules for Reusable Classes</SubTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
