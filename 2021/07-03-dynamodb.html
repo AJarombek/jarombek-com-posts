@@ -1,0 +1,42 @@
+<div>
+<p>
+DynamoDB is a NoSQL database on <a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a> specializing in key-value
+and document storage.  DynamoDB is fully managed by AWS, meaning users don’t need to provision any servers for it
+to run on.  I often compare DynamoDB to <a href="https://jarombek.com/blog?query=MongoDB&page=1">MongoDB</a>, due to
+their similar functionality and JSON document/item structure.
+</p>
+<p>
+Recently, DynamoDB has come up quite a bit in engineering conversations I’ve had in relation to building cloud native
+applications.  I wrote <a href="https://jarombek.com/blog/dec-15-2017-mongodb-pt1">a</a>
+<a href="https://jarombek.com/blog/dec-16-2017-mongodb-pt2">series</a>
+<a href="https://jarombek.com/blog/dec-23-2017-mongodb-pt3">of</a>
+<a href="https://jarombek.com/blog/dec-27-2017-mongodb-pt4">articles</a> on MongoDB in 2017 while I was prototyping
+with the database.  Recently I did the same with DynamoDB, creating a sample DynamoDB table with
+<a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a> and using AWS SDKs to modify and test its
+contents.  This article discusses what I’ve learned about DynamoDB and showcases my prototype code.
+</p>
+<SectionTitle title="What is DynamoDB?">What is DynamoDB?</SectionTitle>
+<p>
+DynamoDB is a managed NoSQL database that is hosted on AWS. DynamoDB is closed source and fully managed by AWS; No
+installation of DynamoDB on a server is required.  Engineers simply use the service, and are charged based on the
+amount of data they store, along with read and write capacity<sup>1</sup>.  DynamoDB is both a key-value store and a
+document database.  The main components of DynamoDB are tables, items, and attributes<sup>2</sup>.
+</p>
+<Definition word="DynamoDB Table">
+A DynamoDB table is a collection of items.  Tables define a schema for their items, however you don’t need to define
+all the attributes that exist in items within the schema.  This makes DynamoDB tables very flexible compared to SQL
+database tables, which have static schemas.  A DynamoDB table is roughly equivalent to a
+<strong>MongoDB collection</strong>.
+</Definition>
+<Definition word="DynamoDB Item">
+A DynamoDB item is an object with attributes.  Items are members of a table, and follow the schema of the table.  Items
+are stored in a “marshalled” JSON format<sup>3,4</sup>. For example, the JSON data
+<code className="jarombek-inline-code">{"name": "Andy"}</code> is stored in DynamoDB as
+<code className="jarombek-inline-code">{"name": {"S": "Andy"}}</code>. This is slightly different from MongoDB, which
+stores data in BSON (Binary JSON) format.  A DynamoDB item is roughly equivalent to a <strong>MongoDB document</strong>.
+</Definition>
+<SectionTitle title="DynamoDB Prototype Architecture">DynamoDB Prototype Architecture</SectionTitle>
+<SectionTitle title="DynamoDB Coding with the Go AWS SDK">DynamoDB Coding with the Go AWS SDK</SectionTitle>
+<SectionTitle title="DynamoDB Testing with the Python AWS SDK">DynamoDB Testing with the Python AWS SDK</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
