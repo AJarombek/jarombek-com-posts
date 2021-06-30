@@ -35,7 +35,90 @@ are stored in a “marshalled” JSON format<sup>3,4</sup>. For example, the JSO
 <code className="jarombek-inline-code">{"name": {"S": "Andy"}}</code>. This is slightly different from MongoDB, which
 stores data in BSON (Binary JSON) format.  A DynamoDB item is roughly equivalent to a <strong>MongoDB document</strong>.
 </Definition>
+<Definition word="DynamoDB Attribute">
+A DynamoDB attribute is a name-value pair that exists on an item.  Attributes are the most fundamental building block
+of data in DynamoDB.  The names of attributes are strings.  Attributes can have three types of values: scalar, document,
+and set<sup>5</sup>. Scalar types include primitive data types such as strings, numbers, and booleans. Document types
+are JSON documents, containing objects and arrays. Set types are groups of scalar values.  A DynamoDB scalar is roughly
+equivalent to a <strong>MongoDB field</strong>.
+</Definition>
+<p>
+DynamoDB tables are required to have a primary key, and can optionally have one or more secondary indexes.  There are
+two types of primary keys: partition keys and sort keys.  Partition keys and sort keys are assigned to attributes in a
+table.  If a table only has a partition key, each item in the table must have a unique value for that partition key
+attribute.  If a table has a partition key and a sort key, this is called a composite key.  In a composite key, the
+combination of the partition key attribute and sort key attribute must be unique for each item in the table.  Partition
+keys and sort keys also help DynamoDB with its internal storage of table data<sup>6</sup>.
+</p>
+<p>
+In addition to primary keys, DynamoDB tables can be given secondary indexes. One thing that is different between
+DynamoDB and a traditional SQL relational database is that queries of tables can only be performed on attributes that
+are primary keys or secondary indexes in DynamoDB. In contrast, relational database tables can be queried using any of
+their columns, no matter if they are a primary key, indexed or otherwise. This makes secondary indexes in DynamoDB
+very important.
+</p>
+<p>
+Secondary indexes allow for attributes other than the primary keys to be queried.  There are two types of secondary
+indexes: <strong>global secondary indexes</strong> and <strong>local secondary indexes</strong>.  A global secondary
+index creates an index with a partition key and sort key other than the ones assigned to the table, while a local
+secondary index creates an index with a partition key matching the one assigned to the table, but with a different
+sort key<sup>7</sup>.  While global secondary indexes are extremely useful, they are not free.  To build a secondary
+index, DynamoDB must maintain an additional read-only projection of the table, which adds to service costs<sup>8</sup>.
+</p>
+<p>
+My first impression of DynamoDB is that it's a very easy to use database, especially for those with MongoDB
+experience.  I still have yet to see how well it scales up for large datasets, but for prototyping and small
+applications it seems like a really nice option.
+</p>
 <SectionTitle title="DynamoDB Prototype Architecture">DynamoDB Prototype Architecture</SectionTitle>
+<p>
+The DynamoDB prototype I created consists of a single table with a primary key and a global secondary index.  The table
+represents stuffed animals, and is appropriately named <code className="jarombek-inline-code">stuffed-animals</code>.
+The basic table architecture is configured with Terraform, along with a few items.  The following
+<a href="https://github.com/AJarombek/devops-prototypes/blob/master/samples/dynamodb/infra/main.tf">Terraform code</a>
+creates the <code className="jarombek-inline-code">stuffed-animals</code> table.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_dynamodb_table" "table" {
+  name = "stuffed-animals"
+  billing_mode = "PROVISIONED"
+  read_capacity = 20
+  write_capacity = 20
+
+  hash_key = "id"
+
+  attribute {
+    name = "id"
+    type = "N"
+  }
+
+  attribute {
+    name = "name"
+    type = "S"
+  }
+
+  attribute {
+    name = "species"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name = "NameIndex"
+    hash_key = "name"
+    range_key = "species"
+    write_capacity = 10
+    read_capacity = 10
+    projection_type = "INCLUDE"
+    non_key_attributes = ["description"]
+  }
+
+  tags = {
+    Name = "stuffed-animals-table"
+    Application = "dynamodb-sample"
+    Environment = "sandbox"
+  }
+}
+</CodeSnippet>
 <SectionTitle title="DynamoDB Coding with the Go AWS SDK">DynamoDB Coding with the Go AWS SDK</SectionTitle>
 <SectionTitle title="DynamoDB Testing with the Python AWS SDK">DynamoDB Testing with the Python AWS SDK</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
