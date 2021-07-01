@@ -119,7 +119,68 @@ resource "aws_dynamodb_table" "table" {
   }
 }
 </CodeSnippet>
+<p>
+In the <code className="jarombek-inline-code">aws_dynamodb_table</code> resource, the
+<code className="jarombek-inline-code">hash_key</code> (partition key) argument sets the
+<code className="jarombek-inline-code">id</code> attribute as the partition key for the table. The table schema defines
+three attributes in the <code className="jarombek-inline-code">attribute</code> code blocks:
+<code className="jarombek-inline-code">id</code> of type <code className="jarombek-inline-code">N</code> (number),
+<code className="jarombek-inline-code">name</code> of type <code className="jarombek-inline-code">S</code> (string), and
+<code className="jarombek-inline-code">species</code> of type <code className="jarombek-inline-code">S</code> (string).
+As mentioned earlier, items can have more attributes than those defined in the schema, but schemas do give a rough
+outline for the shape of items. The table also has one global secondary index named
+<code className="jarombek-inline-code">NameIndex</code>, which is defined in the
+<code className="jarombek-inline-code">global_secondary_index</code> code block.
+<code className="jarombek-inline-code">NameIndex</code> has a hash key (partition key) of
+<code className="jarombek-inline-code">name</code> and a range key (sort key) of
+<code className="jarombek-inline-code">species</code>.
+</p>
+<p>
+After creating the DynamoDB table, the Terraform code creates two items with the
+<code className="jarombek-inline-code">aws_dynamodb_table_item</code> resource.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_dynamodb_table_item" "dotty" {
+  table_name = aws_dynamodb_table.table.name
+  hash_key = aws_dynamodb_table.table.hash_key
+  item = file("dotty.json")
+}
+
+resource "aws_dynamodb_table_item" "lily" {
+  table_name = aws_dynamodb_table.table.name
+  hash_key = aws_dynamodb_table.table.hash_key
+  item = file("lily.json")
+}
+</CodeSnippet>
+<p>
+While this code is important for adding the items to the <code className="jarombek-inline-code">stuffed-animals</code>
+table, the most interesting details are in the JSON files which are values for the
+<code className="jarombek-inline-code">item</code> attributes. For example, here is the
+<a href="https://github.com/AJarombek/devops-prototypes/blob/master/samples/dynamodb/infra/dotty.json">JSON file</a> for
+the first item, a stuffed animal horse named Dotty.
+</p>
+<CodeSnippet language="JSON">
+{
+  "id": {"N": "1"},
+  "name": {"S": "Dotty"},
+  "species": {"S": "Horse"},
+  "description": {"S": "Small spotted horse who loves to cuddle.  She also has beautiful flappy ears."},
+  "favorite_activity": {"S": "Sleeping under a blanket"}
+}
+</CodeSnippet>
+<p>
+Notice that the JSON is in the marshalled format discussed earlier, with data types specified for each attribute.  When
+this Terraform code is built, the table and items are created and viewable from the AWS console.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-3-21-dynamodb-aws-console.png"/>
+</figure>
+<p>
+The remainder of the DynamoDB prototype consists of AWS Go SDK coding for querying and creating items, and AWS Python
+SDK coding for DynamoDB table and infrastructure tests.
+</p>
 <SectionTitle title="DynamoDB Coding with the Go AWS SDK">DynamoDB Coding with the Go AWS SDK</SectionTitle>
 <SectionTitle title="DynamoDB Testing with the Python AWS SDK">DynamoDB Testing with the Python AWS SDK</SectionTitle>
+<SectionTitle title="Tying the Pieces Together with Jenkins">Tying the Pieces Together with Jenkins</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
