@@ -339,7 +339,7 @@ provides more examples of how to scan and query a DynamoDB table.
 </p>
 <p>
 As previously shown in the Go code, scanning a DynamoDB table is the simplest way to get all its items.  In Python,
-scanning the table and checking the number of items returned is as simple as the following code.
+scanning a table and checking its item count is achieved with the following code.
 </p>
 <CodeSnippet language="Python">
 table: Table = self.dynamodb_resource.Table('stuffed-animals')
@@ -348,6 +348,59 @@ items: List[dict] = response.get('Items')
 
 self.assertEqual(2, len(items))
 </CodeSnippet>
+<p>
+While I prefer the SQL equivalent of <code className="jarombek-inline-code">SELECT COUNT(*) FROM tablename</code>,
+scanning is very simple and easy.  Querying tables for items that match certain criteria is where things get a bit more
+complicated.  For example, let’s compare two queries.  The first query uses the
+<code className="jarombek-inline-code">id</code> partition key on the table to retrieve an item with an id of
+<strong>2</strong>.  The second query uses the <code className="jarombek-inline-code">name</code> partition key on the
+secondary index to retrieve an item with the name <strong>dotty</strong>
+</p>
+<CodeSnippet language="Python">
+table: Table = self.dynamodb_resource.Table('stuffed-animals')
+response = table.query(
+    KeyConditionExpression=Key('id').eq(2)
+)
+items: List[dict] = response.get('Items')
+
+self.assertEqual(1, len(items))
+</CodeSnippet>
+<CodeSnippet language="Python">
+response = table.query(
+    IndexName='NameIndex',
+    KeyConditionExpression=Key('name').eq('Dotty')
+)
+items: List[dict] = response.get('Items')
+
+self.assertEqual(1, len(items))
+</CodeSnippet>
+<p>
+The syntax is pretty simple and can be easily learned through use, but the important takeaway is that queries are
+written differently depending on whether you use a key on a table vs. a key on a secondary index. This is different from
+SQL which treats all attributes (columns) the same when querying.  In SQL, when querying with a
+<code className="jarombek-inline-code">WHERE</code> clause there is no difference between filtering on a primary key
+column vs. a foreign key column vs. an indexed column.
+</p>
+<p>
+Advanced DynamoDB queries are beyond the scope of this article, but I plan to experiment with them in the future.
+However, just based off these simple queries I can tell that the querying mechanism is not as robust as SQL.
+</p>
 <SectionTitle title="Tying the Pieces Together with Jenkins">Tying the Pieces Together with Jenkins</SectionTitle>
+<p>
+The final piece of my DynamoDB prototype is a <a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins job</a>
+runs the full process of building the Terraform infrastructure, testing the state of the DynamoDB table, running the Go
+code, and then testing the table again. The code for this Jenkins job is available on
+<a href="https://github.com/AJarombek/global-jenkins-jobs/tree/master/prototypes/devops-prototypes/dynamodb-sample-test">
+GitHub</a>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+DynamoDB is a valuable NoSQL database for engineers who work with AWS to know, given how easy it is to set up and its
+ability to hold JSON structured data.  The query mechanism DynamoDB offers is inferior to SQL, but this is often an
+acceptable sacrifice for applications to take.  Compared to MongoDB, DynamoDB is easier to setup and manage, but
+MongoDB has more querying and data aggregation features that make it more suited for complex applications.  As I work
+with DynamoDB more, I’ll better understand how it scales and know more of its pros and cons.  All the code for the
+DynamoDB prototype is available on
+<a href="https://github.com/AJarombek/devops-prototypes/tree/master/samples/dynamodb">GitHub</a>.
+</p>
 </div>
