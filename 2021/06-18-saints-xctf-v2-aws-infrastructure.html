@@ -52,16 +52,16 @@ discussed in this article.
 <p>
 While designing the SaintsXCTF version 2.0 infrastructure, I put a major emphasis on creating separate production and
 development environments.  Since the initial website version was live during development of version 2.0, I needed a
-separate non-production configuration to test.  Besides for the domain names and AWS resource names, the infrastructure
-between the production and development environments was designed to be identical.  This allowed for predictable behavior
-when building the production environment once the development environment was fully tested.  I plan to continue using
+separate non-production configuration to use for testing.  Besides for the domain names and AWS resource names, the infrastructure
+between the production and development environments is identical.  This allows for predictable behavior
+when building the production environment once the development environment is fully tested.  I plan to continue using
 the development environment for testing new infrastructure changes going forward.
 </p>
 <p>
-Under normal circumstances, the development environment isn’t running in order to save money.  However, setting it up
-only requires some <code className="jarombek-inline-code">terraform apply</code> commands invoked from
+Under normal circumstances, the development environment isn't running in order to save money.  However, recreating it
+ only requires some <code className="jarombek-inline-code">terraform apply</code> commands invoked from
 <a href="https://github.com/AJarombek/global-jenkins-jobs/tree/master/saints-xctf/infrastructure">Jenkins jobs</a>.
-When running, the web application, main API, authentication API, and function API are accessible from
+When the development environment is running, the web application, main API, authentication API, and function API are accessible from
 <strong>dev.saintsxctf.com</strong>, <strong>dev.api.saintsxctf.com</strong>, <strong>dev.auth.saintsxctf.com</strong>,
 and <strong>dev.fn.saintsxctf.com</strong>.  Their respective production equivalents are accessible from
 <strong>saintsxctf.com</strong>, <strong>api.saintsxctf.com</strong>, <strong>auth.saintsxctf.com</strong>, and
@@ -70,16 +70,17 @@ and <strong>dev.fn.saintsxctf.com</strong>.  Their respective production equival
 <p>
 As previously mentioned, the SaintsXCTF AWS Terraform infrastructure is logically grouped into modules.  All these
 modules are directories at the top level of the
-<a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a> repository.  Many of
-these modules are configured differently for the development and production environments.  For example, the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a> repository.  Most
+ modules are configured differently for development and production environments.  For example, the
 authentication API module has the following directory structure.
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-terraform-module.png"/>
 </figure>
 <p>
-There are three environmental configurations in this module - one for resources shared across all environments, one
-for production, and one for development.  These environmental configurations invoke the submodules, which in the case
+There are three environmental configurations in this module - one for resources shared across all environments
+ (<strong>all</strong>), one for development (<strong>dev</strong>), and one for production (<strong>prod</strong>).
+ These environmental configurations invoke the submodules, which in the case
 of the authentication API are <code className="jarombek-inline-code">api-gateway</code>,
 <code className="jarombek-inline-code">lambda</code>, and <code className="jarombek-inline-code">secrets-manager</code>.
 For example, inside <strong>saints-xctf-com-auth/env/prod</strong> is a
@@ -87,6 +88,8 @@ For example, inside <strong>saints-xctf-com-auth/env/prod</strong> is a
 file which provisions the production infrastructure through the submodules.
 </p>
 <CodeSnippet language="HCL">
+# main.tf
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -152,8 +155,8 @@ discussed in this article.  Instead of using the AWS Terraform provider to build
 is created by the Kubernetes Terraform provider.  Specifically, the EKS cluster has an
 <a href="https://jarombek.com/blog/sep-28-2020-eks#alb-ingress-controller-and-external-dns">ALB Ingress Controller</a>
 (now known as an <a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/">AWS Load Balancer
-Controller</a>) running in a pod.  This ingress controller is capable of building load balancers that route traffic to
-Kubernetes services. Using the Kubernetes Terraform provider, an <code className="jarombek-inline-code">Ingress</code>
+Controller</a>) running in a Kubernetes pod.  This ingress controller is capable of building load balancers that route traffic to
+Kubernetes services. Using the Kubernetes Terraform provider, a Kubernetes <code className="jarombek-inline-code">Ingress</code>
 object is created with certain annotations, resulting in the ingress controller provisioning load balancer
 infrastructure in AWS.
 </p>
@@ -268,9 +271,9 @@ repository.
 <SectionTitle title="Authentication REST API">Authentication REST API</SectionTitle>
 <p>
 The SaintsXCTF application has four AWS Lambda functions related to authentication, two of which are exposed through a
-REST API set up with API Gateway.  The general premise of the authentication API is that SaintsXCTF uses
-<a href="https://jarombek.com/blog/mar-11-2018-jwt">JWTs</a> to authenticate users.  With a proper JWT, users can make
-API calls and operate within the website and mobile applications.
+REST API by API Gateway.  The premise of the authentication API is to use
+ <a href="https://jarombek.com/blog/mar-11-2018-jwt">JWTs</a> to authenticate users of the application.  With a proper
+ JWT, users can make API calls and operate within the website and mobile applications.
 </p>
 <p>
 The Terraform module for the authentication API exists in the
@@ -297,18 +300,18 @@ All four AWS Lambda functions are written in Python.  Their general use is as fo
 <ol>
 <li>
 Upon sign in, the <strong>https://auth.saintsxctf.com/token</strong> endpoint is invoked, which calls the
-<code className="jarombek-inline-code">SaintsXCTFToken</code> function. The user’s credentials are passed with this
+<code className="jarombek-inline-code">SaintsXCTFToken</code> function. The user's credentials are passed with this
 request and the response contains a JWT if the credentials are valid.
 </li>
 <li>
-Every time an API call is made to <strong>https://api.saintsxctf.com</strong> which requires authentication, the
-<strong>https://auth.saintsxctf.com/authenticate</strong> endpoint is invoked behind the scenes by the API.  This
-endpoint calls the <code>SaintsXCTFAuthenticate</code> function. The JWT token received from
+Every time an API call that requires authentication is made to <strong>https://api.saintsxctf.com</strong>, the
+<strong>https://auth.saintsxctf.com/authenticate</strong> endpoint is invoked by the API.  This
+endpoint calls the <code className="jarombek-inline-code">SaintsXCTFAuthenticate</code> function. The JWT token received from
 <strong>https://auth.saintsxctf.com/token</strong> is passed in the request body of
 <strong>https://auth.saintsxctf.com/authenticate</strong>, and if the JWT is valid the endpoint returns
 <code className="jarombek-inline-code">true</code>. Otherwise, it returns <code className="jarombek-inline-code">false</code>.
 The SaintsXCTF API handles the response from <strong>https://auth.saintsxctf.com/authenticate</strong> by proceeding
-with the request if the response is <code className="jarombek-inline-code">true</code>. Otherwise, it returns an HTTP
+with the user's request if the response is <code className="jarombek-inline-code">true</code>. Otherwise, it returns an HTTP
 403 Forbidden error code.
 </li>
 <li>
@@ -324,8 +327,8 @@ The JWT tokens created by the <code className="jarombek-inline-code">SaintsXCTFT
 signed using an RS256 (RSA Signature with SHA-256) algorithm<sup>1</sup>. To perform this signing, a public key and private key
 are stored in AWS SecretsManager. For additional security, these public and private keys are rotated on a regular
 basis with the <code className="jarombek-inline-code">SaintsXCTFRotate</code> AWS Lambda function. This limits the
-damage if an unwanted user gains access to the public and private keys, since their ability to sign tokens would only
-last until the next rotation.
+damage if an unwanted user gains access to the public and private keys, since their ability to sign tokens only
+lasts until the next rotation.
 </li>
 </ol>
 <p>
@@ -349,11 +352,11 @@ function source code.
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-saints-xctf-com-fn.png"/>
 </figure>
 <p>
-As will be the case with the authentication API, a future article will be dedicated to the function API.
+As with the authentication API, a future article will be dedicated to the function API.
 </p>
 <SectionTitle title="MySQL RDS Database">MySQL RDS Database</SectionTitle>
 <p>
-The one main piece of infrastructure that didn’t change in SaintsXCTF version 2.0 was the RDS MySQL database.  This
+One main piece of infrastructure that didn't change in SaintsXCTF version 2.0 is the RDS MySQL database.  This
 database holds all the persistent data used by the application, such as user information and exercise logs.
 </p>
 <p>
@@ -384,19 +387,20 @@ resource "aws_cloudwatch_metric_alarm" "saints-xctf-mysql-database-storage-low-a
 database.  <code className="jarombek-inline-code">aws_security_group</code> provides other subnets in the SaintsXCTF
 VPC access to make connections to the database, while <code className="jarombek-inline-code">aws_db_subnet_group</code>
 specifies two subnets that the database exists within.  Since both subnets are housed in different AWS AZs
-(Availability Zones), this configuration makes the database highly available, in the case that one AWS AZ goes down.
-Finally, the <code className="jarombek-inline-code">aws_cloudwatch_metric_alarm</code> resource creates a CloudWatch
+(Availability Zones), this configuration makes the database highly available. High availability provides protection
+ in case one Availability Zone goes down. Finally, the
+ <code className="jarombek-inline-code">aws_cloudwatch_metric_alarm</code> resource creates a CloudWatch
 alarm in case the RDS instance runs low on storage.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 In many ways, an application is only as good as the foundation it is built upon.  The AWS infrastructure for SaintsXCTF
-keeps the application running with little downtime, which is key for a good user experience  It also is
-modularized, allowing me to add new components and drop old ones easily. This enables future application updates to
+keeps the application running with little downtime, which is key for a good user experience.  It is also
+ modularized, allowing me to easily add new modules and drop old ones. This enables future application updates to
 be smaller in scope than version 2.0, which completely rewrote the entire codebase.
 </p>
 <p>
-In my next SaintsXCTF article I’ll discuss the other crucial piece of infrastructure for the application: Kubernetes
+In my next SaintsXCTF article I'll discuss the other crucial piece of infrastructure for the application: Kubernetes
 on EKS.  All the AWS infrastructure code for SaintsXCTF can be found on
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure">GitHub</a>.
 </p>
