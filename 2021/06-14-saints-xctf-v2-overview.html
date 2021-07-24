@@ -2,8 +2,8 @@
 <p>
 On December 24th 2016, I released my first website <a href="https://saintsxctf.com/">saintsxctf.com</a>.  I was still a
 senior in college at the time, and used my limited software development knowledge from classes and a summer internship
-to build the application.  SaintsXCTF is a running training log designed for my college Cross Country and Track & Field
-teams at St. Lawrence University.  Competitively running in college had a major impact on my life, and I was really
+to build the application.  SaintsXCTF is a training log designed for my college Cross Country and Track & Field
+teams at St. Lawrence University.  Running competitively in college had a major impact on my life, and I was really
 proud to create the website to assist my teammates and coaches.  Shortly after releasing the
 <a href="https://github.com/AJarombek/saints-xctf">website</a>, I created an
 <a href="https://github.com/AJarombek/saints-xctf-android">Android application</a> and an
@@ -15,15 +15,15 @@ projects.
 As I began my professional software engineering career in the summer of 2017, I gradually learned industry best
 practices and became more well rounded as a developer.  At this point, certain shortcomings and misguided assumptions
 about my SaintsXCTF applications became apparent.  First, the core web application and API did not follow the latest
-industry standards.  Second, all three applications were not properly tested and were prone to degradation when left
-unchecked.  Third, the security & infrastructure of the application was very basic and not fault tolerant. Lastly, my
+industry standards.  Second, all three applications were not properly tested and were prone to degradation if left
+unchecked.  Third, the security & infrastructure of the applications was very basic and not fault tolerant. Lastly, my
 assumption that releasing the applications meant my work was done proved to be incorrect. As all software engineers
-know, the work is only just beginning when an application is initially released.
+know, the work just begins when an application is initially released.
 </p>
 <p>
-These realizations resulted in a multi-year effort to create a new version of SaintsXCTF which checked off all the boxes
-that the original missed.  I decided upon a two step process to get the original version of SaintsXCTF converted to a
-new version.  The first step began in December 2018 and was completed in February 2019.  This step moved the website,
+These realizations resulted in a multi-year effort to create a new version of SaintsXCTF that fixed all the issues with
+ the original.  I decided upon a two step process to get the original version of SaintsXCTF converted to the
+ new version.  The first step began in December 2018 and was completed in February 2019.  This step moved the website,
 API, and database infrastructure to AWS.  All the infrastructure was written as code using Terraform.  The second step
 began in June 2019 and was completed in May 2021.  This two year development step rewrote the SaintsXCTF
 <a href="https://github.com/AJarombek/saints-xctf-web">web application</a>,
@@ -59,7 +59,7 @@ articles discuss certain components, technologies, and design decisions in Saint
 </ul>
 <SectionTitle title="Initial Architecture">Initial Architecture</SectionTitle>
 <p>
-The initial release of SaintsXCTF had a very basic infrastructure consisting of a single hosted linux server. This
+The initial SaintsXCTF infrastructure was extremely barebones, consisting of a single hosted linux server. This
 server, a virtual machine hosted by Linode, ran the web application, API, and database.
 </p>
 <figure>
@@ -79,7 +79,7 @@ written in <a href="https://jarombek.com/blog?query=JavaScript&page=1">JavaScrip
 <p>
 These technologies have their fair share of issues as well.  In the UI technology ecosystem, JQuery is infamous for
 resulting in difficult to read spaghetti code.  With modern front-end frameworks and libraries such as React and
-Angular, UI code has become more modular, clean, and reusable.  In college I wasn't aware of these libraries, so
+Angular, UI code has become more modular, clean, and reusable.  In college, I wasn't aware of these libraries, so
 JQuery was a logical starting point.  An additional problem with the UI code was the stylesheet.  The UI consisted of
 one single CSS file for the entire application.  This resulted in hard to identify styling issues, especially when
 adding new styles to one page negatively impacted another page.  Once again, modern CSS preprocessors and CSS in
@@ -88,45 +88,47 @@ JavaScript code.
 </p>
 <p>
 In the API technology ecosystem, the lack of a server-side framework resulted in hard to read code.  Also, certain
-actions such as creating classes that represent HTTP request objects were written by me.  If I had used a back-end
-framework, these classes would have been provided.  I was reinventing the wheel without realizing it.  Another issue
+actions such as creating classes that represent HTTP request objects were written by me.  If I used a back-end
+framework instead, these classes would have been provided for me.  I was reinventing the wheel without realizing it.  Another issue
 with the API was that it shared the same codebase and build process (a manual SFTP upload to the linux server) as the
 front-end code.  This meant if the website went down, the API would as well.  If new UI code was deployed, the API was
-redeployed as well.  This logical separation is achieved in the second version of the application.
+redeployed as well.  In the second version of the application, I redesigned the codebase to separate the UI and API.
 </p>
 <p>
-Due to all these flaws in the website’s technology stack and infrastructure, I began reconsidering any ideas of
-enhancing the functionality of the application.  Instead, I began planning an iterative process of refurbishing the
+Due to all these flaws in the initial website’s technology stack and infrastructure, I stopped
+ enhancing the functionality of the application shortly after releasing it.  Instead, I began planning an iterative process of refurbishing the
 application up to industry standards.
 </p>
 <SectionTitle title="Lift and Shift AWS Architecture">Lift and Shift AWS Architecture</SectionTitle>
 <p>
-Before starting on entirely new codebases for the UI and API, I fixed any potentially fatal flaws with the initial
-version of the application.  The major flaw of the initial design was its linux server, which was a single point of
+Before creating entirely new codebases for the UI and API, I fixed all the fatal flaws with the initial
+version of the application.  The biggest flaw of the initial design was the linux server, which was a single point of
 failure.  If that server went down, everything would have been lost.
 </p>
 <p>
 To remedy this issue I redesigned the infrastructure on <a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a>
-and wrote it all as code using <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a>.  As a result, I
-could build infrastructure in a repeatable manner.  I also designed the infrastructure without any single points of
+and wrote the infrastructure as code using <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a>.  As a result, I
+ was able to build the infrastructure in a repeatable manner.  This new infrastructure was designed without any single points of
 failure.
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-14-21-aws-lift-shift-architecture.png"/>
 </figure>
 <p>
-From the end user perspective, nothing changed when using the application after these changes.  However, the
-reliability of the application increased greatly.  First, in a worst case scenario where the infrastructure breaks,
-Terraform scripts are capable of recreating the infrastructure in a matter of minutes.  Second,  I implemented an AWS
-Lambda function (not shown in the infrastructure diagram) which takes
- <a href="https://jarombek.com/blog/sep-3-2019-rds-backups-pt1">database backups</a> daily and uploads them to S3.
-Therefore, a worst case scenario would result in one day of lost data.
+From the end user perspective, nothing changed while using the application after these changes.  However, the
+reliability of the application greatly increased.  First, in a worst case scenario where the infrastructure broke,
+Terraform scripts were capable of recreating the infrastructure in a matter of minutes.
+</p>
+<p>
+Second, I implemented an AWS Lambda function (not shown in the infrastructure diagram) which takes
+<a href="https://jarombek.com/blog/sep-3-2019-rds-backups-pt1">database backups</a> daily and uploads them to S3.
+Therefore, the new worst case scenario would result in one day of lost data; a great improvement over losing everything.
 </p>
 <p>
 Luckily, this scenario is extremely unlikely.  <a href="https://jarombek.com/blog?query=aws%20rds&page=1">AWS RDS</a>
 (the MySQL database) and <a href="https://jarombek.com/blog?query=aws%20ec2&page=1">AWS EC2</a> (the API and web application
 server) have impressive uptime percentages of 99.95% and 99.99%, respectively<sup>1,2</sup>.  RDS also takes snapshots
-on a regular basis for disaster recovery purposes.  With these impressive reliability, I never had to use my database
+on a regular basis for disaster recovery purposes.  With this impressive reliability, I never had to use my database
 backup files to restore the database.  Nevertheless, the peace of mind it gave me was worth it.
 </p>
 <SectionTitle title="Version 2.0 Architecture">Version 2.0 Architecture</SectionTitle>
@@ -147,14 +149,14 @@ Terraform.  The biggest infrastructure change was moving to
 deployed on Kubernetes pods, with traffic routed to them from an AWS load balancer.  All the Kubernetes infrastructure is
 created with Terraform as well.  With the combined ease of Terraform and elegance of Kubernetes deployments, updating
 or reverting a website or API version is as easy as building
-<a href="https://jarombek.com/blog?query=Docker&page=1">Docker</a> images and applying Terraform changes.  I will go
+<a href="https://jarombek.com/blog?query=Docker&page=1">Docker</a> images and applying Terraform changes.  I go
 into all the technical details of this process in the article on SaintsXCTF Kubernetes Infrastructure.
 </p>
 <p>
 Other infrastructure changes include the use of <a href="https://jarombek.com/blog?query=API%20Gateway&page=1">API Gateway</a>
 and <a href="https://jarombek.com/blog?query=AWS%20Lambda&page=1">AWS Lambda</a>.  There are two APIs deployed on API
 Gateway - an authentication API (<strong>auth.saintsxctf.com</strong>) and a function API
-(<strong>fn.saintsxctf.com</strong>).  The authentication API has two endpoints for creating authentication tokens and
+(<strong>fn.saintsxctf.com</strong>).  The authentication API has endpoints for creating authentication tokens and
 validating authentication tokens.  These tokens are <a href="https://jarombek.com/blog?query=JWT&page=1">JWTs</a> that
 have a lifespan of one hour.  This authentication approach is a major improvement over my old implementation, which
 just used a static passcode in the authorization header for all API calls.
@@ -167,7 +169,8 @@ website.  Profile pictures are saved and accessed from an
 <p>
 The API and web application technology stacks where built from the ground up for the new version.  The API now uses the
 Flask server side library, which is written in <a href="https://jarombek.com/blog?query=Python&page=1">Python</a>.  The
-web application uses <a href="https://jarombek.com/blog?query=React&page=1">React</a>, Redux, and JSS.  This time
+web application uses <a href="https://jarombek.com/blog?query=React&page=1">React</a>, Redux, and
+ <a href="https://jarombek.com/blog?query=JSS&page=1">JSS</a>.  This time
 around all the front-end code is written in <a href="https://jarombek.com/blog?query=TypeScript&page=1">TypeScript</a>
 instead of <a href="https://jarombek.com/blog?query=JavaScript&page=1">JavaScript</a>.  The only unchanged technology between
 the two versions of the application is the MySQL database, which is hosted on AWS RDS.  All these technologies and
