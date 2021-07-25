@@ -1,0 +1,46 @@
+<div>
+<p>
+AWS CloudWatch Synthetic Monitoring is a platform that allows you to create functions which monitor applications or
+APIs.  These functions are known as canary functions, and they use AWS Lambda for their infrastructure.  Canary
+functions can be written in JavaScript or Python.  They utilize Puppeteer (JavaScript) and Selenium (Python) for
+browser test automation.
+</p>
+<p>
+I started looking into Synthetic Monitoring as a way to test my SaintsXCTF application running in production.  I had
+some issues where the website unexpectedly stopped working, and there was no process in place to alert me of that issue.
+With Synthetic Monitoring, I created canary functions to test critical paths of the website, such as signing in a user.
+</p>
+<p>
+Synthetic Monitoring is a relatively new AWS service, so documentation on it is a bit lighter when compared to other
+services.  Specifically, building canary functions with Terraform had incomplete documentation and very little sample
+code.  In this article, I give an overview of my Synthetic Monitoring AWS infrastructure and show how it’s configured
+with Terraform.  I also give a brief walk through of my canary function source code.  All the code mentioned in this
+article is available on <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/
+synthetic-monitoring">GitHub</a>.
+</p>
+<SectionTitle title="Canary Function Infrastructure">Canary Function Infrastructure</SectionTitle>
+<p>
+My Synthetic Monitoring infrastructure consists of canary functions, an S3 bucket holding canary function results and
+images, and CloudWatch events to notify me via email when a canary function fails.  This infrastructure is shown in the
+diagram below.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-26-21-synthetics-canary-architecture.png"/>
+</figure>
+<p>
+Notice that my infrastructure consists of three canary functions, two written in JavaScript and one written in Python.
+All this infrastructure is built with Terraform, separated into three modules.  The first module is for the canary
+functions and CloudWatch events, the second is for the S3 bucket holding canary function results, and the third
+contains an IAM role and policy assumed by the canary function.
+</p>
+<SubTitle title="Canary Functions and CloudWatch Events">Canary Functions and CloudWatch Events</SubTitle>
+<p>
+The following Terraform code creates one of my canary functions.  This canary function tests the sign in functionality
+on my website.  It also sets up a CloudWatch event for sending alerts when the function fails.
+</p>
+<SubTitle title="S3 Bucket">S3 Bucket</SubTitle>
+<SubTitle title="IAM Role and Policy">IAM Role and Policy</SubTitle>
+<SectionTitle title="JavaScript and Puppeteer Functions">JavaScript and Puppeteer Functions</SectionTitle>
+<SectionTitle title="Python and Selenium Functions">Python and Selenium Functions</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
