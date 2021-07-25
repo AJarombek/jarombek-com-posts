@@ -1,30 +1,30 @@
 <div>
 <p>
 DynamoDB is a NoSQL database on <a href="https://jarombek.com/blog?query=AWS&page=1">AWS</a> specializing in key-value
-and document storage.  DynamoDB is fully managed by AWS, meaning users don’t need to provision any servers for it
+and document storage.  DynamoDB is fully managed by AWS, meaning users don't need to provision any servers for it
 to run on.  I often compare DynamoDB to <a href="https://jarombek.com/blog?query=MongoDB&page=1">MongoDB</a>, due to
 their similar functionality and JSON document/item structure.
 </p>
 <p>
-Recently, DynamoDB has come up quite a bit in engineering conversations I’ve had in relation to building cloud native
+Recently, DynamoDB has come up quite a bit in engineering conversations I've had in relation to building cloud native
 applications.  I wrote <a href="https://jarombek.com/blog/dec-15-2017-mongodb-pt1">a</a>
-<a href="https://jarombek.com/blog/dec-16-2017-mongodb-pt2">series</a>
-<a href="https://jarombek.com/blog/dec-23-2017-mongodb-pt3">of</a>
-<a href="https://jarombek.com/blog/dec-27-2017-mongodb-pt4">articles</a> on MongoDB in 2017 while I was prototyping
+ <a href="https://jarombek.com/blog/dec-16-2017-mongodb-pt2">series</a>
+ <a href="https://jarombek.com/blog/dec-23-2017-mongodb-pt3">of</a>
+ <a href="https://jarombek.com/blog/dec-27-2017-mongodb-pt4">articles</a> on MongoDB in 2017 while I was prototyping
 with the database.  Recently I did the same with DynamoDB, creating a sample DynamoDB table with
 <a href="https://jarombek.com/blog?query=Terraform&page=1">Terraform</a> and using AWS SDKs to modify and test its
-contents.  This article discusses what I’ve learned about DynamoDB and showcases my prototype code.
+contents.  This article discusses what I've learned about DynamoDB and showcases my prototype code.
 </p>
 <SectionTitle title="What is DynamoDB?">What is DynamoDB?</SectionTitle>
 <p>
 DynamoDB is a managed NoSQL database that is hosted on AWS. DynamoDB is closed source and fully managed by AWS; No
-installation of DynamoDB on a server is required.  Engineers simply use the service, and are charged based on the
+installation of DynamoDB on a server is required.  Engineers simply use the service and are charged based on the
 amount of data they store, along with read and write capacity<sup>1</sup>.  DynamoDB is both a key-value store and a
 document database.  The main components of DynamoDB are tables, items, and attributes<sup>2</sup>.
 </p>
 <Definition word="DynamoDB Table">
-A DynamoDB table is a collection of items.  Tables define a schema for their items, however you don’t need to define
-all the attributes that exist in items within the schema.  This makes DynamoDB tables very flexible compared to SQL
+A DynamoDB table is a collection of items.  Tables define a schema for their items.  However, you don't need to define
+all the attributes that exist in an item within the schema.  This makes DynamoDB tables very flexible compared to SQL
 database tables, which have static schemas.  A DynamoDB table is roughly equivalent to a
 <strong>MongoDB collection</strong>.
 </Definition>
@@ -44,16 +44,16 @@ equivalent to a <strong>MongoDB field</strong>.
 </Definition>
 <p>
 DynamoDB tables are required to have a primary key, and can optionally have one or more secondary indexes.  There are
-two types of primary keys: partition keys and sort keys.  Partition keys and sort keys are assigned to attributes in a
+two types of primary keys: <strong>partition keys</strong> and <strong>sort keys</strong>.  Partition keys and sort keys are assigned to attributes in a
 table.  If a table only has a partition key, each item in the table must have a unique value for that partition key
 attribute.  If a table has a partition key and a sort key, this is called a composite key.  In a composite key, the
 combination of the partition key attribute and sort key attribute must be unique for each item in the table.  Partition
 keys and sort keys also help DynamoDB with its internal storage of table data<sup>6</sup>.
 </p>
 <p>
-In addition to primary keys, DynamoDB tables can be given secondary indexes. One thing that is different between
-DynamoDB and a traditional SQL relational database is that queries of tables can only be performed on attributes that
-are primary keys or secondary indexes in DynamoDB. In contrast, relational database tables can be queried using any of
+In addition to primary keys, DynamoDB tables can have secondary indexes. One difference between
+DynamoDB and traditional SQL relational databases is that in DynamoDB, queries of tables can only be performed on attributes that
+are primary keys or secondary indexes. In contrast, relational database tables can be queried using any of
 their columns, no matter if they are a primary key, indexed or otherwise. This makes secondary indexes in DynamoDB
 very important.
 </p>
@@ -66,8 +66,8 @@ sort key<sup>7</sup>.  While global secondary indexes are extremely useful, they
 index, DynamoDB must maintain an additional read-only projection of the table, which adds to service costs<sup>8</sup>.
 </p>
 <p>
-My first impression of DynamoDB is that it's a very easy to use database, especially for those with MongoDB
-experience.  I still have yet to see how well it scales up for large datasets, but for prototyping and small
+My first impression of DynamoDB is that it's very easy to use, especially for those with MongoDB
+experience.  I have yet to see how well it scales up for large datasets, but for prototyping and small
 applications it seems like a really nice option.
 </p>
 <SectionTitle title="DynamoDB Prototype Architecture">DynamoDB Prototype Architecture</SectionTitle>
@@ -123,7 +123,7 @@ resource "aws_dynamodb_table" "table" {
 In the <code className="jarombek-inline-code">aws_dynamodb_table</code> resource, the
 <code className="jarombek-inline-code">hash_key</code> (partition key) argument sets the
 <code className="jarombek-inline-code">id</code> attribute as the partition key for the table. The table schema defines
-three attributes in the <code className="jarombek-inline-code">attribute</code> code blocks:
+three attributes inside <code className="jarombek-inline-code">attribute</code> code blocks:
 <code className="jarombek-inline-code">id</code> of type <code className="jarombek-inline-code">N</code> (number),
 <code className="jarombek-inline-code">name</code> of type <code className="jarombek-inline-code">S</code> (string), and
 <code className="jarombek-inline-code">species</code> of type <code className="jarombek-inline-code">S</code> (string).
@@ -176,13 +176,13 @@ this Terraform code is built, the table and items are created and viewable from 
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-3-21-dynamodb-aws-console.png"/>
 </figure>
 <p>
-The remainder of the DynamoDB prototype consists of AWS Go SDK coding for querying and creating items, and AWS Python
-SDK coding for DynamoDB table and infrastructure tests.
+The remainder of the DynamoDB prototype consists of AWS Go SDK code for querying and creating items, and AWS Python
+SDK code for DynamoDB table and infrastructure tests.
 </p>
 <SectionTitle title="DynamoDB Coding with the Go AWS SDK">DynamoDB Coding with the Go AWS SDK</SectionTitle>
 <p>
 AWS provides software development kits (SDKs) in multiple programming languages, including Go and Python.  Recently I
-started working with Go, a programming language developed at Google and first released in 2009.  I’ve really enjoyed
+started working with Go, a programming language developed at Google and first released in 2009.  I've really enjoyed
 working with Go, and have tried to incorporate it into more and more projects.  In one sentence, the main reason I like
 Go is that it has all the benefits of a statically typed language, but still has a concise syntax that is easy to write.
 </p>
@@ -191,7 +191,7 @@ I decided to incorporate Go into my DynamoDB prototype through the use of the Go
 items, add items, remove items, and more from the DynamoDB table.  My Go code is located in a
 <a href="https://github.com/AJarombek/devops-prototypes/blob/master/samples/dynamodb/app/main.go">main.go</a> file.
 The AWS SDK has <a href="https://aws.github.io/aws-sdk-go-v2/docs/getting-started/">documentation</a> online, although
-I’ve found its a bit incomplete.
+I've found it a bit incomplete.
 </p>
 <p>
 The Go code is just a script in a single <code className="jarombek-inline-code">main()</code> function.  For starters,
@@ -223,7 +223,7 @@ if records.Count != 2 {
 </CodeSnippet>
 <p>
 DynamoDB has two main API methods for getting items: <code className="jarombek-inline-code">Scan</code> and
-<code className="jarombek-inline-code">Query</code>.  While a table scan will retrieve all the items in a table, a
+<code className="jarombek-inline-code">Query</code>.  While a table scan retrieves all the items in a table, a
 query uses primary keys and secondary indexes to retrieve a subset of items.  The next piece of code updates an
 existing item in the table.
 </p>
@@ -310,7 +310,7 @@ if err != nil {
 }
 </CodeSnippet>
 <p>
-The final piece of code deletes one of the items that I added.
+The final piece of code deletes one of the items I added.
 </p>
 <CodeSnippet language="Go">
 deleteKeyMap := map[string]types.AttributeValue{
@@ -327,14 +327,14 @@ _, err = client.DeleteItem(context.TODO(), deleteInput)
 <p>
 If there is one thing you should take away from this code, its that while DynamoDB operations are easy to work with,
 they aren't as simplistic as SQL.  The expressiveness of SQL is often an argument used for relational SQL databases
-over NoSQL databases, and that argument can be used against DynamoDB as well.  However, the ease to setup DynamoDB is
+over NoSQL databases, and that argument can be used against DynamoDB as well.  However, the setup ease of DynamoDB is
 often such a great benefit that the lack of a sophisticated SQL-like querying model is a sacrifice worth taking.
 </p>
 <SectionTitle title="DynamoDB Testing with the Python AWS SDK">DynamoDB Testing with the Python AWS SDK</SectionTitle>
 <p>
 I wrote tests for my DynamoDB table in Python using the AWS SDK.  This
 <a href="https://github.com/AJarombek/devops-prototypes/blob/master/samples/dynamodb/test/testTerraformInfra.py">test</a>
-<a href="https://github.com/AJarombek/devops-prototypes/blob/master/samples/dynamodb/test/testGoSdkInfra.py">code</a>
+ <a href="https://github.com/AJarombek/devops-prototypes/blob/master/samples/dynamodb/test/testGoSdkInfra.py">code</a>
 provides more examples of how to scan and query a DynamoDB table.
 </p>
 <p>
@@ -351,7 +351,7 @@ self.assertEqual(2, len(items))
 <p>
 While I prefer the SQL equivalent of <code className="jarombek-inline-code">SELECT COUNT(*) FROM tablename</code>,
 scanning is very simple and easy.  Querying tables for items that match certain criteria is where things get a bit more
-complicated.  For example, let’s compare two queries.  The first query uses the
+complicated.  For example, let's compare two queries.  The first query uses the
 <code className="jarombek-inline-code">id</code> partition key on the table to retrieve an item with an id of
 <strong>2</strong>.  The second query uses the <code className="jarombek-inline-code">name</code> partition key on the
 secondary index to retrieve an item with the name <strong>dotty</strong>
@@ -387,8 +387,8 @@ However, just based off these simple queries I can tell that the querying mechan
 </p>
 <SectionTitle title="Tying the Pieces Together with Jenkins">Tying the Pieces Together with Jenkins</SectionTitle>
 <p>
-The final piece of my DynamoDB prototype is a <a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins job</a>
-runs the full process of building the Terraform infrastructure, testing the state of the DynamoDB table, running the Go
+The final piece of my DynamoDB prototype is a <a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins</a> job that
+ runs the full process of building the Terraform infrastructure, testing the state of the DynamoDB table, running the Go
 code, and then testing the table again. The code for this Jenkins job is available on
 <a href="https://github.com/AJarombek/global-jenkins-jobs/tree/master/prototypes/devops-prototypes/dynamodb-sample-test">
 GitHub</a>.
@@ -399,7 +399,7 @@ DynamoDB is a valuable NoSQL database for engineers who work with AWS to know, g
 ability to hold JSON structured data.  The query mechanism DynamoDB offers is inferior to SQL, but this is often an
 acceptable sacrifice for applications to take.  Compared to MongoDB, DynamoDB is easier to setup and manage, but
 MongoDB has more querying and data aggregation features that make it more suited for complex applications.  As I work
-with DynamoDB more, I’ll better understand how it scales and know more of its pros and cons.  All the code for the
+with DynamoDB more, I'll better understand how it scales and know more of its pros and cons.  All the code for the
 DynamoDB prototype is available on
 <a href="https://github.com/AJarombek/devops-prototypes/tree/master/samples/dynamodb">GitHub</a>.
 </p>
