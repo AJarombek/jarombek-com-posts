@@ -38,8 +38,225 @@ contains an IAM role and policy assumed by the canary function.
 The following Terraform code creates one of my canary functions.  This canary function tests the sign in functionality
 on my website.  It also sets up a CloudWatch event for sending alerts when the function fails.
 </p>
+<CodeSnippet language="HCL">
+data "aws_s3_bucket" "saints-xctf-canaries" {
+  bucket = "saints-xctf-canaries"
+}
+
+data "aws_iam_role" "canary-role" {
+  name = "canary-role"
+}
+
+data "aws_sns_topic" "alert-email" {
+  name = "alert-email-topic"
+}
+
+resource "aws_synthetics_canary" "saints-xctf-sign-in" {
+  name = "sxctf-sign-in"
+  artifact_s3_location = "s3://${data.aws_s3_bucket.saints-xctf-canaries.id}/"
+  execution_role_arn = data.aws_iam_role.canary-role.arn
+  runtime_version = "syn-nodejs-puppeteer-3.1"
+  handler = "signIn.handler"
+  zip_file = "${path.module}/SaintsXCTFSignIn.zip"
+  start_canary = true
+
+  success_retention_period = 2
+  failure_retention_period = 14
+
+  schedule {
+    expression = "rate(1 hour)"
+    duration_in_seconds = 0
+  }
+
+  run_config {
+    timeout_in_seconds = 300
+    memory_in_mb = 960
+    active_tracing = false
+  }
+
+  tags = {
+    Name = "sxctf-sign-in"
+    Environment = local.environment
+    Application = "saints-xctf"
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "saints-xctf-sign-in-canary-event-rule" {
+  name = "saints-xctf-sign-in-canary-rule"
+  event_pattern = jsonencode({
+    source = ["aws.synthetics"]
+    detail = {
+      "canary-name": [aws_synthetics_canary.saints-xctf-sign-in.name],
+      "test-run-status": ["FAILED"]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "saints-xctf-sign-in-canary-event-target" {
+  target_id = "SaintsXCTFSignInCanaryTarget"
+  arn = data.aws_sns_topic.alert-email.arn
+  rule = aws_cloudwatch_event_rule.saints-xctf-sign-in-canary-event-rule.name
+}
+</CodeSnippet>
+<p>
+This canary function is started upon creation and is scheduled to run hourly.  It uses the
+<code className="jarombek-inline-code">syn-nodejs-puppeteer-3.1</code> runtime, which is the latest JavaScript runtime
+available to canary functions at the time of this article’s writing.  The source code for the canary functions exists
+in a <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/synthetic-monitoring/modules/canaries/func">
+separate folder in my repository</a>, and is bundled into a zip file before the Terraform script is executed.
+</p>
+<p>
+The canary function Terraform module code is available in a
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/synthetic-monitoring/modules/canaries/main.tf">
+main.tf</a> file on GitHub.
+</p>
 <SubTitle title="S3 Bucket">S3 Bucket</SubTitle>
+<p>
+The results of the canary function are uploaded to an S3 bucket, which is specified in the
+<code className="jarombek-inline-code">artifact_s3_location</code> argument on the
+<code className="jarombek-inline-code">aws_synthetics_canary</code> resource. This S3 bucket is created with the
+following configuration:
+</p>
+<CodeSnippet language="HCL">
+data "aws_caller_identity" "current" {}
+
+resource "aws_s3_bucket" "saints-xctf-canaries" {
+  bucket = "saints-xctf-canaries"
+  acl = "private"
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle_rule {
+    enabled = true
+
+    noncurrent_version_expiration {
+      days = 60
+    }
+  }
+
+  tags = {
+    Name = "saints-xctf-canaries"
+    Application = "saints-xctf"
+    Environment = "all"
+  }
+}
+
+resource "aws_s3_bucket_policy" "saints-xctf-canaries-policy" {
+  bucket = aws_s3_bucket.saints-xctf-canaries.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id = "SaintsXCTFCanariesPolicy"
+    Statement = [
+      {
+        Sid = "Permissions"
+        Effect = "Allow"
+        Principal = {
+          AWS = data.aws_caller_identity.current.account_id
+        }
+        Action = ["s3:*"]
+        Resource = ["${aws_s3_bucket.saints-xctf-canaries.arn}/*"]
+      }
+    ]
+  })
+}
+</CodeSnippet>
+<p>
+The S3 bucket Terraform module code is available in a <a href="https://github.com/AJarombek/saints-xctf-infrastructure/
+blob/master/synthetic-monitoring/modules/s3/main.tf">main.tf</a> file on GitHub.
+</p>
 <SubTitle title="IAM Role and Policy">IAM Role and Policy</SubTitle>
+<p>
+Canary functions are given an IAM role, which is specified in the
+<code className="jarombek-inline-code">execution_role_arn</code> argument on the
+<code className="jarombek-inline-code">aws_synthetics_canary</code> resource.  The following code creates this IAM role
+and its corresponding policy.
+</p>
+<CodeSnippet language="HCL">
+data "aws_secretsmanager_secret" "saints-xctf-andy-password" {
+  name = "saints-xctf-andy-password"
+}
+
+data "aws_iam_policy_document" "canary-assume-role-policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect = "Allow"
+
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type = "Service"
+    }
+  }
+}
+
+resource "aws_iam_role" "canary-role" {
+  name = "canary-role"
+  path = "/saints-xctf-com/"
+  assume_role_policy = data.aws_iam_policy_document.canary-assume-role-policy.json
+  description = "IAM role for AWS Synthetic Monitoring Canaries"
+}
+
+data "aws_iam_policy_document" "canary-policy" {
+  statement {
+    sid = "CanaryGeneric"
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:GetBucketLocation",
+      "s3:ListAllMyBuckets",
+      "cloudwatch:PutMetricData",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "CanarySecretsManager"
+    effect = "Allow"
+    actions = ["secretsmanager:GetSecretValue"]
+    resources = [data.aws_secretsmanager_secret.saints-xctf-andy-password.arn]
+  }
+}
+
+resource "aws_iam_policy" "canary-policy" {
+  name = "canary-policy"
+  path = "/saints-xctf-com/"
+  policy = data.aws_iam_policy_document.canary-policy.json
+  description = "IAM role for AWS Synthetic Monitoring Canaries"
+}
+
+resource "aws_iam_role_policy_attachment" "canary-policy-attachment" {
+  role = aws_iam_role.canary-role.name
+  policy_arn = aws_iam_policy.canary-policy.arn
+}
+</CodeSnippet>
+<p>
+There are certain permissions that canary functions must have in their IAM roles<sup>1</sup>.  These permissions are specified in
+the <code className="jarombek-inline-code">CanaryGeneric</code> statement of the policy.  My canary functions also
+require additional permissions, specifically for AWS SecretsManager. These permissions are specified in the
+<code className="jarombek-inline-code">CanarySecretsManager</code> statement of the policy.
+</p>
+<p>
+The IAM role and policy Terraform module code is available in a
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/synthetic-monitoring/modules/iam/main.tf">main.tf</a>
+file on GitHub.
+</p>
+<SubTitle title="Resulting Infrastructure">Resulting Infrastructure</SubTitle>
+<p>
+After all this infrastructure is created, the canary functions and their execution results are viewable in the AWS console.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-26-21-aws-canaries.png"/>
+</figure>
+<p>
+Individual functions can also be viewed and its execution results can be thoroughly analyzed.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-26-21-aws-sign-in-canary.png"/>
+</figure>
 <SectionTitle title="JavaScript and Puppeteer Functions">JavaScript and Puppeteer Functions</SectionTitle>
 <SectionTitle title="Python and Selenium Functions">Python and Selenium Functions</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
