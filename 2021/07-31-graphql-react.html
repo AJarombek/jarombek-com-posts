@@ -38,6 +38,97 @@ doesn’t use a GraphQL client library to make the API calls, instead just using
 library to make API calls. While the HTTP client library is a more bare-bones approach, it is still fully capable of
 handling GraphQL APIs.
 </p>
+<p>
+Let’s look at one of the basic components displayed on the UI.  The <code className="jarombek-inline-code">RepositoryCount</code>
+component has the responsibility of displaying the number of repositories in my GitHub account on the dashboard. It has
+a <a href="https://github.com/AJarombek/graphql-react-prototype/blob/master/src/components/items/RepositoryCount.js">
+RepositoryCount.js</a> file for the React component code and a <a href="https://github.com/AJarombek/
+graphql-react-prototype/blob/master/src/components/items/RepositoryCount.less">RepositoryCount.less</a> file for the
+stylesheet code.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-repository-count-component.png"/>
+</figure>
+<p>
+The <code className="jarombek-inline-code">RepositoryCount</code> component makes a GraphQL API call to the GitHub API
+after the component first renders.  Once a result is returned from the API, the component re-renders with the number of
+repositories in my GitHub account.
+</p>
+<CodeSnippet language="JavaScript">
+import React, { useEffect, useState } from 'react';
+import { getPersonalRepositories } from '../../datasource/GraphQL';
+
+const RepositoryCount = () => {
+  const [repoCount, setRepoCount] = useState(0);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function getGraphQLResult() {
+      const result = await getPersonalRepositories('AJarombek');
+
+      if (result.data.data) {
+        setRepoCount(result.data.data.user.repositories.totalCount);
+        setError(null);
+      } else {
+        setError(result.data.errors[0].message);
+      }
+    }
+
+    getGraphQLResult();
+  }, []);
+
+  return (
+    &lt;div className="items repository-count">
+      {error
+        ? (
+          &lt;div className="error">
+            &lt;h6>{error}&lt;/h6>
+          &lt;/div>
+        )
+        : (
+          <>
+            &lt;h3>Number of Repositories&lt;/h3>
+            &lt;h2>{repoCount}&lt;/h2>
+          &lt;/>
+        )}
+    &lt;/div>
+  );
+};
+
+export default RepositoryCount;
+</CodeSnippet>
+<p>
+The repository count is held in a <code className="jarombek-inline-code">useState</code> React hook with the name
+<code className="jarombek-inline-code">repoCount</code>. This value is changed using the
+<code className="jarombek-inline-code">setRepoCount</code> function. When
+<code className="jarombek-inline-code">setRepoCount</code> is invoked, the
+<code className="jarombek-inline-code">RepositoryCount</code> component re-renders and displays the repository count in
+an HTML <code className="jarombek-inline-code">&lt;h2&gt;</code> element. If an error occurs while making the API call,
+the error message is stored in the <code className="jarombek-inline-code">error</code> variable, which is also managed
+by a <code className="jarombek-inline-code">useState</code> React hook. If the <code className="jarombek-inline-code">error</code>
+variable contains a string value, it is displayed in an HTML <code className="jarombek-inline-code">&lt;h6&gt;</code>
+element.
+</p>
+<p>
+The <code className="jarombek-inline-code">useEffect</code> React hook is invoked once after the component first
+renders.  It’s purpose is to make the GitHub API call and store its response in a state variable.  The
+<code className="jarombek-inline-code">getGraphQLResult()</code> function performs this task.  The first line of
+<code className="jarombek-inline-code">getGraphQLResult()</code> calls a
+<code className="jarombek-inline-code">getPersonalRepositories()</code> function, which is imported from another file. I
+extracted all the API client logic into a separate file, which I will discuss later. The API call is asynchronous, which
+is why I use the <code className="jarombek-inline-code">await</code> keyword.
+<code className="jarombek-inline-code">getPersonalRepositories()</code> returns a JavaScript object with the API
+response, and the remainder of the logic in <code className="jarombek-inline-code">getGraphQLResult()</code> handles the
+response in the case of a success or failure.
+</p>
+<p>
+If the API call is successful and the response object contains data, the repository count is assigned to the
+<code className="jarombek-inline-code">repoCount</code> variable using the
+<code className="jarombek-inline-code">setRepoCount</code> function. If the API call is unsuccessful and contains no
+data, the API returns an error message.  This error message is assigned to the
+<code className="jarombek-inline-code">error</code> variable using the <code className="jarombek-inline-code">setError</code>
+function.
+</p>
 <SectionTitle title="Test Code and Infrastructure">Test Code and Infrastructure</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
