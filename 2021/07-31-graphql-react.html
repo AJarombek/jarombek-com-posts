@@ -1,0 +1,43 @@
+<div>
+<p>
+Last year, I started using <a href="https://jarombek.com/blog?query=graphql&page=1">GraphQL</a> at my job.  I decided to
+create some GraphQL prototypes in my spare time, to get better acquainted with the GraphQL ecosystem.  In 2018 I learned
+the basics of GraphQL and wrote <a href="https://jarombek.com/blog/aug-5-2018-graphql-pt1">two</a>
+ <a href="https://jarombek.com/blog/aug-9-2018-graphql-pt2">articles</a> about my experience, but never dove into using
+GraphQL in real world applications.  The <a href="https://github.com/AJarombek/graphql-react-prototype">GraphQL React prototype</a>
+discussed in this article along with my <a href="https://github.com/AJarombek/apollo-client-server-prototype">Apollo prototype</a>
+are the beginnings of that production application journey.  In the future, I plan on using GraphQL for the API layer of
+my applications.
+</p>
+<p>
+The GraphQL prototype discussed in this article is a <a href="https://jarombek.com/blog?query=react&page=1">React</a>
+front-end application that connects to a GitHub GraphQL API.  The API provides details about my repositories, and React
+displays those details in a dashboard.  The dashboard is shown below.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-dashboard.png"/>
+</figure>
+<p>
+The dashboard has a responsive design, so its also viewable on tablets and mobile screens.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-dashboard-mobile.png"/>
+</figure>
+<SectionTitle title="GraphQL and React Application Code">GraphQL and React Application Code</SectionTitle>
+<p>
+The React code for the dashboard is broken down into multiple components, with each box displayed on the screen being
+its own component.  Components use Less for their stylesheet language.  Less, similar to
+<a href="https://jarombek.com/blog?query=sass&page=1">Sass</a>, is a CSS preprocessor, which adds features on top of
+the base CSS language.
+</p>
+<p>
+Each component makes a GraphQL query to the GitHub API, collecting the data it wishes to display.  The front-end code
+doesn’t use a GraphQL client library to make the API calls, instead just using an HTTP client library called
+<code className="jarombek-inline-code">axios</code>.  In an upcoming article I’ll discuss my
+<a href="https://github.com/AJarombek/apollo-client-server-prototype">Apollo prototype</a>, which uses the Apollo Client
+library to make API calls. While the HTTP client library is a more bare-bones approach, it is still fully capable of
+handling GraphQL APIs.
+</p>
+<SectionTitle title="Test Code and Infrastructure">Test Code and Infrastructure</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
