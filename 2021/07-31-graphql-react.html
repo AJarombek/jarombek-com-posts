@@ -38,6 +38,7 @@ doesn’t use a GraphQL client library to make the API calls, instead just using
 library to make API calls. While the HTTP client library is a more bare-bones approach, it is still fully capable of
 handling GraphQL APIs.
 </p>
+<SubTitle title="Repository Count Component">Repository Count Component</SubTitle>
 <p>
 Let’s look at one of the basic components displayed on the UI.  The <code className="jarombek-inline-code">RepositoryCount</code>
 component has the responsibility of displaying the number of repositories in my GitHub account on the dashboard. It has
@@ -129,6 +130,81 @@ data, the API returns an error message.  This error message is assigned to the
 <code className="jarombek-inline-code">error</code> variable using the <code className="jarombek-inline-code">setError</code>
 function.
 </p>
+<p>
+As previously mentioned, the API client logic is encapsulated in a separate file called
+<a href="https://github.com/AJarombek/graphql-react-prototype/blob/master/src/datasource/GraphQL.js">GraphQL.js</a>.
+ <code className="jarombek-inline-code">getPersonalRepositories()</code>, which was used in the
+<code className="jarombek-inline-code">RepositoryCount</code> component, is defined as follows:
+</p>
+<CodeSnippet language="JavaScript">
+const getPersonalRepositories = (username) => request(getPersonalRepositoriesQuery, { username });
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">getPersonalRepositories()</code> takes a GitHub username as an argument (in my
+case <strong>AJarombek</strong>) and then invokes a <code className="jarombek-inline-code">request()</code> function.
+<code className="jarombek-inline-code">request()</code> takes two arguments: a GraphQL query string and a JavaScript
+object containing variables passed to the GraphQL query.  <code className="jarombek-inline-code">request()</code> uses
+the <strong>axios</strong> HTTP client library to make the GraphQL API request to the GitHub API.
+</p>
+<CodeSnippet language="JavaScript">
+import axios from 'axios';
+
+const instance = axios.create({
+  baseURL: 'https://api.github.com/graphql',
+  headers: {
+    Authorization: `bearer ${process.env.GITHUB_ACCESS_TOKEN}`,
+  },
+});
+
+const request = (query, variables) => instance.post('', { query, variables });
+</CodeSnippet>
+<p>
+As you can see, both the GraphQL query and the query variables are passed in an HTTP POST body to
+<strong>https://api.github.com/graphql</strong>.
+</p>
+<p>
+The final piece of the puzzle is the GraphQL query.  The first argument to <code className="jarombek-inline-code">request()</code>
+in the <code className="jarombek-inline-code">getPersonalRepositories()</code> function body was a variable named
+<code className="jarombek-inline-code">getPersonalRepositoriesQuery</code>. This variable is a string containing a
+GraphQL query.
+</p>
+<CodeSnippet language="JavaScript">
+const getPersonalRepositoriesQuery = `
+  query PersonalRepositories($username: String!) {
+    user(login: $username) {
+      repositories(isFork: false, isLocked: false, privacy: PUBLIC, affiliations: OWNER,
+                  ownerAffiliations:OWNER, first: 100) {
+        totalCount
+      }
+    }
+  }
+`;
+</CodeSnippet>
+<p>
+All these pieces of code chained together, from the <code className="jarombek-inline-code">RepositoryCount</code> component
+to the <strong>axios</strong> client, run a GraphQL query and render the result in a web browser.
+</p>
+<p>
+For some additional perspective, shown below is the GraphQL query executed from an HTTP UI client.  In this case I’m
+using <a href="https://insomnia.rest/">Insomnia</a>, but you can also use Postman or any other client for HTTP requests.
+The major point I want to get across here is that these GraphQL queries aren’t doing anything too complex, they are
+simply HTTP requests.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-graphql-query.png"/>
+</figure>
+<SubTitle title="Most Total Commits Component">Most Total Commits Component</SubTitle>
+<p>
+Let’s briefly look at one more component.  The <code className="jarombek-inline-code">TotalCommits</code> component
+displays the five repositories with the most code commits in my GitHub account. It has
+a <a href="https://github.com/AJarombek/graphql-react-prototype/blob/master/src/components/items/TotalCommits.js">
+TotalCommits.js</a> file for the React component code and a <a href="https://github.com/AJarombek/
+graphql-react-prototype/blob/master/src/components/items/TotalCommits.less">TotalCommits.less</a> file for the
+stylesheet code.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-total-commits-component.png"/>
+</figure>
 <SectionTitle title="Test Code and Infrastructure">Test Code and Infrastructure</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
