@@ -205,6 +205,107 @@ stylesheet code.
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-total-commits-component.png"/>
 </figure>
+<p>
+<code className="jarombek-inline-code">TotalCommits</code> is a bit more complex because it needs to manipulate the
+data received from the GraphQL API, and then display the data in a list.
+</p>
+<CodeSnippet language="JavaScript">
+import React, { useEffect, useState } from 'react';
+import { getTotalCommits } from '../../datasource/GraphQL';
+
+const TotalCommits = () => {
+  const [repoCommits, setRepoCommits] = useState([]);
+  const [error, setError] = useState(null);
+
+  const generateMostTotalCommits = (repositories) => {
+    const repositoriesByCommits = [];
+
+    for (const repository of repositories) {
+      repositoriesByCommits.push({
+        name: repository.node.name,
+        commits: repository.node.ref?.target?.history?.totalCount ?? 0,
+      });
+    }
+
+    repositoriesByCommits.sort((a, b) => b.commits - a.commits);
+
+    setRepoCommits(repositoriesByCommits.slice(0, 5));
+    setError(null);
+  };
+
+  useEffect(() => {
+    async function getGraphQLResult() {
+      const result = await getTotalCommits('AJarombek');
+
+      if (result.data.data) {
+        generateMostTotalCommits(result.data.data.user.repositories.edges);
+      } else {
+        setError(result.data.errors[0].message);
+      }
+    }
+
+    getGraphQLResult();
+  }, []);
+
+  return (
+    &lt;div className="items total-commits">
+      {error
+        ? (
+          &lt;div className="error">
+            &lt;h6>{error}&lt;/h6>
+          &lt;/div>
+        )
+        : (
+          &lt;>
+            &lt;h2>Most Total Commits&lt;/h2>
+            { repoCommits.map((repository) => (
+              &lt;div className="commits" key={repository.name}>
+                &lt;p>{repository.name}&lt;/p>
+                &lt;p>{repository.commits}&lt;/p>
+              &lt;/div>
+            ))}
+          &lt;/>
+        )}
+    &lt;/div>
+  );
+};
+
+export default TotalCommits;
+</CodeSnippet>
+<p>
+In many ways, <code className="jarombek-inline-code">TotalCommits</code> is structured the same way as
+<code className="jarombek-inline-code">RepositoryCount</code>.  It renders either an error message or data from the
+GitHub API. It utilizes <code className="jarombek-inline-code">useState()</code> and
+<code className="jarombek-inline-code">useEffect()</code> React hooks to retrieve and store the API data after the
+components initial render. There are two main things that differentiate <code className="jarombek-inline-code">TotalCommits</code>
+from <code className="jarombek-inline-code">RepositoryCount</code>. First, it restructures and sorts the data retrieved
+from the API in a separate function called <code className="jarombek-inline-code">generateMostTotalCommits()</code>. After
+this function runs, an array of five JavaScript objects are stored in a <code className="jarombek-inline-code">repoCommits</code>
+variable, representing the five repositories in my GitHub account with the most commits.  Second, the component renders
+each of these repositories in their own HTML <code className="jarombek-inline-code">&lt;div&gt;</code> element,
+displaying the repository name and the number of commits.
+</p>
+<p>
+<code className="jarombek-inline-code">TotalCommits</code> invokes a <code className="jarombek-inline-code">getTotalCommits</code>
+function to retrieve the repository information from the GitHub GraphQL API.  This function exists in the
+<a href="https://github.com/AJarombek/graphql-react-prototype/blob/master/src/datasource/GraphQL.js#L92-L115">GraphQL.js</a>
+file. The GraphQL query for this component is shown below, invoked from the Insomnia HTTP UI Client.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-graphql-query-2.png"/>
+</figure>
+<p>
+All the components in my GraphQL React prototype follow a similar structure to <code className="jarombek-inline-code">TotalCommits</code>
+and <code className="jarombek-inline-code">RepositoryCount</code>. The rest can be viewed on
+<a href="https://github.com/AJarombek/graphql-react-prototype/tree/master/src/components/items">GitHub</a>.
+</p>
 <SectionTitle title="Test Code and Infrastructure">Test Code and Infrastructure</SectionTitle>
+<p>
+The GraphQL React prototype has Kubernetes infrastructure hosted on AWS.  This infrastructure is built with Terraform,
+and has the following structure:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-31-21-infrastructure.png"/>
+</figure>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
