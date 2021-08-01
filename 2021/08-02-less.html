@@ -44,5 +44,86 @@ in my <a href="https://jarombek.com/blog/jun-29-2021-jss">JSS article</a> and
 <a href="https://jarombek.com/blog/jun-30-2021-react-jss">JSS in React</a> article.
 </Note>
 <SectionTitle title="Improving Stylesheet Code With Less">Improving Stylesheet Code With Less</SectionTitle>
+<p>
+Let’s look at a few Less code samples from the prototype applications I’ve written.  First, much like Sass, Less
+supports nested CSS rules.  Here is an example from one of my <a href="https://github.com/AJarombek/
+graphql-react-prototype/blob/master/src/components/items/RepositoryCount.less">React component stylesheets</a>.
+</p>
+<CodeSnippet language="Less">
+@import "../../vars";
+
+.repository-count {
+  grid-area: repoCount;
+  height: 125px;
+
+  h3, h2 {
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 42px;
+    .hoverPurple()
+  }
+
+  .error {
+    height: 100%;
+  }
+}
+</CodeSnippet>
+<p>
+Notice how <code className="jarombek-inline-code">h3</code>, <code className="jarombek-inline-code">h2</code>, and
+<code className="jarombek-inline-code">.error</code> are nested inside <code className="jarombek-inline-code">
+.repository-count</code>.  This code snippet also shows how Less supports stylesheet imports.
+<code className="jarombek-inline-code">@import "../../vars"</code> imports a <strong>var.less</strong> file, making all
+its variables and mixins available to the CSS rules.  The <a href="https://github.com/AJarombek/
+graphql-react-prototype/blob/master/src/vars.less">vars.less</a> file has the following content:
+</p>
+<CodeSnippet language="Less">
+@darkTheme: #454443;
+@darkerTheme: darken(@darkTheme, 10%);
+@defaultFontColor: #e9eaed;
+@contrastPurple: #8a4cff;
+
+.hoverPurple() {
+  color: lighten(@contrastPurple, 20%);
+  transition: color ease 0.4s;
+
+  &:hover {
+    color: @contrastPurple;
+  }
+}
+</CodeSnippet>
+<p>
+The first four lines define four variables, each representing a color.  These variables are used in CSS declarations
+elsewhere in the stylesheet code.  For example, the <code className="jarombek-inline-code">@defaultFontColor</code>
+variable can be assigned to a <code className="jarombek-inline-code">color</code> property with the
+<code className="jarombek-inline-code">color: @defaultFontColor;</code> declaration.  The second color variable,
+<code className="jarombek-inline-code">@darkerTheme: darken(@darkTheme, 10%)</code>, showcases one of the functions
+provided by Less called <code className="jarombek-inline-code">darken()</code>.  Similar to Sass, Less provides
+<a href="https://lesscss.org/functions/">built-in functions</a> which make it easier to write styles<sup>5</sup>.  While
+CSS has some <a href="https://www.w3schools.com/cssref/css_functions.asp">built-in functions</a>, Sass and Less greatly
+improve the function offering<sup>6</sup>.
+</p>
+<p>
+<strong>vars.less</strong> also defines a mixin named <code className="jarombek-inline-code">hoverPurple</code>.  Mixins
+are a group of CSS declarations and nested CSS selectors which are “mixed in” with CSS other rules.  For example,
+<code className="jarombek-inline-code">hoverPurple</code> was “mixed in” with the
+<code className="jarombek-inline-code">h2</code> CSS selector in the first code sample shown in this article.
+</p>
+<p>
+While Less has more features than the ones shown in this article, in my experience variables, nested CSS rules,
+functions, and mixins are the ones most commonly used.  Less has pretty good documentation online, so you can learn more
+on their <a href="https://lesscss.org/features/#features-overview-feature">website</a>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+As far as CSS preprocessors are concerned, Less is a formidable option.  Although I prefer the syntax of Sass, Less has
+nearly identical features, and configuring it with an application is easy.  All the Less code I’ve written exists in my
+<a href="https://github.com/AJarombek/graphql-react-prototype">graphql-react-prototype</a> and
+<a href="https://github.com/AJarombek/apollo-client-server-prototype">apollo-client-server-prototype</a> repositories.
+</p>
 </div>
