@@ -1,0 +1,48 @@
+<div>
+<p>
+When it comes to CSS preprocessors (stylesheet languages that add features on top of CSS and transpile to CSS), in the
+past I’ve often used Sass.  When I first started learning about CSS preprocessors, the two main choices were Sass and
+Less.  The reason I decided to learn Sass instead of Less was due to its greater popularity and me trying to follow
+industry trends.  At the time, Bootstrap had just released version 4, which switched its stylesheet language from Less
+to Sass<sup>1</sup>.  It didn't make sense for me to learn the preprocessor language that was being left in the dust.
+</p>
+<p>
+Over time, I increasingly wished to learn the difference between Sass and Less.  It was hard for me to tell if there
+were differences in the functionality of Sass or Less, or if Sass was picked as the favorite due to syntactical
+preferences and third-party library support.  Last year I wrote two front-end application prototypes,
+<a href="https://github.com/AJarombek/graphql-react-prototype">graphql-react-prototype</a> and
+<a href="https://github.com/AJarombek/apollo-client-server-prototype">apollo-client-server-prototype</a>.  Instead of
+using a stylesheet technology I already knew such as Sass or JSS, I decided to learn Less and use it as the stylesheet
+language for these prototypes.
+</p>
+<p>
+Although I hoped to find interesting differences between the functionality of Less and Sass, in reality I found that
+both languages were very similar.  While I’m sure engineers who work with both technologies extensively can find subtle
+differences between the two, from a high level they provide the same capabilities on top of CSS.  Similar to Sass, Less
+has variables, mixins, conditionals, and loops.  The main difference between the two is the syntax.
+</p>
+<p>
+In some cases, Sass seems to have clearly superior syntax.  For example, <code className="jarombek-inline-code">for</code>
+ <a href="https://sass-lang.com/documentation/at-rules/control/for">loops in Sass</a> have better syntax than
+<code className="jarombek-inline-code">for</code> <a href="https://sass-lang.com/documentation/at-rules/control/for">
+loops in Less</a>, with Sass having a built-in <code className="jarombek-inline-code">@for</code> rule and Less
+requiring you to use a mixin<sup>2,3</sup>.  In other cases, syntactical preferences are more subjective.  For example,
+a variable with the name <code className="jarombek-inline-code">myVariable</code> is written as
+<code className="jarombek-inline-code">$myVariable</code> in Sass and <code className="jarombek-inline-code">@myVariable</code>
+in Less.  Neither is superior, it just comes down to personal taste.
+</p>
+<p>
+So why did Sass gain more traction in the software engineering world than Less?  Since both languages have similar
+functionality, to some extent I believe it is because most engineers prefer the syntax of Sass<sup>4</sup>.  I also
+think third-party Sass libraries and frameworks, such as <a href="http://compass-style.org/">Compass</a>, swayed
+engineers who enjoyed their out-of-the-box functionality.  In my opinion, Sass does have slightly cleaner syntax, so
+I am more inclined to use it instead of Less in my projects.
+</p>
+<Note type="info">
+Currently, my favorite approach for authoring stylesheets is JSS, a CSS is JavaScript library.  You can read about it
+in my <a href="https://jarombek.com/blog/jun-29-2021-jss">JSS article</a> and 
+<a href="https://jarombek.com/blog/jun-30-2021-react-jss">JSS in React</a> article.
+</Note>
+<SectionTitle title="Improving Stylesheet Code With Less">Improving Stylesheet Code With Less</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
