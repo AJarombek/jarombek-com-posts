@@ -1,0 +1,35 @@
+<div>
+<p>
+Cypress is an end to end (e2e) testing framework written in JavaScript for front-end applications.  Cypress tests run
+in a Chrome web browser or in a headless browser, navigating through and interacting with web pages.  While it’s
+reasonable to compare Cypress to other test automation frameworks such as Selenium or Puppeteer, Cypress was created
+specifically for writing end to end tests.  Because of its test first design, Cypress provides lots of features that
+make writing end to end tests easy.  It is currently my preferred end to end testing tool.
+</p>
+<p>
+While Cypress tests can be written in JavaScript, as is the case with my <a href="https://github.com/AJarombek/
+jarombek-com/tree/master/cypress/integration">jarombek.com</a> application, it also has TypeScript support.  Nowadays,
+I write most of my front-end applications in TypeScript due to its type safety.  In my experience, TypeScript helps
+reduce the number of bugs and type mismatch mistakes in JavaScript code.  For applications written in TypeScript, it is
+great to be able to write Cypress tests in TypeScript as well.  This helps keep the programming language usage uniform
+across the front-end application code and test code.
+</p>
+<p>
+In this article, I discuss the basics of Cypress and how I use it to test my front-end applications.  All the Cypress
+test code I show is written in TypeScript.  The Cypress test code comes from two of my application repositories:
+<a href="https://github.com/AJarombek/apollo-client-server-prototype/tree/master/client/cypress">apollo-client-server-prototype</a>
+and <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/cypress">saints-xctf-web</a>.
+</p>
+<SectionTitle title="What is End to End Testing">What is End to End Testing?</SectionTitle>
+<Definition word="End to End Testing">
+End to end (E2E) testing is the practice of writing tests for an application from one end to another, from beginning to
+end.  In essence, these tests cover the entire execution flow of an application in a production-like environment.  In
+the case of a front-end application, this means testing the application by interacting with the UI as an actual user
+would. Because these tests are executed in a production-like environment, all the API calls used by the front-end code
+are invoked as part of the tests.  This results in the application being executed from end to end - from the front-end
+to the back-end and database.
+</Definition>
+<SectionTitle title="Cypress Basics">Cypress Basics</SectionTitle>
+<SectionTitle title="Cypress Test Examples">Cypress Test Examples</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
