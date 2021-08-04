@@ -29,7 +29,49 @@ would. Because these tests are executed in a production-like environment, all th
 are invoked as part of the tests.  This results in the application being executed from end to end - from the front-end
 to the back-end and database.
 </Definition>
+<p>
+With Cypress, end to end tests are run in a web browser.  Tests navigate to a web page and make assertions about the
+content shown.  Then, they can interact with the page and make further assertions about what changed in the UI, check
+what network calls were made, and more.
+</p>
 <SectionTitle title="Cypress Basics">Cypress Basics</SectionTitle>
+<p>
+Cypress is installed from its <a href="https://www.npmjs.com/package/cypress">cypress</a> npm package.  Cypress is
+pretty easy to configure with an application.  For example, my <a href="https://saintsxctf.com">saintsxctf.com</a>
+application uses Cypress and is configured to use it with TypeScript.  For starters, its repository
+<a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> is written as an npm package, with
+<code className="jarombek-inline-code">cypress</code> defined as a dev dependency in its <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/master/package.json#L77">package.json</a> file.  Next, a <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/master/cypress.json">cypress.json</a> file exists in the root directory of the npm
+package.  This is the main configuration file for Cypress, with the contents of my configuration file shown below.
+</p>
+<CodeSnippet language="JSON">
+{
+  "baseUrl": "http://localhost:8090",
+  "ignoreTestFiles": ["*.md"],
+  "env": {
+    ...
+  }
+}
+</CodeSnippet>
+<p>
+Although the fields of the configuration file are optional, they do help simplify tests and configure the settings of
+Cypress to fit your needs<sup>1</sup>.  In my configuration file, <code className="jarombek-inline-code">baseUrl</code>
+configures the default base URL to use for all my tests, so that I don’t need to copy-paste it across all my test cases.
+<code className="jarombek-inline-code">ignoreTestFiles</code> configures the Cypress test runner to ignore any Markdown
+files in the test directory, in my case which are used for documentation purposes.  Finally,
+<code className="jarombek-inline-code">env</code> sets environment variables which are accessible to the Cypress test
+code.  Cypress has many additional <a href="https://docs.cypress.io/guides/references/configuration#Options">
+configuration options</a> listed in their documentation.
+</p>
+<p>
+The actual Cypress test code is written in a <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/cypress">cypress</a>
+directory located in the root of the npm package.  The <strong>cypress</strong> folder and its subdirectories are
+created as a scaffold automatically when Cypress is first run in the project, so there is no need to create these
+manually.  Inside <strong>cypress</strong> are four subdirectories - <strong>fixtures</strong>, <strong>integration</strong>,
+<strong>plugins</strong>, and <strong>support</strong> - along with a <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/master/cypress/tsconfig.json">tsconfig.json</a> file to configure TypeScript.
+</p>
 <SectionTitle title="Cypress Test Examples">Cypress Test Examples</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
