@@ -72,6 +72,64 @@ manually.  Inside <strong>cypress</strong> are four subdirectories - <strong>fix
 <strong>plugins</strong>, and <strong>support</strong> - along with a <a href="https://github.com/AJarombek/
 saints-xctf-web/blob/master/cypress/tsconfig.json">tsconfig.json</a> file to configure TypeScript.
 </p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-directory.png"/>
+</figure>
+<p>
+The <strong>integration</strong> directory holds the Cypress end to end tests.  In my case, these tests are TypeScript
+files with <strong>.e2e.test.ts</strong> file extensions.  For example, the Cypress tests for the home page of my
+<a href="https://saintsxctf.com">saintsxctf.com</a> website are located in a <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/master/cypress/integration/Home.e2e.test.ts">Home.e2e.test.ts</a> file.
+</p>
+<p>
+The <strong>fixtures</strong> directory contains static assets used by the tests.  The majority of the files in my
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/fixtures">fixtures</a> directory are JSON
+files representing mocked API responses.  In certain end to end tests, it’s preferable to use fixed API responses
+instead of ones from an actual live API.  This is often due to the unpredictability of API data, and a need to test
+specific repeatable scenarios.  It’s also due to the requirement of testing failure scenarios on the website, such as
+when an API returns an unexpected error code.  These scenarios are easily achieved by mocking the API responses with
+the JSON files found in the <strong>fixtures</strong> directory.  The other static assets found in my
+<strong>fixtures</strong> directory are pictures, which are used for testing profile picture and group picture
+uploading on my website.
+</p>
+<p>
+The <strong>plugins</strong> directory contains a single <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/cypress/plugins/index.js">index.js</a> JavaScript file that runs in Node.js before the Cypress tests
+begin<sup>2</sup>.  This file is used to configure first-party and third-party tooling which extends the functionality
+of Cypress.  For example, my plugins file configures a <a href="https://docs.cypress.io/guides/tooling/
+code-coverage#E2E-code-coverage">code coverage plugin</a> to generate code coverage reports for my end to end
+tests<sup>3</sup>.  Code coverage reports require an additional <code className="jarombek-inline-code">@cypress/code-coverage</code>
+dev dependency in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L51">package.json</a>
+file.
+</p>
+<p>
+The <strong>support</strong> directory contains custom commands used throughout the Cypress tests.  These custom
+commands contain reusable code, making the Cypress tests more concise and <a href="https://jarombek.com/blog/
+jun-17-2019-terraform-module#dry-principal">DRY</a>.  The <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/cypress/support/index.ts">index.ts</a> file is run automatically before every Cypress test file, so that the
+custom commands don’t need to be imported repeatedly into all the test files<sup>4</sup>.  There is a whole section of
+this article dedicated to writing custom commands in Cypress.
+</p>
+<p>
+The <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/tsconfig.json">tsconfig.json</a> file in
+the <strong>cypress</strong> folder creates and configures a TypeScript project for the Cypress tests, separate from the
+TypeScript project for the source code.  The most important property of the JSON configuration is
+<code className="jarombek-inline-code">compilerOptions.types</code>, which specifies that only the type definitions
+specific to Cypress should be used in the test code<sup>5</sup>.
+</p>
+<CodeSnippet language="JSON">
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": "../node_modules",
+    "target": "ES5",
+    "lib": ["ES5", "DOM"],
+    "types": ["cypress", "cypress-file-upload"]
+  },
+  "include": ["**/*.ts"]
+}
+</CodeSnippet>
 <SectionTitle title="Cypress Test Examples">Cypress Test Examples</SectionTitle>
+<SectionTitle title="Cypress Custom Commands">Cypress Custom Commands</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
