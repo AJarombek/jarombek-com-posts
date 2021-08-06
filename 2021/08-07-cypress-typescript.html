@@ -129,7 +129,70 @@ specific to Cypress should be used in the test code<sup>5</sup>.
   "include": ["**/*.ts"]
 }
 </CodeSnippet>
+<p>
+There are two main ways to run Cypress tests: in a web browser or in a headless browser.  Inside my <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/master/package.json#L120-L122">package.json</a> file, I specify multiple custom commands
+for running Cypress tests.  The first command, <code className="jarombek-inline-code">cypress open</code> (aliased as
+<code className="jarombek-inline-code">cy:open</code>), opens the Cypress test runner and allows you to run test files
+in a web browser.  The test runner is shown below.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-test-runner.png"/>
+</figure>
+<p>
+The test runner lists all the end to end test files, referred to as <strong>specs</strong>, which exist in the
+<strong>integration</strong> directory.  Clicking on any of the file names will open a web browser and begin running
+the tests.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-browser.png"/>
+</figure>
+<p>
+In the screenshot above, all three tests passed.  While the tests run, the Cypress commands which execute are displayed
+on the left hand side of the browser.  On the right hand side, the current state of the website in the test is shown.
+This is great for seeing your tests execute on the UI, and allows for easy debugging if tests are failing.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-executed-test.png"/>
+</figure>
+<p>
+The other way to run tests is with a headless browser.  Headless browsers provide an execution environment similar to a
+web browser, except they are run from a command line<sup>6</sup>.  Executing Cypress tests in headless browsers is great
+for CI/CD pipelines which run tests in an automated fashion.  The
+<code className="jarombek-inline-code">cypress run --headless</code> command (aliased as
+<code className="jarombek-inline-code">cy:headless</code>) runs all the Cypress tests in a headless browser.
+</p>
+<p>
+In the remainder of this article, I walk you through Cypress test cases and reusable Cypress functions.  All these
+examples are used in the end to end tests for my <a href="https://saintsxctf.com">saintsxctf.com</a> website.
+</p>
 <SectionTitle title="Cypress Test Examples">Cypress Test Examples</SectionTitle>
+<p>
+Let’s start with some basic examples which test the home page of my <a href="https://saintsxctf.com">saintsxctf.com</a>
+website.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-page.png"/>
+</figure>
+<p>
+Cypress test code is built on top of the <a href="https://mochajs.org/">Mocha testing framework</a> and the
+<a href="https://www.chaijs.com/">Chai assertion library</a>.  Therefore, engineers familiar with these libraries will
+recognize the coding syntax right away.  Cypress test specs often have a similar layout to the following specification
+for my website’s home page.
+</p>
+<CodeSnippet language="JavaScript">
+describe('Home E2E Tests', () => {
+  beforeEach(() => {
+    cy.visit('/');
+  });
+
+  it('loads the home page as expected', () => {
+    cy.get('.sxctf-home').contains('Cross Country and Track & Field Team Exercise Logs').should('exist');
+  });
+
+  ...
+});
+</CodeSnippet>
 <SectionTitle title="Cypress Custom Commands">Cypress Custom Commands</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
