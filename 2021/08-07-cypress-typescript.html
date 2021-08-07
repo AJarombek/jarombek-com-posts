@@ -193,6 +193,92 @@ describe('Home E2E Tests', () => {
   ...
 });
 </CodeSnippet>
+<p>
+The home page’s end to end test spec is located in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+cypress/integration/Home.e2e.test.ts">Home.e2e.test.ts</a> file.  The <code className="jarombek-inline-code">describe()</code>
+function gives a name to the test suite with its first argument and defines all the test cases along with pre-test and
+post-test hook methods with its second argument.  In my example, the test suite is named "Home E2E Tests".
+<code className="jarombek-inline-code">beforeEach()</code> is a pre-test hook which executes before every test case.
+<code className="jarombek-inline-code">beforeEach()</code> executes one built-in Cypress command,
+<code className="jarombek-inline-code">cy.visit('/');</code>, which navigates the browser to the home page of my
+website before each test.
+</p>
+<p>
+The final piece of code in the snippet above is an <code className="jarombek-inline-code">it()</code> function, which 
+defines a test case.  The test is given the name "loads the home page as expected" and executes a few Cypress commands.  
+Most Cypress tests utilize function chaining, and this basic example is no different.  First, the call to 
+<code className="jarombek-inline-code">cy.get('.sxctf-home')</code> gets any HTML elements with the class 
+<code className="jarombek-inline-code">sxctf-home</code>.  The result could be zero, one, or many HTML elements.  Next, 
+the result of this function is chained with <code className="jarombek-inline-code">
+.contains('Cross Country and Track & Field Team Exercise Logs')</code>.  The <code className="jarombek-inline-code">
+contains()</code> function narrows down the HTML elements retrieved with the  <code className="jarombek-inline-code">
+cy.get()</code> call to only those elements that contain the text "Cross Country and Track & Field Team Exercise Logs".  
+Finally, the result of this function is chained with <code className="jarombek-inline-code">.should('exist')</code>.  
+This ensures that at least one HTML element exists with a <code className="jarombek-inline-code">sxctf-home</code> class 
+and has the text "Cross Country and Track & Field Team Exercise Logs".  If no elements match these two requirements, the 
+Cypress test fails.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-title-test.png"/>
+</figure>
+<p>
+Let’s look at a few more basic tests used on my application's home page.
+</p>
+<CodeSnippet language="JavaScript">
+it("'about' header button navigates down to the 'about' section", () => {
+  cy.get('.aboutButton').click();
+  cy.url().should('include', '/#about');
+});
+</CodeSnippet>
+<p>
+This test takes an action of clicking on an HTML element with an <code className="jarombek-inline-code">aboutButton</code>
+class.  The test then asserts that the URL of the webpage has changed to <strong>/#about</strong>, signaling that the
+user was navigated down the page to the "About" section.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-about-test.png"/>
+</figure>
+<p>
+The website under test is mobile-responsive, and I have a separate file for mobile end to end tests called
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/integration/Home.mobile.e2e.test.ts">
+Home.mobile.e2e.test.ts</a>.
+</p>
+<CodeSnippet language="JavaScript">
+describe('Home Mobile E2E Tests', () => {
+  beforeEach(() => {
+    cy.viewport(400, 800);
+    cy.visit('/');
+  });
+
+  it("'About' navbar dropdown link navigates down to the 'About' section", () => {
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/`);
+    cy.get('.sxctf-nav-hamburger').click();
+    cy.get('.aj-nav-list-item').contains('About').click();
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/#about`);
+  });
+
+  ...
+});
+</CodeSnippet>
+<p>
+The mobile home page test suite has a <code className="jarombek-inline-code">beforeEach()</code> hook function similar
+to the one in <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/integration/Home.e2e.test.ts">
+Home.e2e.test.ts</a>, except this time it also changes the viewport to a mobile phone screen size.  This is achieved
+with the Cypress command <code className="jarombek-inline-code">cy.viewport(400, 800)</code> which changes the viewport
+width to 400px and the viewport height to 800px.
+</p>
+<p>
+The test shown in this code snippet is logically equivalent to the "About" section test discussed prior.  This time, a
+mobile dropdown is clicked to navigate to the "About" section instead of a button in the website header.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-about-mobile-test.png"/>
+</figure>
+<SectionTitle title="Advanced Cypress Test Examples">Advanced Cypress Test Examples</SectionTitle>
+<p>
+Now let’s look at some of the advanced Cypress tests written in my end to end test suite.  Don’t worry too much about
+the tiny code details; Instead, focus on the big picture of what Cypress is capable of.
+</p>
 <SectionTitle title="Cypress Custom Commands">Cypress Custom Commands</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
