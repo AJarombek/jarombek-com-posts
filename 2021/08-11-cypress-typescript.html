@@ -73,7 +73,7 @@ manually.  Inside <strong>cypress</strong> are four subdirectories - <strong>fix
 saints-xctf-web/blob/master/cypress/tsconfig.json">tsconfig.json</a> file to configure TypeScript.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-directory.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-cypress-directory.png"/>
 </figure>
 <p>
 The <strong>integration</strong> directory holds the Cypress end to end tests.  In my case, these tests are TypeScript
@@ -137,7 +137,7 @@ for running Cypress tests.  The first command, <code className="jarombek-inline-
 in a web browser.  The test runner is shown below.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-test-runner.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-cypress-test-runner.png"/>
 </figure>
 <p>
 The test runner lists all the end to end test files, referred to as <strong>specs</strong>, which exist in the
@@ -145,7 +145,7 @@ The test runner lists all the end to end test files, referred to as <strong>spec
 the tests.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-browser.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-cypress-browser.png"/>
 </figure>
 <p>
 In the screenshot above, all three tests passed.  While the tests run, the Cypress commands which execute are displayed
@@ -153,7 +153,7 @@ on the left hand side of the browser.  On the right hand side, the current state
 This is great for seeing your tests execute on the UI, and allows for easy debugging if tests are failing.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-cypress-executed-test.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-cypress-executed-test.png"/>
 </figure>
 <p>
 The other way to run tests is with a headless browser.  Headless browsers provide an execution environment similar to a
@@ -172,7 +172,7 @@ Let’s start with some basic examples which test the home page of my <a href="h
 website.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-page.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-home-page.png"/>
 </figure>
 <p>
 Cypress test code is built on top of the <a href="https://mochajs.org/">Mocha testing framework</a> and the
@@ -180,7 +180,7 @@ Cypress test code is built on top of the <a href="https://mochajs.org/">Mocha te
 recognize the coding syntax right away.  Cypress test specs often have a similar layout to the following specification
 for my website’s home page.
 </p>
-<CodeSnippet language="JavaScript">
+<CodeSnippet language="TypeScript">
 describe('Home E2E Tests', () => {
   beforeEach(() => {
     cy.visit('/');
@@ -219,12 +219,12 @@ and has the text "Cross Country and Track & Field Team Exercise Logs".  If no el
 Cypress test fails.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-title-test.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-home-title-test.png"/>
 </figure>
 <p>
 Let’s look at a few more basic tests used on my application's home page.
 </p>
-<CodeSnippet language="JavaScript">
+<CodeSnippet language="TypeScript">
 it("'about' header button navigates down to the 'about' section", () => {
   cy.get('.aboutButton').click();
   cy.url().should('include', '/#about');
@@ -236,14 +236,14 @@ class.  The test then asserts that the URL of the webpage has changed to <strong
 user was navigated down the page to the "About" section.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-about-test.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-home-about-test.png"/>
 </figure>
 <p>
 The website under test is mobile-responsive, and I have a separate file for mobile end to end tests called
 <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/integration/Home.mobile.e2e.test.ts">
 Home.mobile.e2e.test.ts</a>.
 </p>
-<CodeSnippet language="JavaScript">
+<CodeSnippet language="TypeScript">
 describe('Home Mobile E2E Tests', () => {
   beforeEach(() => {
     cy.viewport(400, 800);
@@ -272,13 +272,140 @@ The test shown in this code snippet is logically equivalent to the "About" secti
 mobile dropdown is clicked to navigate to the "About" section instead of a button in the website header.
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-7-21-saintsxctf-home-about-mobile-test.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-home-about-mobile-test.png"/>
 </figure>
 <SectionTitle title="Advanced Cypress Test Examples">Advanced Cypress Test Examples</SectionTitle>
 <p>
 Now let’s look at some of the advanced Cypress tests written in my end to end test suite.  Don’t worry too much about
 the tiny code details; Instead, focus on the big picture of what Cypress is capable of.
 </p>
+<SubTitle title="Create New Exercise Log">Create New Exercise Log</SubTitle>
+<p>
+Let’s look at a test that creates a new exercise log.  This test exists in a <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/v2.0.4/cypress/integration/NewLog.e2e.test.ts#L69-L109">NewLog.e2e.test.ts</a> file.
+</p>
+<CodeSnippet language="TypeScript">
+it('able to create a new running exercise log', () => {
+  cy.route('POST', '/api/v2/logs/').as('createLog');
+
+  const formattedDate = moment().format('YYYY-MM-DD');
+  const finalFormattedDate = moment().format('MMM. Do, YYYY');
+
+  cy.visit('/log/new');
+  cy.get('.sxctf-image-input input[name="name"]').type('Test Run');
+  cy.get('.sxctf-image-input input[name="location"]').type('New York, NY');
+  cy.get('.sxctf-image-input input[name="date"]').type(formattedDate);
+  cy.get('.sxctf-image-input input[name="distance"]').type('5');
+  cy.get('.sxctf-image-input input[name="time"]').type('3625');
+  cy.get('textarea').type('Running Log Generated from E2E Tests');
+  cy.get('button').contains('Create').click();
+
+  cy.wait('@createLog');
+
+  cy.getDataCy('alert').should('exist');
+  cy.getDataCy('alert').should('contain.text', 'Exercise log created!');
+
+  // The success message should disappear after 4 seconds.
+  cy.wait(4000);
+  cy.getDataCy('alert').should('not.exist');
+
+  cy.get('.dashboardButton').click();
+  cy.url().should('equal', `${Cypress.config('baseUrl')}/dashboard`);
+
+  cy.get('#logFeed .exerciseLog').should('have.length', 10);
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogUser').should('contain.text', 'Andy Jarombek');
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogTitle').should('contain.text', 'Test Run');
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogDate').should('contain.text', finalFormattedDate);
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogType').should('contain.text', 'RUN');
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogLocation').should('contain.text', 'New York, NY');
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogDistance').should('contain.text', '5 miles');
+  cy.get('#logFeed .exerciseLog').eq(0).findDataCy('exerciseLogTimePace').should('contain.text', '36:25 (7:17/mi)');
+  cy.get('#logFeed .exerciseLog').eq(0).should('have.class', 'average');
+  cy.get('#logFeed .exerciseLog')
+    .eq(0)
+    .findDataCy('exerciseLogDescription')
+    .should('contain.text', 'Running Log Generated from E2E Tests');
+});
+</CodeSnippet>
+<p>
+The test starts by filling out an exercise log creation form with the help of the Cypress
+<code className="jarombek-inline-code">type()</code> commands.  This code snippet also demonstrates how other JavaScript
+libraries, such as the moment.js date/time library, can be used in Cypress tests.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-create-log-test.png"/>
+</figure>
+<p>
+<code className="jarombek-inline-code">cy.get('button').contains('Create').click()</code> clicks a button which makes
+an API call to create a new exercise log.  The Cypress test waits for this API call to complete with the
+<code className="jarombek-inline-code">cy.wait('@createLog')</code> command.  <code className="jarombek-inline-code">
+@createLog</code> is an alias for a HTTP route.  It is defined at the beginning of the test with the
+<code className="jarombek-inline-code">cy.route('POST', '/api/v2/logs/').as('createLog')</code> command.  After the
+exercise log is created, the Cypress test navigates back to the dashboard page of the website and makes sure the new
+exercise log appears.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-create-log-test-2.png"/>
+</figure>
+<SubTitle title="Monthly Exercise Calendar">Monthly Exercise Calendar</SubTitle>
+<p>
+Another advanced Cypress test is one for a monthly calendar tab on a user’s profile page.  This test exists in a
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/integration/NewLog.e2e.test.ts#L69-L109">
+NewLog.e2e.test.ts</a> file.
+</p>
+<CodeSnippet language="TypeScript">
+it('has a tab with a calendar of monthly exercise logs', () => {
+  cy.visit('/profile/andy');
+  cy.profileMockAPICalls();
+
+  cy.createRangeViewRoute('rangeViewCurrentMonthRoute', currentMonthRangeItems, 0, 'month', true);
+  cy.get('.tabs p').contains('Monthly Calendar').click();
+  cy.wait('@rangeViewCurrentMonthRoute');
+
+  const calendarMonth = moment().format('MMMM YYYY');
+
+  cy.getDataCy('currentMonth').should('contain.text', calendarMonth);
+  cy.calendarWeekCheck(0, [null, 5.39, 5.83, 8.64, 5.96, 8.75, 9.12], 43.69);
+  cy.calendarWeekCheck(1, [2.89, 5.89, 5.94, 11.96, 5.97, '8.80', 14.01], 55.46);
+  cy.calendarWeekCheck(2, [2.94, 4.55, 6.28, 6.52, 6.58, '12.00', null], 38.87);
+  cy.calendarWeekCheck(3, [null, null, null, null, null, null, null], '0.00');
+  cy.calendarWeekCheck(4, [null, null, null, null, null, null, null], '0.00');
+  cy.calendarWeekCheck(5, [null, null, null, null, null, null, null], '0.00');
+
+  // Go to the previous month.
+  cy.createRangeViewRoute('rangeViewPreviousMonthRoute', prevMonthRangeItems, 1, 'month', true);
+  cy.getDataCy('prevMonth').click();
+  cy.wait('@rangeViewPreviousMonthRoute');
+
+  const prevCalendarMonth = moment().subtract(1, 'month').format('MMMM YYYY');
+
+  cy.getDataCy('currentMonth').should('contain.text', prevCalendarMonth);
+  cy.calendarWeekCheck(0, [null, 5.42, 5.36, '5.40', 6.51, 6.01, 12.23], 40.93);
+  cy.calendarWeekCheck(1, [2.82, 5.42, 5.38, '5.40', 7.11, '6.00', 13.27], '45.40');
+  cy.calendarWeekCheck(2, [2.86, 5.44, 5.43, '5.40', 5.43, 11.27, 13.21], 49.04);
+  cy.calendarWeekCheck(3, [5.38, 2.83, 5.36, '5.40', 6.49, 6.02, 7.02], '38.50');
+  cy.calendarWeekCheck(4, [null, 5.39, 5.83, 8.64, 5.96, 8.75, 9.12], 43.69);
+  cy.calendarWeekCheck(5, [2.89, 5.89, 5.94, 11.96, 5.97, '8.80', 14.01], 55.46);
+
+  // Return to the current month.
+  cy.getDataCy('nextMonth').click();
+
+  cy.getDataCy('currentMonth').should('contain.text', calendarMonth);
+  cy.calendarWeekCheck(0, [null, 5.39, 5.83, 8.64, 5.96, 8.75, 9.12], 43.69);
+  cy.calendarWeekCheck(1, [2.89, 5.89, 5.94, 11.96, 5.97, '8.80', 14.01], 55.46);
+  cy.calendarWeekCheck(2, [2.94, 4.55, 6.28, 6.52, 6.58, '12.00', null], 38.87);
+  cy.calendarWeekCheck(3, [null, null, null, null, null, null, null], '0.00');
+  cy.calendarWeekCheck(4, [null, null, null, null, null, null, null], '0.00');
+  cy.calendarWeekCheck(5, [null, null, null, null, null, null, null], '0.00');
+});
+</CodeSnippet>
+<p>
+The test navigates to the profile page of user <strong>andy</strong> and clicks on the <strong>Monthly Calendar</strong>
+tab.  From there, the Cypress test asserts that the calendar shows the proper month and exercise mileage statistics.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-monthly-calendar.png"/>
+</figure>
 <SectionTitle title="Cypress Custom Commands">Cypress Custom Commands</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
