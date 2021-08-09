@@ -406,6 +406,107 @@ tab.  From there, the Cypress test asserts that the calendar shows the proper mo
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-monthly-calendar.png"/>
 </figure>
+<p>
+The monthly calendar Cypress test utilized multiple custom Cypress commands.  These include
+<code className="jarombek-inline-code">cy.profileMockAPICalls()</code> (located in <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/profile.ts#L21-L26">profile.ts</a> and <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/profile.d.ts#L24-L28">profile.d.ts</a>),
+<code className="jarombek-inline-code">cy.createRangeViewRoute()</code> (located in <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/shared.ts#L39-L81">shared.ts</a> and <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/shared.d.ts#L29-L47">shared.d.ts</a>),
+<code className="jarombek-inline-code">cy.calendarWeekCheck()</code> (located in <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/shared.ts#L115-L155">shared.ts</a> and <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/shared.d.ts#L65-L72">shared.d.ts</a>), and
+<code className="jarombek-inline-code">cy.getDataCy()</code> (located in <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/commands.ts#L110-L112">commands.ts</a> and <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/commands.d.ts#L37-L42">commands.d.ts</a>).  I discuss custom Cypress
+commands in the next section of this article, but this code demonstrates how they can greatly simplify end to end tests.
+</p>
+<p>
+For example, <code className="jarombek-inline-code">cy.calendarWeekCheck()</code> checks the mileage for each day in a
+week on the calendar.  <code className="jarombek-inline-code">cy.calendarWeekCheck(0, [null, 5.39, 5.83, 8.64, 5.96, 8.75, 9.12], 43.69)</code>
+looks at the first week in the calendar, and asserts that the total mileage is <strong>43.69</strong>.  It iterates over
+each day, checking that the first day displays no mileage, the second day displays <strong>5.39</strong> miles, the
+third day displays <strong>5.83</strong> miles, etc.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-monthly-calendar-2.png"/>
+</figure>
+<p>
+This custom Cypress command is called six times for each month.  Since the test changes the month displayed on the
+calendar multiple times, <code className="jarombek-inline-code">cy.calendarWeekCheck()</code> is invoked almost 20
+times.  Placing the logic for testing a week of calendar data in a reusable Cypress command saved us many lines of code!
+</p>
+<SubTitle title="API Error Scenario">API Error Scenario</SubTitle>
+<p>
+One final advanced Cypress test checks what happens to the website if an API request fails.  Specifically, it checks
+the scenario where adding a user to a group in the website fails.  This test exists in a <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/v2.0.4/cypress/integration/GroupAdmin.mock.e2e.test.ts#L377-L421">GroupAdmin.mock.e2e.test.ts</a>
+file.
+</p>
+<CodeSnippet language="TypeScript">
+it('shows an error if adding a pending user fails', () => {
+  cy.andyAdminMemberships();
+
+  const groupAlumniMembersRoute = cy.route({
+    method: 'GET',
+    url: '**/api/v2/groups/members/1',
+    response: '@groupAlumniAdminPendingMembers'
+  });
+
+  groupAlumniMembersRoute.as('groupAlumniMembersRoute');
+
+  cy.visit('/admin/group/1');
+
+  cy.alumniGroupAdminMockAPICalls();
+
+  const groupMembersUpdateErrorRoute = cy.route({
+    method: 'PUT',
+    url: '**/api/v2/groups/members/1/Tom',
+    response: {
+      self: '/v2/groups/members/1/Tom',
+      updated: false,
+      group_member: null,
+      error: 'The group membership failed to update.'
+    },
+    status: 500
+  });
+
+  groupMembersUpdateErrorRoute.as('groupMembersUpdateErrorRoute');
+
+  cy.getDataCy('alert').should('not.exist');
+  cy.getDataCy('pendingMember').eq(0).find('.aj-contained-button').should('contain.text', 'Accept').click();
+  cy.getDataCy('acceptDenyModal').find('.aj-contained-button').contains('ACCEPT MEMBERSHIP').click();
+
+  cy.wait('@groupMembersUpdateErrorRoute');
+
+  cy.getDataCy('alert').should('exist');
+  cy.getDataCy('alert').should(
+    'contain.text',
+    'An unexpected error occurred while accepting a users membership request. ' +
+      'Try reloading the page. If this error persists, contact andrew@jarombek.com.'
+  );
+
+  cy.getDataCy('alert').getDataCy('alertCloseIcon').click();
+  cy.getDataCy('alert').should('not.exist');
+});
+</CodeSnippet>
+<p>
+The main objective of this test is to prove that an error message is displayed to the user during an unexpected API
+failure scenario.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-api-error.png"/>
+</figure>
+<p>
+The test starts by navigating to the webpage and mocking the API calls.  This test does not directly call the API, due
+to its specific data requirements.  It also needs to simulate a failed API call.  The failed API call is defined in the
+statement which creates the <code className="jarombek-inline-code">groupMembersUpdateErrorRoute</code> variable.  The
+function call to <code className="jarombek-inline-code">cy.route()</code> defines a custom API response and sets the
+HTTP status code to <strong>500</strong>, which is an error code for an internal server error.  Whenever an HTTP PUT
+request to a URL matching the pattern <strong>**/api/v2/groups/members/1/Tom</strong> is made, Cypress intercepts it and
+returns the custom API response and status code.
+</p>
 <SectionTitle title="Cypress Custom Commands">Cypress Custom Commands</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
