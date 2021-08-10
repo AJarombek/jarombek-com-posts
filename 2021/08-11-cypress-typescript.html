@@ -507,6 +507,99 @@ HTTP status code to <strong>500</strong>, which is an error code for an internal
 request to a URL matching the pattern <strong>**/api/v2/groups/members/1/Tom</strong> is made, Cypress intercepts it and
 returns the custom API response and status code.
 </p>
+<p>
+The API route with the mocked response is given an alias <code className="jarombek-inline-code">
+groupMembersUpdateErrorRoute</code>.  When attempting to accept a user into a group, the test ensures that this mocked
+API call is invoked with the command <code className="jarombek-inline-code">cy.wait('@groupMembersUpdateErrorRoute')</code>.
+This command runs after the <strong>Accept Membership</strong> button is clicked.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/8-11-21-saintsxctf-api-error-2.png"/>
+</figure>
+<p>
+After the mocked API call is invoked, the test asserts that the webpage displays an alert message explaining the error.
+</p>
 <SectionTitle title="Cypress Custom Commands">Cypress Custom Commands</SectionTitle>
+<p>
+Cypress allows you to easily create custom commands or overwrite existing commands.  This helps make tests more readable
+and promotes the creation of reusable test code.  I use custom Cypress commands extensively in my end to end tests.
+Custom commands are found in the <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/cypress/support">support</a>
+subdirectory of my repositories <strong>cypress</strong> directory.
+</p>
+<p>
+<code className="jarombek-inline-code">Cypress.Commands.add()</code> creates a new Cypress command<sup>7</sup>.  The
+following code creates a basic command named <code className="jarombek-inline-code">setUserInLocalStorage</code> which
+puts a JSON string representing a user in the web browser’s local storage.  It exists in my
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/v2.0.4/cypress/support/commands.ts#L16-L41">commands.ts</a>
+file, which contains custom commands used throughout the end to end tests.
+</p>
+<CodeSnippet language="TypeScript">
+Cypress.Commands.add('setUserInLocalStorage', () => {
+  localStorage.setItem(
+    'user',
+    JSON.stringify({
+      isFetching: false,
+      didInvalidate: false,
+      lastUpdated: 1596919187,
+      activation_code: 'abc123',
+      class_year: 2017,
+      deleted: null,
+      description: 'I sometimes like to run.',
+      email: 'andrew@jarombek.com',
+      favorite_event: 'Shakeout',
+      first: 'Andy',
+      last: 'Jarombek',
+      last_signin: '2020-08-13 12:53:18',
+      location: 'Riverside, CT',
+      member_since: '2016-12-23',
+      password: null,
+      salt: null,
+      subscribed: null,
+      username: 'andy',
+      week_start: 'monday'
+    })
+  );
+});
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">Cypress.Commands.add()</code> takes two arguments: the name of the custom
+command and the function body of the custom command.  Since my Cypress code is written in TypeScript, it also needs a
+type definition for the custom command.  A type definition prevents type errors when using custom commands, and also
+serves as useful documentation.  Each of my custom command TypeScript files has a corresponding <strong>*.d.ts</strong>
+file, which contains the type definitions.  For example, my <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+v2.0.4/cypress/support/commands.ts">commands.ts</a> file has a corresponding <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/v2.0.4/cypress/support/commands.d.ts">commands.d.ts</a> file, with the following type definition
+for my custom <code className="jarombek-inline-code">setUserInLocalStorage</code> command.
+</p>
+<CodeSnippet language="TypeScript">
+declare namespace Cypress {
+    interface Chainable {
+        /**
+         * Custom command to put user details in the browser's localStorage.
+         * @example setUserInLocalStorage()
+         */
+        setUserInLocalStorage(): void;
+
+        ...
+    }
+}
+</CodeSnippet>
+<p>
+This code adds the custom command type to the global Cypress <code className="jarombek-inline-code">Chainable</code>
+interface<sup>8</sup>, making it accessible in TypeScript Cypress tests.  In my end to end tests, the
+<code className="jarombek-inline-code">setUserInLocalStorage</code> command is commonly used in pre-test hook functions,
+such as the following code snippet from <a href="https://github.com/AJarombek/saints-xctf-web/blob/v2.0.4/cypress/
+integration/Dashboard.e2e.test.ts#L16">Dashboard.e2e.test.ts</a>.
+</p>
+<CodeSnippet language="TypeScript">
+describe('Dashboard E2E Tests', () => {
+  beforeEach(() => {
+    cy.setUserInLocalStorage();
+    ...
+  });
+
+  ...
+}
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
