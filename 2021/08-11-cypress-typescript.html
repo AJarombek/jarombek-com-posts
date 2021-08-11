@@ -601,5 +601,103 @@ describe('Dashboard E2E Tests', () => {
   ...
 }
 </CodeSnippet>
+<p>
+Most of my custom Cypress commands encapsulate other Cypress commands that assert information about HTML elements.  In
+a prior example, I showed a Cypress test which looked at a monthly calendar of exercise data.  One of the custom
+Cypress commands used in that test, <code className="jarombek-inline-code">calendarWeekCheck()</code>, is shown below.
+It exists in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/support/shared.ts#L115-L155">
+shared.ts</a> file.
+</p>
+<CodeSnippet language="TypeScript">
+Cypress.Commands.add(
+  'calendarWeekCheck',
+  (week: number, miles: (number | string | null)[], totalMiles: number | string) => {
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(0)
+      .should(miles[0] ? 'contain.text' : 'not.contain.text', miles[0] ? `${miles[0]}Miles` : 'Miles');
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(1)
+      .should(miles[1] ? 'contain.text' : 'not.contain.text', miles[1] ? `${miles[1]}Miles` : 'Miles');
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(2)
+      .should(miles[2] ? 'contain.text' : 'not.contain.text', miles[2] ? `${miles[2]}Miles` : 'Miles');
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(3)
+      .should(miles[3] ? 'contain.text' : 'not.contain.text', miles[3] ? `${miles[3]}Miles` : 'Miles');
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(4)
+      .should(miles[4] ? 'contain.text' : 'not.contain.text', miles[4] ? `${miles[4]}Miles` : 'Miles');
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(5)
+      .should(miles[5] ? 'contain.text' : 'not.contain.text', miles[5] ? `${miles[5]}Miles` : 'Miles');
+    cy.getDataCy('week')
+      .eq(week)
+      .findDataCy('day')
+      .eq(6)
+      .should(miles[6] ? 'contain.text' : 'not.contain.text', miles[6] ? `${miles[6]}Miles` : 'Miles');
+    cy.getDataCy('week').eq(week).findDataCy('weekTotal').should('contain.text', `${totalMiles}Miles`);
+  }
+);
+</CodeSnippet>
+<p>
+This command goes through the seven days in the week and checks what text is displayed for that week in the calendar.
+While most of the sub-commands in the <code className="jarombek-inline-code">calendarWeekCheck()</code> command are
+built-in Cypress commands, two are not: <code className="jarombek-inline-code">getDataCy()</code> and
+<code className="jarombek-inline-code">findDataCy()</code>.
+</p>
+<CodeSnippet language="TypeScript">
+Cypress.Commands.add('getDataCy', (value) => {
+  return cy.get(`[data-cypress=${value}]`);
+});
+
+Cypress.Commands.add('findDataCy', { prevSubject: true }, (subject, value) => {
+  return cy.wrap(subject).find(`[data-cypress=${value}]`);
+});
+</CodeSnippet>
+<p>
+Both <code className="jarombek-inline-code">getDataCy()</code> and <code className="jarombek-inline-code">findDataCy()</code>
+retrieve HTML elements with <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes">
+data attributes</a> named <code className="jarombek-inline-code">data-cypress</code>.  The value of the data attribute
+is passed to the Cypress commands through a <code className="jarombek-inline-code">value</code> parameter.  One thing
+you may have noticed is that <code className="jarombek-inline-code">getDataCy()</code> and
+<code className="jarombek-inline-code">findDataCy()</code> have return values, while the prior two custom Cypress
+commands did not.  As previously stated, Cypress commands are built to be chained together.  By returning the HTML
+elements with <code className="jarombek-inline-code">data-cypress</code> data attributes, both these custom Cypress
+commands can be chained with regular Cypress commands.  You can see this in the <code className="jarombek-inline-code">
+calendarWeekCheck()</code> command code.
+</p>
+<p>
+The chainable properties of <code className="jarombek-inline-code">getDataCy()</code> and
+<code className="jarombek-inline-code">findDataCy()</code> are made clear by looking at their type definitions in
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/cypress/support/commands.d.ts#L37-L42">commands.d.ts</a>,
+specifically their return types of <code className="jarombek-inline-code">Chainable&lt;Element&gt;</code>.
+</p>
+<CodeSnippet language="TypeScript">
+/**
+ * Chainable function for getting elements with a data-cypress attribute.
+ * @param value The value of the data attribute on an HTML element.
+ * @example getDataCy('button')
+ */
+getDataCy(value: string): Chainable&lt;Element&gt;;
+
+/**
+ * Child chainable function for finding elements with a data-cypress attribute.
+ * @param value The value of the data attribute on an HTML element.
+ * @example findDataCy('button')
+ */
+findDataCy(value: string): Chainable&lt;Element&gt;;
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
