@@ -699,5 +699,79 @@ getDataCy(value: string): Chainable&lt;Element&gt;;
  */
 findDataCy(value: string): Chainable&lt;Element&gt;;
 </CodeSnippet>
+<p>
+Another thing you may have noticed is that the <code className="jarombek-inline-code">findDataCy</code> command is
+defined with an additional <code className="jarombek-inline-code">{ prevSubject: true }</code> value.
+<code className="jarombek-inline-code">prevSubject</code> configures a command to either be a parent command or a child
+command<sup>9</sup>.  By default, <code className="jarombek-inline-code">prevSubject</code> is assigned the value
+<code className="jarombek-inline-code">false</code>, which means it is a parent command which doesn’t take a value from
+a previous command.  In other words, a parent command always appears at the beginning of a Cypress command chain.
+Unlike the previous commands I’ve shown which implicitly use the default value of <code className="jarombek-inline-code">
+prevSubject</code>, <code className="jarombek-inline-code">findDataCy</code> is explicitly configured to be a child
+command.  This means it is always used in the middle or the end of a Cypress command chain.  Look closely at the
+definition of <code className="jarombek-inline-code">findDataCy</code> and you will see it takes an additional
+<code className="jarombek-inline-code">subject</code> argument, which is the result of a prior Cypress command.  In
+this case, the prior result is a list of HTML elements.
+</p>
+<p>
+As a final custom Cypress command example, I want to show that custom commands don’t necessarily have to just use
+built-in commands and other custom commands for their implementations.  The following
+<code className="jarombek-inline-code">setTokenInLocalStorage</code> custom command makes an API call to my applications
+authentication API, and then sets the authentication token response in the browsers local storage and an environment
+variable.
+</p>
+<CodeSnippet language="TypeScript">
+import axios from 'axios';
+import * as moment from 'moment';
+
+Cypress.Commands.add('setTokenInLocalStorage', () => {
+  const existingToken = Cypress.env('authToken');
+  const existingTokenExpiration = Cypress.env('authTokenExpiration');
+
+  if (existingToken && moment(existingTokenExpiration) > moment()) {
+    cy.log('Using existing token');
+    cy.log(`Existing token expires ${existingTokenExpiration}`);
+    localStorage.setItem('token', existingToken);
+    return;
+  }
+
+  cy.log('Retrieving new auth token');
+
+  const instance = axios.create({
+    baseURL: Cypress.env('authUrl'),
+    timeout: 5000
+  });
+
+  instance
+    .post('/token', {
+      clientId: 'andy',
+      clientSecret: Cypress.env('SXCTF_PASSWORD')
+    })
+    .then((res) => {
+      const token = res.data.result;
+      Cypress.env('authToken', token);
+
+      const tokenExpiration = moment().add('45', 'minutes').format();
+      Cypress.env('authTokenExpiration', tokenExpiration);
+
+      localStorage.setItem('token', token);
+    })
+    .catch((error) => {
+      console.info(error);
+    });
+});
+</CodeSnippet>
+<p>
+All the custom commands shown in this article and many more are available on GitHub in my <a href="https://github.com/
+AJarombek/saints-xctf-web/tree/master/cypress/support">saints-xctf-web</a> repository.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Cypress is my go-to end to end testing library.  It works great with both JavaScript and TypeScript, and has an easy to
+learn and extensible API.  The ability to run Cypress tests in a web browser and watch the tests interact with a web
+page is a fantastic feature that makes testing easy, even for newcomers to the front-end engineering space.  All my
+Cypress test code is available in my <a href="https://github.com/AJarombek/apollo-client-server-prototype/tree/master/
+client/cypress">apollo-client-server-prototype</a> and <a href="https://github.com/AJarombek/saints-xctf-web/tree/
+master/cypress">saints-xctf-web</a> repositories on GitHub.
+</p>
 </div>
