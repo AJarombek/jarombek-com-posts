@@ -1,19 +1,20 @@
 <div>
 <p>
-AWS CloudWatch Synthetic Monitoring is a platform that allows you to create functions which monitor applications or
+AWS CloudWatch Synthetic Monitoring is a platform that enables the creation of functions that monitor applications or
 APIs.  These functions are known as canary functions, and they use AWS Lambda for their infrastructure.  Canary
-functions can be written in JavaScript or Python.  They utilize Puppeteer (JavaScript) and Selenium (Python) for
+functions are written in JavaScript or Python.  They utilize Puppeteer (JavaScript) and Selenium (Python) for
 browser test automation.
 </p>
 <p>
 I started looking into Synthetic Monitoring as a way to test my SaintsXCTF application running in production.  I had
-some issues where the website unexpectedly stopped working, and there was no process in place to alert me of that issue.
-With Synthetic Monitoring, I created canary functions to test critical paths of the website, such as signing in a user.
+an issue where the website unexpectedly stopped working, and there was no automated process in place to alert me.
+ With Synthetic Monitoring, I created canary functions to test critical paths of the website, such as signing in a user.
+ If canary functions fail, I get an email alerting me of the issue.
 </p>
 <p>
-Synthetic Monitoring is a relatively new AWS service, so documentation on it is a bit lighter when compared to other
-services.  Specifically, building canary functions with Terraform had incomplete documentation and very little sample
-code.  In this article, I give an overview of my Synthetic Monitoring AWS infrastructure and show how it’s configured
+Synthetic Monitoring is a relatively new AWS service, so documentation is a bit lighter when compared to other
+services.  Specifically, documentation for building canary functions with Terraform is incomplete with very few code
+ samples.  In this article, I give an overview of my Synthetic Monitoring AWS infrastructure and show how it's configured
 with Terraform.  I also give a brief walk through of my canary function source code.  All the code mentioned in this
 article is available on <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/
 synthetic-monitoring">GitHub</a>.
@@ -29,9 +30,9 @@ diagram below.
 </figure>
 <p>
 Notice that my infrastructure consists of three canary functions, two written in JavaScript and one written in Python.
-All this infrastructure is built with Terraform, separated into three modules.  The first module is for the canary
-functions and CloudWatch events, the second is for the S3 bucket holding canary function results, and the third
-contains an IAM role and policy assumed by the canary function.
+All this infrastructure is built with Terraform, separated into three modules.  The first module is for canary
+functions and CloudWatch events, the second module is for an S3 bucket holding canary function results, and the third
+ module contains an IAM role and policy assumed by the canary function.
 </p>
 <SubTitle title="Canary Functions and CloudWatch Events">Canary Functions and CloudWatch Events</SubTitle>
 <p>
@@ -101,7 +102,7 @@ resource "aws_cloudwatch_event_target" "saints-xctf-sign-in-canary-event-target"
 <p>
 This canary function is started upon creation and is scheduled to run hourly.  It uses the
 <code className="jarombek-inline-code">syn-nodejs-puppeteer-3.1</code> runtime, which is the latest JavaScript runtime
-available to canary functions at the time of this article’s writing.  The source code for the canary functions exists
+available to canary functions at the time of this article's writing.  The source code for the canary functions exists
 in a <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/synthetic-monitoring/modules/canaries/func">
 separate folder in my repository</a>, and is bundled into a zip file before the Terraform script is executed.
 </p>
@@ -236,40 +237,38 @@ resource "aws_iam_role_policy_attachment" "canary-policy-attachment" {
 <p>
 There are certain permissions that canary functions must have in their IAM roles<sup>1</sup>.  These permissions are specified in
 the <code className="jarombek-inline-code">CanaryGeneric</code> statement of the policy.  My canary functions also
-require additional permissions, specifically for AWS SecretsManager. These permissions are specified in the
+require additional permissions, specifically for AWS Secrets Manager. These permissions are specified in the
 <code className="jarombek-inline-code">CanarySecretsManager</code> statement of the policy.
 </p>
 <p>
-The IAM role and policy Terraform module code is available in a
+The IAM Terraform module code is available in a
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/synthetic-monitoring/modules/iam/main.tf">main.tf</a>
 file on GitHub.
 </p>
 <SubTitle title="Resulting Infrastructure">Resulting Infrastructure</SubTitle>
 <p>
 After all this infrastructure is created, the canary functions and their execution results are viewable in the AWS console.
+ Individual functions can also be viewed and their execution results can be thoroughly analyzed.
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-26-21-aws-canaries.png"/>
 </figure>
-<p>
-Individual functions can also be viewed and their execution results can be thoroughly analyzed.
-</p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/7-26-21-aws-sign-in-canary.png"/>
 </figure>
 <SectionTitle title="Canary Function Source Code">Canary Function Source Code</SectionTitle>
 <p>
-The source code for canary functions can be written in JavaScript or Python.  I used both languages, simply for the
+The source code for canary functions is written in JavaScript or Python.  I used both languages, simply for the
 sake of trying all available options.  The runtime environments for both languages are configured with browser test
-libraries installed.  JavaScript functions utilize Puppeteer while Python functions utilize Selenium.
+libraries.  JavaScript functions use Puppeteer while Python functions use Selenium.
 </p>
 <p>
-First I will walkthrough one of my functions that utilizes JavaScript and Puppeteer, followed by a walkthrough of a
-Python and Selenium function.
+First, I will walkthrough one of my functions utilizing JavaScript and Puppeteer, followed by a walkthrough of a
+ function utilizing Python and Selenium.
 </p>
 <SubTitle title="JavaScript and Puppeteer Functions">JavaScript and Puppeteer Functions</SubTitle>
 <p>
-One of my JavaScript canary functions tests whether a user can sign in to my website.  The source code is shown below,
+One of my JavaScript canary functions performs a test to see whether a user can sign in to my website.  The source code is shown below,
 and exists in a <a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/synthetic-monitoring/
 modules/canaries/func/sign-in/nodejs/node_modules/signIn.js">signIn.js</a> file.
 </p>
@@ -339,24 +338,24 @@ This function uses the <code className="jarombek-inline-code">synthetics</code> 
 wrapper around Puppeteer, so reading the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/
 CloudWatch_Synthetics_Canaries_WritingCanary_Nodejs.html">AWS Synthetics documentation</a> along with the
 <a href="https://pptr.dev/#?product=Puppeteer&version=v10.1.0&show=outline">Puppeteer documentation</a> is enough to
-hit the ground running with <code className="jarombek-inline-code">synthetics</code>. Synthetics also has a bunch of
+hit the ground running. Synthetics also has a bunch of
 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Library_Nodejs.html">
 custom functions</a>, such as the <code className="jarombek-inline-code">executeStep()</code> function used in my code.
 <code className="jarombek-inline-code">executeStep()</code> runs Puppeteer commands and takes screenshots of the
-website, which are eventually uploaded to the canary function’s S3 bucket.
+website, which are eventually uploaded to the canary function's S3 bucket.
 </p>
 <p>
 The canary function starts by navigating to the sign in page.  This is performed by the
-<code className="jarombek-inline-code">page.goto('https://saintsxctf.com/signin')</code> command.  Then, following the
-<code className="jarombek-inline-code">executeStep()</code> functions, it types in credentials to a sign in form
+<code className="jarombek-inline-code">page.goto('https://saintsxctf.com/signin')</code> command.  Then, in the four
+ <code className="jarombek-inline-code">executeStep()</code> functions, it types in credentials to a sign in form
 (<code className="jarombek-inline-code">'enter_credentials'</code>), clicks the sign in button
 (<code className="jarombek-inline-code">'sign_in'</code>), clicks on the profile page button once signed in
-(<code className="jarombek-inline-code">'profile_page_click'</code>), and checks to see if an element appears on screen
-in the profile page (<code className="jarombek-inline-code">'profile_page_view'</code>).
+(<code className="jarombek-inline-code">'profile_page_click'</code>), and checks to see if an element appears
+ in the profile page (<code className="jarombek-inline-code">'profile_page_view'</code>).
 </p>
 <p>
-This code also shows the ability of canary functions to use the AWS SDK, in this case to grab user credentials from
-SecretsManager.  SecretsManager helped avoid hard coding credentials into the canary function source code.
+This code also shows how canary functions can use the AWS SDK, in this case to grab user credentials from
+Secrets Manager.  Secrets Manager helps avoid the bad practice of hard coding credentials into the canary function source code.
 </p>
 <SubTitle title="Python and Selenium Functions">Python and Selenium Functions</SubTitle>
 <p>
