@@ -1,0 +1,48 @@
+<div>
+<p>
+Many of my applications contain front-end components and API components.  These two components are loosely coupled but
+communicate with each other over HTTPS.  For example, my <a href="https://saintsxctf.com/">saintsxctf.com</a>
+application has a React front-end which communicates with a Flask REST API back-end, along with other API Gateway REST
+APIs.  One way to accomplish this communication from front-end to API is by explicitly writing the URLs of the APIs
+in the front-end code.  This works fine, but it also exposes information about the API origin servers to clients.
+Origin server information exposure can be avoided by passing all API traffic through the same URL as the front-end
+application. This is accomplished using a reverse proxy.
+</p>
+<p>
+The following image shows my SaintsXCTF website, and how the URL of the API is hidden from clients.  If users inspect
+the website’s network traffic, they see HTTPS requests sent to the reverse proxy server for <strong>saintsxctf.com</strong>,
+instead of the actual API server <strong>api.saintsxctf.com</strong>.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-20-21-shared-url.png"/>
+</figure>
+<p>
+This article discusses reverse proxy servers, walks through examples from my applications, and provides application
+source code; allowing you to achieve similar results.  More specifically, it looks at creating Nginx reverse proxies
+in Docker containers.
+</p>
+<SectionTitle title="What is an Nginx Reverse Proxy">What is an Nginx Reverse Proxy?</SectionTitle>
+<p>
+When discussing Nginx reverse proxies, there are two distinct technologies to unpack: Nginx and reverse proxies.
+</p>
+<Definition word="Nginx">
+Nginx (pronounced Engine-X) is an open source web server which can be used as a reverse proxy<sup>1</sup>.  It is
+commonly used for serving content from HTTP requests, as well as caching and load balancing requests.  Nginx is
+comparable in popularity with Apache HTTP Server, which is another open source web server.  Nginx has its own
+configuration language, which engineers use to adjust the web server’s behavior<sup>2</sup>.
+</Definition>
+<Definition word="Reverse Proxy">
+A reverse proxy server sits in between a client and one or many back-end servers.  The reverse proxy server takes
+in requests from the client, and distributes those requests to the servers sitting behind it appropriately.  When the
+reverse proxy server sends responses from it’s back-end servers to the client, it does so without alluding to the
+existence of the back-end servers at all.  From the client’s perspective, responses originate from the reverse proxy
+server itself.  Reverse proxy servers are used to hide back-end servers, cache responses, load balance, and more<sup>3</sup>.
+</Definition>
+<p>
+Using Nginx’s configuration language, servers can be configured as reverse proxy servers.  While these servers can exist
+on physical machines or virtual machines, the Nginx servers discussed in this article exist on Docker containers.
+</p>
+<SectionTitle title="Architectural Overview">Architectural Overview</SectionTitle>
+<SectionTitle title="Configuring Nginx Docker Containers">Configuring Nginx Docker Containers</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
