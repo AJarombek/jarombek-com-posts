@@ -43,6 +43,93 @@ Using Nginx’s configuration language, servers can be configured as reverse pro
 on physical machines or virtual machines, the Nginx servers discussed in this article exist on Docker containers.
 </p>
 <SectionTitle title="Architectural Overview">Architectural Overview</SectionTitle>
+<p>
+I have multiple applications which use Nginx reverse proxy servers on Docker containers, including the <a href="https://
+github.com/AJarombek/saints-xctf-web/blob/master/nginx.conf">SaintsXCTF web application</a>, <a href="https://github.com/
+AJarombek/saints-xctf-api/blob/master/api/src/nginx.conf">SaintsXCTF API</a>, <a href="https://github.com/AJarombek/
+apollo-client-server-prototype/blob/master/client/nginx.conf">Apollo client prototype</a>, <a href="https://github.com/
+AJarombek/apollo-client-server-prototype/blob/master/server/nginx.conf">Apollo server prototype</a>, and <a href="https://
+github.com/AJarombek/graphql-react-prototype/blob/master/nginx.conf">GraphQL React prototype</a>.  All these containers
+are orchestrated using Kubernetes and hosted on AWS EKS.  For the remainder of the article, I’ll look specifically at
+the Nginx configuration for my SaintsXCTF application.  All the other application’s Nginx code can be viewed on GitHub
+using the links above.
+</p>
+<p>
+The SaintsXCTF application has two Nginx reverse proxies, one for the web application and one for the main API.  The
+application also has smaller APIs which are hosted using AWS API Gateway.  As I mentioned earlier, the Nginx reverse
+proxies are hosted on Docker containers orchestrated on Kubernetes.  My Kubernetes infrastructure is hosted on an AWS
+EKS cluster in my AWS account.  Below is an infrastructure diagram showing the reverse proxy servers.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-20-21-reverse-proxy-infrastructure.png"/>
+</figure>
+<p>
+The web application Kubernetes deployment consists of a single container running an Nginx server.  The API Kubernetes
+deployment consists of two containers: an Nginx server and a uWSGI server.  For the API, the Nginx server is the
+reverse proxy server and the uWSGI server is the application server, hosting the Python/Flask API.
+</p>
+<p>
+Let’s look at the Docker and Nginx configuration for these containers, back to front; starting with the uWSGI container
+for the API code.  The two important configuration files for the uWSGI container are a <a href="https://github.com/
+AJarombek/saints-xctf-api/blob/master/api/src/api.flask.dockerfile">Dockerfile</a> and a <a href="https://github.com/
+AJarombek/saints-xctf-api/blob/master/api/src/uwsgi.ini">uwsgi.ini</a> file.
+</p>
+<CodeSnippet language="Dockerfile">
+FROM python:3.8
+
+LABEL maintainer="andrew@jarombek.com" \
+      version="1.0.0" \
+      description="Dockerfile for the Flask SaintsXCTF API in Production"
+
+RUN apt-get update \
+    && apt-get install g++
+
+RUN pip install pipenv \
+    && pip install uwsgi
+
+RUN mkdir /src
+WORKDIR /src
+
+COPY Pipfile .
+COPY Pipfile.lock .
+
+RUN pipenv install --system
+
+COPY . .
+ENV FLASK_ENV production
+ENV ENV prod
+
+COPY credentials .aws/
+ENV AWS_DEFAULT_REGION us-east-1
+ENV AWS_SHARED_CREDENTIALS_FILE .aws/credentials
+
+STOPSIGNAL SIGTERM
+EXPOSE 5000
+
+CMD ["uwsgi", "--ini", "uwsgi.ini"]
+</CodeSnippet>
+<CodeSnippet language="TOML">
+; uwsgi.ini
+
+[uwsgi]
+protocol = uwsgi
+module = main
+callable = app
+master = true
+processes = 5
+
+; When using an Nginx reverse proxy, use 'socket'
+socket = :5000
+
+; When using uWSGI as a server that awaits HTTP requests, use 'http-socket'
+; http-socket = :5000
+</CodeSnippet>
+<p>
+Don’t get bogged down by the details of the Dockerfile; the important takeaway is that it installs uWSGI with
+<code className="jarombek-inline-code">pip install uwsgi</code> and starts the uWSGI application server with the
+configuration specified in <strong>uwsgi.ini</strong> using the <code className="jarombek-inline-code">
+CMD ["uwsgi", "--ini", "uwsgi.ini"]</code> entrypoint.
+</p>
 <SectionTitle title="Configuring Nginx Docker Containers">Configuring Nginx Docker Containers</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
