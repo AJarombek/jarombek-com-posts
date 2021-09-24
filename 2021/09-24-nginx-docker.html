@@ -309,5 +309,27 @@ base image</a> which installs npm dependencies using yarn, the creation of JavaS
 application via <code className="jarombek-inline-code">RUN yarn build</code>, and JavaScript bundles being copied from
 the base image to the Nginx image via <code className="jarombek-inline-code">COPY --from=base /src/dist /usr/share/nginx/html</code>.
 </p>
+<p>
+The Nginx reverse proxy server configuration for the web application is a bit more complex. The
+<code className="jarombek-inline-code">server</code> block for the web application has many
+<code className="jarombek-inline-code">location</code> blocks.  The first <code className="jarombek-inline-code">
+location</code> block serves the React.js web application, while each subsequent block proxies requests to different
+back-end servers.  These proxies use <code className="jarombek-inline-code">proxy_pass</code> directives instead of
+<code className="jarombek-inline-code">uwsgi_pass</code> directives, since the back-end servers are simple HTTPS servers
+instead of uWSGI applciation servers<sup>8</sup>.
+</p>
+<p>
+Similar to the API, the web application is configured to run in production with Kubernetes in a <a href="https://github.com/
+AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com/modules/kubernetes/main.tf">main.tf</a> file.  Instead
+of using Docker Compose locally, the web application configures a local reverse proxy using webpack dev server<sup>9</sup>.
+The configuration for webpack dev server exists in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+webpack.config.js#L116-L155">webpack.config.js</a> file.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Reverse proxy servers are a great way to hide back-end server locations from end users.  I also find them very elegant,
+as they remove the need to hardcode server URLs in application code.  Code for the <a href="https://github.com/AJarombek/
+saints-xctf-web">web application</a> and <a href="https://github.com/AJarombek/saints-xctf-api">API</a> referenced
+throughout this article is available on GitHub.
+</p>
 </div>
