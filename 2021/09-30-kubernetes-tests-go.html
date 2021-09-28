@@ -1,0 +1,39 @@
+<div>
+<p>
+These days, most of my application infrastructure exists on <a href="https://jarombek.com/blog?query=docker&page=1">
+Docker</a> containers, orchestrated by <a href="https://jarombek.com/blog?query=kubernetes&page=1">Kubernetes</a>.  I
+have a Kubernetes cluster running on AWS using EKS (Elastic Kubernetes Service).  Since two of my production
+applications (<a href="https://jarombek.com/">jarombek.com</a> and <a href="https://saintsxctf.com/">saintsxctf.com</a>)
+run on the Kubernetes cluster, the health of their infrastructure is critical.  To help ensure that the Kubernetes
+cluster is running as expected, I created tests which check the state of Kubernetes objects and ensure that they exist
+on the cluster as expected.
+</p>
+<p>
+This article explores my Kubernetes test suite, which is written in Go and leverages the <a href="https://github.com/
+kubernetes/client-go">Kubernetes Go Client</a>.  It also describes how the test suite is run on an automated schedule,
+alerting me when test failures occur.
+</p>
+<SectionTitle title="Testing Kubernetes">Testing Kubernetes</SectionTitle>
+<p>
+My Kubernetes infrastructure and corresponding test code is spread across multiple repositories, most notably in
+<a href="https://github.com/AJarombek/jarombek-com-infrastructure/tree/master/test-k8s">jarombek-com-infrastructure</a>,
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/test-k8s">saints-xctf-infrastructure</a>,
+and <a href="https://github.com/AJarombek/global-aws-infrastructure/tree/master/test-k8s">global-aws-infrastructure</a>.
+In this article I will focus on the infrastructure tests for <a href="https://jarombek.com/">jarombek.com</a>, which
+happens to be the website you are currently viewing!  <strong>jarombek.com</strong> has the following Kubernetes
+infrastructure:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-30-21-jarombek-com-k8s.png"/>
+</figure>
+<p>
+My Kubernetes infrastructure is created in an automated fashion using
+<a href="https://jarombek.com/blog?query=terraform&page=1">Terraform</a>.  Specifically, the Kubernetes objects for
+<strong>jarombek.com</strong> are configured in two Terraform modules: <a href="https://github.com/AJarombek/
+jarombek-com-infrastructure/tree/master/jarombek-com-kubernetes">jarombek-com-kubernetes</a> and
+<a href="https://github.com/AJarombek/jarombek-com-infrastructure/tree/master/jarombek-com-kubernetes-ingress">
+jarombek-com-kubernetes-ingress</a>.  Both these modules have test code associated with them.
+</p>
+<SectionTitle title="Automating Test Runs">Automating Test Runs</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
