@@ -34,6 +34,88 @@ jarombek-com-infrastructure/tree/master/jarombek-com-kubernetes">jarombek-com-ku
 <a href="https://github.com/AJarombek/jarombek-com-infrastructure/tree/master/jarombek-com-kubernetes-ingress">
 jarombek-com-kubernetes-ingress</a>.  Both these modules have test code associated with them.
 </p>
+<p>
+The Kubernetes test code, written using the Kubernetes Go Client, resides in a <a href="https://github.com/AJarombek/
+jarombek-com-infrastructure/tree/master/test-k8s">test-k8s</a> directory.  The test code is a Go module, configured by
+<a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/go.mod">go.mod</a>.  The Go
+module definition file specifies the module name, the Go version used, and the external Go module requirements.
+</p>
+<CodeSnippet>
+module github.com/ajarombek/jarombek-com-infrastructure/test-k8s
+
+go 1.14
+
+require (
+	github.com/ajarombek/cloud-modules/kubernetes-test-functions v0.2.10
+	k8s.io/apimachinery v0.17.3-beta.0
+	k8s.io/client-go v0.17.0
+)
+</CodeSnippet>
+<p>
+The Go version used in the module is <strong>1.14</strong> and the module name is <strong>github.com/ajarombek/
+jarombek-com-infrastructure/test-k8s</strong>, matching the repository URL and directory path to the
+<strong>go.mod</strong> file.  The tests are dependent on two Kubernetes modules: <strong>k8s.io/apimachinery</strong>
+and <strong>k8s.io/client-go</strong>.  There is also one dependency called
+<strong>github.com/ajarombek/cloud-modules/kubernetes-test-functions</strong>, which is a Go module of my own.  This
+module contains reusable functions for writing Kubernetes tests in Go, and can be found in my <a href="https://github.com/
+AJarombek/cloud-modules/tree/master/kubernetes-test-functions">cloud-modules</a> repository.  I will discuss this Go
+module in a separate article.
+</p>
+<p>
+The entrypoint to the test suite is <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/
+test-k8s/main_test.go">main_test.go</a>.  It configures the test suite and initializes the Kubernetes client.
+</p>
+<CodeSnippet language="Go">
+package main
+
+import (
+	"k8s.io/client-go/kubernetes"
+	"os"
+	"testing"
+)
+
+var ClientSet *kubernetes.Clientset
+
+var env = os.Getenv("TEST_ENV")
+var namespace = GetNamespace()
+
+// Setup code for the test suite.
+func TestMain(m *testing.M) {
+	kubeconfig, inCluster := ParseCommandLineArguments()
+	ClientSet = GetClientSet(kubeconfig, inCluster)
+	os.Exit(m.Run())
+}
+
+func GetNamespace() string {
+	if env == "dev" {
+		return "jarombek-com-dev"
+	} else {
+		return "jarombek-com"
+	}
+}
+</CodeSnippet>
+<p>
+There are multiple pieces to unpack here.  First, the entrypoint of the test suite is
+<code className="jarombek-inline-code">TestMain()</code>, which is invoked when the CLI command
+<code className="jarombek-inline-code">go test</code> is run.  The three lines of code in
+<code className="jarombek-inline-code">TestMain()</code> parse command line arguments, initialize the Kubernetes
+client, and run the test suite, respectively.
+</p>
+<p>
+More specifically, the <code className="jarombek-inline-code">ParseCommandLineArguments()</code> function, which exists
+in a separate <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/client.go#L49-L57">
+client.go</a> file, looks for <code className="jarombek-inline-code">--kubeconfig</code> and
+<code className="jarombek-inline-code">--incluster</code> command line flags, and assigns them to variables.
+</p>
+<CodeSnippet language="Go">
+func ParseCommandLineArguments() (*string, *string) {
+	var kubeconfig *string = flag.String("kubeconfig", "", "Absolute path to the kubeconfig file.")
+	var inCluster *string = flag.String("incluster", "", "Whether or not the tests are running in a cluster.")
+	flag.Parse()
+
+	return kubeconfig, inCluster
+}
+</CodeSnippet>
 <SectionTitle title="Automating Test Runs">Automating Test Runs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
