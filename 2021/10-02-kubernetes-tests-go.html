@@ -116,6 +116,73 @@ func ParseCommandLineArguments() (*string, *string) {
 	return kubeconfig, inCluster
 }
 </CodeSnippet>
+<p>
+There are two ways to initialize the Kubernetes client and authenticate it with the Kubernetes API: with a
+<strong>kubeconfig</strong> file outside a Kubernetes cluster or with a <code className="jarombek-inline-code">
+ServiceAccount</code> within a Kubernetes cluster.  These two techniques are referred to as <a href="https://github.com/
+kubernetes/client-go/tree/master/examples/out-of-cluster-client-configuration">out of cluster configuration</a> and
+<a href="https://github.com/kubernetes/client-go/tree/master/examples/in-cluster-client-configuration">in cluster
+configuration</a>, respectively<sup>1,2</sup>.  In my <code className="jarombek-inline-code">ParseCommandLineArguments()
+</code> function, the <code className="jarombek-inline-code">kubeconfig</code> flag refers to out of cluster
+configuration and the <code className="jarombek-inline-code">incluster</code> flag refers to in cluster configuration.
+The value of the <code className="jarombek-inline-code">kubeconfig</code> flag is a string, representing the file path
+to a <strong>kubeconfig</strong> file, which is used for authentication.  The value of the
+<code className="jarombek-inline-code">incluster</code> flag is simply a boolean.  These flags can be used from the CLI
+like so:
+</p>
+<CodeSnippet language="Bash">
+# Run tests outside a Kubernetes cluster, authenticating with a kubeconfig file
+go test --kubeconfig /path/to/kubeconfig
+
+# Run tests inside a Kubernetes cluster, authenticating with a ServiceAccount
+go test --incluster true
+</CodeSnippet>
+<p>
+On the second line of <code className="jarombek-inline-code">TestMain()</code>, a
+<code className="jarombek-inline-code">GetClientSet()</code> function is invoked, with
+<code className="jarombek-inline-code">kubeconfig</code> and <code className="jarombek-inline-code">incluster</code>
+passed as arguments.  <code className="jarombek-inline-code">GetClientSet()</code> is a custom function declared in
+<a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/client.go#L16-L47">client.go</a>
+which configures and initializes the Kubernetes client either in cluster or out of cluster.
+</p>
+<CodeSnippet language="Go">
+import (
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+)
+
+func GetClientSet(kubeconfig *string, inCluster *string) *kubernetes.Clientset {
+	var config *rest.Config
+	var err error
+
+	if *inCluster == "true" {
+		config, err = rest.InClusterConfig()
+
+		if err != nil {
+			panic(err.Error())
+		}
+	} else {
+		config, err = clientcmd.BuildConfigFromFlags("", *kubeconfig)
+
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
+	clientset, err := kubernetes.NewForConfig(config)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return clientset
+}
+</CodeSnippet>
+<p>
+If the tests are run in the Kubernetes cluster, <code className="jarombek-inline-code">rest.InClusterConfig()</code> is
+invoked.  Otherwise, <code className="jarombek-inline-code">clientcmd.BuildConfigFromFlags()</code> is invoked.
+</p>
 <SectionTitle title="Automating Test Runs">Automating Test Runs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
