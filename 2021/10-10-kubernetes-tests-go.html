@@ -24,7 +24,7 @@ happens to be the website you are currently viewing!  <strong>jarombek.com</stro
 infrastructure:
 </p>
 <figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-30-21-jarombek-com-k8s.png"/>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/10-10-21-jarombek-com-k8s.png"/>
 </figure>
 <p>
 My Kubernetes infrastructure is created in an automated fashion using
@@ -61,6 +61,7 @@ module contains reusable functions for writing Kubernetes tests in Go, and can b
 AJarombek/cloud-modules/tree/master/kubernetes-test-functions">cloud-modules</a> repository.  I will discuss this Go
 module in a separate article.
 </p>
+<SubTitle title="Configuring Kubernetes Tests">Configuring Kubernetes Tests</SubTitle>
 <p>
 The entrypoint to the test suite is <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/
 test-k8s/main_test.go">main_test.go</a>.  It configures the test suite and initializes the Kubernetes client.
@@ -183,6 +184,75 @@ func GetClientSet(kubeconfig *string, inCluster *string) *kubernetes.Clientset {
 If the tests are run in the Kubernetes cluster, <code className="jarombek-inline-code">rest.InClusterConfig()</code> is
 invoked.  Otherwise, <code className="jarombek-inline-code">clientcmd.BuildConfigFromFlags()</code> is invoked.
 </p>
+<p>
+With the Kubernetes client configured, <code className="jarombek-inline-code">MainTest()</code> ends with a call to
+<code className="jarombek-inline-code">os.Exit(m.Run())</code>, which runs all the tests.  However, before running the
+tests, there are two final important parts of the <a href="https://github.com/AJarombek/jarombek-com-infrastructure/
+blob/master/test-k8s/main_test.go">main_test.go</a> file.  First, the environment that the tests are run in is gathered
+from the <code className="jarombek-inline-code">TEST_ENV</code> environment variable in the line
+<code className="jarombek-inline-code">var env = os.Getenv("TEST_ENV")</code>.  I have infrastructure in development
+and production environments, so this configuration helps me test both environments Kubernetes objects separately.
+</p>
+<p>
+Kubernetes objects for my <strong>jarombek.com</strong> website exist in two different namespaces.  For the production
+environment, objects exist in the <code className="jarombek-inline-code">jarombek-com</code> namespace.  For the
+development environment, objects exist in the <code className="jarombek-inline-code">jarombek-com-dev</code> namespace.
+The following code in <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/
+main_test.go">main_test.go</a> initializes a global <code className="jarombek-inline-code">namespace</code> variable
+with the proper namespace depending on the environment being tested.  This variable is accessible from the test code.
+</p>
+<CodeSnippet language="Go">
+var env = os.Getenv("TEST_ENV")
+var namespace = GetNamespace()
+
+func GetNamespace() string {
+	if env == "dev" {
+		return "jarombek-com-dev"
+	} else {
+		return "jarombek-com"
+	}
+}
+</CodeSnippet>
+<SubTitle title="Configuring Kubernetes Tests">Writing Kubernetes Tests</SubTitle>
+<p>
+At this point, the Kubernetes testing environment is all configured.  The Kubernetes tests reside in two files:
+<a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/namespace_test.go">
+namespace_test.go</a> and <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/
+jarombek_com_test.go">jarombek_com_test.go</a>.  <strong>namespace_test.go</strong> checks if the namespace for the
+infrastructure contains the expected number of Kubernetes objects.  <strong>jarombek_com_test.go</strong> tests those
+objects in more detail.
+</p>
+<p>
+First, let’s look at the namespace tests.
+</p>
+<CodeSnippet language="Go">
+// namespace_test.go
+
+package main
+
+import (
+	k8sfuncs "github.com/ajarombek/cloud-modules/kubernetes-test-functions"
+	"testing"
+)
+
+// TestJarombekComNamespaceDeploymentCount determines if the number of 'Deployment' objects in the 'jarombek-com'
+// (or 'jarombek-com-dev') namespace is as expected.
+func TestJarombekComNamespaceDeploymentCount(t *testing.T) {
+	k8sfuncs.ExpectedDeploymentCount(t, ClientSet, namespace, 2)
+}
+
+// TestJarombekComNamespaceServiceCount determines if the expected number of Service objects exist in the 'jarombek-com'
+// (or 'jarombek-com-dev') namespace.
+func TestJarombekComNamespaceServiceCount(t *testing.T) {
+	k8sfuncs.NamespaceServiceCount(t, ClientSet, namespace, 2)
+}
+
+// TestJarombekComNamespaceIngressCount determines if the number of 'Ingress' objects in the 'jarombek-com'
+// (or 'jarombek-com-dev') namespace is as expected.
+func TestJarombekComNamespaceIngressCount(t *testing.T) {
+	k8sfuncs.NamespaceIngressCount(t, ClientSet, namespace, 1)
+}
+</CodeSnippet>
 <SectionTitle title="Automating Test Runs">Automating Test Runs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
