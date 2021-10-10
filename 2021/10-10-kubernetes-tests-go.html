@@ -253,6 +253,61 @@ func TestJarombekComNamespaceIngressCount(t *testing.T) {
 	k8sfuncs.NamespaceIngressCount(t, ClientSet, namespace, 1)
 }
 </CodeSnippet>
+<p>
+There are three tests specified in this code, each encapsulated in a function.  The first test confirms that two
+<code className="jarombek-inline-code">Deployment</code> objects exist in the namespace, the second test confirms that
+two <code className="jarombek-inline-code">Service</code> objects exist in the namespace, and the third test confirms
+that one <code className="jarombek-inline-code">Ingress</code> object exist in the namespace.  The actual testing
+assertions are made in helper functions located in my <a href="https://github.com/AJarombek/cloud-modules/tree/master/
+kubernetes-test-functions">kubernetes-test-functions</a> Go module.  These helper functions are accessed through the
+<code className="jarombek-inline-code">k8sfuncs</code> variable.
+</p>
+<p>
+The three reusable functions used in the namespace test code - <code className="jarombek-inline-code">
+ExpectedDeploymentCount()</code>, <code className="jarombek-inline-code">NamespaceServiceCount()</code>, and
+<code className="jarombek-inline-code">NamespaceIngressCount()</code> - are located in the
+<strong>kubernetes-test-functions</strong> module <a href="https://github.com/AJarombek/cloud-modules/blob/master/
+kubernetes-test-functions/main.go#L19-L42">here</a>, <a href="https://github.com/AJarombek/cloud-modules/blob/master/
+kubernetes-test-functions/main.go#L308-L331">here</a>, and <a href="https://github.com/AJarombek/cloud-modules/blob/
+master/kubernetes-test-functions/main.go#L365-L388">here</a>.  The
+<code className="jarombek-inline-code">ExpectedDeploymentCount()</code> function is shown below.
+</p>
+<CodeSnippet language="Go">
+// ExpectedDeploymentCount determines if the number of 'Deployment' objects in a namespace is as expected.
+func ExpectedDeploymentCount(t *testing.T, clientset *kubernetes.Clientset, namespace string, expectedCount int) {
+	deployments, err := clientset.AppsV1().Deployments(namespace).List(v1meta.ListOptions{})
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var actualCount = len(deployments.Items)
+	if actualCount == expectedCount {
+		t.Logf(
+			"The expected number of Deployments exist in the '%v' namespace.  Expected %v, got %v.",
+			namespace,
+			expectedCount,
+			actualCount,
+		)
+	} else {
+		t.Errorf(
+			"An unexpected number of Deployments exist in the '%v' namespace.  Expected %v, got %v.",
+			namespace,
+			expectedCount,
+			actualCount,
+		)
+	}
+}
+</CodeSnippet>
+<p>
+The first parameter of <code className="jarombek-inline-code">ExpectedDeploymentCount()</code>,
+<code className="jarombek-inline-code">t</code>, is of type <code className="jarombek-inline-code">*testing.T</code>,
+which contains the state of the testing suite and also enables test logging.  The second parameter,
+<code className="jarombek-inline-code">clientset</code>, is the Kubernetes client.  The last two parameters,
+<code className="jarombek-inline-code">namespace</code> and <code className="jarombek-inline-code">expectedCount</code>,
+determine the namespace to check for <code className="jarombek-inline-code">Deployment</code> objects and specify the
+expected deployment count, respectively.
+</p>
 <SectionTitle title="Automating Test Runs">Automating Test Runs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
