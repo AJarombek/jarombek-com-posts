@@ -1,23 +1,23 @@
 <div>
 <p>
-Many of my applications contain front-end components and API components.  These two components are loosely coupled but
+Many of my applications contain frontend components and API components.  These two components are loosely coupled but
 communicate with each other over HTTPS.  For example, my <a href="https://saintsxctf.com/">saintsxctf.com</a>
-application has a React front-end which communicates with a Flask REST API back-end, along with other API Gateway REST
-APIs.  One way to accomplish this communication from front-end to API is by explicitly writing the URLs of the APIs
-in the front-end code.  This works fine, but it also exposes information about the API origin servers to clients.
-Origin server information exposure can be avoided by passing all API traffic through the same URL as the front-end
+application has a React frontend which communicates with a Flask REST API backend, along with other API Gateway REST
+APIs.  One way to accomplish communication from a frontend to an API is by explicitly writing the URLs of the APIs
+in the frontend code.  This works fine, but it also exposes information about API origin servers to clients.
+Origin server information exposure can be avoided by passing all API traffic through the same URL as the frontend
 application. This is accomplished using a reverse proxy.
 </p>
 <p>
 The following image shows my SaintsXCTF website, and how the URL of the API is hidden from clients.  If users inspect
-the website’s network traffic, they see HTTPS requests sent to the reverse proxy server for <strong>saintsxctf.com</strong>,
+the website's network traffic, they see HTTPS requests sent to the reverse proxy server for <strong>saintsxctf.com</strong>,
 instead of the actual API server <strong>api.saintsxctf.com</strong>.
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/9-24-21-shared-url.png"/>
 </figure>
 <p>
-This article discusses reverse proxy servers, walks through examples from my applications, and provides application
+This article discusses reverse proxy servers, shows examples from my applications, and provides application
 source code; allowing you to achieve similar results.  More specifically, it looks at creating Nginx reverse proxies
 in Docker containers.
 </p>
@@ -29,17 +29,17 @@ When discussing Nginx reverse proxies, there are two distinct technologies to un
 Nginx (pronounced Engine-X) is an open source web server which can be used as a reverse proxy<sup>1</sup>.  It is
 commonly used for serving content from HTTP requests, as well as caching and load balancing requests.  Nginx is
 comparable in popularity with Apache HTTP Server, which is another open source web server.  Nginx has its own
-configuration language, which engineers use to adjust the web server’s behavior<sup>2</sup>.
+configuration language, which engineers use to adjust the web server's behavior<sup>2</sup>.
 </Definition>
 <Definition word="Reverse Proxy">
-A reverse proxy server sits in between a client and one or many back-end servers.  The reverse proxy server takes
-in requests from the client, and distributes those requests to the servers sitting behind it appropriately.  When the
-reverse proxy server sends responses from it’s back-end servers to the client, it does so without alluding to the
-existence of the back-end servers at all.  From the client’s perspective, responses originate from the reverse proxy
-server itself.  Reverse proxy servers are used to hide back-end servers, cache responses, load balance, and more<sup>3</sup>.
+A reverse proxy server sits between a client and one or more backend servers.  Reverse proxy servers intake 
+ requests from a client, and appropriately distributes those requests to servers sitting behind it.  When a
+ reverse proxy server sends responses from it's backend servers to a client, it does so without alluding to the
+existence of backend servers at all.  From the client's perspective, responses originate from the reverse proxy
+server itself.  Reverse proxy servers are used to hide backend servers, cache responses, load balance, and more<sup>3</sup>.
 </Definition>
 <p>
-Using Nginx’s configuration language, servers can be configured as reverse proxy servers.  While these servers can exist
+Using Nginx's configuration language, servers can be configured as reverse proxy servers.  While these servers can exist
 on physical machines or virtual machines, the Nginx servers discussed in this article exist on Docker containers.
 </p>
 <SectionTitle title="Architectural Overview">Architectural Overview</SectionTitle>
@@ -49,9 +49,9 @@ github.com/AJarombek/saints-xctf-web/blob/master/nginx.conf">SaintsXCTF web appl
 AJarombek/saints-xctf-api/blob/master/api/src/nginx.conf">SaintsXCTF API</a>, <a href="https://github.com/AJarombek/
 apollo-client-server-prototype/blob/master/client/nginx.conf">Apollo client prototype</a>, <a href="https://github.com/
 AJarombek/apollo-client-server-prototype/blob/master/server/nginx.conf">Apollo server prototype</a>, and <a href="https://
-github.com/AJarombek/graphql-react-prototype/blob/master/nginx.conf">GraphQL React prototype</a>.  All these containers
-are orchestrated using Kubernetes and hosted on AWS EKS.  For the remainder of the article, I’ll look specifically at
-the Nginx configuration for my SaintsXCTF application.  All the other application’s Nginx code can be viewed on GitHub
+github.com/AJarombek/graphql-react-prototype/blob/master/nginx.conf">GraphQL React prototype</a>.  All these proxy server containers
+are orchestrated using Kubernetes and hosted on AWS EKS.  For the remainder of the article, I'll look specifically at
+the Nginx configuration for my SaintsXCTF application.  Nginx code from my other applications can be viewed on GitHub
 using the links above.
 </p>
 <p>
@@ -70,7 +70,7 @@ reverse proxy server and the uWSGI server is the application server, hosting the
 </p>
 <SectionTitle title="Configuring Nginx Docker Containers">Configuring Nginx Docker Containers</SectionTitle>
 <p>
-Let’s look at the Docker and Nginx configuration for these containers, back to front; starting with the uWSGI container
+Let's look at the Docker and Nginx configurations for these containers, back to front; starting with the uWSGI container
 for the API code.  The two important configuration files for the uWSGI container are a <a href="https://github.com/
 AJarombek/saints-xctf-api/blob/master/api/src/api.flask.dockerfile">Dockerfile</a> and a <a href="https://github.com/
 AJarombek/saints-xctf-api/blob/master/api/src/uwsgi.ini">uwsgi.ini</a> file.
@@ -128,9 +128,9 @@ socket = :5000
 ; http-socket = :5000
 </CodeSnippet>
 <p>
-Don’t get bogged down by the details of the Dockerfile; the important takeaway is that it installs uWSGI with
+Don't get bogged down by the details of the Dockerfile; the important takeaway is that it installs uWSGI with
 <code className="jarombek-inline-code">pip install uwsgi</code> and starts the uWSGI application server with the
-configuration specified in <strong>uwsgi.ini</strong> using the <code className="jarombek-inline-code">
+configuration specified in <strong>uwsgi.ini</strong>.  It does so using the <code className="jarombek-inline-code">
 CMD ["uwsgi", "--ini", "uwsgi.ini"]</code> entrypoint.
 </p>
 <p>
@@ -173,7 +173,7 @@ server {
 </CodeSnippet>
 <p>
 The important parts of the <strong>Dockerfile</strong> are the <code className="jarombek-inline-code">RUN</code> and
-<code className="jarombek-inline-code">COPY</code> commands.  These commands delete the existing Nginx configuration
+<code className="jarombek-inline-code">COPY</code> commands.  These commands delete the default Nginx configuration
 and add the custom Nginx configuration, respectively.  The custom Nginx configuration exists in the
 <strong>nginx.conf</strong> file.
 </p>
@@ -305,7 +305,7 @@ server {
 <p>
 The <strong>Dockerfile</strong> for the web application should look similar to the Nginx Dockerfile for the API.  The
 differences include the use of a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/base.dockerfile">
-base image</a> which installs npm dependencies using yarn, the creation of JavaScript bundles for the front-end
+base image</a> which installs npm dependencies using yarn, the creation of JavaScript bundles for the frontend
 application via <code className="jarombek-inline-code">RUN yarn build</code>, and JavaScript bundles being copied from
 the base image to the Nginx image via <code className="jarombek-inline-code">COPY --from=base /src/dist /usr/share/nginx/html</code>.
 </p>
@@ -314,20 +314,20 @@ The Nginx reverse proxy server configuration for the web application is a bit mo
 <code className="jarombek-inline-code">server</code> block for the web application has many
 <code className="jarombek-inline-code">location</code> blocks.  The first <code className="jarombek-inline-code">
 location</code> block serves the React.js web application, while each subsequent block proxies requests to different
-back-end servers.  These proxies use <code className="jarombek-inline-code">proxy_pass</code> directives instead of
-<code className="jarombek-inline-code">uwsgi_pass</code> directives, since the back-end servers are simple HTTPS servers
+backend servers.  These proxies use <code className="jarombek-inline-code">proxy_pass</code> directives instead of
+<code className="jarombek-inline-code">uwsgi_pass</code> directives, since the backend servers are simple HTTPS servers
 instead of uWSGI applciation servers<sup>8</sup>.
 </p>
 <p>
 Similar to the API, the web application is configured to run in production with Kubernetes in a <a href="https://github.com/
 AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com/modules/kubernetes/main.tf">main.tf</a> file.  Instead
-of using Docker Compose locally, the web application configures a local reverse proxy using webpack dev server<sup>9</sup>.
+of using Docker Compose locally like the API, the web application configures a local reverse proxy using webpack dev server<sup>9</sup>.
 The configuration for webpack dev server exists in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
 webpack.config.js#L116-L155">webpack.config.js</a> file.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Reverse proxy servers are a great way to hide back-end server locations from end users.  I also find them very elegant,
+Reverse proxy servers are a great way to hide backend server locations from end users.  I also find them very elegant,
 as they remove the need to hardcode server URLs in application code.  Code for the <a href="https://github.com/AJarombek/
 saints-xctf-web">web application</a> and <a href="https://github.com/AJarombek/saints-xctf-api">API</a> referenced
 throughout this article is available on GitHub.

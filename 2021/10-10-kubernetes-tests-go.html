@@ -1,12 +1,12 @@
 <div>
 <p>
 These days, most of my application infrastructure exists on <a href="https://jarombek.com/blog?query=docker&page=1">
-Docker</a> containers, orchestrated by <a href="https://jarombek.com/blog?query=kubernetes&page=1">Kubernetes</a>.  I
-have a Kubernetes cluster running on AWS using EKS (Elastic Kubernetes Service).  Since two of my production
+Docker</a> containers, orchestrated by <a href="https://jarombek.com/blog?query=kubernetes&page=1">Kubernetes</a>.  My
+ AWS account has a Kubernetes cluster, which is hosted using EKS (Elastic Kubernetes Service).  Since two of my production
 applications (<a href="https://jarombek.com/">jarombek.com</a> and <a href="https://saintsxctf.com/">saintsxctf.com</a>)
-run on the Kubernetes cluster, the health of their infrastructure is critical.  To help ensure that the Kubernetes
-cluster is running as expected, I created tests which check the state of Kubernetes objects and ensure that they exist
-on the cluster as expected.
+run on this Kubernetes cluster, the health of their infrastructure is critical.  To help ensure that the Kubernetes
+cluster is running properly, I created tests which check the state of my Kubernetes objects and ensure that they exist
+on the EKS cluster as expected.
 </p>
 <p>
 This article explores my Kubernetes test suite, which is written in Go and leverages the <a href="https://github.com/
@@ -15,11 +15,11 @@ alerting me when test failures occur.
 </p>
 <SectionTitle title="Testing Kubernetes">Testing Kubernetes</SectionTitle>
 <p>
-My Kubernetes infrastructure and corresponding test code is spread across multiple repositories, most notably in
+My Kubernetes infrastructure and test code is spread across multiple repositories, most notably in
 <a href="https://github.com/AJarombek/jarombek-com-infrastructure/tree/master/test-k8s">jarombek-com-infrastructure</a>,
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/test-k8s">saints-xctf-infrastructure</a>,
 and <a href="https://github.com/AJarombek/global-aws-infrastructure/tree/master/test-k8s">global-aws-infrastructure</a>.
-In this article I will focus on the infrastructure tests for <a href="https://jarombek.com/">jarombek.com</a>, which
+In this article I focus on the infrastructure tests for <a href="https://jarombek.com/">jarombek.com</a>, which
 happens to be the website you are currently viewing!  <strong>jarombek.com</strong> has the following Kubernetes
 infrastructure:
 </p>
@@ -53,8 +53,8 @@ require (
 </CodeSnippet>
 <p>
 The Go version used in the module is <strong>1.14</strong> and the module name is <strong>github.com/ajarombek/
-jarombek-com-infrastructure/test-k8s</strong>, matching the repository URL and directory path to the
-<strong>go.mod</strong> file.  The tests are dependent on two Kubernetes modules: <strong>k8s.io/apimachinery</strong>
+jarombek-com-infrastructure/test-k8s</strong>; a concatenation of the GitHub repository URL and the directory path to the
+<strong>go.mod</strong> file.  Code in the module is dependent on two Kubernetes modules: <strong>k8s.io/apimachinery</strong>
 and <strong>k8s.io/client-go</strong>.  There is also one dependency called
 <strong>github.com/ajarombek/cloud-modules/kubernetes-test-functions</strong>, which is a Go module of my own.  This
 module contains reusable functions for writing Kubernetes tests in Go, and can be found in my <a href="https://github.com/
@@ -122,20 +122,22 @@ There are two ways to initialize the Kubernetes client and authenticate it with 
 <strong>kubeconfig</strong> file outside a Kubernetes cluster or with a <code className="jarombek-inline-code">
 ServiceAccount</code> within a Kubernetes cluster.  These two techniques are referred to as <a href="https://github.com/
 kubernetes/client-go/tree/master/examples/out-of-cluster-client-configuration">out of cluster configuration</a> and
-<a href="https://github.com/kubernetes/client-go/tree/master/examples/in-cluster-client-configuration">in cluster
+<a href="https://github.com/kubernetes/client-go/tree/master/examples/in-cluster-client-configuration">in-cluster
 configuration</a>, respectively<sup>1,2</sup>.  In my <code className="jarombek-inline-code">ParseCommandLineArguments()
 </code> function, the <code className="jarombek-inline-code">kubeconfig</code> flag refers to out of cluster
-configuration and the <code className="jarombek-inline-code">incluster</code> flag refers to in cluster configuration.
+configuration and the <code className="jarombek-inline-code">incluster</code> flag refers to in-cluster configuration.
 The value of the <code className="jarombek-inline-code">kubeconfig</code> flag is a string, representing the file path
 to a <strong>kubeconfig</strong> file, which is used for authentication.  The value of the
 <code className="jarombek-inline-code">incluster</code> flag is simply a boolean.  These flags can be used from the CLI
 like so:
 </p>
 <CodeSnippet language="Bash">
-# Run tests outside a Kubernetes cluster, authenticating with a kubeconfig file
+# Both authentication approaches.
+
+# Run tests outside a Kubernetes cluster, authenticating with a kubeconfig file.
 go test --kubeconfig /path/to/kubeconfig
 
-# Run tests inside a Kubernetes cluster, authenticating with a ServiceAccount
+# Run tests inside a Kubernetes cluster, authenticating with a ServiceAccount.
 go test --incluster true
 </CodeSnippet>
 <p>
@@ -191,7 +193,7 @@ tests, there are two final important parts of the <a href="https://github.com/AJ
 blob/master/test-k8s/main_test.go">main_test.go</a> file.  First, the environment that the tests are run in is gathered
 from the <code className="jarombek-inline-code">TEST_ENV</code> environment variable in the line
 <code className="jarombek-inline-code">var env = os.Getenv("TEST_ENV")</code>.  I have infrastructure in development
-and production environments, so this configuration helps me test both environments Kubernetes objects separately.
+and production environments, so this configuration helps me test Kubernetes objects in both environments separately.
 </p>
 <p>
 Kubernetes objects for my <strong>jarombek.com</strong> website exist in two different namespaces.  For the production
@@ -223,7 +225,7 @@ infrastructure contains the expected number of Kubernetes objects.  <strong>jaro
 objects in more detail.
 </p>
 <p>
-First, let’s look at the namespace tests.
+First, let's look at the namespace tests.
 </p>
 <CodeSnippet language="Go">
 // namespace_test.go
@@ -257,7 +259,7 @@ func TestJarombekComNamespaceIngressCount(t *testing.T) {
 There are three tests specified in this code, each encapsulated in a function.  The first test confirms that two
 <code className="jarombek-inline-code">Deployment</code> objects exist in the namespace, the second test confirms that
 two <code className="jarombek-inline-code">Service</code> objects exist in the namespace, and the third test confirms
-that one <code className="jarombek-inline-code">Ingress</code> object exist in the namespace.  The actual testing
+that one <code className="jarombek-inline-code">Ingress</code> object exists in the namespace.  The actual testing
 assertions are made in helper functions located in my <a href="https://github.com/AJarombek/cloud-modules/tree/master/
 kubernetes-test-functions">kubernetes-test-functions</a> Go module.  These helper functions are accessed through the
 <code className="jarombek-inline-code">k8sfuncs</code> variable.
@@ -311,7 +313,7 @@ expected deployment count, respectively.
 <p>
 The first line of the function body uses the Kubernetes client to get all the <code className="jarombek-inline-code">
 Deployment</code> objects in a namespace.  Then, <code className="jarombek-inline-code">len(deployments.Items)</code>
-gets the number of <code className="jarombek-inline-code">Deployment</code> objects, followed by an
+ determines the number of <code className="jarombek-inline-code">Deployment</code> objects, followed by an
 <code className="jarombek-inline-code">if</code> statement which checks if the actual number of objects matches the
 expected number of objects.  <code className="jarombek-inline-code">t.Logf</code> is used to log a successful test, and
 <code className="jarombek-inline-code">t.Errorf</code> is used to log a failed test.
@@ -319,7 +321,7 @@ expected number of objects.  <code className="jarombek-inline-code">t.Logf</code
 NamespaceIngressCount()</code> have similar implementations.
 </p>
 <p>
-Now let’s look at the remaining tests.
+Now, let's look at the remaining tests.
 </p>
 <CodeSnippet language="Go">
 import (
@@ -437,31 +439,32 @@ func TestJarombekComIngressAnnotations(t *testing.T) {
 <p>
 One again, all these tests use reusable functions.  However, the final function, <code className="jarombek-inline-code">
 TestJarombekComIngressAnnotations()</code>, also performs some logic of its own.  Since
-<code className="jarombek-inline-code">TestJarombekComIngressAnnotations()</code> is different than the rest, let’s
+<code className="jarombek-inline-code">TestJarombekComIngressAnnotations()</code> is different from the rest, let's
 analyze it in more detail.  In Kubernetes, objects can have annotations, which are key-value pairs containing metadata
 about an object.  For <code className="jarombek-inline-code">Ingress</code> objects, these annotations can have
 important information which directs ingress controllers to build certain networking infrastructure.  In my case, the
-<code className="jarombek-inline-code">Ingress</code> object for my website is utilized by an AWS Ingress Controller
+<code className="jarombek-inline-code">Ingress</code> object is utilized by an AWS Ingress Controller
 (now known as an AWS Load Balancer Controller), which creates a load balancer in my AWS account, directing traffic to
-my websites Kubernetes objects.  This function tests that the <code className="jarombek-inline-code">Ingress</code>
-object contains the proper annotations, so that the load balancer is created as expected.
+my website's Kubernetes objects.  <code className="jarombek-inline-code">TestJarombekComIngressAnnotations()</code>
+tests that the <code className="jarombek-inline-code">Ingress</code> object contains the proper annotations, so that
+the load balancer is created as expected.
 </p>
 <p>
 <code className="jarombek-inline-code">TestJarombekComIngressAnnotations()</code> starts by using the Kubernetes client
 to get the <code className="jarombek-inline-code">Ingress</code> object for my website; storing it in an
 <code className="jarombek-inline-code">ingress</code> variable.  If the <code className="jarombek-inline-code">
-Ingress</code> object isn’t found, an error is stored in an <code className="jarombek-inline-code">err</code> variable.
-The test makes sure that the <code className="jarombek-inline-code">Ingress</code> object exists before continuing with
-the test in the <code className="jarombek-inline-code">if err != nil {}</code> code block.  The remainder of the test
+Ingress</code> object isn't found, an error is stored in an <code className="jarombek-inline-code">err</code> variable.
+The test ensures that the <code className="jarombek-inline-code">Ingress</code> object exists before continuing with
+ the <code className="jarombek-inline-code">if err != nil {}</code> code block.  The remainder of the test
 checks that annotations on the object have expected values and that the number of annotations on the object is as
 expected.
 </p>
 <SectionTitle title="Automating Test Runs">Automating Test Runs</SectionTitle>
 <p>
-My Kubernetes tests run daily in Jenkins jobs first thing in the morning.  There are two Jenkins jobs - one for the
-development environment and one for the production environment.  These tests run from within the Kubernetes cluster,
-since the Jenkins jobs are configured to run on Kubernetes pods.  The Jenkins jobs also send me email alerts with the
-status of the tests, so that I can make sure their are no errors when I check my email in the morning.  You can view
+My Kubernetes tests run every morning in Jenkins jobs.  There are two Jenkins jobs - one for the
+development environment and one for the production environment.  My test code is run from within the Kubernetes cluster,
+since the Jenkins jobs are configured to run on Kubernetes pods.  The Jenkins jobs also send me email alerts with
+ statuses of the tests, allowing me to know whether everything is operational when I read emails in the morning.  You can view
 the code for these Jenkins jobs on <a href="https://github.com/AJarombek/global-jenkins-jobs/tree/master/jarombek-com/
 infrastructure/jarombek-com-kubernetes-infrastructure-test">GitHub</a>.
 </p>
@@ -470,10 +473,10 @@ infrastructure/jarombek-com-kubernetes-infrastructure-test">GitHub</a>.
 </figure>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Automated tests of my Kubernetes infrastructure has proven to be an effective safety blanket.  It’s great to see
-successful test results in the morning and feel reassured that the infrastructure for my website is working as expected.
+Automated tests of my Kubernetes infrastructure has proven to be an effective safety blanket.  It's great to see
+successful test results in the morning and feel reassured that the infrastructure for my websites are working as expected.
 While you can write tests for Kubernetes infrastructure in multiple languages, the Go client library is very easy to
-work with and I highly recommend it.  As previously mentioned, you can view all my Kubernetes test code in my
+work with; I highly recommend it.  As previously mentioned, you can view all my Kubernetes test code in my
 <a href="https://github.com/AJarombek/jarombek-com-infrastructure/tree/master/test-k8s">jarombek-com-infrastructure</a>,
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/test-k8s">saints-xctf-infrastructure</a>,
 and <a href="https://github.com/AJarombek/global-aws-infrastructure/tree/master/test-k8s">global-aws-infrastructure</a>
