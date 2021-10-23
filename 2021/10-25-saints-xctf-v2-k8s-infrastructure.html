@@ -41,7 +41,188 @@ jun-18-2021-saints-xctf-v2-aws-infrastructure">a prior article</a>.
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/10-25-21-k8s-architecture.png"/>
 </figure>
+<p>
+Similar to the AWS infrastructure, the SaintsXCTF Kubernetes infrastructure is logically grouped into Terraform
+modules.  More specifically, there are three Terraform modules for Kubernetes infrastructure.  The
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com">first</a> is for the web
+application, the <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-api">
+second</a> is for the API application, and the <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/
+master/saints-xctf-com-ingress">third</a> is for an Ingress object which directs traffic to the web application and
+API.  All three are discussed in this article.
+</p>
 <SectionTitle title="SaintsXCTF Web Application Infrastructure">SaintsXCTF Web Application Infrastructure</SectionTitle>
+<p>
+The web application Kubernetes infrastructure consists of a service and a deployment.  The service networks traffic to
+the pods in the deployment.  The service YAML configuration is shown below.
+</p>
+<CodeSnippet language="YAML">
+apiVersion: v1
+kind: Service
+metadata:
+  name: saints-xctf-web-service
+  namespace: saints-xctf
+  labels:
+    version: v1.0.0
+    environment: production
+    application: saints-xctf-web
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    application: saints-xctf-web
+</CodeSnippet>
+<p>
+This YAML configuration is translated into HCL (Hashicorp Configuration Language) for use in Terraform.  The
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com/modules/kubernetes/
+main.tf#L137-L162">Terraform configuration for the service</a> is shown below.
+</p>
+<CodeSnippet language="HCL">
+resource "kubernetes_service" "service" {
+  metadata {
+    name = "saints-xctf-web-service"
+    namespace = local.namespace
+
+    labels = {
+      version = local.version
+      environment = local.env
+      application = "saints-xctf-web"
+    }
+  }
+
+  spec {
+    type = "NodePort"
+
+    port {
+      port = 80
+      target_port = 80
+      protocol = "TCP"
+    }
+
+    selector = {
+      application = "saints-xctf-web"
+    }
+  }
+}
+</CodeSnippet>
+<p>
+The service object <code className="jarombek-inline-code">saints-xctf-web-service</code> navigates traffic to port 80
+of the SaintsXCTF web application, which is hosted on Kubernetes pods as part of a deployment object.  The web
+application deployment, <code className="jarombek-inline-code">saints-xctf-web-deployment</code>, is again translated
+from a <a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com/modules/kubernetes/
+k8s-config/deployment.yaml">YAML file</a> into <a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/
+master/saints-xctf-com/modules/kubernetes/main.tf#L45-L135">Terraform configuration</a>.
+</p>
+<CodeSnippet language="HCL">
+resource "kubernetes_deployment" "deployment" {
+  metadata {
+    name = "saints-xctf-web-deployment"
+    namespace = local.namespace
+
+    labels = {
+      version = local.version
+      environment = local.env
+      application = "saints-xctf-web"
+    }
+  }
+
+  spec {
+    replicas = 2
+    min_ready_seconds = 10
+
+    strategy {
+      type = "RollingUpdate"
+
+      rolling_update {
+        max_surge = "1"
+        max_unavailable = "0"
+      }
+    }
+
+    selector {
+      match_labels = {
+        version = local.version
+        environment = local.env
+        application = "saints-xctf-web"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          version = local.version
+          environment = local.env
+          application = "saints-xctf-web"
+        }
+      }
+
+      spec {
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key = "workload"
+                  operator = "In"
+                  values = ["production-applications"]
+                }
+              }
+            }
+          }
+        }
+
+        container {
+          name = "saints-xctf-web"
+          image = "${local.account_id}.dkr.ecr.us-east-1.amazonaws.com/${local.image}:${local.short_version}"
+
+          readiness_probe {
+            period_seconds = 5
+            initial_delay_seconds = 20
+
+            http_get {
+              path = "/"
+              port = 80
+            }
+          }
+
+          liveness_probe {
+            period_seconds = 5
+            initial_delay_seconds = 20
+            failure_threshold = 4
+
+            http_get {
+              path = "/api/"
+              port = 80
+            }
+          }
+
+          port {
+            container_port = 80
+            protocol = "TCP"
+          }
+        }
+      }
+    }
+  }
+}
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">saints-xctf-web-deployment</code> object creates 2 pods which host the
+SaintsXCTF web application (as configured by <code className="jarombek-inline-code">replicas</code>).  The deployment
+strategy is a <code className="jarombek-inline-code">RollingUpdate</code>, which allows for zero downtime as pods
+update one by one.  The pods are configured with a node affinity (configured by <code className="jarombek-inline-code">
+node_affinity</code>), which forces all pods to exist on Kubernetes cluster nodes with a certain label, in my case
+<code className="jarombek-inline-code">production-applications</code>.  This allows me to separate production
+applications from non-production and prototype applications on my Kubernetes cluster.  The pods are configured with
+readiness probes (<code className="jarombek-inline-code">readiness_probe</code>) and liveness probes
+(<code className="jarombek-inline-code">liveness_probe</code>).  The readiness probe checks that the web application is
+accessible via HTTP requests, and the liveness probe checks that the API is accessible from the pod via HTTP requests.
+If these checks fail, a new pod is started and the current pod is terminated.  This helps ensure that my application
+doesn't face any downtime.
+</p>
 <SectionTitle title="SaintsXCTF API Infrastructure">SaintsXCTF API Infrastructure</SectionTitle>
+<SectionTitle title="Ingress Infrastructure">Ingress Infrastructure</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>

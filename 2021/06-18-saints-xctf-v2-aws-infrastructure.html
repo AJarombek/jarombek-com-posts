@@ -35,7 +35,8 @@ code which configures and builds the infrastructure.
 <p>
 SaintsXCTF application infrastructure can be grouped into two categories - AWS and Kubernetes.  This article only
 discusses the AWS infrastructure, which has a green background in the diagram below.  The Kubernetes infrastructure,
-which has a red background in the diagram, is discussed in the next article.
+which has a red background in the diagram, is discussed in the <a href="https://jarombek.com/blog/
+oct-25-2021-saints-xctf-v2-k8s-infrastructure">next article</a>.
 </p>
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/6-18-21-aws-architecture.png"/>
@@ -166,7 +167,8 @@ created by the ingress controller routes traffic to Kubernetes for both the <str
 <strong>api.saintsxctf.com</strong> domains.  The Terraform module for the load balancer and Kubernetes Ingress object
 exists in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-ingress">
 saints-xctf-com-ingress</a> directory in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure">
-saints-xctf-infrastructure</a> repository.  I will provide more details about this code in my upcoming article on
+saints-xctf-infrastructure</a> repository.  I will provide more details about this code in my
+ <a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">upcoming article</a> on
 SaintsXCTF Kubernetes infrastructure.
 </p>
 <SectionTitle title="Application Asset S3 Bucket">Application Asset S3 Bucket</SectionTitle>
@@ -400,8 +402,8 @@ keeps the application running with little downtime, which is key for a good user
 be smaller in scope than version 2.0, which completely rewrote the entire codebase.
 </p>
 <p>
-In my next SaintsXCTF article I'll discuss the other crucial piece of infrastructure for the application: Kubernetes
-on EKS.  All the AWS infrastructure code for SaintsXCTF can be found on
-<a href="https://github.com/AJarombek/saints-xctf-infrastructure">GitHub</a>.
+In my <a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">next SaintsXCTF article</a> I'll
+discuss the other crucial piece of infrastructure for the application: Kubernetes on EKS.  All the AWS infrastructure
+code for SaintsXCTF can be found on <a href="https://github.com/AJarombek/saints-xctf-infrastructure">GitHub</a>.
 </p>
 </div>
