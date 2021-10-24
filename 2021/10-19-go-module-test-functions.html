@@ -1,29 +1,29 @@
 <div>
 <p>
-Recently I’ve been writing <a href="https://jarombek.com/blog/oct-10-2021-kubernetes-tests-go">tests for my Kubernetes
+Recently I wrote <a href="https://jarombek.com/blog/oct-10-2021-kubernetes-tests-go">tests for my Kubernetes
 infrastructure in Go</a>.  These tests are split across <a href="https://github.com/AJarombek/
 jarombek-com-infrastructure/tree/master/test-k8s">multiple</a> <a href="https://github.com/AJarombek/
 saints-xctf-infrastructure/tree/master/test-k8s">different</a> <a href="https://github.com/AJarombek/
 global-aws-infrastructure/tree/master/test-k8s">repositories</a>.  However, there is a lot of overlap in testing logic
-between the test suites in each repository.  Following good programming practices and in attempts to keep my code DRY,
+between the test suites in each repository.  In attempts to follow good programming practices and keep my code DRY,
 I split out the common code between the repositories into reusable functions.  These functions exist in their own Go
 module, which is imported into the test suites as a dependency.
 </p>
 <p>
-Go modules are part of Go’s dependency management system<sup>1</sup>.  They consist of a collection of packages, which
-are defied in a <strong>go.mod</strong> file.  Go modules can be used as dependencies for other modules, as is the
+Go modules are part of Go's dependency management system<sup>1</sup>.  They consist of a collection of packages, which
+are defied in a <strong>go.mod</strong> file.  Go modules can be used as dependencies in other modules, as is the
 case with my reusable test function module and my Kubernetes test modules.
 </p>
 <p>
 In this article, I first show how to configure a Go module, using my reusable test function module as an example.
-Then, I show how this module is used in my Kubernetes test modules.
+Then, I show how the reusable test function module is used in my Kubernetes test modules.
 </p>
 <SectionTitle title="Configuring the Go Module">Configuring the Go Module</SectionTitle>
 <p>
-Go modules are defined by their <strong>go.mod</strong> file, similar to how a npm package is defined by its
-<strong>package.json</strong> file.  <strong>go.mod</strong> exists in the root directory of the Go module.
-<strong>go.mod</strong> files have their own syntax separate from the Go programming language or any other programming
-or configuration language<sup>2</sup>.  The <a href="https://github.com/AJarombek/cloud-modules/blob/master/
+Go modules are defined in a <strong>go.mod</strong> file, similar to how a npm package is defined in a
+ <strong>package.json</strong> file.  <strong>go.mod</strong> exists in the root directory of a Go module.
+<strong>go.mod</strong> files have their own syntax separate from the Go programming language or any other
+ configuration language<sup>2</sup>.  The <a href="https://github.com/AJarombek/cloud-modules/blob/master/
 kubernetes-test-functions/go.mod">go.mod</a> file for my reusable test function module has the following content:
 </p>
 <CodeSnippet>
@@ -44,20 +44,20 @@ are directives.
 </p>
 <p>
 The <code className="jarombek-inline-code">module</code> directive defines the path of the module, which is used as an
-identifier to import it into other modules.  The path of my module is <code className="jarombek-inline-code">github.com/
-ajarombek/cloud-modules/kubernetes-test-functions</code>.  Notice that the module path is similar to the URL of my
-GitHub repository which contains the Go module - <strong>github.com/AJarombek/cloud-modules/tree/master/
-kubernetes-test-functions</strong>.  This is no coincidence; the module path needs to match the location where it is
-hosted<sup>4</sup>.  Hosting location module paths allow Go to find the module when its path is used in other code.  In
+identifier when it is imported into other modules.  The path of my module is <code className="jarombek-inline-code">github.com/
+ajarombek/cloud-modules/kubernetes-test-functions</code>.  Notice that the module path is similar to the modules
+ GitHub repository URL - <strong>github.com/AJarombek/cloud-modules/tree/master/kubernetes-test-functions</strong>.
+  This is no coincidence; the module path needs to match the location where it is
+hosted<sup>4</sup>.  Module paths with hosting locations allow Go to find the module when its path is used.  In
 my module path, <code className="jarombek-inline-code">github.com</code> is the hosting domain,
 <code className="jarombek-inline-code">ajarombek</code> is the GitHub user, <code className="jarombek-inline-code">
 cloud-modules</code> is the repository name, and <code className="jarombek-inline-code">kubernetes-test-functions</code>
 is the directory within the repository containing the <strong>go.mod</strong> file.
 </p>
 <p>
-The <code className="jarombek-inline-code">go</code> directive specifies the version of Go that the module was written
-in.  In my case, that version is <strong>1.14</strong>, with the latest version of Go being <strong>1.17</strong> at
-the time I’m writing this article.
+The <code className="jarombek-inline-code">go</code> directive specifies the version of Go that the module is written
+in.  In my case, that version is <strong>1.15</strong>, with the latest version of Go being <strong>1.17</strong>
+ (as of October 2021).
 </p>
 <p>
 The <code className="jarombek-inline-code">require</code> directive specifies all the Go module dependencies and their
@@ -73,8 +73,8 @@ containing the Go module.
 </p>
 <SectionTitle title="Using the Go Module">Using the Go Module</SectionTitle>
 <p>
-With a Go module created and pushed to GitHub with tags specifying the versions, it is time to use the module in other
-Go code.  Since other Go code will also be a Go module, the <code className="jarombek-inline-code">require</code>
+With a Go module created and pushed to GitHub with tags specifying different versions, it is time to use the module within another
+ module.  In a different Go module, the <code className="jarombek-inline-code">require</code>
 directive can be used to specify <code className="jarombek-inline-code">
 github.com/ajarombek/cloud-modules/kubernetes-test-functions</code> as a dependency.  The following code snippet is
 the <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/go.mod">go.mod</a> file from
@@ -97,7 +97,8 @@ a minimum) of the <code className="jarombek-inline-code">github.com/ajarombek/cl
 </code> module is a dependency of this Go module.
 </p>
 <p>
-Go modules contain one or more packages, which are collections of source code files.  In Go, the
+Now we can import and use the <code className="jarombek-inline-code">kubernetes-test-functions</code> module. Go
+modules contain one or more packages, which are collections of source code files.  In Go, the
 <code className="jarombek-inline-code">import</code> statement consists of one or many package paths, which are
 strings.  Using my <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/master/test-k8s/
 jarombek_com_test.go">jarombek.com Kubernetes tests</a> as an example once again, the
@@ -125,11 +126,11 @@ To learn more about the Kubernetes test functions themselves, you can check out 
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Two major takeaways I had while writing Go modules were how easy they were to create and the elegance of the
+Two takeaways I had while writing Go modules were how easy they are to create and the elegance of the
 <strong>go.mod</strong> syntax.  I love how simply naming Go modules with their host domain, in my case
 <strong>github.com</strong>, allows Go to resolve module dependencies.  In my view, a great dependency management
 system can enhance a programming language and make it more viable for projects.  Go modules make me even more likely
-to use Go in the future, as it continues to climb in my <a href="https://jarombek.com/stats">programming rankings</a>.
+to use the Go programming language in the future, as it continues to climb in my <a href="https://jarombek.com/stats">programming rankings</a>.
 The code shown in this article is found in my <a href="https://github.com/AJarombek/cloud-modules/tree/master/
 kubernetes-test-functions">cloud-modules</a> and <a href="https://github.com/AJarombek/jarombek-com-infrastructure/
 tree/master/test-k8s">jarombek-com-infrastructure</a> repositories.
