@@ -341,5 +341,29 @@ spec:
               serviceName: saints-xctf-api
               servicePort: 80
 </CodeSnippet>
+<p>
+Four hosts are specified in the configuration - <strong>saintsxctf.com</strong>, <strong>api.saintsxctf.com</strong>,
+and their <strong>www</strong> prefixed equivalents.  Traffic to these domains are routed to the SaintsXCTF web
+application and API Kubernetes services.  The most interesting configuration fields are found in the
+<code className="jarombek-inline-code">annotations</code> dictionary.  All the <code className="jarombek-inline-code">
+alb.ingress.kubernetes.io</code> annotations configure an AWS load balancer to route traffic to the Kubernetes cluster.
+The <code className="jarombek-inline-code">external-dns.alpha.kubernetes.io</code> annotation creates Route53 DNS
+records for my four SaintsXCTF web application & API domains.  With these DNS records created, HTTP/HTTPS requests are
+routed to the AWS load balancer created by the Ingress object, which in turn routes traffic to my Kubernetes Pods.
+</p>
+<p>
+With the Ingress object and Service/Deployment objects created in Kubernetes, the website and API are fully functional
+and accessible from clients browsing the internet!
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Maintaining my SaintsXCTF web application and API infrastructure on Kubernetes is a massive improvement over my
+previous AWS EC2 virtual machine setup.  With Kubernetes, I can easily release new versions of my website and API with
+zero downtime.  Terraform also improves my ability to quickly alter Kubernetes infrastructure, since all the
+infrastructure is configured as code and can be created, updated, or destroyed on demand.  All the code for my
+Kubernetes infrastructure is available on <a href="https://github.com/AJarombek/saints-xctf-infrastructure">GitHub</a>.
+I also have <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/test-k8s">test code</a> for my
+Kubernetes infrastructure, which is discussed further in <a href="https://jarombek.com/blog/
+oct-10-2021-kubernetes-tests-go">another article</a>.
+</p>
 </div>
