@@ -1,0 +1,74 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.
+</Note>
+<p>
+At its core, SaintsXCTF is a web application that allows users to log their running workouts, openly express how they
+felt while running, and encourage and support the running careers of their teammates.  From a user perspective, the
+website is the most important part of the SaintsXCTF technology stack, as it is what they interact with every day and
+depend on being functional.
+</p>
+<p>
+When I wrote the first version of the <a href="https://saintsxctf.com/">saintsxctf.com</a> website, I was a senior in
+college who had just begun learning web development.  I was also new to UI design.  Over time this inexperience became
+more and more apparent when viewing the first version of the website and its underlying code.  I knew when designing
+the second version of the website, I not only needed to follow best engineering practices, but also make an elegant UI
+design.
+</p>
+<p>
+The next five articles in the SaintsXCTF series are devoted solely to the website and its React codebase.  This article
+gives an overview of the technologies used in the frontend code and a walkthrough of the pages on the website.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">AWS Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">Kubernetes Infrastructure</a></li>
+<li><strong>React Web Application Overview</strong></li>
+<li>Web Application React and TypeScript</li>
+<li>Web Application Redux State Configuration</li>
+<li>Web Application Cypress E2E Tests</li>
+<li>Web Application JSS Modular Design</li>
+<li>Flask Python API</li>
+<li>Flask API Testing</li>
+<li>Flask API Docker & Docker Compose Configuration</li>
+<li>Function API Using API Gateway & Lambda</li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>IOS Application Updates and Learning Experiences</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
+<li>Post-Deployment Challenges & Future Improvements</li>
+</ul>
+<SectionTitle title="Technology Overview">Technology Overview</SectionTitle>
+<p>
+Version 2.0 of the SaintsXCTF web application uses the <a href="https://jarombek.com/blog?query=react&page=1">React.js</a>
+front-end library.  For stylesheets, it uses <a href="https://jarombek.com/blog?query=jss&page=1">JSS</a> (CSS in
+JavaScript).  <a href="https://jarombek.com/blog?query=redux&page=1">Redux</a> is leveraged for state management within
+the React application.  For testing, <a href="https://jarombek.com/blog?query=jest&page=1">Jest</a> is utilized for
+Unit, Integration, and Snapshot tests.  <a href="https://jarombek.com/blog?query=cypress&page=1">Cypress</a> is utilized
+for End to End (E2E) tests.
+</p>
+<p>
+When I first started creating version 2.0 of the web application, I was writing all the React, Redux, and JSS code in
+JavaScript.  However, after further consideration, I decided to pivot towards writing all the frontend code in
+TypeScript.  TypeScript is a superset of JavaScript with static type checking and additional language features.
+Nowadays, I often use TypeScript instead of JavaScript to make my code safer and less prone to subtle bugs.  With
+SaintsXCTF, version 2.0 was a great opportunity to finally use TypeScript in a production application.  Alongside the
+application code, the Jest and Cypress test code is also written in TypeScript.
+</p>
+<p>
+The React application is bundled for distribution with <a href="https://jarombek.com/blog?query=webpack&page=1">
+Webpack</a>.  Locally, the application can be run either using Webpack Dev Server or Docker.  In production, the
+application runs on a Docker container.  The Docker container configures and runs an Nginx server, which routes
+requests to the React code bundle.  This Docker container is orchestrated using Kubernetes and is part of a larger AWS
+infrastructure.
+</p>
+<p>
+Upcoming articles will look at the web application code in detail, but the codebase is also accessible on GitHub in a
+<a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
+</p>
+<SectionTitle title="Website Overview">Website Overview</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
