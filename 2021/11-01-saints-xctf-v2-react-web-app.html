@@ -70,5 +70,48 @@ Upcoming articles will look at the web application code in detail, but the codeb
 <a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
 </p>
 <SectionTitle title="Website Overview">Website Overview</SectionTitle>
+<p>
+There are two main sections of the <a href="https://saintsxctf.com/">saintsxctf.com</a> website: when there is no user
+session and when a user is signed in.  When there is no user session, the landing page is the home page:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-home.png"/>
+</figure>
+<p>
+When there is a user session, the landing page is the dashboard page:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-dashboard.png"/>
+</figure>
+<p>
+User sessions are determined by a JWT in the browser’s <code className="jarombek-inline-code">localStorage</code>.  The
+JWT token is passed along with all API requests for authentication.  If the JWT is expired or an API call results in an
+unauthenticated error, the JWT is removed and the user is signed out.
+</p>
+<p>
+A signed out user has the option to sign in or register.  Both sign in and registration have their own pages.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-sign-in.png"/>
+</figure>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-register.png"/>
+</figure>
+<p>
+As shown previously, signed in users are navigated to a dashboard page, which shows the latest exercise logs uploaded
+by the team.  It also gives them multiple navigation options.  Since the main purpose of the website is to allow users
+to write exercise logs, there is a page with an exercise log form.
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-log-1.png"/>
+</figure>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-log-2.png"/>
+</figure>
+<p>
+Each user has a profile page.  Profile pages consist of multiple tabs, each of which shows a different view to the
+user.  Tabs include exercise logs, statistics, a weekly chart, a monthly calendar, and an edit profile administrative
+page.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
