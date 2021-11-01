@@ -1,0 +1,67 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You DO NOT
+need to read prior articles in the series to fully understand this article.
+</Note>
+<p>
+I recently rewrote my web application <a href="https://saintsxctf.com/">saintsxctf.com</a> using React and TypeScript.
+This article looks at how the application is configured and walks through some React code.  All the code for the
+website exists in the <a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">AWS Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">Kubernetes Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/nov-1-2021-saints-xctf-v2-react-web-app">React Web Application Overview</a></li>
+<li><strong>Web Application React and TypeScript</strong></li>
+<li>Web Application Redux State Configuration</li>
+<li>Web Application Cypress E2E Tests</li>
+<li>Web Application JSS Modular Design</li>
+<li>Flask Python API</li>
+<li>Flask API Testing</li>
+<li>Flask API Docker & Docker Compose Configuration</li>
+<li>Function API Using API Gateway & Lambda</li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>IOS Application Updates and Learning Experiences</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
+<li>Post-Deployment Challenges & Future Improvements</li>
+</ul>
+<SectionTitle title="React Application Configuration">React Application Configuration</SectionTitle>
+<p>
+The TypeScript React application for SaintsXCTF is bundled with Webpack and transpiled with Babel.  My React
+application is <strong>not</strong> configured with <code className="jarombek-inline-code">create-react-app</code>.
+This approach requires more time and knowledge of React, Webpack, TypeScript, and Babel from the engineer, with the
+benefit of increased customization.  The application is also an npm package, meaning that it is configured with a
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json">package.json</a> file.  Note that both
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L106">typescript</a> and
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L35">react</a> are specified as
+application dependencies.
+</p>
+<p>
+TypeScript is configured for the application in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+tsconfig.json">tsconfig.json</a> file.  The TypeScript configuration for SaintsXCTF is shown below.
+</p>
+<CodeSnippet language="JSON">
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "declaration": false,
+    "noImplicitAny": true,
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "target": "ES2020",
+    "jsx": "react"
+  },
+  "exclude": ["node_modules", "test", "cypress"]
+}
+</CodeSnippet>
+<SectionTitle title="Application Directory Structure">Application Directory Structure</SectionTitle>
+<SectionTitle title="React Components">React Components</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
