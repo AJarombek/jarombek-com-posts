@@ -61,6 +61,76 @@ tsconfig.json">tsconfig.json</a> file.  The TypeScript configuration for SaintsX
   "exclude": ["node_modules", "test", "cypress"]
 }
 </CodeSnippet>
+<p>
+<strong>tsconfig.json</strong> signifies the root directory of the TypeScript application and sets certain
+configuration parameters.  Most of these fall under <code className="jarombek-inline-code">compilerOptions</code>,
+which determines how the TypeScript language works (how it compiles)<sup>1</sup>.  Webpack, specifically
+<a href="https://webpack.js.org/guides/typescript/#loader">ts-loader</a>, uses the <strong>tsconfig.json</strong> file
+to determine how to compile TypeScript files<sup>2</sup>.  Behind the scenes, <code className="jarombek-inline-code">
+ts-loader</code> uses the TypeScript compiler <code className="jarombek-inline-code">tsc</code>.
+</p>
+<p>
+Let’s look through the configuration properties within <code className="jarombek-inline-code">compilerOptions</code>.
+<code className="jarombek-inline-code">"outDir": "./dist/"</code> specifies that JavaScript files compiled from
+TypeScript code are placed in a <strong>dist</strong> directory within the repository.
+<code className="jarombek-inline-code">"sourceMap": true</code> enables source maps, which are useful for debugging
+<sup>3</sup>.  <code className="jarombek-inline-code">"declaration": false</code> specifies that JavaScript files
+created from the TypeScript code don’t require corresponding type definition (<strong>*.d.ts</strong>) files<sup>4</sup>.
+This is because the codebase isn’t used as a third party library;  Instead, it is read by the web browser when users
+navigate to the website.  <code className="jarombek-inline-code">"noImplicitAny": true</code> helps enforce type safety,
+<code className="jarombek-inline-code">"module": "ES6"</code> sets the JavaScript module system to use for compiled
+code.  <code className="jarombek-inline-code">"target": "ES2020"</code> sets the target JavaScript version of the
+compiled JavaScript code, and <code className="jarombek-inline-code">"jsx": "react"</code> converts all JSX code to the
+equivalent JavaScript React library functions.
+</p>
+<p>
+The final piece of the TypeScript configuration file is <code className="jarombek-inline-code">exclude</code>, which
+specifies that TypeScript files in certain directories are not part of the TypeScript program.  These include the
+external dependencies (<code className="jarombek-inline-code">node_modules</code>), unit tests
+(<code className="jarombek-inline-code">test</code>), and end to end tests (<code className="jarombek-inline-code">
+cypress</code>).
+</p>
+<p>
+As I mentioned, the configuration in <strong>tsconfig.json</strong> is used by Webpack, specifically the loader
+<code className="jarombek-inline-code">ts-loader</code>.  Note that <code className="jarombek-inline-code">
+ts-loader</code> is also specified as a dependency in <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/package.json#L105">package.json</a>.  My application's Webpack configuration is specified in two files:
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/webpack.config.js">webpack.config.js</a> and
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/webpack.parts.js">webpack.parts.js</a>.  Inside
+<strong>webpack.config.js</strong>, <code className="jarombek-inline-code">ts-loader</code> is configured to transpile
+TypeScript code to JavaScript code with the <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+webpack.config.js#L32-L43">following code</a>:
+</p>
+<CodeSnippet language="JavaScript">
+{
+  test: /\.ts(x?)$/,
+  exclude: /(node_modules)/,
+  use: [
+    {
+      loader: 'babel-loader'
+    },
+    {
+      loader: 'ts-loader'
+    }
+  ]
+}
+</CodeSnippet>
+<p>
+This code configures Webpack loaders to be applied to certain file patterns.  The file pattern specified is the regular
+expression <code className="jarombek-inline-code">/\.ts(x?)$/</code>, matching Typescript files with the
+<strong>.ts</strong> and <strong>.tsx</strong> file extensions.  Webpack loaders preprocess files by performing
+transformations on application code<sup>5,6</sup>.  This step is executed prior to Webpack bundling the code.  The two
+loaders specified to execute on TypeScript files in the code above are <code className="jarombek-inline-code">
+babel-loader</code> and <code className="jarombek-inline-code">ts-loader</code>.
+</p>
+<p>
+With this setup, <code className="jarombek-inline-code">ts-loader</code> is run on the TypeScript code first, followed
+by <code className="jarombek-inline-code">babel-loader</code><sup>7</sup>.  Babel is a JavaScript compiler.  In my
+configuration, <code className="jarombek-inline-code">babel-loader</code> further compiles the intermediary JavaScript
+code that is created by <code className="jarombek-inline-code">ts-loader</code><sup>8</sup>.  Babel is configured by a
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/.babelrc">.babelrc</a> file, which is located at the
+root directory of the repository alongside the Webpack configuration.
+</p>
 <SectionTitle title="Application Directory Structure">Application Directory Structure</SectionTitle>
 <SectionTitle title="React Components">React Components</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
