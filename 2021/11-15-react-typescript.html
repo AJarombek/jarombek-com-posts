@@ -117,9 +117,9 @@ webpack.config.js#L32-L43">following code</a>:
 </CodeSnippet>
 <p>
 This code configures Webpack loaders to be applied to certain file patterns.  The file pattern specified is the regular
-expression <code className="jarombek-inline-code">/\.ts(x?)$/</code>, matching Typescript files with the
+expression <code className="jarombek-inline-code">/\.ts(x?)$/</code>, matching Typescript files with
 <strong>.ts</strong> and <strong>.tsx</strong> file extensions.  Webpack loaders preprocess files by performing
-transformations on application code<sup>5,6</sup>.  This step is executed prior to Webpack bundling the code.  The two
+transformations on code<sup>5,6</sup>.  This step is executed prior to Webpack bundling the code.  The two
 loaders specified to execute on TypeScript files in the code above are <code className="jarombek-inline-code">
 babel-loader</code> and <code className="jarombek-inline-code">ts-loader</code>.
 </p>
@@ -131,7 +131,76 @@ code that is created by <code className="jarombek-inline-code">ts-loader</code><
 <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/.babelrc">.babelrc</a> file, which is located at the
 root directory of the repository alongside the Webpack configuration.
 </p>
+<p>
+This process of compiling and bundling code is performed for my production and development environments, which are
+accessible from <strong>saintsxctf.com</strong> and <strong>dev.saintsxctf.com</strong>, respectively.  In my local
+environment, <a href="https://github.com/webpack/webpack-dev-server">webpack-dev-server</a> is used to host the
+application. <strong>webpack-dev-server</strong> runs an application server for the React application and enables hot
+reloading of the webpage.  This means that whenever TypeScript files in the application are updated, the web
+application automatically reloads with the latest changes.  This makes development a breeze!
+<strong>webpack-dev-server</strong> is configured in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/webpack.config.js#L116-L155">webpack.config.js</a> file and is run from a terminal with the
+<code className="jarombek-inline-code">webpack-dev-server --hot --inline --env local</code> command.  The configuration
+code is shown below.
+</p>
+<CodeSnippet language="JavaScript">
+devServer: {
+  historyApiFallback: true,
+  port: 8090,
+  proxy: {
+    '/api/**': {
+      target: 'http://localhost:5000/',
+      secure: false,
+      pathRewrite: { '^/api': '' }
+    },
+    '/auth/**': {
+      target: 'http://localhost:5001/',
+      secure: false,
+      pathRewrite: { '^/auth': '' }
+    },
+    '/fn/**': {
+      target: 'https://fn.saintsxctf.com/',
+      secure: true,
+      changeOrigin: true,
+      pathRewrite: { '^/fn': '' }
+    },
+    '/asset/**': {
+      target: 'https://asset.saintsxctf.com/',
+      secure: true,
+      changeOrigin: true,
+      pathRewrite: { '^/asset': '' }
+    },
+    '/uasset/**': {
+      target: 'https://uasset.saintsxctf.com/dev/',
+      secure: true,
+      changeOrigin: true,
+      pathRewrite: { '^/uasset': '' }
+    },
+    '/s3/**': {
+      target: 'https://s3.amazonaws.com/',
+      secure: true,
+      changeOrigin: true,
+      pathRewrite: { '^/s3': '' }
+    },
+  }
+}
+</CodeSnippet>
+<p>
+This configuration specifies that the local development server for the application runs on port <strong>8090</strong>.
+It also creates a reverse proxy server for API requests, which is configured under the
+<code className="jarombek-inline-code">proxy</code> object.  In development and production, the reverse proxy server is
+created with Nginx, and is configured in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+nginx.conf">nginx.conf</a> file.  I wrote an article on <a href="https://jarombek.com/blog/sep-24-2021-nginx-docker">
+reverse proxy servers written with Nginx</a> if you want to learn more.
+</p>
 <SectionTitle title="Application Directory Structure">Application Directory Structure</SectionTitle>
+<p>
+React code for my SaintsXCTF application exists in a <a href="https://github.com/AJarombek/saints-xctf-web/tree/
+master/src">src</a> directory.  The codebase has the following folder structure:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-15-21-directory-structure.png"/>
+</figure>
 <SectionTitle title="React Components">React Components</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
