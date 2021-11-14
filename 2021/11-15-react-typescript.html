@@ -201,6 +201,107 @@ master/src">src</a> directory.  The codebase has the following folder structure:
 <figure>
 <img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-15-21-directory-structure.png"/>
 </figure>
+<p>
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.html">index.html</a> is the entrypoint to
+the web application, and <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.tsx">index.tsx</a>
+bootstraps the React application.
+</p>
+<p>
+The subdirectories inside <strong>src</strong> contain TypeScript application code.  <a href="https://github.com/
+AJarombek/saints-xctf-web/tree/master/src/components">components</a> contains React components used by the
+application.  <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/containers">containers</a> also
+contains React components, however these are top-level components, one for each page in the application.
+<a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/datasources">datasources</a> configures
+<a href="https://axios-http.com/docs/instance">axios instances</a> for each API used by the application<sup>9</sup>.
+These instances determine how HTTP requests are routed and behaviors to take on requests and responses.
+<a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/hooks">hooks</a> contains custom React hooks
+which are reused throughout the application.  <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/
+redux">redux</a> configures Redux as the state management system for the application.  <a href="https://github.com/
+AJarombek/saints-xctf-web/tree/master/src/styles">styles</a> contains global JSS styles and variables which are reused
+in component stylesheets.  Finally, <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/utils">
+utils</a> contains reusable TypeScript functions which are shared amongst components.
+</p>
 <SectionTitle title="React Components">React Components</SectionTitle>
+<p>
+Let’s look at some React components written in TypeScript.  One of the basic components in my application is a custom
+checkbox.  The <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/components/shared/CheckBox">
+checkbox component</a>, named <code className="jarombek-inline-code">CheckBox</code>, is shown below.
+</p>
+<CodeSnippet language="TypeScript">
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import styles from './styles';
+import classNames from 'classnames';
+import { ClassValue } from 'classnames/types';
+
+interface Props {
+  id?: string;
+  checked: boolean;
+  onChange: (e: React.MouseEvent&lt;HTMLDivElement, MouseEvent>) => void;
+  className?: ClassValue;
+}
+
+const useStyles = createUseStyles(styles);
+
+const CheckBox: React.FunctionComponent&lt;Props> = ({ id, checked, onChange, className }) => {
+  const classes = useStyles();
+
+  return (
+    &lt;div className={classNames(classes.checkBox, className)} onClick={onChange}>
+      &lt;input type="checkbox" id={id} className={classes.input} checked={checked} />
+      &lt;span>{checked && &lt;p>&#x4e;&lt;/p>}&lt;/span>
+    &lt;/div>
+  );
+};
+
+export default CheckBox;
+</CodeSnippet>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-15-21-checkbox-component.png"/>
+</figure>
+<p>
+<code className="jarombek-inline-code">CheckBox</code> is a straightforward functional React component.  In this
+article I assume that you understand the basics concepts of the <a href="https://jarombek.com/blog?query=React&page=1">
+React</a> library.  However, I will go over the aspects of the code which are specific to TypeScript.  First, let’s
+consider how a JavaScript equivalent of <code className="jarombek-inline-code">CheckBox</code> would be written.
+</p>
+<CodeSnippet language="JavaScript">
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import styles from './styles';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+
+const useStyles = createUseStyles(styles);
+
+const CheckBox = ({ id, checked, onChange, className }) => {
+  const classes = useStyles();
+
+  return (
+    &lt;div className={classNames(classes.checkBox, className)} onClick={onChange}>
+      &lt;input type="checkbox" id={id} className={classes.input} checked={checked} />
+      &lt;span>{checked && &lt;p>&#x4e;&lt;/p>}&lt;/span>
+    &lt;/div>
+  );
+};
+
+CheckBox.propTypes = {
+  id: PropTypes.string,
+  checked: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired,
+  className: PropTypes.string
+};
+
+export default CheckBox;
+</CodeSnippet>
+<p>
+The JavaScript and TypeScript versions of <code className="jarombek-inline-code">CheckBox</code> are very similar.  The
+differences relate to type definitions.  For example, in TypeScript, <code className="jarombek-inline-code">
+CheckBox</code> is given the type <code className="jarombek-inline-code">React.FunctionComponent&lt;Props></code>,
+while the JavaScript code does not supply an explicit type.  In TypeScript, <code className="jarombek-inline-code">
+Props</code> is also an explicitly defined type, created as an <code className="jarombek-inline-code">interface</code>.
+In React, the type of props are specified using the <code className="jarombek-inline-code">CheckBox.propTypes</code>
+syntax with assistance from the <code className="jarombek-inline-code">PropTypes</code> library.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
