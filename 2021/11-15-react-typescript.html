@@ -221,6 +221,61 @@ AJarombek/saints-xctf-web/tree/master/src/styles">styles</a> contains global JSS
 in component stylesheets.  Finally, <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/utils">
 utils</a> contains reusable TypeScript functions which are shared amongst components.
 </p>
+<p>
+The final piece of configuration is a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/.eslintrc.js">
+.eslintrc.js</a> file for ESLint and Prettier.  ESLint is a linter which analyzes JavaScript and TypeScript code and
+detects any issues or formatting mistakes.  Engineers are able to set which rules they want tested, such as the maximum
+number of characters on a line and whether to use single quotes or double quotes.  Prettier is a code formatter which
+can operate with ESLint.  Therefore, Prettier can automatically reformat code, making it match all the ESLint rules.
+</p>
+<p>
+By default, ESLint analyzes JavaScript code.  However, a <code className="jarombek-inline-code">
+@typescript-eslint/eslint-parser</code> npm package can be installed to allow ESLint to analyze TypeScript code.
+TypeScript also has its own set of default linting rules, which are found in a <code className="jarombek-inline-code">
+@typescript-eslint/eslint-plugin</code> npm package.  The ESLint configuration for my application is shown below.  You
+can adapt it to you application needs and code formatting preferences.
+</p>
+<CodeSnippet language="JavaScript">
+module.exports = {
+    parser: "@typescript-eslint/parser",
+    extends: [
+        'plugin:react/recommended',
+        'plugin:@typescript-eslint/recommended',
+        'prettier/@typescript-eslint'
+    ],
+    parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        ecmaFeatures: {
+            jsx: true
+        }
+    },
+    settings: {
+        react: {
+            version: 'detect'
+        }
+    },
+    plugins: [
+        "prettier",
+        "react-hooks"
+    ],
+    rules: {
+        "max-len": ["error", { "code": 120 }],
+        "quotes": ["error", "single", { "avoidEscape": true }],
+        "react/prop-types": ["off"],
+        "react/no-unescaped-entities": ["off"],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "@typescript-eslint/camelcase": ["off"],
+        "prettier/prettier": ["error", {
+            "singleQuote": true,
+            "printWidth": 120,
+            "trailingComma": "none",
+        }]
+    },
+    ignorePatterns: ['webpack.config.js', 'webpack.parts.js', 'jest.config.js']
+};
+</CodeSnippet>
 <SectionTitle title="React Components">React Components</SectionTitle>
 <p>
 Let’s look at some React components written in TypeScript.  One of the basic components in my application is a custom
@@ -303,5 +358,66 @@ Props</code> is also an explicitly defined type, created as an <code className="
 In React, the type of props are specified using the <code className="jarombek-inline-code">CheckBox.propTypes</code>
 syntax with assistance from the <code className="jarombek-inline-code">PropTypes</code> library.
 </p>
+<p>
+Functions defined within components also take advantage of TypeScript’s explicit type definitions.  For example, I have
+a component named <code className="jarombek-inline-code">UploadFile</code> which allows users to upload pictures.  It
+responds to DOM events such as a click or file drag and drop.  The full component code is on GitHub, with the DOM event
+listeners shown below.
+</p>
+<CodeSnippet language="TypeScript">
+const handleDragEnter = (e: React.DragEvent&lt;HTMLDivElement>): void => {
+  e.preventDefault();
+  e.stopPropagation();
+  setDragCounter((count) => ++count);
+};
+
+const handleDragLeave = (e: React.DragEvent&lt;HTMLDivElement>): void => {
+  e.preventDefault();
+  e.stopPropagation();
+  setDragCounter((count) => --count);
+};
+
+const handleDragOver = (e: React.DragEvent&lt;HTMLDivElement>): void => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
+const handleDrop = (e: React.DragEvent&lt;HTMLDivElement>): void => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (e.dataTransfer.files?.length) {
+    setFile(e.dataTransfer.files[0]);
+    e.dataTransfer.clearData();
+    setDragCounter(0);
+  }
+};
+
+const handleClickUpload = (): void => {
+  if (fileInputRef?.current) {
+    fileInputRef.current.click();
+  }
+};
+
+const handleFileInput = (e: React.ChangeEvent&lt;HTMLInputElement>): void => {
+  setFile(e.target.files[0]);
+};
+</CodeSnippet>
+<p>
+Event listener argument type definitions such as <code className="jarombek-inline-code">
+React.DragEvent&lt;HTMLDivElement></code> or <code className="jarombek-inline-code">
+React.ChangeEvent&lt;HTMLInputElement></code> are unique to TypeScript and do not exist or be enforced in JavaScript
+code.  The event listener return types, which in my case are <code className="jarombek-inline-code">void</code>, are
+also not enforced or explicitly written in JavaScript.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+As the code shows, the biggest benefit of using TypeScript in React applications is type safety, specifically static
+type analysis.  With TypeScript, subtle runtime type errors such as calling <code className="jarombek-inline-code">
+string</code> methods on <code className="jarombek-inline-code">number</code> types are avoided, getting caught during
+code compilation.  Configuring a React application with TypeScript is also relatively easy.  Best of all, existing
+JavaScript applications can slowly be transformed into TypeScript, since both languages can coexist together.
+TypeScript code can import JavaScript code, and vice versa.  You can view all the code for my SaintsXCTF React
+application on <a href="https://github.com/AJarombek/saints-xctf-web">GitHub</a>.
+</p>
 </div>
