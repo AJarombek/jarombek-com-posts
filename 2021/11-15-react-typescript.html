@@ -1,13 +1,13 @@
 <div>
 <Note type="info">
 This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
-<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You DO NOT
-need to read prior articles in the series to fully understand this article.
+ <a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You <strong>DO NOT</strong>
+ need to read prior articles in the series to fully understand this article.
 </Note>
 <p>
 I recently rewrote my web application <a href="https://saintsxctf.com/">saintsxctf.com</a> using React and TypeScript.
 This article looks at how the application is configured and walks through some React code.  All the code for the
-website exists in the <a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
+website exists in a <a href="https://github.com/AJarombek/saints-xctf-web">GitHub</a> repository.
 </p>
 <SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
 <ul>
@@ -35,10 +35,10 @@ website exists in the <a href="https://github.com/AJarombek/saints-xctf-web">sai
 The TypeScript React application for SaintsXCTF is bundled with Webpack and transpiled with Babel.  My React
 application is <strong>not</strong> configured with <code className="jarombek-inline-code">create-react-app</code>.
 This approach requires more time and knowledge of React, Webpack, TypeScript, and Babel from the engineer, with the
-benefit of increased customization.  The application is also an npm package, meaning that it is configured with a
-<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json">package.json</a> file.  Note that both
-<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L106">typescript</a> and
-<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L35">react</a> are specified as
+benefit of increased customization.  The application is also an npm package, and therefore has a
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json">package.json</a> configuration file.  Note that both
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L106">Typescript</a> and
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json#L35">React</a> are specified as
 application dependencies.
 </p>
 <p>
@@ -75,18 +75,18 @@ Let’s look through the configuration properties within <code className="jaromb
 TypeScript code are placed in a <strong>dist</strong> directory within the repository.
 <code className="jarombek-inline-code">"sourceMap": true</code> enables source maps, which are useful for debugging
 <sup>3</sup>.  <code className="jarombek-inline-code">"declaration": false</code> specifies that JavaScript files
-created from the TypeScript code don’t require corresponding type definition (<strong>*.d.ts</strong>) files<sup>4</sup>.
-This is because the codebase isn’t used as a third party library;  Instead, it is read by the web browser when users
-navigate to the website.  <code className="jarombek-inline-code">"noImplicitAny": true</code> helps enforce type safety,
-<code className="jarombek-inline-code">"module": "ES6"</code> sets the JavaScript module system to use for compiled
+created from TypeScript code don’t require corresponding type definition (<strong>*.d.ts</strong>) files<sup>4</sup>.
+This is because the codebase isn’t used as a third party library;  instead, it is read by a web browser when users
+navigate to the website.  <code className="jarombek-inline-code">"noImplicitAny": true</code> helps enforce type safety.
+  <code className="jarombek-inline-code">"module": "ES6"</code> sets the JavaScript module system to use for compiled
 code.  <code className="jarombek-inline-code">"target": "ES2020"</code> sets the target JavaScript version of the
 compiled JavaScript code, and <code className="jarombek-inline-code">"jsx": "react"</code> converts all JSX code to the
 equivalent JavaScript React library functions.
 </p>
 <p>
 The final piece of the TypeScript configuration file is <code className="jarombek-inline-code">exclude</code>, which
-specifies that TypeScript files in certain directories are not part of the TypeScript program.  These include the
-external dependencies (<code className="jarombek-inline-code">node_modules</code>), unit tests
+specifies that TypeScript files in certain directories are not part of the TypeScript program.  Excluded directories
+ are external dependencies (<code className="jarombek-inline-code">node_modules</code>), unit tests
 (<code className="jarombek-inline-code">test</code>), and end to end tests (<code className="jarombek-inline-code">
 cypress</code>).
 </p>
@@ -99,7 +99,7 @@ master/package.json#L105">package.json</a>.  My application's Webpack configurat
 <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/webpack.parts.js">webpack.parts.js</a>.  Inside
 <strong>webpack.config.js</strong>, <code className="jarombek-inline-code">ts-loader</code> is configured to transpile
 TypeScript code to JavaScript code with the <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
-webpack.config.js#L32-L43">following code</a>:
+webpack.config.js#L32-L43">following setup</a>:
 </p>
 <CodeSnippet language="JavaScript">
 {
@@ -120,7 +120,7 @@ This code configures Webpack loaders to be applied to certain file patterns.  Th
 expression <code className="jarombek-inline-code">/\.ts(x?)$/</code>, matching Typescript files with
 <strong>.ts</strong> and <strong>.tsx</strong> file extensions.  Webpack loaders preprocess files by performing
 transformations on code<sup>5,6</sup>.  This step is executed prior to Webpack bundling the code.  The two
-loaders specified to execute on TypeScript files in the code above are <code className="jarombek-inline-code">
+loaders specified to execute on TypeScript files are <code className="jarombek-inline-code">
 babel-loader</code> and <code className="jarombek-inline-code">ts-loader</code>.
 </p>
 <p>
@@ -140,8 +140,8 @@ reloading of the webpage.  This means that whenever TypeScript files in the appl
 application automatically reloads with the latest changes.  This makes development a breeze!
 <strong>webpack-dev-server</strong> is configured in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/
 master/webpack.config.js#L116-L155">webpack.config.js</a> file and is run from a terminal with the
-<code className="jarombek-inline-code">webpack-dev-server --hot --inline --env local</code> command.  The configuration
-code is shown below.
+<code className="jarombek-inline-code">webpack-dev-server --hot --inline --env local</code> command.  Its configuration
+ is shown below.
 </p>
 <CodeSnippet language="JavaScript">
 devServer: {
@@ -191,49 +191,21 @@ It also creates a reverse proxy server for API requests, which is configured und
 <code className="jarombek-inline-code">proxy</code> object.  In development and production, the reverse proxy server is
 created with Nginx, and is configured in a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
 nginx.conf">nginx.conf</a> file.  I wrote an article on <a href="https://jarombek.com/blog/sep-24-2021-nginx-docker">
-reverse proxy servers written with Nginx</a> if you want to learn more.
-</p>
-<SectionTitle title="Application Directory Structure">Application Directory Structure</SectionTitle>
-<p>
-React code for my SaintsXCTF application exists in a <a href="https://github.com/AJarombek/saints-xctf-web/tree/
-master/src">src</a> directory.  The codebase has the following folder structure:
-</p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-15-21-directory-structure.png"/>
-</figure>
-<p>
-<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.html">index.html</a> is the entrypoint to
-the web application, and <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.tsx">index.tsx</a>
-bootstraps the React application.
+Nginx reverse proxy servers</a> if you want to learn more.
 </p>
 <p>
-The subdirectories inside <strong>src</strong> contain TypeScript application code.  <a href="https://github.com/
-AJarombek/saints-xctf-web/tree/master/src/components">components</a> contains React components used by the
-application.  <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/containers">containers</a> also
-contains React components, however these are top-level components, one for each page in the application.
-<a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/datasources">datasources</a> configures
-<a href="https://axios-http.com/docs/instance">axios instances</a> for each API used by the application<sup>9</sup>.
-These instances determine how HTTP requests are routed and behaviors to take on requests and responses.
-<a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/hooks">hooks</a> contains custom React hooks
-which are reused throughout the application.  <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/
-redux">redux</a> configures Redux as the state management system for the application.  <a href="https://github.com/
-AJarombek/saints-xctf-web/tree/master/src/styles">styles</a> contains global JSS styles and variables which are reused
-in component stylesheets.  Finally, <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/utils">
-utils</a> contains reusable TypeScript functions which are shared amongst components.
-</p>
-<p>
-The final piece of configuration is a <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/.eslintrc.js">
+The final piece of configuration is an <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/.eslintrc.js">
 .eslintrc.js</a> file for ESLint and Prettier.  ESLint is a linter which analyzes JavaScript and TypeScript code and
 detects any issues or formatting mistakes.  Engineers are able to set which rules they want tested, such as the maximum
-number of characters on a line and whether to use single quotes or double quotes.  Prettier is a code formatter which
-can operate with ESLint.  Therefore, Prettier can automatically reformat code, making it match all the ESLint rules.
+number of characters on a line and whether to use single quotes or double quotes for strings.  Prettier is a code formatter which
+can operate with ESLint.  Therefore, Prettier can automatically reformat code to match all the ESLint rules.
 </p>
 <p>
 By default, ESLint analyzes JavaScript code.  However, a <code className="jarombek-inline-code">
-@typescript-eslint/eslint-parser</code> npm package can be installed to allow ESLint to analyze TypeScript code.
+@typescript-eslint/eslint-parser</code> npm package can be installed, allowing ESLint to analyze TypeScript code.
 TypeScript also has its own set of default linting rules, which are found in a <code className="jarombek-inline-code">
 @typescript-eslint/eslint-plugin</code> npm package.  The ESLint configuration for my application is shown below.  You
-can adapt it to you application needs and code formatting preferences.
+can adapt it to your application needs and code formatting preferences.
 </p>
 <CodeSnippet language="JavaScript">
 module.exports = {
@@ -276,6 +248,34 @@ module.exports = {
     ignorePatterns: ['webpack.config.js', 'webpack.parts.js', 'jest.config.js']
 };
 </CodeSnippet>
+<SectionTitle title="Application Directory Structure">Application Directory Structure</SectionTitle>
+<p>
+React code for my SaintsXCTF application exists in a <a href="https://github.com/AJarombek/saints-xctf-web/tree/
+master/src">src</a> directory.  The codebase has the following folder structure:
+</p>
+<figure>
+<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-15-21-directory-structure.png"/>
+</figure>
+<p>
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.html">index.html</a> is the entrypoint to
+the web application, and <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.tsx">index.tsx</a>
+bootstraps the React application.
+</p>
+<p>
+The subdirectories inside <strong>src</strong> contain TypeScript application code.  <a href="https://github.com/
+AJarombek/saints-xctf-web/tree/master/src/components">components</a> contains React components used by the
+application.  <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/containers">containers</a> also
+contains React components, however these are top-level components, one for each page in the application.
+<a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/datasources">datasources</a> configures
+<a href="https://axios-http.com/docs/instance">axios instances</a> for each API used by the application<sup>9</sup>.
+These instances determine how HTTP requests are routed and define actions to take on requests and responses.
+<a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/hooks">hooks</a> contains custom React hooks
+which are reused throughout the application.  <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/
+redux">redux</a> configures Redux as the state management system for the application.  <a href="https://github.com/
+AJarombek/saints-xctf-web/tree/master/src/styles">styles</a> contains global JSS styles and variables which are reused
+in component stylesheets.  Finally, <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/utils">
+utils</a> contains reusable TypeScript functions which are shared amongst components.
+</p>
 <SectionTitle title="React Components">React Components</SectionTitle>
 <p>
 Let’s look at some React components written in TypeScript.  One of the basic components in my application is a custom
@@ -316,9 +316,9 @@ export default CheckBox;
 </figure>
 <p>
 <code className="jarombek-inline-code">CheckBox</code> is a straightforward functional React component.  In this
-article I assume that you understand the basics concepts of the <a href="https://jarombek.com/blog?query=React&page=1">
-React</a> library.  However, I will go over the aspects of the code which are specific to TypeScript.  First, let’s
-consider how a JavaScript equivalent of <code className="jarombek-inline-code">CheckBox</code> would be written.
+article, I assume that you understand basics concepts of the <a href="https://jarombek.com/blog?query=React&page=1">
+React</a> library.  However, I will go over aspects of the code which are specific to TypeScript.  First, let’s
+consider how a JavaScript equivalent of <code className="jarombek-inline-code">CheckBox</code> is written.
 </p>
 <CodeSnippet language="JavaScript">
 import React from 'react';
@@ -355,66 +355,53 @@ differences relate to type definitions.  For example, in TypeScript, <code class
 CheckBox</code> is given the type <code className="jarombek-inline-code">React.FunctionComponent&lt;Props></code>,
 while the JavaScript code does not supply an explicit type.  In TypeScript, <code className="jarombek-inline-code">
 Props</code> is also an explicitly defined type, created as an <code className="jarombek-inline-code">interface</code>.
-In React, the type of props are specified using the <code className="jarombek-inline-code">CheckBox.propTypes</code>
+In JavaScript, types of props are specified using the <code className="jarombek-inline-code">CheckBox.propTypes</code>
 syntax with assistance from the <code className="jarombek-inline-code">PropTypes</code> library.
 </p>
 <p>
 Functions defined within components also take advantage of TypeScript’s explicit type definitions.  For example, I have
 a component named <code className="jarombek-inline-code">UploadFile</code> which allows users to upload pictures.  It
-responds to DOM events such as a click or file drag and drop.  The full component code is on GitHub, with the DOM event
-listeners shown below.
+responds to DOM events such as page clicks or files being dragged and dropped.  The full component code is on
+ <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/components/shared/UploadFile">GitHub</a>, with
+ the DOM event listeners shown below.
 </p>
 <CodeSnippet language="TypeScript">
 const handleDragEnter = (e: React.DragEvent&lt;HTMLDivElement>): void => {
-  e.preventDefault();
-  e.stopPropagation();
-  setDragCounter((count) => ++count);
+  ...
 };
 
 const handleDragLeave = (e: React.DragEvent&lt;HTMLDivElement>): void => {
-  e.preventDefault();
-  e.stopPropagation();
-  setDragCounter((count) => --count);
+  ...
 };
 
 const handleDragOver = (e: React.DragEvent&lt;HTMLDivElement>): void => {
-  e.preventDefault();
-  e.stopPropagation();
+  ...
 };
 
 const handleDrop = (e: React.DragEvent&lt;HTMLDivElement>): void => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  if (e.dataTransfer.files?.length) {
-    setFile(e.dataTransfer.files[0]);
-    e.dataTransfer.clearData();
-    setDragCounter(0);
-  }
+  ...
 };
 
 const handleClickUpload = (): void => {
-  if (fileInputRef?.current) {
-    fileInputRef.current.click();
-  }
+  ...
 };
 
 const handleFileInput = (e: React.ChangeEvent&lt;HTMLInputElement>): void => {
-  setFile(e.target.files[0]);
+  ...
 };
 </CodeSnippet>
 <p>
 Event listener argument type definitions such as <code className="jarombek-inline-code">
 React.DragEvent&lt;HTMLDivElement></code> or <code className="jarombek-inline-code">
-React.ChangeEvent&lt;HTMLInputElement></code> are unique to TypeScript and do not exist or be enforced in JavaScript
-code.  The event listener return types, which in my case are <code className="jarombek-inline-code">void</code>, are
+React.ChangeEvent&lt;HTMLInputElement></code> are unique to TypeScript and do not exist and are not enforced in JavaScript
+code.  The event listener return types, in my case <code className="jarombek-inline-code">void</code>, are
 also not enforced or explicitly written in JavaScript.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 As the code shows, the biggest benefit of using TypeScript in React applications is type safety, specifically static
 type analysis.  With TypeScript, subtle runtime type errors such as calling <code className="jarombek-inline-code">
-string</code> methods on <code className="jarombek-inline-code">number</code> types are avoided, getting caught during
+string</code> methods on <code className="jarombek-inline-code">number</code> types are avoided; instead, these errors are caught during
 code compilation.  Configuring a React application with TypeScript is also relatively easy.  Best of all, existing
 JavaScript applications can slowly be transformed into TypeScript, since both languages can coexist together.
 TypeScript code can import JavaScript code, and vice versa.  You can view all the code for my SaintsXCTF React

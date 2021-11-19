@@ -5,16 +5,16 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 </Note>
 <p>
 At its core, SaintsXCTF is a web application that allows users to log their running workouts, openly express how they
-felt while running, and encourage and support the running careers of their teammates.  From a user perspective, the
-website is the most important part of the SaintsXCTF technology stack, as it is what they interact with every day and
-depend on being functional.
+felt while running, and encourage and support teammates.  From a user perspective, the
+website is the most important part of the SaintsXCTF technology stack, since it is what they interact with every day and
+depend on being operational.
 </p>
 <p>
 When I wrote the first version of the <a href="https://saintsxctf.com/">saintsxctf.com</a> website, I was a senior in
-college who had just begun learning web development.  I was also new to UI design.  Over time this inexperience became
-more and more apparent when viewing the first version of the website and its underlying code.  I knew when designing
-the second version of the website, I not only needed to follow best engineering practices, but also make an elegant UI
-design.
+ college who just began learning web development.  I was also new to user interface (UI) design and user experience (UX)
+ design.  Over time, this inexperience became more and more apparent when viewing the first version of the website and
+ its underlying code.  While designing the second version of the website, I knew not only did I need to follow best
+ engineering practices, but I also had to make an elegant user interface.
 </p>
 <p>
 The next five articles in the SaintsXCTF series are devoted solely to the website and its React codebase.  This article
@@ -44,14 +44,14 @@ gives an overview of the technologies used in the frontend code and a walkthroug
 <SectionTitle title="Technology Overview">Technology Overview</SectionTitle>
 <p>
 Version 2.0 of the SaintsXCTF web application uses the <a href="https://jarombek.com/blog?query=react&page=1">React.js</a>
-front-end library.  For stylesheets, it uses <a href="https://jarombek.com/blog?query=jss&page=1">JSS</a> (CSS in
+frontend library.  For stylesheets, it uses <a href="https://jarombek.com/blog?query=jss&page=1">JSS</a> (CSS in
 JavaScript).  <a href="https://jarombek.com/blog?query=redux&page=1">Redux</a> is leveraged for state management within
-the React application.  For testing, <a href="https://jarombek.com/blog?query=jest&page=1">Jest</a> is utilized for
-Unit, Integration, and Snapshot tests.  <a href="https://jarombek.com/blog?query=cypress&page=1">Cypress</a> is utilized
-for End to End (E2E) tests.
+the application.  For testing, <a href="https://jarombek.com/blog?query=jest&page=1">Jest</a> is utilized for
+ unit, integration, and snapshot tests.  <a href="https://jarombek.com/blog?query=cypress&page=1">Cypress</a> is utilized
+for end to end (E2E) tests.
 </p>
 <p>
-When I first started creating version 2.0 of the web application, I was writing all the React, Redux, and JSS code in
+When I first started creating version 2.0 of the web application, I wrote all the React, Redux, and JSS code in
 JavaScript.  However, after further consideration, I decided to pivot towards writing all the frontend code in
 TypeScript.  TypeScript is a superset of JavaScript with static type checking and additional language features.
 Nowadays, I often use TypeScript instead of JavaScript to make my code safer and less prone to subtle bugs.  With
@@ -60,13 +60,13 @@ application code, the Jest and Cypress test code is also written in TypeScript.
 </p>
 <p>
 The React application is bundled for distribution with <a href="https://jarombek.com/blog?query=webpack&page=1">
-Webpack</a>.  Locally, the application can be run either using Webpack Dev Server or Docker.  In production, the
+Webpack</a>.  Locally, the application is run either with Webpack Dev Server or Docker.  In production, the
 application runs on a Docker container.  The Docker container configures and runs an Nginx server, which routes
 requests to the React code bundle.  This Docker container is orchestrated using Kubernetes and is part of a larger AWS
 infrastructure.
 </p>
 <p>
-Upcoming articles will look at the web application code in detail, but the codebase is also accessible on GitHub in a
+Upcoming articles look at the web application code in detail, but the codebase is also accessible on GitHub in a
 <a href="https://github.com/AJarombek/saints-xctf-web">saints-xctf-web</a> repository.
 </p>
 <SectionTitle title="Website Overview">Website Overview</SectionTitle>
@@ -74,113 +74,93 @@ Upcoming articles will look at the web application code in detail, but the codeb
 There are two main sections of the <a href="https://saintsxctf.com/">saintsxctf.com</a> website: when there is no user
 session and when a user is signed in.  When there is no user session, the landing page is the home page:
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-home.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-home.png" paddingBottom="true">
+</InlineImage>
 <p>
 When there is a user session, the landing page is the dashboard page:
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-dashboard.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-dashboard.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
-User sessions are determined by a JWT in the browser’s <code className="jarombek-inline-code">localStorage</code>.  The
-JWT token is passed along with all API requests for authentication.  If the JWT is expired or an API call results in an
+User sessions are determined by a JWT in the browser's <code className="jarombek-inline-code">localStorage</code>.
+ JWT tokens are passed along with all API requests for authentication.  If the JWT is expired or an API call results in an
 unauthenticated error, the JWT is removed and the user is signed out.
 </p>
 <p>
 A signed out user has the option to sign in or register.  Both sign in and registration have their own pages.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-sign-in.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-register.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-sign-in.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-register.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
-As shown previously, signed in users are navigated to a dashboard page, which shows the latest exercise logs uploaded
-by the team.  It also gives them multiple navigation options.  Since the main purpose of the website is to allow users
+As shown previously, signed in users are navigated to a dashboard page, which shows the latest exercise logs.
+  It also gives them multiple navigation options.  Since the main purpose of the website is to allow users
 to write exercise logs, there is a page with an exercise log form.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-log-1.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-log-2.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-log-1.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-log-2.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
-Each user has a profile page.  Profile pages consist of multiple tabs, each of which shows a different view to the
+Each user has a profile page.  A profile page consists of multiple tabs, each showing a different view to the
 user.  Tabs include exercise logs, statistics, a weekly chart, and a monthly calendar.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-profile-logs.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-profile-calendar.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-profile-chart.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-profile-stats.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-profile-logs.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-profile-calendar.png" paddingTop="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-profile-chart.png" paddingTop="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-profile-stats.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
 If the profile page corresponds to the signed in user, an additional administrative tab is viewable, allowing the user
 to edit their profile.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-profile-edit.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-profile-edit.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
 Each user is a member of zero to many teams, and each team consists of one or many groups.  These groups also get their
 own pages with multiple tabs.  One way to navigate to a group page is by clicking on the <strong>Teams</strong> link in
-the navigation bar, which displays all the teams the user is a member of and all the corresponding groups.
+the navigation bar, which displays all the teams the user is a member of and the corresponding groups.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-teams.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-teams.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
-From here, a group page can be accessed.  For example, the following screenshots show all the tabs on the
-<strong>Admin</strong> group page within the team <strong>St. Lawrence Cross Country and Track & Field</strong>.
+From here, group pages are accessible.  For example, the following screenshots show all the tabs on the
+<strong>Alumni</strong> group page within the team <strong>St. Lawrence Cross Country and Track & Field</strong>.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-group-logs.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-group-members.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-group-leaderboard.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-group-stats.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-group-logs.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-group-members.png" paddingTop="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-group-leaderboard.png" paddingTop="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-group-stats.png" paddingTop="true" paddingBottom="true">>
+</InlineImage>
 <p>
 The website also has an admin feature, where certain users are designated as administrators for specific groups.  If a
 user is an administrator, they can access a separate section of the website.  The admin section starts with a page that
 lists all the groups for which the user is an administrator.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-admin.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-admin.png" paddingTop="true" paddingBottom="true">>
+</InlineImage>
 <p>
 From this page, group admin pages are selectable.  Group admin pages have multiple tabs, giving users different ways to
-alter the groups, change memberships, and invite new users to the website.
+alter the group, change memberships, and invite new users to the website.
 </p>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-admin-users.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-admin-invite.png"/>
-</figure>
-<figure>
-<img className="jarombek-blog-image" src="https://asset.jarombek.com/posts/11-1-21-saintsxctf-admin-edit.png"/>
-</figure>
+<InlineImage filename="11-1-21-saintsxctf-admin-users.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-admin-invite.png" paddingTop="true">
+</InlineImage>
+<InlineImage filename="11-1-21-saintsxctf-admin-edit.png" paddingTop="true">
+</InlineImage>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-I’m really proud to see all my hard work pay off with the new version of the <a href="https://saintsxctf.com/">
-saintsxctf.com</a> website.  In the next couple articles, I’ll look at the technical details of the website in more
-detail.  If you want a preview of the code, you can view the website code in the <a href="https://github.com/AJarombek/
+I'm really proud to see all my hard work pay off with the new version of <a href="https://saintsxctf.com/">
+saintsxctf.com</a>.  In the next couple articles, I'll look at the technical details of the website in more
+detail.  If you want a preview of the code, you can view the <a href="https://github.com/AJarombek/
 saints-xctf-web">saints-xctf-web</a> repository on GitHub.
 </p>
 </div>
