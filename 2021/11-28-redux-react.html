@@ -1,0 +1,82 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You
+<strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
+</Note>
+<p>
+Redux is a state management pattern that is commonly used in complex React applications.  Redux, based on the Flux
+design pattern, is helpful when application state is shared between many pages of a website and is updated
+frequently<sup>1</sup>.  In my <a href="https://saintsxctf.com/">saintsxctf.com</a> website, Redux is used to store
+application state and use it across all the webpages.  SaintsXCTF is a good example of a website that can benefit from
+Redux;  it needs login information, user preferences, team memberships, group memberships, and more to be shared
+amongst all pages.
+</p>
+<p>
+In this article, I start by going over the basics of Redux.  I’ll also explain the “ducks pattern”, which is an
+approach to writing Redux code.  Then, I’ll walk through the Redux configuration and code in my SaintsXCTF
+application.  All the code for my SaintsXCTF web application is available in a <a href="https://github.com/AJarombek/
+saints-xctf-web">GitHub</a> repository.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">AWS Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">Kubernetes Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/nov-1-2021-saints-xctf-v2-react-web-app">React Web Application Overview</a></li>
+<li><a href="https://jarombek.com/blog/nov-15-2021-react-typescript">Web Application React and TypeScript</a></li>
+<li><strong>Web Application Redux State Configuration</strong></li>
+<li>Web Application Cypress E2E Tests</li>
+<li>Web Application JSS Modular Design</li>
+<li>Flask Python API</li>
+<li>Flask API Testing</li>
+<li>Flask API Docker & Docker Compose Configuration</li>
+<li>Function API Using API Gateway & Lambda</li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>IOS Application Updates and Learning Experiences</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
+<li>Post-Deployment Challenges & Future Improvements</li>
+</ul>
+<SectionTitle title="Introduction to Redux">Introduction to Redux</SectionTitle>
+<p>
+Redux is an open-source JavaScript library based on the Flux design pattern.
+</p>
+<Definition word="Flux">
+<p>
+Flux is a web-development design pattern and architecture which is an alternative to the MVC (Model View Controller)
+pattern<sup>2,3</sup>.  Flex maintains application state in one or many <strong>stores</strong>.  Stores are updated
+with <strong>actions</strong>, which contain new state data and instructions for updating a store<sup>4</sup>.  Actions
+are passed to stores via a <strong>dispatcher</strong>.  Once actions reach the store, the application state is updated
+accordingly, and any views that use the application state are re-rendered.
+</p>
+<p>
+Flux creates a unidirectional flow of data, beginning with an event on the UI, such as a button click. UI events
+trigger actions, with travel through the dispatcher to a store. Finally, the UI updates according to the new state in
+the store.  If you want to understand Flux in more detail, I recommend reading the official <a href="https://
+facebook.github.io/flux/docs/in-depth-overview">In-Depth Overview</a>.
+</p>
+</Definition>
+<Definition word="Redux">
+<p>
+Redux is based on the Flux design pattern with a few key differences.  Unlike Flux, Redux consists of a single store
+containing an immutable state object.  Redux also does not have dispatchers.  Instead, Redux has
+<strong>reducers</strong>.  Reducers are functions which take an action and the existing state as arguments.  During
+the execution of a reducer function, a new state object is created and returned<sup>5</sup>.
+</p>
+<p>
+Similar to Flux, Redux follows a unidirectional data flow.  Once again, actions are created when UI events occur.
+Actions pass data to the store, the state in the store is updated with the help of a reducer, and the UI is updated
+accordingly.
+</p>
+</Definition>
+<p>
+Let’s describe the main components of Redux in more detail.  These components include <strong>actions</strong>,
+<strong>action creators</strong>, <strong>reducers</strong>, and <strong>the store</strong>.
+</p>
+<SectionTitle title="Ducks Pattern">Ducks Pattern</SectionTitle>
+<SectionTitle title="Redux Application Setup">Redux Application Setup</SectionTitle>
+<SectionTitle title="Redux State Management Code">Redux State Management Code</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
