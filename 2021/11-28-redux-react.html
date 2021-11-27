@@ -75,6 +75,70 @@ accordingly.
 Let’s describe the main components of Redux in more detail.  These components include <strong>actions</strong>,
 <strong>action creators</strong>, <strong>reducers</strong>, and <strong>the store</strong>.
 </p>
+<InlineImage filename="11-28-21-redux-components.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<ComparisonTable title="Redux Components">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Actions
+</h5>
+<div className="jarombek-cte-body">
+<p>
+Actions are JavaScript objects which describe how to update the application state in the Redux store.  Action objects
+have a <code className="jarombek-inline-code">type</code> field, which is a string that identifies the action.  Actions
+often have additional fields with instructions on how to update the state or data to add to the state.  For example,
+an action to sign in a user and place their username in the application state may look like
+<code className="jarombek-inline-code">{type: "SIGN_IN", username: "andy"}</code>.
+</p>
+<p>
+Actions are dispatched to the Redux store.  The Redux store invokes a reducer function corresponding to the
+action.  This reducer returns a new application state with changes made, which are determined by the action.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Action Creators
+</h5>
+<div className="jarombek-cte-body">
+<p>
+Action creators are functions that create Redux action objects.  They simplify the creation of actions by encapsulating
+the logic for building an action of a specific type within a single function.  For example, the action
+<code className="jarombek-inline-code">{type: "SIGN_IN", username: "andy"}</code> can be built from an action creator
+<code className="jarombek-inline-code">signIn()</code> that takes a username as an argument.
+</p>
+<p>
+Sometimes, action creators perform more complex logic, such as performing asynchronous operations to external services
+and interfaces; for example, an action creator may invoke an API and create actions based on the response.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Reducers
+</h5>
+<div className="jarombek-cte-body">
+<p>
+Reducers are functions that create new state objects.  Reducers take two arguments: an action object and an existing
+state object.  The reducer creates a copy of the existing state object and applies changes specified in the action.
+The return value of the reducer is the new state object, which replaces the existing state object in the Redux store.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Store
+</h5>
+<div className="jarombek-cte-body">
+<p>
+Redux contains a single store, which holds the application state.  Application state is immutable, i.e. an application
+state object cannot be modified.  To change the state in the store, a new state object replaces the entire existing
+state object.  New state objects are created with the help of reducer functions.  Reducer functions are called when
+actions are dispatched to the store.
+</p>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
 <SectionTitle title="Ducks Pattern">Ducks Pattern</SectionTitle>
 <SectionTitle title="Redux Application Setup">Redux Application Setup</SectionTitle>
 <SectionTitle title="Redux State Management Code">Redux State Management Code</SectionTitle>
