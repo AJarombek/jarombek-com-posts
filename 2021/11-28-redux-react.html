@@ -139,8 +139,93 @@ actions are dispatched to the store.
 </div>
 </ComparisonTableEntry>
 </ComparisonTable>
+<p>
+When using Redux in a React application, the <a href="https://react-redux.js.org/tutorials/quick-start">React Redux</a>
+library is often used to simplify the configuration and usage of Redux.  I utilize React Redux in my SaintsXCTF
+application.
+</p>
 <SectionTitle title="Ducks Pattern">Ducks Pattern</SectionTitle>
+<p>
+The <strong>ducks pattern</strong> relates to the file layout of Redux code.  In older applications, Redux code was
+often grouped into separate directories for actions, reducers, and action creators<sup>6</sup>.  With the ducks
+pattern, actions, reducers, and action creators exist in the same files.  However, code is logically grouped in
+separate files.
+</p>
+<p>
+For example, my SaintsXCTF application has a <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/
+redux/modules">redux/modules</a> directory which contains all my Redux TypeScript files which follow the ducks
+pattern.  Each file in this directory relates to a specific feature of the application.  The <a href="https://
+github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/groups.ts">groups.ts</a> file, for example, contains
+actions, reducers, and action creators that relate to group pages on the website (user’s in SaintsXCTF can be members
+of one or many groups).
+</p>
+<p>
+The following code snippet is an abbreviated version of <strong>groups.ts</strong>:
+</p>
+<CodeSnippet language="TypeScript">
+// groups.ts
+
+// Actions
+const GET_GROUP_REQUEST = 'saints-xctf-web/groups/GET_GROUP_REQUEST';
+...
+
+// Action Types
+interface GetGroupRequestAction {
+  type: typeof GET_GROUP_REQUEST;
+  groupId: number;
+}
+
+...
+
+// Reducers
+function getGroupRequestReducer(state: GroupState, action: GetGroupRequestAction): GroupState {
+  const existingGroupState = state.group[action.groupId] ?? {};
+
+  return {
+    ...state,
+    group: {
+      ...state.group,
+      [action.groupId]: {
+        ...existingGroupState,
+        isFetching: true,
+        lastUpdated: moment().unix(),
+        serverError: null
+      }
+    }
+  };
+}
+
+...
+
+export default function reducer(state = initialState, action: GroupActionTypes): GroupState {
+  switch (action.type) {
+    case GET_GROUP_REQUEST:
+      return getGroupRequestReducer(state, action);
+    ...
+    default:
+      return state;
+  }
+}
+
+// Action Creators
+export function getGroupRequest(groupId: number): GetGroupRequestAction {
+  return {
+    type: GET_GROUP_REQUEST,
+    groupId
+  };
+}
+
+...
+</CodeSnippet>
 <SectionTitle title="Redux Application Setup">Redux Application Setup</SectionTitle>
+<p>
+Redux is configured with the React application using the <a href="https://react-redux.js.org/tutorials/quick-start">
+React Redux</a> library.  Both <code className="jarombek-inline-code">react-redux</code> and
+<code className="jarombek-inline-code">@types/react-redux</code> are specified as dependencies to the application in
+the <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json">package.json</a> file.  The
+configuration of Redux begins in the entrypoint of the React application, <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/master/src/index.tsx#L35-L48">index.ts</a>.
+</p>
 <SectionTitle title="Redux State Management Code">Redux State Management Code</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
