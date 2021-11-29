@@ -224,7 +224,76 @@ React Redux</a> library.  Both <code className="jarombek-inline-code">react-redu
 <code className="jarombek-inline-code">@types/react-redux</code> are specified as dependencies to the application in
 the <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json">package.json</a> file.  The
 configuration of Redux begins in the entrypoint of the React application, <a href="https://github.com/AJarombek/
-saints-xctf-web/blob/master/src/index.tsx#L35-L48">index.ts</a>.
+saints-xctf-web/blob/master/src/index.tsx#L35-L48">index.ts</a>.  A simplified version of the code is shown below.
+</p>
+<CodeSnippet language="TypeScript">
+import React from 'react';
+import { render } from 'react-dom';
+import configureStore from './redux/store';
+import { Provider } from 'react-redux';
+
+const store = configureStore();
+
+const RoutedApp = (): JSX.Element => {
+  return (
+    &lt;Provider store={store}>
+        &lt;App />
+    &lt;/Provider>
+  );
+};
+
+render(&lt;RoutedApp />, document.getElementById('react-container'));
+
+export default RoutedApp;
+</CodeSnippet>
+<p>
+I extracted all the details unrelated to Redux from this code, with the complete version available on
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.tsx">GitHub</a>.  The React Redux library
+supplies a <code className="jarombek-inline-code">&lt;Provider /></code> component, which makes the Redux store
+available to all components in the application<sup>7</sup>.  As you will see later on, the Redux store is accessible
+via React hooks.
+</p>
+<p>
+<code className="jarombek-inline-code">&lt;Provider /></code> is used at the top level of the application, right after
+bootstrapping React onto the DOM with the <code className="jarombek-inline-code">render()</code> method call.
+<code className="jarombek-inline-code">&lt;Provider /></code> takes a required prop
+<code className="jarombek-inline-code">store</code>, which is the Redux store for the application.  In my case, the
+Redux store is created with the line <code className="jarombek-inline-code">const store = configureStore()</code>.
+<code className="jarombek-inline-code">configureStore()</code> is a custom function, which is shown below.
+</p>
+<CodeSnippet language="TypeScript">
+import { createBrowserHistory } from 'history';
+import { createStore, applyMiddleware, Store } from 'redux';
+import { routerMiddleware } from 'connected-react-router';
+import { createLogger } from 'redux-logger';
+import thunkMiddleware from 'redux-thunk';
+import reducer from './modules/reducers';
+
+export const history = createBrowserHistory();
+
+export default function configureStore(): Store {
+  const loggerMiddleware = createLogger();
+  const middleware = [routerMiddleware(history), loggerMiddleware, thunkMiddleware];
+
+  const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
+  const store = createStoreWithMiddleware(reducer(history));
+
+  return store;
+}
+</CodeSnippet>
+<p>
+The code above is a simplified version of a <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/src/redux/store.ts">store.ts</a> file in my application.  <code className="jarombek-inline-code">
+configureStore()</code> is a function that returns a Redux store of type <code className="jarombek-inline-code">
+Store</code>.  You will often see variants of the code above in Redux tutorials.  Let’s walk through this code line
+by line.
+</p>
+<p>
+<code className="jarombek-inline-code">const loggerMiddleware = createLogger()</code> creates a logging middleware for
+Redux using the <strong>redux-logger</strong> library.  Redux middleware is a means for adding third party extensions
+to Redux.  These third party libraries are invoked after actions are dispatched to the store, but before the store
+invokes a reducer function<sup>8</sup>.  <strong>redux-logger</strong> provides middleware for logging actions to the
+console output of a web browser.  This is very helpful for debugging.
 </p>
 <SectionTitle title="Redux State Management Code">Redux State Management Code</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
