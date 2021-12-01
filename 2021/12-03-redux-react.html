@@ -295,6 +295,78 @@ to Redux.  These third party libraries are invoked after actions are dispatched 
 invokes a reducer function<sup>8</sup>.  <strong>redux-logger</strong> provides middleware for logging actions to the
 console output of a web browser.  This is very helpful for debugging.
 </p>
+<p>
+<code className="jarombek-inline-code">loggerMiddleware</code> is utilized in the line
+<code className="jarombek-inline-code">const middleware = [routerMiddleware(history), loggerMiddleware, thunkMiddleware]
+</code>.  <code className="jarombek-inline-code">middleware</code> is a list of Redux middlewares used in my
+application.  <code className="jarombek-inline-code">routerMiddleware</code> is a React Router middleware, and
+<code className="jarombek-inline-code">thunkMiddleware</code> is a middleware for writing asynchronous code that
+interacts with the Redux store (for example, dispatching an action based on the result of an API request)<sup>9</sup>.
+</p>
+<p>
+<code className="jarombek-inline-code">const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore)</code>
+is a complicated looking piece of code.  <code className="jarombek-inline-code">applyMiddleware</code> is a higher
+order function (it is a function that returns another function).  It takes my list of Redux middlewares as an argument.
+The result of <code className="jarombek-inline-code">applyMiddleware</code> is a function that takes
+<code className="jarombek-inline-code">createStore</code> as an argument.  The result is
+<code className="jarombek-inline-code">createStoreWithMiddleware</code>, which itself is a function.
+</p>
+<p>
+<code className="jarombek-inline-code">createStoreWithMiddleware()</code> is used to create a Redux store with our list
+of middlewares applied.  The line <code className="jarombek-inline-code">createStoreWithMiddleware(reducer(history))</code>
+accomplishes this task.  <code className="jarombek-inline-code">reducer()</code> is a function that creates all the
+Redux reducers for my application.  It also takes a browser history object as an argument
+(<code className="jarombek-inline-code">history</code>) for use with the React Router middleware.
+</p>
+<p>
+The following code shows the <code className="jarombek-inline-code">reducer()</code> function (named here as
+<code className="jarombek-inline-code">createRootReducer</code>).  It exists in a <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/master/src/redux/modules/reducers.ts">reducers.ts</a> file in my repository.
+</p>
+<CodeSnippet language="TypeScript">
+import { combineReducers, Reducer } from 'redux';
+import { connectRouter } from 'connected-react-router';
+
+import auth from './auth';
+import registration from './registration';
+import logs from './logs';
+import memberships from './memberships';
+import notifications from './notifications';
+import profile from './profile';
+import rangeView from './rangeView';
+import teams from './teams';
+import groups from './groups';
+import { History } from 'history';
+
+const createRootReducer = (history: History): Reducer =>
+  combineReducers({
+    router: connectRouter(history),
+    auth,
+    registration,
+    logs,
+    memberships,
+    notifications,
+    profile,
+    rangeView,
+    teams,
+    groups
+  });
+
+export default createRootReducer;
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">createRootReducer()</code> is a function that creates a reducing function for
+the Redux store<sup>10</sup>.  In other words, it creates the Redux reducer for my application.
+<code className="jarombek-inline-code">createRootReducer()</code> returns the result of
+<code className="jarombek-inline-code">combineReducers()</code>, which is a utility function built-in to Redux.
+<code className="jarombek-inline-code">combineReducers()</code> takes an object of reducer functions as an argument.
+It merges these reducers and returns a single reducer function that can be used by the Redux store.  With the help of
+<code className="jarombek-inline-code">combineReducers()</code>, reducers can be split across multiple files, allowing
+engineers to follow the Ducks pattern.  As you can see, I have separate reducer functions for different application
+features (<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/auth.ts">auth</a>,
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/registration.ts">registration</a>,
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/logs.ts">logs</a>, etc.).
+</p>
 <SectionTitle title="Redux State Management Code">Redux State Management Code</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
