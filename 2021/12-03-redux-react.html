@@ -363,10 +363,135 @@ the Redux store<sup>10</sup>.  In other words, it creates the Redux reducer for 
 It merges these reducers and returns a single reducer function that can be used by the Redux store.  With the help of
 <code className="jarombek-inline-code">combineReducers()</code>, reducers can be split across multiple files, allowing
 engineers to follow the Ducks pattern.  As you can see, I have separate reducer functions for different application
-features (<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/auth.ts">auth</a>,
-<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/registration.ts">registration</a>,
-<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/logs.ts">logs</a>, etc.).
+features (<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/auth.ts#L506-L551">auth</a>,
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/registration.ts#L218-L243">registration</a>,
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/logs.ts#L660-L709">logs</a>, etc.).
+Each of these files is referred to as a Redux Ducks module<sup>11</sup>.
 </p>
-<SectionTitle title="Redux State Management Code">Redux State Management Code</SectionTitle>
+<SectionTitle title="Redux Ducks Modules">Redux Ducks Modules</SectionTitle>
+<p>
+Each Redux Ducks module is a JavaScript or TypeScript file containing Redux actions, action creators, and a reducer.
+When using TypeScript, a module can also contain type definitions for actions.  For example, in my React/TypeScript
+application, one of my Redux Ducks modules is <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/
+redux/modules/teams.ts">teams.ts</a>.
+</p>
+<p>
+<strong>teams.ts</strong> contains Redux logic for a single feature of my website - teams that users can be members
+of.  My Redux Ducks modules are logically split into five sections: actions, action types, reducers, action creators,
+and redux thunk functions.
+</p>
+<SubTitle title="Actions">Actions</SubTitle>
+<p>
+In Redux, actions have a type property, which is a unique identifier for the type.  The
+<code className="jarombek-inline-code">type</code> property is a string; all the type strings used in a module are
+defined at the top of the module.  For example, these are the type strings defined in my <a href="https://github.com/
+AJarombek/saints-xctf-web/blob/master/src/redux/modules/teams.ts#L15-L23">teams.ts</a> module.
+</p>
+<CodeSnippet language="TypeScript">
+const GET_TEAM_REQUEST = 'saints-xctf-web/teams/GET_TEAM_REQUEST';
+const GET_TEAM_SUCCESS = 'saints-xctf-web/teams/GET_TEAM_SUCCESS';
+const GET_TEAM_FAILURE = 'saints-xctf-web/teams/GET_TEAM_FAILURE';
+const GET_TEAM_GROUPS_REQUEST = 'saints-xctf-web/teams/GET_TEAM_GROUPS_REQUEST';
+const GET_TEAM_GROUPS_SUCCESS = 'saints-xctf-web/teams/GET_TEAM_GROUPS_SUCCESS';
+const GET_TEAM_GROUPS_FAILURE = 'saints-xctf-web/teams/GET_TEAM_GROUPS_FAILURE';
+const SEARCH_TEAMS_REQUEST = 'saints-xctf-web/teams/SEARCH_TEAMS_REQUEST';
+const SEARCH_TEAMS_SUCCESS = 'saints-xctf-web/teams/SEARCH_TEAMS_SUCCESS';
+const SEARCH_TEAMS_FAILURE = 'saints-xctf-web/teams/SEARCH_TEAMS_FAILURE';
+</CodeSnippet>
+<p>
+All actions follow the naming convention <code className="jarombek-inline-code">'application-name/module-name/ACTION_NAME'</code>.
+While Redux does not mandate this convention, I find it elegant and effective in removing the risk of naming conflicts
+between actions in different modules.
+</p>
+<p>
+Action type strings are used by action creators and reducers.  Action creators use action type strings when
+building an action object.  Reducers use action type strings to determine which reducer function to invoke based on
+the action dispatched to the Redux store.
+</p>
+<SubTitle title="Action Types">Action Types</SubTitle>
+<p>
+Action types are used by TypeScript to ensure that action objects are well-typed.  In other words, an action type
+defines an interface for an action, containing all the properties in an action and their corresponding types.  The
+following code shows all the action types defined in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/src/redux/modules/teams.ts#L25-L87">teams.ts</a> module.
+</p>
+<CodeSnippet language="TypeScript">
+interface GetTeamRequestAction {
+  type: typeof GET_TEAM_REQUEST;
+  teamName: string;
+}
+
+interface GetTeamSuccessAction {
+  type: typeof GET_TEAM_SUCCESS;
+  team: Team;
+  teamName: string;
+}
+
+interface GetTeamFailureAction {
+  type: typeof GET_TEAM_FAILURE;
+  serverError: string;
+  teamName: string;
+}
+
+interface GetTeamGroupsRequestAction {
+  type: typeof GET_TEAM_GROUPS_REQUEST;
+  teamName: string;
+}
+
+interface GetTeamGroupsSuccessAction {
+  type: typeof GET_TEAM_GROUPS_SUCCESS;
+  groups: Group[];
+  teamName: string;
+}
+
+interface GetTeamGroupsFailureAction {
+  type: typeof GET_TEAM_GROUPS_FAILURE;
+  serverError: string;
+  teamName: string;
+}
+
+interface SearchTeamsRequestAction {
+  type: typeof SEARCH_TEAMS_REQUEST;
+  text: string;
+}
+
+interface SearchTeamsSuccessAction {
+  type: typeof SEARCH_TEAMS_SUCCESS;
+  teams: Team[];
+  text: string;
+}
+
+interface SearchTeamsFailureAction {
+  type: typeof SEARCH_TEAMS_FAILURE;
+  serverError: string;
+  text: string;
+}
+
+type TeamActionTypes =
+  | GetTeamRequestAction
+  | GetTeamSuccessAction
+  | GetTeamFailureAction
+  | GetTeamGroupsRequestAction
+  | GetTeamGroupsSuccessAction
+  | GetTeamGroupsFailureAction
+  | SearchTeamsRequestAction
+  | SearchTeamsSuccessAction
+  | SearchTeamsFailureAction;
+</CodeSnippet>
+<p>
+Each action has a corresponding <code className="jarombek-inline-code">interface</code>, containing a
+<code className="jarombek-inline-code">type</code> property and zero to many additional properties.  For example, type
+<code className="jarombek-inline-code">GetTeamSuccessAction</code> has a
+<code className="jarombek-inline-code">type</code> along with <code className="jarombek-inline-code">team</code> and
+<code className="jarombek-inline-code">teamName</code> properties.  All these types are unioned together into a single
+<code className="jarombek-inline-code">TeamActionTypes</code> type.
+</p>
+<p>
+Action types are used extensively when defining reducers and action creators.
+</p>
+<SubTitle title="Reducers">Reducers</SubTitle>
+<SubTitle title="Action Creators">Action Creators</SubTitle>
+<SubTitle title="Redux Thunk Functions">Redux Thunk Functions</SubTitle>
+<SectionTitle title="React Redux State Management Code">React Redux State Management Code</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
