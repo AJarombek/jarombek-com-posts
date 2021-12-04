@@ -490,7 +490,134 @@ Each action has a corresponding <code className="jarombek-inline-code">interface
 Action types are used extensively when defining reducers and action creators.
 </p>
 <SubTitle title="Reducers">Reducers</SubTitle>
+<p>
+In each module, there is a root reducer and one or many reducer functions.  The root reducer decides which reducer
+function to invoke based on the type of an action dispatched to the Redux store.  The following code shows the root
+reducer for my <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/
+teams.ts#L244-L267">teams.ts</a> module.
+</p>
+<CodeSnippet language="TypeScript">
+export default function reducer(state = initialState, action: TeamActionTypes): TeamState {
+  switch (action.type) {
+    case GET_TEAM_REQUEST:
+      return getTeamRequestReducer(state, action);
+    case GET_TEAM_SUCCESS:
+      return getTeamSuccessReducer(state, action);
+    case GET_TEAM_FAILURE:
+      return getTeamFailureReducer(state, action);
+    case GET_TEAM_GROUPS_REQUEST:
+      return getTeamGroupsRequestReducer(state, action);
+    case GET_TEAM_GROUPS_SUCCESS:
+      return getTeamGroupsSuccessReducer(state, action);
+    case GET_TEAM_GROUPS_FAILURE:
+      return getTeamGroupsFailureReducer(state, action);
+    case SEARCH_TEAMS_REQUEST:
+      return getSearchTeamsRequestReducer(state, action);
+    case SEARCH_TEAMS_SUCCESS:
+      return getSearchTeamsSuccessReducer(state, action);
+    case SEARCH_TEAMS_FAILURE:
+      return getSearchTeamsFailureReducer(state, action);
+    default:
+      return state;
+  }
+}
+</CodeSnippet>
+<p>
+The root reducer is written as the <code className="jarombek-inline-code">reducer()</code> function.
+<code className="jarombek-inline-code">reducer()</code> is the main export of the Redux Ducks module.
+<code className="jarombek-inline-code">reducer()</code> takes two arguments: <code className="jarombek-inline-code">
+state</code> and <code className="jarombek-inline-code">action</code>.  <code className="jarombek-inline-code">
+state</code> holds the existing state of the Redux store for my application, and <code className="jarombek-inline-code">
+action</code> holds an action object that was dispatched to the store.  The <code className="jarombek-inline-code">
+type</code> property of the <code className="jarombek-inline-code">action</code> object determines which reducer
+function to invoke from the root reducer.
+</p>
+<p>
+<code className="jarombek-inline-code">action.type</code> is used in the switch statement to select a reducer function.
+For example, if an action <code className="jarombek-inline-code">{type: "GET_TEAM_REQUEST", teamName: "saintsxctf"}</code>
+is dispatched to the Redux store and the reducer is invoked, <code className="jarombek-inline-code">
+getTeamRequestReducer(state, action)</code> will be called.  <code className="jarombek-inline-code">
+getTeamRequestReducer()</code> has the following implementation:
+</p>
+<CodeSnippet language="TypeScript">
+function getTeamRequestReducer(state: TeamState, action: GetTeamRequestAction): TeamState {
+  const existingTeamState = state.team[action.teamName] ?? {};
+
+  return {
+    ...state,
+    team: {
+      ...state.team,
+      [action.teamName]: {
+        ...existingTeamState,
+        isFetching: true,
+        lastUpdated: moment().unix(),
+        serverError: null
+      }
+    }
+  };
+}
+</CodeSnippet>
+<p>
+This reducer function creates a new state object using the existing <code className="jarombek-inline-code">state</code>
+and the JavaScript spread (<code className="jarombek-inline-code">...</code>) notation.  Based on the contents of the
+<code className="jarombek-inline-code">action</code> object argument, a field <code className="jarombek-inline-code">
+team[action.teamName]</code> is added to the application state.
+</p>
+<p>
+If the existing state was:
+</p>
+<CodeSnippet language="JavaScript">
+{
+  team: {},
+  search: {}
+}
+</CodeSnippet>
+<p>
+The new state after a <code className="jarombek-inline-code">{type: "GET_TEAM_REQUEST", teamName: "saintsxctf"}</code>
+action is dispatched may look like:
+</p>
+<CodeSnippet language="JavaScript">
+{
+  team: {
+    saintsxctf: {
+      isFetching: true,
+      lastUpdated: 1638565750,
+      serverError: null
+    }
+  },
+  search: {}
+}
+</CodeSnippet>
 <SubTitle title="Action Creators">Action Creators</SubTitle>
+<p>
+Every action type has a corresponding action creator, which is a function that creates an action object.  The following
+code shows some of the action creators available in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/
+master/src/redux/modules/teams.ts#L269-L337">teams.ts</a> module.
+</p>
+<CodeSnippet language="TypeScript">
+export function getTeamRequest(teamName: string): GetTeamRequestAction {
+  return {
+    type: GET_TEAM_REQUEST,
+    teamName
+  };
+}
+
+export function getTeamSuccess(team: Team, teamName: string): GetTeamSuccessAction {
+  return {
+    type: GET_TEAM_SUCCESS,
+    team,
+    teamName
+  };
+}
+
+export function getTeamFailure(serverError: string, teamName: string): GetTeamFailureAction {
+  return {
+    type: GET_TEAM_FAILURE,
+    serverError,
+    teamName
+  };
+}
+</CodeSnippet>
 <SubTitle title="Redux Thunk Functions">Redux Thunk Functions</SubTitle>
 <SectionTitle title="React Redux State Management Code">React Redux State Management Code</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
