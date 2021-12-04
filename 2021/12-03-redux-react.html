@@ -75,7 +75,7 @@ accordingly.
 Let’s describe the main components of Redux in more detail.  These components include <strong>actions</strong>,
 <strong>action creators</strong>, <strong>reducers</strong>, and <strong>the store</strong>.
 </p>
-<InlineImage filename="11-28-21-redux-components.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="12-3-21-redux-components.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <ComparisonTable title="Redux Components">
 <ComparisonTableEntry>
@@ -618,7 +618,147 @@ export function getTeamFailure(serverError: string, teamName: string): GetTeamFa
   };
 }
 </CodeSnippet>
+<p>
+Basically, action creators parameterize actions.  Return values of action creators are often dispatched directly to the
+Redux store.  Other times, they are dispatched as part of Redux Thunk functions.
+</p>
 <SubTitle title="Redux Thunk Functions">Redux Thunk Functions</SubTitle>
+<p>
+Redux Thunk functions use the <a href="https://github.com/reduxjs/redux-thunk">redux-thunk</a> library,  Redux thunk
+functions are action creators, except they return a function instead of an action<sup>12</sup>.  These functions can
+run asynchronous code and dispatch actions to the Redux store depending on certain conditions.  The main use of
+<strong>redux-thunk</strong> in my application is to make API calls, and to dispatch actions dependent on API
+responses.
+</p>
+<p>
+For example, the following Redux Thunk function makes a call to my API, retrieving a team with a specific name.  It
+exists in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/teams.ts#L339-L357">
+teams.ts</a> module.
+</p>
+<CodeSnippet language="TypeScript">
+export function getTeam(teamName: string): AppThunk&lt;Promise&lt;void>, TeamState> {
+  return async function (dispatch: Dispatch): Promise&lt;void> {
+    dispatch(getTeamRequest(teamName));
+
+    try {
+      const response = await api.get(`teams/${teamName}`);
+      const { team } = response.data;
+
+      dispatch(getTeamSuccess(team, teamName));
+    } catch (error) {
+      const { response } = error as AxiosError;
+      const serverError = response?.data?.error ?? 'An unexpected error occurred.';
+
+      if (response?.status !== 403) {
+        dispatch(getTeamFailure(serverError, teamName));
+      }
+    }
+  };
+}
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">getTeam()</code> is a Redux Thunk function that returns an
+<code className="jarombek-inline-code">async</code> function.  This function takes a single argument called
+<code className="jarombek-inline-code">dispatch</code>, which is a Redux function that dispatches actions to the
+store.  <code className="jarombek-inline-code">dispatch</code> is used three times.  The first,
+<code className="jarombek-inline-code">dispatch(getTeamRequest(teamName))</code>, dispatches an action indicating that
+the API request is about to be made.  This is useful for implementing loading icons or screens.  Inside the
+<code className="jarombek-inline-code">try… catch</code> block, <code className="jarombek-inline-code">
+await api.get(`teams/${teamName}`)</code> makes the actual API call.  The second dispatch,
+<code className="jarombek-inline-code">dispatch(getTeamSuccess(team, teamName))</code>, dispatches an action when the
+API call is successful.  The <code className="jarombek-inline-code">team</code> variable comes from the API response
+body.  The third dispatch, <code className="jarombek-inline-code">dispatch(getTeamFailure(serverError, teamName))</code>
+dispatches an action when the API call returns an error.
+</p>
+<p>
+If you look through the Redux Thunk functions in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+src/redux/modules/teams.ts#L339-L397">teams.ts</a> module or throughout the <a href="https://github.com/AJarombek/
+saints-xctf-web/tree/master/src/redux/modules">entire application</a>, you will notice that most follow this same
+pattern.
+</p>
 <SectionTitle title="React Redux State Management Code">React Redux State Management Code</SectionTitle>
+<p>
+When working with Redux in a React application, the <strong>react-redux</strong> library provides React hooks for
+dispatching actions to the Redux store and reading application state from the Redux store.  These React hooks are
+<code className="jarombek-inline-code">useDispatch()</code> and <code className="jarombek-inline-code">
+useSelector()</code>, respectively.
+</p>
+<p>
+Continuing with the example of teams in my application, let's look at the page which displays all the teams that a
+user is a member of.
+</p>
+<InlineImage filename="12-3-21-teams-page.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The following code is for a <code className="jarombek-inline-code">TeamsBody</code> component, which represents the
+page shown above.  The code below is shortened for readability, with the full code available in a
+<a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/components/teams/TeamsBody/TeamsBody.tsx">
+TeamsBody.tsx</a> file in my repository.
+</p>
+<CodeSnippet language="TypeScript">
+import React, { useEffect, useState } from 'react';
+import { GroupMeta, Memberships, RootState, TeamMembership, User, Users } from '../../../redux/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserMemberships } from '../../../redux/modules/profile';
+import { getTeamGroups } from '../../../redux/modules/teams';
+import { useNavigate } from 'react-router-dom';
+
+interface Props {
+  user: User;
+}
+
+const TeamsBody: React.FunctionComponent&lt;Props> = ({ user }) => {
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const userProfiles: Users = useSelector((state: RootState) => state.profile.users);
+  const teams = useSelector((state: RootState) => state.teams.team);
+
+  const [memberships, setMemberships] = useState&lt;TeamMembership[]>(null);
+
+  useEffect(() => {
+    if (userProfiles && user?.username && !userProfiles[user.username]?.memberships) {
+      dispatch(getUserMemberships(user.username));
+    }
+  }, [dispatch, user.username, userProfiles]);
+
+  useEffect(() => {
+    if (userProfiles && user.username) {
+      const membershipDetails: Memberships = userProfiles[user.username]?.memberships ?? {};
+      setMemberships(membershipDetails.teams?.filter((team) => team.status === 'accepted'));
+    }
+  }, [userProfiles, user.username]);
+
+  useEffect(() => {
+    if (memberships) {
+      memberships.forEach((membership: TeamMembership) => {
+        dispatch(getTeamGroups(membership.team_name));
+      });
+    }
+  }, [memberships, dispatch]);
+
+  return (
+    &lt;div>
+      &lt;h3>Select a group.&lt;/h3>
+      &lt;div>
+        {memberships?.map((membership) => (
+          &lt;div key={membership.team_name} data-cypress="teamItem">
+            &lt;h4>{membership.title}&lt;/h4>
+            &lt;div>
+              {teams[membership.team_name]?.groups?.items?.map((group: GroupMeta) => (
+                &lt;div data-cypress="groupItem" onClick={(): void => navigate(`/group/${group.id}`)}>
+                  &lt;p>{group.group_title}&lt;/p>
+                &lt;/div>
+              ))}
+            &lt;/div>
+          &lt;/div>
+        ))}
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default TeamsBody;
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
