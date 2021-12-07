@@ -760,5 +760,31 @@ const TeamsBody: React.FunctionComponent&lt;Props> = ({ user }) => {
 
 export default TeamsBody;
 </CodeSnippet>
+<p>
+First, notice that <code className="jarombek-inline-code">useDispatch()</code> and
+<code className="jarombek-inline-code">useSelector()</code> are imported from <code className="jarombek-inline-code">
+react-redux</code>.  <code className="jarombek-inline-code">useDistpatch()</code> is invoked to get a
+<code className="jarombek-inline-code">dispatch</code> function, with the line <code className="jarombek-inline-code">
+const dispatch = useDispatch()</code>.  On the next two lines, <code className="jarombek-inline-code">useSelector</code>
+is used to retrieve data from the Redux store, specifically user profiles and teams, saved in
+<code className="jarombek-inline-code">userProfiles</code> and <code className="jarombek-inline-code">teams</code>
+variables, respectively.
+</p>
+<p>
+<code className="jarombek-inline-code">dispatch</code> is invoked within <code className="jarombek-inline-code">
+useEffect()</code> React hooks.  <code className="jarombek-inline-code">useEffect()</code> is beyond the scope of this
+article; however, in general terms, this setup dispatches the results of action creators and Redux Thunk functions to
+the Redux store when the webpage loads or React props/state change.  These Redux Thunk functions make the API calls
+that supply data for the front-end application.
+</p>
+<p>
+The return statement is the JSX for the React  component, which is translated into HTML when displayed on a web browser.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Redux is a great way to store complex front-end application state.  It integrates seamlessly with React and TypeScript.
+While I don’t recommend its use for basic applications, any time a website requires state across pages or persisted
+sign in data, I recommend giving Redux a look.  All the front-end code for my application which uses Redux,
+SaintsXCTF, is available on <a href="https://github.com/AJarombek/saints-xctf-web">GitHub</a>.
+</p>
 </div>
