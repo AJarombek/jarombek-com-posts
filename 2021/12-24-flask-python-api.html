@@ -39,6 +39,79 @@ repository.
 <li>Post-Deployment Challenges & Future Improvements</li>
 </ul>
 <SectionTitle title="SaintsXCTF API Overview">SaintsXCTF API Overview</SectionTitle>
+<p>
+The SaintsXCTF API is a REST API that returns JSON structured data.  One of the main design principles I used for the
+API is to include links in the JSON response bodies.  For example, take the entrypoint of the API.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+    "api_name":"saints-xctf-api",
+    "self_link":"/",
+    "versions_link":"/versions"
+}
+</CodeSnippet>
+<p>
+Two links are specified in the JSON response body.  The fields containing links are
+<code className="jarombek-inline-code">self_link</code> and <code className="jarombek-inline-code">versions_link</code>.
+<code className="jarombek-inline-code">self_link</code> specifies the current API endpoint, and
+<code className="jarombek-inline-code">versions_link</code> specifies another endpoint that a user can navigate to.
+This allows users with no knowledge of the API structure to navigate the API without needing to reference external
+documentation.  Following the <strong>/versions</strong> endpoint specified in the
+<code className="jarombek-inline-code">versions_link</code> field gives the following response.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com/versions
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "self":"/versions",
+   "version_1":null,
+   "version_2":"/v2",
+   "version_latest":"/v2"
+}
+</CodeSnippet>
+<p>
+Once again, this API response provides more links to follow.  I’m currently using the second version of my SaintsXCTF
+API, so the remainder of my endpoints exist under the <strong>/v2</strong> route.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com/v2
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "latest":true,
+   "links":"/v2/links",
+   "self":"/v2",
+   "version":2
+}
+</CodeSnippet>
+<p>
+The root <strong>/v2</strong> route gives a bit of metadata about the API, and also provides a link to
+<strong>/v2/links</strong>.  If a user follows this route, they receive a list of all the top-level application
+endpoints in the API.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com/v2
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "activation_code":"/v2/activation_code/links",
+   "comment":"/v2/comments/links",
+   "flair":"/v2/flair/links",
+   "forgot_password":"/v2/forgot_password/links",
+   "group":"/v2/groups/links",
+   "log":"/v2/logs/links",
+   "log_feed":"/v2/log_feed/links",
+   "notification":"/v2/notifications/links",
+   "range_view":"/v2/range_view/links",
+   "self":"/v2/links",
+   "team":"/v2/teams/links",
+   "user":"/v2/users/links"
+}
+</CodeSnippet>
 <SectionTitle title="Flask Overview">Flask Overview</SectionTitle>
 <SectionTitle title="SQLAlchemy Overview">SQLAlchemy Overview</SectionTitle>
 <SectionTitle title="API File Structure">API File Structure</SectionTitle>
