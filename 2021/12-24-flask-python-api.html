@@ -94,7 +94,7 @@ The root <strong>/v2</strong> route gives a bit of metadata about the API, and a
 endpoints in the API.
 </p>
 <CodeSnippet language="Bash">
-curl https://api.saintsxctf.com/v2
+curl https://api.saintsxctf.com/v2/links
 </CodeSnippet>
 <CodeSnippet language="JSON">
 {
@@ -112,6 +112,147 @@ curl https://api.saintsxctf.com/v2
    "user":"/v2/users/links"
 }
 </CodeSnippet>
+<p>
+Let’s say you are navigating through the API and are interested in viewing user routes.  Following the
+<strong>/v2/users/links</strong> route returns all the user endpoints that are available, and what each endpoint is
+used for.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com/v2/users/links
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "endpoints":[
+      {
+         "description":"Get all the users in the database.",
+         "link":"/v2/users",
+         "verb":"GET"
+      },
+      {
+         "description":"Create a new user.",
+         "link":"/v2/users",
+         "verb":"POST"
+      },
+      {
+         "description":"Retrieve a single user with a given username.",
+         "link":"/v2/users/&lt;username>",
+         "verb":"GET"
+      },
+      {
+         "description":"Update a user with a given username.",
+         "link":"/v2/users/&lt;username>",
+         "verb":"PUT"
+      },
+      {
+         "description":"Soft delete a user with a given username.",
+         "link":"/v2/users/soft/&lt;username>",
+         "verb":"DELETE"
+      },
+      ...
+   ],
+   "self":"/v2/users/links"
+}
+</CodeSnippet>
+<p>
+I shortened the API response for brevity.  After viewing this list of API endpoints, a user can determine which ones to
+invoke to match their needs.  Let’s say you decide to invoke the GET endpoint <strong>/v2/users/&lt;username></strong>
+with the username <strong>andy</strong>.  Doing so results in the following response:
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com/v2/users/andy
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "api_index":"/versions",
+   "contact":"andrew@jarombek.com",
+   "error_description":"Unauthorized",
+   "exception":"401 Unauthorized: The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required."
+}
+</CodeSnippet>
+<p>
+Invoking the endpoint resulted in an HTTP 401 error.  Many of the endpoints in my API are protected, requiring a
+temporary token in the <code className="jarombek-inline-code">Authorization</code> header in order to access the API.
+If you don’t supply a token or provide an invalid token, the API returns 401 and 403 errors, respectively.  Providing
+a valid token in the HTTP request header results in the response below.
+</p>
+<CodeSnippet language="Bash">
+curl -H "Authorization: Bearer xxx" https://api.saintsxctf.com/v2/users/andy
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "self":"/v2/users/andy",
+   "user":{
+      "activation_code":"BbXuat",
+      "class_year":2017,
+      "deleted":false,
+      "description":"I sometimes like to run...",
+      "email":"andrew@jarombek.com",
+      "favorite_event":"Shakeout",
+      "first":"Andy",
+      "last":"Jarombek",
+      "last_signin":"2021-05-30 18:42:42",
+      "location":"New York, NY",
+      "member_since":"2016-12-23",
+      "password":"$2b$12$KDaX8hy3P1fZnG9nUVf1TeXw/rJJ4YaEXYdBi.Bx9k8v3DRFeHQ8a",
+      "profilepic_name":"1629931871738.jpg",
+      "salt":"RjJH6PIndLmr8S5sjgGUj8",
+      "subscribed":null,
+      "username":"andy",
+      "week_start":"monday"
+   }
+}
+</CodeSnippet>
+<p>
+I omitted the actual API token, a JWT, from the <code className="jarombek-inline-code">curl</code> command above.  This
+time, the API responded successfully with a JSON object of my user in SaintsXCTF.
+</p>
+<p>
+The SaintsXCTF API is a CRUD (<strong>C</strong>reate <strong>R</strong>ead <strong>U</strong>pdate
+<strong>D</strong>elete) REST API.  Therefore, API endpoints aren’t limited to GET requests, but also POST, PUT, and
+DELETE requests.  The example below is a POST request that creates a new exercise log for my user.
+</p>
+<CodeSnippet language="Bash">
+
+RequestBody='{"username":"andy","first":"Andy","last":"Jarombek","name":"NYRR Night at the Races","location":"New York, NY","date":"2021-12-16","type":"run","distance":10.5,"metric":"miles","time":"00:00:00","feel":6,"description":""}'
+curl -X POST \
+    -d "${RequestBody}" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer xxx" \
+    https://saintsxctf.com/api/v2/logs/
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "added":true,
+   "log":{
+      "date":"2021-12-16",
+      "deleted":false,
+      "description":"",
+      "distance":10.5,
+      "feel":6,
+      "first":"Andy",
+      "last":"Jarombek",
+      "location":"New York, NY",
+      "log_id":47462,
+      "metric":"miles",
+      "miles":10.5,
+      "name":"NYRR Night at the Races",
+      "pace":"00:00:00",
+      "time":"00:00:00",
+      "time_created":"Fri, 17 Dec 2021 22:56:40 GMT",
+      "type":"run",
+      "username":"andy"
+   },
+   "self":"/v2/logs"
+}
+</CodeSnippet>
+<p>
+One of the main objectives of the API is to make it as easy to use and navigate as possible.  This not only improves
+the experience for other users, but also for myself as I revisit and refactor the API codebase.  While adding links to
+the JSON responses makes the API easier to explore, there is still some information that it lacks.  This includes
+authentication mechanisms and documentation of JSON request body structures (such as for the exercise log creation
+request shown above).  This information requires additional documentation.  I am currently working on Swagger API
+documentation for this purpose, and will likely write about Swagger and the OpenAPI specification in a future article.
+</p>
 <SectionTitle title="Flask Overview">Flask Overview</SectionTitle>
 <SectionTitle title="SQLAlchemy Overview">SQLAlchemy Overview</SectionTitle>
 <SectionTitle title="API File Structure">API File Structure</SectionTitle>
