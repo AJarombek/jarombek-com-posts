@@ -254,8 +254,45 @@ request shown above).  This information requires additional documentation.  I am
 documentation for this purpose, and will likely write about Swagger and the OpenAPI specification in a future article.
 </p>
 <SectionTitle title="Flask Overview">Flask Overview</SectionTitle>
+<p>
+Flask is a lightweight web application framework which is commonly used to build REST APIs.  Flask applications are
+written in Python, with the <a href="https://pypi.org/project/Flask/">Flask library</a> at their core.  Flask doesn't
+do much beyond handling routing, so a lot of the API functionality comes from other libraries (such as
+<a href="https://pypi.org/project/Flask-SQLAlchemy/">flask-sqlalchemy</a> for a Database ORM,
+<a href="https://pypi.org/project/Bcrypt-Flask/">flask-bcrypt</a> for bcrypt password hashing.
+</p>
 <SectionTitle title="SQLAlchemy Overview">SQLAlchemy Overview</SectionTitle>
+<p>
+In my API, SQLAlchemy is used for accessing a MySQL database.  I use the
+<a href="https://pypi.org/project/Flask-SQLAlchemy/">flask-sqlalchemy</a> library, which is a wrapper around SQLAlchemy
+that makes it easier to use in a Flask application.
+</p>
+<p>
+SQLAlchemy is an ORM and SQL database library for Python.  SQLAlchemy works with many different database engines; in my
+case, SQLAlchemy is used to query data from MySQL.
+</p>
 <SectionTitle title="API File Structure">API File Structure</SectionTitle>
+<p>
+In my <a href="https://github.com/AJarombek/saints-xctf-api">saints-xctf-api</a> repository, the Flask application
+exists in an <a href="https://github.com/AJarombek/saints-xctf-api/tree/master/api/src">api/src</a> directory.
+</p>
+<InlineImage filename="12-24-21-api-file-structure.png">
+</InlineImage>
+<p>
+The top level directory of the Flask application contains configuration files and infrastructure setup.  The
+infrastructure setup consists of an Nginx reverse-proxy server (<a href="https://github.com/AJarombek/saints-xctf-api/
+blob/master/api/src/nginx.conf">nginx.conf</a>), a uWSGI application server (<a href="https://github.com/AJarombek/
+saints-xctf-api/blob/master/api/src/uwsgi.ini">uwsgi.ini</a>), and Dockerfiles for each.  The configuration files for
+Flask are discussed in the next section.
+</p>
+<p>
+<strong>dao</strong> contains files that follow the Data Access Object (DAO) pattern<sup>1</sup>.  In essence, each DAO
+file consists of a class with methods which interact with the MySQL database using SQLAlchemy.  <strong>model</strong>
+contains models for use in the SQLAlchemy ORM.  Each model is a Python class that corresponds to a table in MySQL.
+<strong>route</strong> defines all the routes (endpoints) in the API.  Each route is bound to a Python function which
+performs the logic needed to return a proper HTTP response.  <strong>test</strong> contains unit and integration tests
+for the API.  <strong>utils</strong> contains reusable utility functions used throughout the API.
+</p>
 <SectionTitle title="Flask Configuration">Flask Configuration</SectionTitle>
 <SectionTitle title="Database Models">Database Models</SectionTitle>
 <SectionTitle title="Data Access Objects">Data Access Objects</SectionTitle>
