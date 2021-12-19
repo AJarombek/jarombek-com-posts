@@ -471,6 +471,95 @@ different HTTPS error codes.  The custom error messages are JSON strings, all of
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/app.py#L64-L147">app.py</a> file.
 </p>
 <SectionTitle title="Database Models">Database Models</SectionTitle>
+<p>
+The Flask API accesses data from a MySQL database using the SQLAlchemy library.  SQLAlchemy contains an ORM (Object
+Relational Mapping), allowing applications to build Python classes representing SQL tables.  Instantiated objects of
+these Python classes (referred to as "model classes") contain a single row of data from the database table.
+</p>
+<p>
+Model classes in my application exist in a <a href="https://github.com/AJarombek/saints-xctf-api/tree/master/api/src/
+model">model</a> directory.  One example model class is <code className="jarombek-inline-code">User</code>, which
+represents a <code className="jarombek-inline-code">user</code> table in the MySQL database.  This model exists in a
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/model/User.py">User.py</a> file.
+</p>
+<CodeSnippet language="Python">
+# User.py
+
+from database import db
+from sqlalchemy import Column
+from sqlalchemy.orm import deferred
+from sqlalchemy.dialects.mysql import LONGBLOB
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+
+    # Data Columns
+    username = Column(db.VARCHAR(20), primary_key=True)
+    first = Column(db.VARCHAR(30), nullable=False, index=True)
+    last = Column(db.VARCHAR(30), nullable=False, index=True)
+    salt = Column(db.VARCHAR(255))
+    password = Column(db.VARCHAR(255), nullable=False)
+    profilepic = deferred(Column(LONGBLOB), group='pictures')
+    profilepic_name = deferred(Column(db.VARCHAR(50)), group='pictures')
+    description = Column(db.VARCHAR(255))
+    member_since = Column(db.DATE, nullable=False)
+    class_year = Column(db.INTEGER, index=True)
+    location = Column(db.VARCHAR(50))
+    favorite_event = Column(db.VARCHAR(20))
+    activation_code = Column(db.VARCHAR(8), nullable=False)
+    email = Column(db.VARCHAR(50), index=True)
+    subscribed = Column(db.CHAR(1))
+    last_signin = Column(db.DATETIME, nullable=False)
+    week_start = Column(db.VARCHAR(15))
+    deleted = Column(db.BOOLEAN)
+
+    # Audit Columns
+    created_date = Column(db.DATETIME)
+    created_user = Column(db.VARCHAR(31))
+    created_app = Column(db.VARCHAR(31))
+    modified_date = Column(db.DATETIME)
+    modified_user = Column(db.VARCHAR(31))
+    modified_app = Column(db.VARCHAR(31))
+    deleted_date = Column(db.DATETIME)
+    deleted_user = Column(db.VARCHAR(31))
+    deleted_app = Column(db.VARCHAR(31))
+</CodeSnippet>
+<p>
+Model classes extend the <code className="jarombek-inline-code">db.Model</code> base class provided by SQLAlchemy.  The
+<code className="jarombek-inline-code">__tablename__</code> field holds the name of the table in MySQL that the model
+is associated with.  The remaining fields are the columns in the table and their associated data types.  For example,
+one column in the <code className="jarombek-inline-code">user</code> table is <code className="jarombek-inline-code">
+username</code>, which holds a <code className="jarombek-inline-code">VARCHAR</code> of length <strong>20</strong>.
+<code className="jarombek-inline-code">username</code> is the primary key of the <code className="jarombek-inline-code">
+user</code> table, since every user has a unique username.  This column is defined as a field in the
+<code className="jarombek-inline-code">User</code> model object with the line <code className="jarombek-inline-code">
+username = Column(db.VARCHAR(20), primary_key=True)</code>.
+</p>
+<p>
+I omitted a few details of the <code className="jarombek-inline-code">User</code> model from the code snippet above.
+First, <code className="jarombek-inline-code">User</code> has an <code className="jarombek-inline-code">__init__</code>
+constructor for <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/model/User.py#L15-L46">
+converting a dictionary to an instance of the model</a>.  Second, <code className="jarombek-inline-code">User</code>
+implements <code className="jarombek-inline-code">__str__</code> and <code className="jarombek-inline-code">
+__repr__</code> methods for <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/model/
+User.py#L87-L103">printing out model objects cleanly in application logs</a>.  Third and finally,
+<code className="jarombek-inline-code">User</code> implements <code className="jarombek-inline-code">__eq__</code> to
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/model/User.py#L105-L137">compare two instances
+for equality</a>.
+</p>
+<p>
+For each table in the MySQL database, my API has two corresponding model classes.  The naming convention for these
+classes is <code className="jarombek-inline-code">TableName</code> and <code className="jarombek-inline-code">
+TableNameData</code>.  For example, the <code className="jarombek-inline-code">user</code> table has
+<code className="jarombek-inline-code">User</code> and <code className="jarombek-inline-code">UserData</code> model
+classes.  The reason for this structure is that the main model class has auditing columns that shouldn’t be included in
+API response bodies.  Therefore, the <code className="jarombek-inline-code">User</code> model class is used to query
+the database, and <code className="jarombek-inline-code">UserData</code> is used in API responses.  Note that many APIs
+won’t require a structure like this, and a single model class per table will suffice.  The
+<code className="jarombek-inline-code">UserData</code> class exists in a <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/master/api/src/model/UserData.py">UserData</a> file.
+</p>
 <SectionTitle title="Data Access Objects">Data Access Objects</SectionTitle>
 <SectionTitle title="API Routes">API Routes</SectionTitle>
 <SectionTitle title="Route Decorators">Route Decorators</SectionTitle>
