@@ -413,6 +413,63 @@ config = {
     'production': ProductionConfig
 }
 </CodeSnippet>
+<p>
+<code className="jarombek-inline-code">config</code> is a dictionary where the keys are environment names and values
+are classes with Flask configuration properties.  In a production environment, the
+<code className="jarombek-inline-code">ProductionConfig</code> class will be the configuration for my Flask application.
+</p>
+<p>
+Back to the <code className="jarombek-inline-code">create_app()</code> function, all the
+<code className="jarombek-inline-code">application.register_blueprint()</code> invocations are used to configure routes
+in the API.  <code className="jarombek-inline-code">register_blueprint()</code> takes a
+<code className="jarombek-inline-code">Blueprint</code> object as an argument.  In Flask, a blueprint is an application
+component which is registered with the main Flask application<sup>2</sup>.  In my application, each blueprint is bound
+to a specific URL and contains all the endpoints under that URL.
+</p>
+<p>
+For example, the call to <code className="jarombek-inline-code">application.register_blueprint(user_route)</code>
+registers a <code className="jarombek-inline-code">user_route</code> blueprint, which is defined in
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/route/userRoute.py#L41">userRoute.py</a>.  The
+creation of the blueprint, which is assigned to the <strong>/v2/users</strong> route, is demonstrated below.
+</p>
+<CodeSnippet language="Python">
+# userRoute.py
+
+from flask import Blueprint
+
+user_route = Blueprint('user_route', __name__, url_prefix='/v2/users')
+</CodeSnippet>
+<p>
+After registering blueprints in the Flask application, I set four additional configuration variables by adding key-value
+pairs to the <code className="jarombek-inline-code">application.config</code> dictionary.  These configuration variables
+are separate from the ones discussed previously, such as those found in <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/master/api/src/config.py">config.py</a>, because they have the same values across all environments.
+</p>
+<p>
+Next, I call <code className="jarombek-inline-code">db.init_app(application)</code>.  This line of code initializes
+SQLAlchemy in the Flask application.  <code className="jarombek-inline-code">db</code> is an instance of
+<code className="jarombek-inline-code">SQLAlchemy</code> from the <strong>flask-sqlalchemy</strong> library, which is
+defined in <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/database.py">database.py</a>.
+</p>
+<CodeSnippet language="Python">
+# database.py
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+</CodeSnippet>
+<p>
+The next line, <code className="jarombek-inline-code">flask_bcrypt.init_app(application)</code>, initializes the Bcrypt
+password hashing algorithm with Flask.  <code className="jarombek-inline-code">application.cli.add_command(test)</code>
+creates a new command to the Flask CLI for testing the application.  The CLI command is defined in a separate
+<a href=https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/commands.py>commands.py</a> file and is invoked
+using a <code className="jarombek-inline-code">python -m flask test</code> shell command.
+</p>
+<p>
+The remainder of the <code className="jarombek-inline-code">create_app()</code> function sets custom error messages for
+different HTTPS error codes.  The custom error messages are JSON strings, all of which can be viewed in the
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/app.py#L64-L147">app.py</a> file.
+</p>
 <SectionTitle title="Database Models">Database Models</SectionTitle>
 <SectionTitle title="Data Access Objects">Data Access Objects</SectionTitle>
 <SectionTitle title="API Routes">API Routes</SectionTitle>
