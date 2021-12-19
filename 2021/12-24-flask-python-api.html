@@ -294,6 +294,125 @@ performs the logic needed to return a proper HTTP response.  <strong>test</stron
 for the API.  <strong>utils</strong> contains reusable utility functions used throughout the API.
 </p>
 <SectionTitle title="Flask Configuration">Flask Configuration</SectionTitle>
+<p>
+The configuration of my Flask application begins with a small file named
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/main.py">main.py</a>.
+</p>
+<CodeSnippet language="Python">
+# main.py
+
+from app import app
+</CodeSnippet>
+<p>
+<strong>main.py</strong> is the entrypoint for the Flask application in the production environment.  A uWSGI
+application server uses this file to run the API.  <strong>main.py</strong> simply imports a variable named
+<code className="jarombek-inline-code">app</code> from <a href="https://github.com/AJarombek/saints-xctf-api/blob/
+master/api/src/app.py">app.py</a>.  <code className="jarombek-inline-code">app</code> is an instance of
+<code className="jarombek-inline-code">Flask</code>, an object representing the Flask application.  I initialize
+<code className="jarombek-inline-code">app</code> in a <code className="jarombek-inline-code">create_app()</code>
+function, found within <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/app.py#L32-L149">
+app.py</a>.
+</p>
+<CodeSnippet language="Python">
+# app.py
+
+def create_app(config_name) -> Flask:
+    """
+    Application factory function for the Flask app.
+    Source: http://flask.pocoo.org/docs/1.0/patterns/appfactories/
+    """
+    application = Flask(__name__)
+    application.config.from_object(config[config_name])
+
+    application.register_blueprint(activation_code_route)
+    application.register_blueprint(api_route)
+    application.register_blueprint(user_route)
+    application.register_blueprint(forgot_password_route)
+    application.register_blueprint(flair_route)
+    application.register_blueprint(log_route)
+    application.register_blueprint(log_feed_route)
+    application.register_blueprint(group_route)
+    application.register_blueprint(comment_route)
+    application.register_blueprint(range_view_route)
+    application.register_blueprint(notification_route)
+    application.register_blueprint(team_route)
+
+    application.config['SQLALCHEMY_DATABASE_URI'] = get_connection_url()
+    application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    application.config['SQLALCHEMY_RECORD_QUERIES'] = True
+    application.config['SLOW_DB_QUERY_TIME'] = 0.5
+
+    db.init_app(application)
+    flask_bcrypt.init_app(application)
+
+    application.cli.add_command(test)
+
+    # Custom Error Handling
+    @application.errorhandler(401)
+    def error_403(ex):
+        """
+        Custom error handler for when 401 HTTP codes occur.
+        :param ex: String representing the error that occurred.
+        :return: JSON describing the error.
+        """
+        return jsonify({
+            'error_description': "Unauthorized",
+            'exception': str(ex),
+            'contact': 'andrew@jarombek.com',
+            'api_index': '/versions'
+        }), 401
+
+    ...
+
+    return application
+
+
+flask_env = os.getenv('FLASK_ENV') or 'local'
+app = create_app(flask_env)
+</CodeSnippet>
+<p>
+I simplified <code className="jarombek-inline-code">create_app()</code> a bit, making it easier to discuss.
+<code className="jarombek-inline-code">create_app()</code> takes a single <code className="jarombek-inline-code">
+config_name</code> argument, which is the environment that the Flask application is run within.  For example, when run
+in production, the value of <code className="jarombek-inline-code">config_name</code> is <strong>production</strong>.
+The first line, <code className="jarombek-inline-code">application = Flask(__name__)</code>, creates an instance of
+<code className="jarombek-inline-code">Flask</code>.  <code className="jarombek-inline-code">application</code> is
+eventually the return value of <code className="jarombek-inline-code">create_app()</code>, and represents the Flask API.
+</p>
+<p>
+The next line, <code className="jarombek-inline-code">application.config.from_object(config[config_name])</code>, sets
+configuration key-value pairs for the Flask application.  The values of the configuration are environment specific.
+<code className="jarombek-inline-code">config[config_name]</code> is a Python object with properties.
+<code className="jarombek-inline-code">config</code> is defined in a <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/master/api/src/config.py">config.py</a> file, as shown below.
+</p>
+<CodeSnippet language="Python">
+# config.py
+
+class LocalConfig:
+    ENV = 'local'
+    AUTH_URL = 'http://saints-xctf-auth:5000'
+    FUNCTION_URL = 'https://dev.fn.saintsxctf.com'
+
+
+class DevelopmentConfig:
+    ENV = 'dev'
+    AUTH_URL = 'https://dev.auth.saintsxctf.com'
+    FUNCTION_URL = 'https://dev.fn.saintsxctf.com'
+
+
+class ProductionConfig:
+    ENV = 'prod'
+    AUTH_URL = 'https://auth.saintsxctf.com'
+    FUNCTION_URL = 'https://fn.saintsxctf.com'
+
+
+config = {
+    'local': LocalConfig,
+    'development': DevelopmentConfig,
+    'production': ProductionConfig
+}
+</CodeSnippet>
 <SectionTitle title="Database Models">Database Models</SectionTitle>
 <SectionTitle title="Data Access Objects">Data Access Objects</SectionTitle>
 <SectionTitle title="API Routes">API Routes</SectionTitle>
