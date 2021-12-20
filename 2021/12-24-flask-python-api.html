@@ -561,7 +561,157 @@ won’t require a structure like this, and a single model class per table will s
 saints-xctf-api/blob/master/api/src/model/UserData.py">UserData</a> file.
 </p>
 <SectionTitle title="Data Access Objects">Data Access Objects</SectionTitle>
+<p>
+Data Access Objects (DAOs) are classes that interface with a data source; in the case of my API, a MySQL database.
+Separate DAOs are used for individual tables or multiple tables with similar business logic.  All the DAOs in my
+application exist in a <a href="https://github.com/AJarombek/saints-xctf-api/tree/master/api/src/dao">dao</a> directory.
+</p>
+<p>
+For business logic related to users, I have a DAO named <a href="https://github.com/AJarombek/saints-xctf-api/blob/
+master/api/src/dao/userDao.py">userDao.py</a>.  <strong>userDao.py</strong> defines a single DAO class named
+<code className="jarombek-inline-code">UserDao</code>.  Most of the methods in <code className="jarombek-inline-code">
+UserDao</code> are related to a <code className="jarombek-inline-code">user</code> table, however there is also some
+logic that alters data in different tables.  A shortened version of <code className="jarombek-inline-code">
+UserDao</code> is shown below.
+</p>
+<CodeSnippet language="Python">
+# userDao.py
+
+from typing import List
+
+from database import db
+from dao.basicDao import BasicDao
+from model.User import User
+
+
+class UserDao:
+
+    @staticmethod
+    def get_users() -> List[User]:
+        """
+        Get a list of all the users in the database.
+        :return: A list containing User model objects.
+        """
+        return User.query.filter(User.deleted.is_(False)).all()
+
+    @staticmethod
+    def get_user_by_username(username: str) -> User:
+        """
+        Get a single user from the database based on their username.
+        :param username: Username which uniquely identifies the user.
+        :return: The result of the database query.
+        """
+        return User.query\
+            .filter_by(username=username)\
+            .filter(User.deleted.is_(False))\
+            .first()
+
+    @staticmethod
+    def add_user(user: User) -> bool:
+        """
+        Add a user if it has a valid activation code.
+        :param user: Object representing a user for the application.
+        :return: True if the user is inserted into the database, False otherwise.
+        """
+        db.session.add(user)
+        return BasicDao.safe_commit()
+
+    @staticmethod
+    def update_user(username: str, user: User) -> bool:
+        """
+        Update a user in the database.  This function does NOT update passwords.
+        :param username: Username which uniquely identifies the user.
+        :param user: Object representing an updated user for the application.
+        :return: True if the user is updated in the database, False otherwise.
+        """
+        db.session.execute(
+            '''
+            UPDATE users SET
+                first=:first,
+                last=:last,
+                email=:email,
+                profilepic_name=:profilepic_name,
+                description=:description,
+                class_year=:class_year,
+                location=:location,
+                favorite_event=:favorite_event,
+                week_start=:week_start
+            WHERE username=:username
+            AND deleted IS FALSE
+            ''',
+            {
+                'first': user.first,
+                'last': user.last,
+                'email': user.email,
+                'profilepic_name': user.profilepic_name,
+                'description': user.description,
+                'class_year': user.class_year,
+                'location': user.location,
+                'favorite_event': user.favorite_event,
+                'week_start': user.week_start,
+                'username': username
+            }
+        )
+        return BasicDao.safe_commit()
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">UserDao</code> contains static methods which interact with MySQL using
+SQLAlchemy (the <code className="jarombek-inline-code">db</code> variable is an instance of
+<code className="jarombek-inline-code">SQLAlchemy</code>).  Two different approaches are used to interact with the
+database.  The first is to use the ORM and the second is to write SQL queries and execute them.  For example,
+<code className="jarombek-inline-code">get_user_by_username()</code> uses the ORM and the
+<code className="jarombek-inline-code">User</code> model class to find a user in the database with a specific
+username.  On the other hand, <code className="jarombek-inline-code">update_user()</code> uses a SQL query to update a
+user in the database.  Which approach is better is often a matter of personal preference.  SQL is often more expressive
+and easier to read for complex queries.  The ORM avoids mixing SQL and Python code, and can be very easy to use for
+simple queries.  The great thing about SQLAlchemy is that it offers both approaches for engineers to use.
+</p>
+<p>
+One final note about the DAOs in my application.  For inserts, updates, and deletes, my DAO methods use a function
+called <code className="jarombek-inline-code">BasicDao.safe_commit()</code>.  This is a custom function that attempts
+to commit one or many changes to the database as a transaction, and performs a rollback if the transaction fails.  The
+code for this function is shown below and exists in <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/
+api/src/dao/basicDao.py">basicDao.py</a>
+</p>
+<CodeSnippet language="Python">
+# basicDao.py
+
+from database import db
+from flask import current_app
+from sqlalchemy.exc import SQLAlchemyError
+
+
+class BasicDao:
+
+    @staticmethod
+    def safe_commit() -> bool:
+        """
+        Safely attempt to commit changes to MySQL.  Rollback in case of a failure.
+        :return: True if the commit was successful, False if a rollback occurred.
+        """
+        try:
+            db.session.commit()
+            current_app.logger.info('SQL Safely Committed')
+            return True
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            current_app.logger.error('SQL Commit Failed!  Rolling back...')
+            current_app.logger.error(error.args)
+            return False
+</CodeSnippet>
 <SectionTitle title="API Routes">API Routes</SectionTitle>
+<p>
+So far, we’ve seen how DAOs access the database and use SQLAlchemy model classes to retrieve, update, create, or delete
+data.  Of course, user’s of the API don’t interface with the DAO directly.  Instead, users call endpoints (routes) in
+the REST API and request for operations to be performed.  These endpoints are defined and configured in the
+<a href="https://github.com/AJarombek/saints-xctf-api/tree/master/api/src/route">route</a> directory of my application.
+</p>
+<p>
+Route files contain functions, each of which represents an endpoint in the API.  Each file also defines a Flask
+blueprint - a component representing a route in the API with subroutes and HTTP methods attached to it.  The blueprint
+object is used to annotate functions in the route file.  These annotations specify which route the function is
+associated with and what HTTP methods it responds to.
+</p>
 <SectionTitle title="Route Decorators">Route Decorators</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
