@@ -708,10 +708,188 @@ the REST API and request for operations to be performed.  These endpoints are de
 </p>
 <p>
 Route files contain functions, each of which represents an endpoint in the API.  Each file also defines a Flask
-blueprint - a component representing a route in the API with subroutes and HTTP methods attached to it.  The blueprint
-object is used to annotate functions in the route file.  These annotations specify which route the function is
-associated with and what HTTP methods it responds to.
+blueprint - a component representing a route in the API with sub-routes and HTTP methods attached to it.  Flask
+blueprints are instantiated as Python objects.  Blueprint objects are used to annotate functions in the route file.
+These annotations specify which route the function is associated with and what HTTP methods it responds to.
 </p>
+<p>
+For example, I have a route file for all the endpoints that provide metadata about the API.  These endpoints exist in a
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/route/apiRoute.py">apiRoute.py</a> file.  A
+shortened version of the route file is shown below.
+</p>
+<CodeSnippet language="Python">
+# apiRoute.py
+
+from flask import Blueprint, jsonify, Response
+
+api_route = Blueprint('api_route', __name__, url_prefix='/')
+
+
+@api_route.route('/', methods=['GET'])
+def api() -> Response:
+    return jsonify({
+        'self_link': '/',
+        'api_name': 'saints-xctf-api',
+        'versions_link': '/versions'
+    })
+
+
+@api_route.route('/versions', methods=['GET'])
+def versions() -> Response:
+    return jsonify({
+        'self': '/versions',
+        'version_latest': '/v2',
+        'version_1': None,
+        'version_2': '/v2'
+    })
+
+
+@api_route.route('/v2', methods=['GET'])
+def version2() -> Response:
+    return jsonify({
+        'self': '/v2',
+        'version': 2,
+        'latest': True,
+        'links': '/v2/links'
+    })
+
+
+@api_route.route('/v2/links', methods=['GET'])
+def links() -> Response:
+    return jsonify({
+        'self': '/v2/links',
+        'activation_code': '/v2/activation_code/links',
+        'comment': '/v2/comments/links',
+        'flair': '/v2/flair/links',
+        'forgot_password': '/v2/forgot_password/links',
+        'group': '/v2/groups/links',
+        'log_feed': '/v2/log_feed/links',
+        'log': '/v2/logs/links',
+        'message_feed': '/v2/message_feed/links',
+        'message': '/v2/messages/links',
+        'notification': '/v2/notifications/links',
+        'range_view': '/v2/range_view/links',
+        'team': '/v2/teams/links',
+        'user': '/v2/users/links'
+    })
+</CodeSnippet>
+<p>
+The Blueprint for the route file is assigned to the variable <code className="jarombek-inline-code">api_route</code> and
+instantiated with a call to its constructor: <code className="jarombek-inline-code">
+Blueprint('api_route', __name__, url_prefix='/')</code>.  This blueprint is assigned to the root route in the API
+(<code className="jarombek-inline-code">'/'</code>) via the <code className="jarombek-inline-code">url_prefix</code>
+keyword argument.
+</p>
+<p>
+The first function, <code className="jarombek-inline-code">api()</code>, configures an endpoint for the route
+<strong>/</strong>.  The endpoint route is a combination of the <code className="jarombek-inline-code">
+url_prefix</code> from the blueprint and the first argument to the <code className="jarombek-inline-code">
+@api_route.route()</code> annotation.  The URL prefix is <strong>/</strong> and the route annotation is
+<strong>/</strong>, which can be simplified to <strong>/</strong>.  The <code className="jarombek-inline-code">
+methods</code> keyword argument to <code className="jarombek-inline-code">@api_route.route()</code> specifies all the
+HTTP methods that the endpoint responds to; in the case of the <strong>/</strong> route, only HTTP GET requests are
+handled.
+</p>
+<p>
+The <code className="jarombek-inline-code">api()</code> method returns a Flask <code className="jarombek-inline-code">
+Response</code> object, representing an HTTP response.  <code className="jarombek-inline-code">api()</code> uses a
+<code className="jarombek-inline-code">jsonify()</code> function from the Flask library to build this response.
+<code className="jarombek-inline-code">jsonify()</code> takes a dictionary as an argument, converts it to JSON, and
+wraps that JSON in a Flask <code className="jarombek-inline-code">Response</code> object.  From the API user
+perspective, navigating to the route <strong>/</strong> returns this JSON object and a HTTP 200 success code.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+    "api_name":"saints-xctf-api",
+    "self_link":"/",
+    "versions_link":"/versions"
+}
+</CodeSnippet>
+<p>
+The other routes in the <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/route/apiRoute.py">
+apiRoute.py</a> file follow a similar pattern of returning static JSON objects.
+</p>
+<p>
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/route/userRoute.py">userRoute.py</a> is a
+more complex route file, including dynamic JSON responses dependent on user inputs and database query results.  It not
+only contains simple HTTP GET requests, but also POST, PUT, and DELETE requests.  A generalized outline of
+<strong>userRoute.py</strong> is shown below.
+</p>
+<CodeSnippet language="Python">
+# userRoute.py
+
+user_route = Blueprint('user_route', __name__, url_prefix='/v2/users')
+
+
+@user_route.route('', methods=['GET', 'POST'])
+@auth_required(enabled_methods=[GET])
+def users_redirect() -> Response:
+    """
+    Redirect endpoints looking for a resource named 'users' to the user routes.
+    :return: Response object letting the caller know where to redirect the request to.
+    """
+    if request.method == 'GET':
+        ''' [GET] /v2/users '''
+        return redirect(url_for('user_route.users'), code=302)
+
+    elif request.method == 'POST':
+        ''' [POST] /v2/users '''
+        return redirect(url_for('user_route.users'), code=307)
+
+
+@user_route.route('/', methods=['GET', 'POST'])
+@auth_required(enabled_methods=[GET])
+def users() -> Response:
+    """
+    Endpoints for searching all the users or creating a user
+    :return: JSON representation of a list of users and relevant metadata
+    """
+    if request.method == 'GET':
+        ''' [GET] /v2/users/ '''
+        return users_get()
+
+    elif request.method == 'POST':
+        ''' [POST] /v2/users/ '''
+        return user_post()
+
+
+@user_route.route('/&lt;username>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required()
+@disabled(disabled_methods=[DELETE])
+def user(username) -> Response:
+    """
+    Endpoints for specific users (searching, updating, or deleting)
+    :param username: Username (or email) of a User
+    :return: JSON representation of a user and relevant metadata
+    """
+    if request.method == 'GET':
+        ''' [GET] /v2/users/&lt;username> '''
+        return user_by_username_get(username)
+
+    elif request.method == 'PUT':
+        ''' [PUT] /v2/users/&lt;username> '''
+        return user_by_username_put(username)
+
+    elif request.method == 'DELETE':
+        ''' [DELETE] /v2/users/&lt;username> '''
+        return user_by_username_delete(username)
+
+
+@user_route.route('/soft/&lt;username>', methods=['DELETE'])
+@auth_required()
+def user_soft_by_username(username) -> Response:
+    """
+    Endpoints for soft deleting a user.
+    :param username: Username of a User.
+    :return: JSON representation of users and relevant metadata.
+    """
+    if request.method == 'DELETE':
+        ''' [DELETE] /v2/users/soft/&lt;username> '''
+        return user_by_username_soft_delete(username)
+</CodeSnippet>
 <SectionTitle title="Route Decorators">Route Decorators</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
