@@ -964,5 +964,120 @@ My API has many endpoints of varying degrees of complexity, so feel free to expl
 <a href="https://github.com/AJarombek/saints-xctf-api/tree/master/api/src/route">GitHub</a>.
 </p>
 <SectionTitle title="Route Decorators">Route Decorators</SectionTitle>
+<p>
+All the functions which are Flask endpoints have decorators attached to them.  The decorator
+<code className="jarombek-inline-code">@&lt;name>.route()</code>, where <code className="jarombek-inline-code">
+&lt;name></code> is replaced with the variable name of a <code className="jarombek-inline-code">Blueprint</code> or
+<code className="jarombek-inline-code">Flask</code> object, registers a function to handle requests at a specific URL.
+The <code className="jarombek-inline-code">@&lt;name>.route()</code> decorator is part of the Flask library.
+</p>
+<p>
+You may have noticed that some of my routes have additional decorators.  For example, the
+<code className="jarombek-inline-code">user()</code> function, defined in <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/master/api/src/route/userRoute.py#L78-L99">userRoute.py</a> file and displayed again below, has two
+additional annotations: <code className="jarombek-inline-code">@auth_required()</code> and
+<code className="jarombek-inline-code">@disabled()</code>.
+</p>
+<CodeSnippet language="Python">
+@user_route.route('/&lt;username>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required()
+@disabled(disabled_methods=[DELETE])
+def user(username) -> Response:
+    """
+    Endpoints for specific users (searching, updating, or deleting)
+    :param username: Username (or email) of a User
+    :return: JSON representation of a user and relevant metadata
+    """
+    if request.method == 'GET':
+        ''' [GET] /v2/users/&lt;username> '''
+        return user_by_username_get(username)
+
+    elif request.method == 'PUT':
+        ''' [PUT] /v2/users/&lt;username> '''
+        return user_by_username_put(username)
+
+    elif request.method == 'DELETE':
+        ''' [DELETE] /v2/users/&lt;username> '''
+        return user_by_username_delete(username)
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">@auth_required()</code> is a custom decorator that checks for a valid JWT token
+in the <code className="jarombek-inline-code">Authorization</code> header of HTTP requests.  Since most of my endpoints
+require authentication, placing its logic in a reusable declaration makes the code a lot cleaner.  The code for
+<code className="jarombek-inline-code">@auth_required()</code> is shown below and exists in a
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/decorators.py#L23-L57">decorators.py</a> file.
+</p>
+<CodeSnippet language="Python">
+def auth_required(enabled_methods: Optional[List[HTTPMethod]] = None):
+    """
+    Make a custom decorator for endpoints, indicating that authentication is required.
+    :param enabled_methods: HTTP methods (verbs) that require authentication for an endpoint.
+    """
+    def decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            if enabled_methods and request.method not in enabled_methods:
+                current_app.logger.info(f'Authentication is skipped for {request.method} requests to {request.url}')
+            else:
+                if 'Authorization' not in request.headers:
+                    abort(401)
+
+                authorization_header: str = request.headers['Authorization']
+                token = authorization_header.replace('Bearer ', '')
+
+                async def authenticate():
+                    async with aiohttp.ClientSession() as session:
+                        async with session.post(
+                            url=f"{current_app.config['AUTH_URL']}/authenticate",
+                            json={'token': token}
+                        ) as response:
+                            response_body = await response.json()
+                            if not response_body.get('result'):
+                                current_app.logger.info('User Unauthorized')
+                                abort(403)
+                            else:
+                                current_app.logger.info('User Authorized')
+
+                asyncio.run(authenticate())
+
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">@auth_required()</code> leverages the
+<code className="jarombek-inline-code">@functools.wraps()</code> factory method to create the decorator.  This approach
+is a Python convention.  <code className="jarombek-inline-code">@auth_required()</code> takes a single keyword argument
+<code className="jarombek-inline-code">enabled_methods</code>, which is an optional list of HTTP methods.  If
+<code className="jarombek-inline-code">enabled_methods</code> is passed to the decorator, authentication requirements
+are only enforced in the HTTP methods defined in its list.  If <code className="jarombek-inline-code">
+enabled_methods</code> is not used, all the HTTP methods that an endpoint allows require authentication.
+</p>
+<p>
+<code className="jarombek-inline-code">enabled_methods</code> first checks if a <strong>Authorization</strong> header
+exists on the incoming HTTP request.  If the header does not exist, a <strong>401</strong> HTTP error code is returned
+to the user.
+</p>
+<p>
+Next, <code className="jarombek-inline-code">enabled_methods</code> extracts a JWT from the
+<strong>Authorization</strong> header, placing it in a <code className="jarombek-inline-code">token</code> variable.
+The value of the <strong>Authorization</strong> header follows the pattern <code className="jarombek-inline-code">
+Bearer j.w.t</code>, where <code className="jarombek-inline-code">j.w.t</code> is replaced by the JWT.  This token is
+used in another asynchronous function <code className="jarombek-inline-code">authenticate()</code>, which makes an HTTP
+request to an authentication route in my application.  I host this route using AWS Lambda and AWS API Gateway, which
+I'll discuss in an upcoming article.  The authentication route is defined in the code as
+<code className="jarombek-inline-code">"{current_app.config['AUTH_URL']}/authenticate"</code>, with the base URL coming
+from the Flask configuration object.  This is due to the authentication URL being unique in different environments.
+</p>
+<p>
+<code className="jarombek-inline-code">authenticate()</code> uses the response from the authentication route, stored in
+<code className="jarombek-inline-code">response</code>, to determine if the user is permitted to use the API.  The
+authentication API returns a JSON object with a single boolean <code className="jarombek-inline-code">result</code>
+field.  If <code className="jarombek-inline-code">result</code> is true, the user is successfully authenticated.  If
+<code className="jarombek-inline-code">result</code> is false, the user is not allowed to use the API.  In the code, a
+<strong>403</strong> HTTP error code is returned to the user if <code className="jarombek-inline-code">result</code> is
+false.  Otherwise, <code className="jarombek-inline-code">authenticate()</code> performs no further operations and
+control is passed through to the route's function handler.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
