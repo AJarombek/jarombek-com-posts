@@ -1079,5 +1079,50 @@ field.  If <code className="jarombek-inline-code">result</code> is true, the use
 false.  Otherwise, <code className="jarombek-inline-code">authenticate()</code> performs no further operations and
 control is passed through to the route's function handler.
 </p>
+<p>
+<code className="jarombek-inline-code">@disabled()</code> is also a custom decorator that disables a route in the API.
+If a user tries to call a disabled route, they receive a HTTP 403 error.  The implementation of
+<code className="jarombek-inline-code">@disabled()</code> is shown below, and exists in a <a href="https://github.com/
+AJarombek/saints-xctf-api/blob/master/api/src/decorators.py#L60-L76">decorators.py</a> file.
+</p>
+<CodeSnippet language="Python">
+def disabled(disabled_methods: Optional[List[HTTPMethod]] = None):
+    """
+    Make a custom decorator for endpoints that are currently disabled and should not be invoked.
+    :param disabled_methods: HTTP methods (verbs) that are disabled and follow the rules of this annotation.
+    """
+    def decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            if disabled_methods and request.method not in disabled_methods:
+                current_app.logger.info(f'{request.method} requests to {request.url} are not disabled.')
+            else:
+                current_app.logger.info('This endpoint is disabled.')
+                abort(403)
+
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+</CodeSnippet>
+<p>
+Similar to <code className="jarombek-inline-code">@auth_required()</code>, <code className="jarombek-inline-code">
+@disabled()</code> is written with the <code className="jarombek-inline-code">@functools.wraps()</code> factory method
+and accepts an optional <code className="jarombek-inline-code">disabled_methods</code> keyword argument, which has the
+opposite effect as the <code className="jarombek-inline-code">enabled_methods</code> keyword argument in
+<code className="jarombek-inline-code">@auth_required()</code>.  If a route has the
+<code className="jarombek-inline-code">@disabled()</code> decorator and <code className="jarombek-inline-code">
+disabled_methods</code> isn’t specified, all HTTP methods to that route are disabled and return 403 HTTP errors.  If
+a route has the <code className="jarombek-inline-code">@disabled()</code> decorator and
+<code className="jarombek-inline-code">disabled_methods</code> is specified, only the HTTP methods in the
+<code className="jarombek-inline-code">disabled_methods</code> list return 403 errors.  All other methods continue with
+normal execution.  In code, 403 HTTP errors are returned from the API with the <code className="jarombek-inline-code">
+abort(403)</code> command.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Writing APIs with Flask is easy and flexible.  Flask is not very opinionated, leaving engineers in control of design
+choices.  For beginners or junior level programmers, Python is very easy to work with as well, making Flask a good
+option for large teams with engineers at different skill levels.  All the code for my Flask API is available on
+<a href="https://github.com/AJarombek/saints-xctf-api">GitHub</a>.
+</p>
 </div>
