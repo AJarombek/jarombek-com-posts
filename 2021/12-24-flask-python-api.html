@@ -5,11 +5,11 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
 </Note>
 <p>
-While researching API frameworks and libraries, I grew interested in the Flask framework.  Flask is very lightweight,
-and allows engineers to quickly create APIs in Python without much opinionated tooling.  For example, Flask does not
+While researching API frameworks and libraries, I grew interested in the Flask framework.  Flask is a very lightweight framework,
+ allowing engineers to quickly create APIs in Python without much opinionated tooling.  For example, Flask does not
 come installed with a database access layer or ORM, allowing engineers to pick whichever database access library they
-prefer.  This was appealing to me because I’d be able to configure and design the API to my liking.  Also, working in
-Python allowed me to quickly write API code.
+prefer.  This flexibility is appealing to me because it allows me to configure and design the API to my liking.  Also, working in
+Python is easy and allows me to quickly write API code.
 </p>
 <p>
 In this article, I begin by describing how I structured my SaintsXCTF API, which is written in Flask.  Next, I provide
@@ -26,7 +26,7 @@ repository.
 <li><a href="https://jarombek.com/blog/nov-15-2021-react-typescript">Web Application React and TypeScript</a></li>
 <li><a href="https://jarombek.com/blog/dec-3-2021-redux-react">Web Application Redux State Configuration</a></li>
 <li><a href="https://jarombek.com/blog/aug-11-2021-cypress-typescript">Web Application Cypress E2E Tests</a></li>
-<li><a href="https://jarombek.com/blog/jun-30-2021-react-jss">Web Application JSS Modular Design</a></li>b Application JSS Modular Design</li>
+<li><a href="https://jarombek.com/blog/jun-30-2021-react-jss">Web Application JSS Modular Design</a></li>
 <li><strong>Flask Python API</strong></li>
 <li>Flask API Testing</li>
 <li>Flask API Docker & Docker Compose Configuration</li>
@@ -72,7 +72,7 @@ curl https://api.saintsxctf.com/versions
 }
 </CodeSnippet>
 <p>
-Once again, this API response provides more links to follow.  I’m currently using the second version of my SaintsXCTF
+Once again, this API response provides more links to follow.  I'm currently using the second version of my SaintsXCTF
 API, so the remainder of my endpoints exist under the <strong>/v2</strong> route.
 </p>
 <CodeSnippet language="Bash">
@@ -111,7 +111,7 @@ curl https://api.saintsxctf.com/v2/links
 }
 </CodeSnippet>
 <p>
-Let’s say you are navigating through the API and are interested in viewing user routes.  Following the
+Let's say you are navigating through the API and are interested in viewing user routes.  Following the
 <strong>/v2/users/links</strong> route returns all the user endpoints that are available, and what each endpoint is
 used for.
 </p>
@@ -153,7 +153,7 @@ curl https://api.saintsxctf.com/v2/users/links
 </CodeSnippet>
 <p>
 I shortened the API response for brevity.  After viewing this list of API endpoints, a user can determine which ones to
-invoke to match their needs.  Let’s say you decide to invoke the GET endpoint <strong>/v2/users/&lt;username></strong>
+invoke to match their needs.  Let's say you decide to invoke the GET endpoint <strong>/v2/users/&lt;username></strong>
 with the username <strong>andy</strong>.  Doing so results in the following response:
 </p>
 <CodeSnippet language="Bash">
@@ -170,7 +170,7 @@ curl https://api.saintsxctf.com/v2/users/andy
 <p>
 Invoking the endpoint resulted in an HTTP 401 error.  Many of the endpoints in my API are protected, requiring a
 temporary token in the <code className="jarombek-inline-code">Authorization</code> header in order to access the API.
-If you don’t supply a token or provide an invalid token, the API returns 401 and 403 errors, respectively.  Providing
+If you don't supply a token or provide an invalid token, the API returns 401 and 403 errors, respectively.  Providing
 a valid token in the HTTP request header results in the response below.
 </p>
 <CodeSnippet language="Bash">
@@ -206,7 +206,7 @@ time, the API responded successfully with a JSON object of my user in SaintsXCTF
 </p>
 <p>
 The SaintsXCTF API is a CRUD (<strong>C</strong>reate <strong>R</strong>ead <strong>U</strong>pdate
-<strong>D</strong>elete) REST API.  Therefore, API endpoints aren’t limited to GET requests, but also POST, PUT, and
+<strong>D</strong>elete) REST API.  Therefore, API endpoints aren't limited to GET requests.  Users can also perform POST, PUT, and
 DELETE requests.  The example below is a POST request that creates a new exercise log for my user.
 </p>
 <CodeSnippet language="Bash">
@@ -247,8 +247,8 @@ curl -X POST \
 One of the main objectives of the API is to make it as easy to use and navigate as possible.  This not only improves
 the experience for other users, but also for myself as I revisit and refactor the API codebase.  While adding links to
 the JSON responses makes the API easier to explore, there is still some information that it lacks.  This includes
-authentication mechanisms and documentation of JSON request body structures (such as for the exercise log creation
-request shown above).  This information requires additional documentation.  I am currently working on Swagger API
+authentication mechanisms and documentation of JSON request body structures (such as the request body JSON for the exercise log
+ shown above).  This information requires additional documentation.  I am currently working on Swagger API
 documentation for this purpose, and will likely write about Swagger and the OpenAPI specification in a future article.
 </p>
 <SectionTitle title="Flask Overview">Flask Overview</SectionTitle>
@@ -256,14 +256,14 @@ documentation for this purpose, and will likely write about Swagger and the Open
 Flask is a lightweight web application framework which is commonly used to build REST APIs.  Flask applications are
 written in Python, with the <a href="https://pypi.org/project/Flask/">Flask library</a> at their core.  Flask doesn't
 do much beyond handling routing, so a lot of the API functionality comes from other libraries (such as
-<a href="https://pypi.org/project/Flask-SQLAlchemy/">flask-sqlalchemy</a> for a Database ORM,
-<a href="https://pypi.org/project/Bcrypt-Flask/">flask-bcrypt</a> for bcrypt password hashing.
+<a href="https://pypi.org/project/Flask-SQLAlchemy/">flask-sqlalchemy</a> for a Database ORM and
+<a href="https://pypi.org/project/Bcrypt-Flask/">flask-bcrypt</a> for bcrypt password hashing).
 </p>
 <SectionTitle title="SQLAlchemy Overview">SQLAlchemy Overview</SectionTitle>
 <p>
 In my API, SQLAlchemy is used for accessing a MySQL database.  I use the
-<a href="https://pypi.org/project/Flask-SQLAlchemy/">flask-sqlalchemy</a> library, which is a wrapper around SQLAlchemy
-that makes it easier to use in a Flask application.
+<a href="https://pypi.org/project/Flask-SQLAlchemy/">flask-sqlalchemy</a> library, which is a wrapper around SQLAlchemy,
+ making it easier to use in a Flask application.
 </p>
 <p>
 SQLAlchemy is an ORM and SQL database library for Python.  SQLAlchemy works with many different database engines; in my
@@ -284,11 +284,12 @@ saints-xctf-api/blob/master/api/src/uwsgi.ini">uwsgi.ini</a>), and Dockerfiles f
 Flask are discussed in the next section.
 </p>
 <p>
-<strong>dao</strong> contains files that follow the Data Access Object (DAO) pattern<sup>1</sup>.  In essence, each DAO
+There are also several subdirectories in the Flask application.
+  <strong>dao</strong> contains files that follow the Data Access Object (DAO) pattern<sup>1</sup>.  In essence, each DAO
 file consists of a class with methods which interact with the MySQL database using SQLAlchemy.  <strong>model</strong>
 contains models for use in the SQLAlchemy ORM.  Each model is a Python class that corresponds to a table in MySQL.
 <strong>route</strong> defines all the routes (endpoints) in the API.  Each route is bound to a Python function which
-performs the logic needed to return a proper HTTP response.  <strong>test</strong> contains unit and integration tests
+performs the logic needed to return a proper HTTP response.  <strong>tests</strong> contains unit and integration tests
 for the API.  <strong>utils</strong> contains reusable utility functions used throughout the API.
 </p>
 <SectionTitle title="Flask Configuration">Flask Configuration</SectionTitle>
@@ -369,17 +370,17 @@ flask_env = os.getenv('FLASK_ENV') or 'local'
 app = create_app(flask_env)
 </CodeSnippet>
 <p>
-I simplified <code className="jarombek-inline-code">create_app()</code> a bit, making it easier to discuss.
+I simplified the <code className="jarombek-inline-code">create_app()</code> code snippet a bit, making it easier to discuss.
 <code className="jarombek-inline-code">create_app()</code> takes a single <code className="jarombek-inline-code">
 config_name</code> argument, which is the environment that the Flask application is run within.  For example, when run
 in production, the value of <code className="jarombek-inline-code">config_name</code> is <strong>production</strong>.
 The first line, <code className="jarombek-inline-code">application = Flask(__name__)</code>, creates an instance of
 <code className="jarombek-inline-code">Flask</code>.  <code className="jarombek-inline-code">application</code> is
-eventually the return value of <code className="jarombek-inline-code">create_app()</code>, and represents the Flask API.
+eventually the return value of <code className="jarombek-inline-code">create_app()</code>, representing the Flask API.
 </p>
 <p>
 The next line, <code className="jarombek-inline-code">application.config.from_object(config[config_name])</code>, sets
-configuration key-value pairs for the Flask application.  The values of the configuration are environment specific.
+configuration key-value pairs for the Flask application.  The values of the Flask configuration are environment specific.
 <code className="jarombek-inline-code">config[config_name]</code> is a Python object with properties.
 <code className="jarombek-inline-code">config</code> is defined in a <a href="https://github.com/AJarombek/
 saints-xctf-api/blob/master/api/src/config.py">config.py</a> file, as shown below.
@@ -414,7 +415,7 @@ config = {
 <p>
 <code className="jarombek-inline-code">config</code> is a dictionary where the keys are environment names and values
 are classes with Flask configuration properties.  In a production environment, the
-<code className="jarombek-inline-code">ProductionConfig</code> class will be the configuration for my Flask application.
+<code className="jarombek-inline-code">ProductionConfig</code> class is the configuration for my Flask application.
 </p>
 <p>
 Back to the <code className="jarombek-inline-code">create_app()</code> function, all the
@@ -438,13 +439,13 @@ from flask import Blueprint
 user_route = Blueprint('user_route', __name__, url_prefix='/v2/users')
 </CodeSnippet>
 <p>
-After registering blueprints in the Flask application, I set four additional configuration variables by adding key-value
+After registering blueprints for the Flask application in <code className="jarombek-inline-code">create_app()</code>, I set four additional configuration variables by adding key-value
 pairs to the <code className="jarombek-inline-code">application.config</code> dictionary.  These configuration variables
 are separate from the ones discussed previously, such as those found in <a href="https://github.com/AJarombek/
 saints-xctf-api/blob/master/api/src/config.py">config.py</a>, because they have the same values across all environments.
 </p>
 <p>
-Next, I call <code className="jarombek-inline-code">db.init_app(application)</code>.  This line of code initializes
+Next in <code className="jarombek-inline-code">create_app()</code>, I call <code className="jarombek-inline-code">db.init_app(application)</code>.  This line of code initializes
 SQLAlchemy in the Flask application.  <code className="jarombek-inline-code">db</code> is an instance of
 <code className="jarombek-inline-code">SQLAlchemy</code> from the <strong>flask-sqlalchemy</strong> library, which is
 defined in <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/database.py">database.py</a>.
@@ -459,7 +460,7 @@ db = SQLAlchemy()
 <p>
 The next line, <code className="jarombek-inline-code">flask_bcrypt.init_app(application)</code>, initializes the Bcrypt
 password hashing algorithm with Flask.  <code className="jarombek-inline-code">application.cli.add_command(test)</code>
-creates a new command to the Flask CLI for testing the application.  The CLI command is defined in a separate
+ adds a new command to the Flask CLI for testing the application.  The CLI command is defined in a separate
 <a href=https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/commands.py>commands.py</a> file and is invoked
 using a <code className="jarombek-inline-code">python -m flask test</code> shell command.
 </p>
@@ -535,7 +536,7 @@ user</code> table, since every user has a unique username.  This column is defin
 username = Column(db.VARCHAR(20), primary_key=True)</code>.
 </p>
 <p>
-I omitted a few details of the <code className="jarombek-inline-code">User</code> model from the code snippet above.
+I omitted a few details of the <code className="jarombek-inline-code">User</code> model from the code snippet above, which I will discuss now.
 First, <code className="jarombek-inline-code">User</code> has an <code className="jarombek-inline-code">__init__</code>
 constructor for <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/model/User.py#L15-L46">
 converting a dictionary to an instance of the model</a>.  Second, <code className="jarombek-inline-code">User</code>
@@ -544,17 +545,17 @@ __repr__</code> methods for <a href="https://github.com/AJarombek/saints-xctf-ap
 User.py#L87-L103">printing out model objects cleanly in application logs</a>.  Third and finally,
 <code className="jarombek-inline-code">User</code> implements <code className="jarombek-inline-code">__eq__</code> to
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/model/User.py#L105-L137">compare two instances
-for equality</a>.
+of User for equality</a>.
 </p>
 <p>
 For each table in the MySQL database, my API has two corresponding model classes.  The naming convention for these
 classes is <code className="jarombek-inline-code">TableName</code> and <code className="jarombek-inline-code">
 TableNameData</code>.  For example, the <code className="jarombek-inline-code">user</code> table has
 <code className="jarombek-inline-code">User</code> and <code className="jarombek-inline-code">UserData</code> model
-classes.  The reason for this structure is that the main model class has auditing columns that shouldn’t be included in
+classes.  The reason for this structure is that the main model class has auditing columns that shouldn't be included in
 API response bodies.  Therefore, the <code className="jarombek-inline-code">User</code> model class is used to query
 the database, and <code className="jarombek-inline-code">UserData</code> is used in API responses.  Note that many APIs
-won’t require a structure like this, and a single model class per table will suffice.  The
+won't require a structure like this, and a single model class per table will suffice.  The
 <code className="jarombek-inline-code">UserData</code> class exists in a <a href="https://github.com/AJarombek/
 saints-xctf-api/blob/master/api/src/model/UserData.py">UserData</a> file.
 </p>
@@ -660,8 +661,8 @@ database.  The first is to use the ORM and the second is to write SQL queries an
 <code className="jarombek-inline-code">get_user_by_username()</code> uses the ORM and the
 <code className="jarombek-inline-code">User</code> model class to find a user in the database with a specific
 username.  On the other hand, <code className="jarombek-inline-code">update_user()</code> uses a SQL query to update a
-user in the database.  Which approach is better is often a matter of personal preference.  SQL is often more expressive
-and easier to read for complex queries.  The ORM avoids mixing SQL and Python code, and can be very easy to use for
+user in the database.  Which approach is better is often a matter of personal preference.  SQL is more expressive
+and easier to read for complex queries.  The ORM avoids mixing SQL and Python code, and is easy to use for
 simple queries.  The great thing about SQLAlchemy is that it offers both approaches for engineers to use.
 </p>
 <p>
@@ -699,14 +700,14 @@ class BasicDao:
 </CodeSnippet>
 <SectionTitle title="API Routes">API Routes</SectionTitle>
 <p>
-So far, we’ve seen how DAOs access the database and use SQLAlchemy model classes to retrieve, update, create, or delete
-data.  Of course, user’s of the API don’t interface with the DAO directly.  Instead, users call endpoints (routes) in
-the REST API and request for operations to be performed.  These endpoints are defined and configured in the
+So far, we've seen how DAOs interact with the database and use SQLAlchemy model classes to retrieve, update, create, or delete
+data.  Of course, user's of the API don't interface with the DAO directly.  Instead, users call endpoints (routes) in
+the REST API and request operations to be performed.  These endpoints are defined and configured in the
 <a href="https://github.com/AJarombek/saints-xctf-api/tree/master/api/src/route">route</a> directory of my application.
 </p>
 <p>
 Route files contain functions, each of which represents an endpoint in the API.  Each file also defines a Flask
-blueprint - a component representing a route in the API with sub-routes and HTTP methods attached to it.  Flask
+blueprint - a component representing a route in the API with sub-routes attached to it.  Flask
 blueprints are instantiated as Python objects.  Blueprint objects are used to annotate functions in the route file.
 These annotations specify which route the function is associated with and what HTTP methods it responds to.
 </p>
@@ -813,7 +814,7 @@ apiRoute.py</a> file follow a similar pattern of returning static JSON objects.
 <p>
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/route/userRoute.py">userRoute.py</a> is a
 more complex route file, including dynamic JSON responses dependent on user inputs and database query results.  It not
-only contains simple HTTP GET requests, but also POST, PUT, and DELETE requests.  A generalized outline of
+only contains HTTP GET requests, but also POST, PUT, and DELETE requests.  A generalized outline of
 <strong>userRoute.py</strong> is shown below.
 </p>
 <CodeSnippet language="Python">
@@ -898,7 +899,7 @@ For example, <code className="jarombek-inline-code">users()</code> handles both 
 by its decorator <code className="jarombek-inline-code">@user_route.route('/', methods=['GET', 'POST'])</code>.  It also
 requires authentication, which is specified by a custom decorator <code className="jarombek-inline-code">
 @auth_required(enabled_methods=[GET])</code>.  The keyword argument <code className="jarombek-inline-code">
-enabled_methods=[GET]</code> specifies that only GET requests require authentication, POST methods do not.
+enabled_methods=[GET]</code> specifies that only GET requests require authentication; POST methods do not.
 </p>
 <p>
 How requests are handled in <code className="jarombek-inline-code">users()</code> depends on the HTTP verb, which is
@@ -1001,7 +1002,7 @@ def user(username) -> Response:
 <p>
 <code className="jarombek-inline-code">@auth_required()</code> is a custom decorator that checks for a valid JWT token
 in the <code className="jarombek-inline-code">Authorization</code> header of HTTP requests.  Since most of my endpoints
-require authentication, placing its logic in a reusable declaration makes the code a lot cleaner.  The code for
+require authentication, placing JWT validation logic in a reusable decorator makes the codebase a lot cleaner.  The code for
 <code className="jarombek-inline-code">@auth_required()</code> is shown below and exists in a
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/decorators.py#L23-L57">decorators.py</a> file.
 </p>
@@ -1044,36 +1045,37 @@ def auth_required(enabled_methods: Optional[List[HTTPMethod]] = None):
 </CodeSnippet>
 <p>
 <code className="jarombek-inline-code">@auth_required()</code> leverages the
-<code className="jarombek-inline-code">@functools.wraps()</code> factory method to create the decorator.  This approach
+<code className="jarombek-inline-code">@functools.wraps()</code> factory method to create a decorator.  This approach
 is a Python convention.  <code className="jarombek-inline-code">@auth_required()</code> takes a single keyword argument
 <code className="jarombek-inline-code">enabled_methods</code>, which is an optional list of HTTP methods.  If
 <code className="jarombek-inline-code">enabled_methods</code> is passed to the decorator, authentication requirements
-are only enforced in the HTTP methods defined in its list.  If <code className="jarombek-inline-code">
-enabled_methods</code> is not used, all the HTTP methods that an endpoint allows require authentication.
+are only enforced for HTTP methods defined in the <code className="jarombek-inline-code">enabled_methods</code> list.  If <code className="jarombek-inline-code">
+enabled_methods</code> is not passed to the decorator, all HTTP methods that an endpoint responds to will require authentication.
 </p>
 <p>
-<code className="jarombek-inline-code">enabled_methods</code> first checks if a <strong>Authorization</strong> header
+<code className="jarombek-inline-code">auth_required()</code> first checks if an <strong>Authorization</strong> header
 exists on the incoming HTTP request.  If the header does not exist, a <strong>401</strong> HTTP error code is returned
 to the user.
 </p>
 <p>
-Next, <code className="jarombek-inline-code">enabled_methods</code> extracts a JWT from the
+Next, <code className="jarombek-inline-code">auth_required()</code> extracts a JWT from the
 <strong>Authorization</strong> header, placing it in a <code className="jarombek-inline-code">token</code> variable.
 The value of the <strong>Authorization</strong> header follows the pattern <code className="jarombek-inline-code">
 Bearer j.w.t</code>, where <code className="jarombek-inline-code">j.w.t</code> is replaced by the JWT.  This token is
 used in another asynchronous function <code className="jarombek-inline-code">authenticate()</code>, which makes an HTTP
 request to an authentication route in my application.  I host this route using AWS Lambda and AWS API Gateway, which
-I'll discuss in an upcoming article.  The authentication route is defined in the code as
-<code className="jarombek-inline-code">"{current_app.config['AUTH_URL']}/authenticate"</code>, with the base URL coming
-from the Flask configuration object.  This is due to the authentication URL being unique in different environments.
+I'll discuss in an upcoming article.  The authentication route is defined in code as
+<code className="jarombek-inline-code">"{current_app.config['AUTH_URL']}/authenticate"</code>, with the domain name coming
+from the Flask configuration object, specifically the <code className="jarombek-inline-code">'AUTH_URL'</code> property.
+This is due to the authentication URL being unique in different environments.
 </p>
 <p>
 <code className="jarombek-inline-code">authenticate()</code> uses the response from the authentication route, stored in
 <code className="jarombek-inline-code">response</code>, to determine if the user is permitted to use the API.  The
 authentication API returns a JSON object with a single boolean <code className="jarombek-inline-code">result</code>
 field.  If <code className="jarombek-inline-code">result</code> is true, the user is successfully authenticated.  If
-<code className="jarombek-inline-code">result</code> is false, the user is not allowed to use the API.  In the code, a
-<strong>403</strong> HTTP error code is returned to the user if <code className="jarombek-inline-code">result</code> is
+<code className="jarombek-inline-code">result</code> is false, the user is not allowed to use the API.  The code is to configured to return a
+ HTTP 403 error code to the user if <code className="jarombek-inline-code">result</code> is
 false.  Otherwise, <code className="jarombek-inline-code">authenticate()</code> performs no further operations and
 control is passed through to the route's function handler.
 </p>
@@ -1105,15 +1107,15 @@ def disabled(disabled_methods: Optional[List[HTTPMethod]] = None):
 <p>
 Similar to <code className="jarombek-inline-code">@auth_required()</code>, <code className="jarombek-inline-code">
 @disabled()</code> is written with the <code className="jarombek-inline-code">@functools.wraps()</code> factory method
-and accepts an optional <code className="jarombek-inline-code">disabled_methods</code> keyword argument, which has the
-opposite effect as the <code className="jarombek-inline-code">enabled_methods</code> keyword argument in
+and accepts an optional <code className="jarombek-inline-code">disabled_methods</code> keyword argument, with the
+ same effect as the <code className="jarombek-inline-code">enabled_methods</code> keyword argument in
 <code className="jarombek-inline-code">@auth_required()</code>.  If a route has the
 <code className="jarombek-inline-code">@disabled()</code> decorator and <code className="jarombek-inline-code">
-disabled_methods</code> isn’t specified, all HTTP methods to that route are disabled and return 403 HTTP errors.  If
+disabled_methods</code> isn't specified, all HTTP methods to that route are disabled and return HTTP 403 errors.  If
 a route has the <code className="jarombek-inline-code">@disabled()</code> decorator and
 <code className="jarombek-inline-code">disabled_methods</code> is specified, only the HTTP methods in the
 <code className="jarombek-inline-code">disabled_methods</code> list return 403 errors.  All other methods continue with
-normal execution.  In code, 403 HTTP errors are returned from the API with the <code className="jarombek-inline-code">
+normal execution.  In code, HTTP 403 errors are returned from the API with the <code className="jarombek-inline-code">
 abort(403)</code> command.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
