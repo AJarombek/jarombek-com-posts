@@ -7,14 +7,14 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <p>
 Redux is a state management pattern that is commonly used in complex React applications.  Redux, based on the Flux
 design pattern, is helpful when application state is shared between many pages of a website and is updated
-frequently<sup>1</sup>.  In my <a href="https://saintsxctf.com/">saintsxctf.com</a> website, Redux is used to store
-application state and use it across all the webpages.  SaintsXCTF is a good example of a website that can benefit from
+frequently<sup>1</sup>.  In my <a href="https://saintsxctf.com/">saintsxctf.com</a> website, Redux stores and uses
+application state across all my webpages.  SaintsXCTF is a good example of a website that can benefit from
 Redux;  it needs login information, user preferences, team memberships, group memberships, and more to be shared
 amongst all pages.
 </p>
 <p>
-In this article, I start by going over the basics of Redux.  I’ll also explain the “ducks pattern”, which is an
-approach to writing Redux code.  Then, I’ll walk through the Redux configuration and code in my SaintsXCTF
+In this article, I start by going over the basics of Redux.  I'll also explain the “ducks pattern”, which is an
+approach to writing Redux code.  Then, I'll walk through the Redux configuration and code in my SaintsXCTF
 application.  All the code for my SaintsXCTF web application is available in a <a href="https://github.com/AJarombek/
 saints-xctf-web">GitHub</a> repository.
 </p>
@@ -35,9 +35,7 @@ saints-xctf-web">GitHub</a> repository.
 <li>Auth API Using API Gateway & Lambda</li>
 <li>Database Deployments Using Jenkins</li>
 <li>Database Client on Kubernetes</li>
-<li>IOS Application Updates and Learning Experiences</li>
 <li>Testing and Continuous Deployment on Jenkins</li>
-<li>Post-Deployment Challenges & Future Improvements</li>
 </ul>
 <SectionTitle title="Introduction to Redux">Introduction to Redux</SectionTitle>
 <p>
@@ -48,7 +46,7 @@ Redux is an open-source JavaScript library based on the Flux design pattern.
 Flux is a web-development design pattern and architecture which is an alternative to the MVC (Model View Controller)
 pattern<sup>2,3</sup>.  Flex maintains application state in one or many <strong>stores</strong>.  Stores are updated
 with <strong>actions</strong>, which contain new state data and instructions for updating a store<sup>4</sup>.  Actions
-are passed to stores via a <strong>dispatcher</strong>.  Once actions reach the store, the application state is updated
+are passed to stores via a <strong>dispatcher</strong>.  Once actions reach the store, application state is updated
 accordingly, and any views that use the application state are re-rendered.
 </p>
 <p>
@@ -72,7 +70,7 @@ accordingly.
 </p>
 </Definition>
 <p>
-Let’s describe the main components of Redux in more detail.  These components include <strong>actions</strong>,
+Let's describe the main components of Redux in more detail.  These components include <strong>actions</strong>,
 <strong>action creators</strong>, <strong>reducers</strong>, and <strong>the store</strong>.
 </p>
 <InlineImage filename="12-3-21-redux-components.png" paddingTop="true" paddingBottom="true">
@@ -92,7 +90,7 @@ an action to sign in a user and place their username in the application state ma
 </p>
 <p>
 Actions are dispatched to the Redux store.  The Redux store invokes a reducer function corresponding to the
-action.  This reducer returns a new application state with changes made, which are determined by the action.
+action.  This reducer function returns a new application state with changes made, which are determined by the action.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -120,8 +118,8 @@ Reducers
 <div className="jarombek-cte-body">
 <p>
 Reducers are functions that create new state objects.  Reducers take two arguments: an action object and an existing
-state object.  The reducer creates a copy of the existing state object and applies changes specified in the action.
-The return value of the reducer is the new state object, which replaces the existing state object in the Redux store.
+state object.  Reducers create a copy of the existing state object and apply changes specified in the action.
+The return value of a reducer is a new state object, which replaces the existing state object in the Redux store.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -131,8 +129,8 @@ Store
 </h5>
 <div className="jarombek-cte-body">
 <p>
-Redux contains a single store, which holds the application state.  Application state is immutable, i.e. an application
-state object cannot be modified.  To change the state in the store, a new state object replaces the entire existing
+Redux applications contain a single store, which holds the application state.  Application state is immutable, i.e. an application
+state object cannot be modified.  To change the state in the store, a new state object replaces an existing
 state object.  New state objects are created with the help of reducer functions.  Reducer functions are called when
 actions are dispatched to the store.
 </p>
@@ -146,17 +144,17 @@ application.
 </p>
 <SectionTitle title="Ducks Pattern">Ducks Pattern</SectionTitle>
 <p>
-The <strong>ducks pattern</strong> relates to the file layout of Redux code.  In older applications, Redux code was
-often grouped into separate directories for actions, reducers, and action creators<sup>6</sup>.  With the ducks
+The <strong>ducks pattern</strong> relates to the file layout of Redux code.  In older applications, Redux code is
+ often grouped into separate directories for actions, reducers, and action creators<sup>6</sup>.  With the ducks
 pattern, actions, reducers, and action creators exist in the same files.  However, code is logically grouped in
 separate files.
 </p>
 <p>
 For example, my SaintsXCTF application has a <a href="https://github.com/AJarombek/saints-xctf-web/tree/master/src/
-redux/modules">redux/modules</a> directory which contains all my Redux TypeScript files which follow the ducks
+redux/modules">modules</a> directory containing all the Redux TypeScript files following the ducks
 pattern.  Each file in this directory relates to a specific feature of the application.  The <a href="https://
 github.com/AJarombek/saints-xctf-web/blob/master/src/redux/modules/groups.ts">groups.ts</a> file, for example, contains
-actions, reducers, and action creators that relate to group pages on the website (user’s in SaintsXCTF can be members
+actions, reducers, and action creators that relate to group pages on the website (user's in SaintsXCTF can be members
 of one or many groups).
 </p>
 <p>
@@ -219,9 +217,9 @@ export function getGroupRequest(groupId: number): GetGroupRequestAction {
 </CodeSnippet>
 <SectionTitle title="Redux Application Setup">Redux Application Setup</SectionTitle>
 <p>
-Redux is configured with the React application using the <a href="https://react-redux.js.org/tutorials/quick-start">
+Redux is configured within the React application using the <a href="https://react-redux.js.org/tutorials/quick-start">
 React Redux</a> library.  Both <code className="jarombek-inline-code">react-redux</code> and
-<code className="jarombek-inline-code">@types/react-redux</code> are specified as dependencies to the application in
+<code className="jarombek-inline-code">@types/react-redux</code> are specified as application dependencies in
 the <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/package.json">package.json</a> file.  The
 configuration of Redux begins in the entrypoint of the React application, <a href="https://github.com/AJarombek/
 saints-xctf-web/blob/master/src/index.tsx#L35-L48">index.ts</a>.  A simplified version of the code is shown below.
@@ -247,7 +245,7 @@ render(&lt;RoutedApp />, document.getElementById('react-container'));
 export default RoutedApp;
 </CodeSnippet>
 <p>
-I extracted all the details unrelated to Redux from this code, with the complete version available on
+I removed all the details unrelated to Redux from this code, with the complete version available on
 <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/index.tsx">GitHub</a>.  The React Redux library
 supplies a <code className="jarombek-inline-code">&lt;Provider /></code> component, which makes the Redux store
 available to all components in the application<sup>7</sup>.  As you will see later on, the Redux store is accessible
@@ -285,13 +283,13 @@ export default function configureStore(): Store {
 The code above is a simplified version of a <a href="https://github.com/AJarombek/saints-xctf-web/blob/
 master/src/redux/store.ts">store.ts</a> file in my application.  <code className="jarombek-inline-code">
 configureStore()</code> is a function that returns a Redux store of type <code className="jarombek-inline-code">
-Store</code>.  You will often see variants of the code above in Redux tutorials.  Let’s walk through this code line
+Store</code>.  You will often see variants of the code above in Redux tutorials.  Let's walk through this code line
 by line.
 </p>
 <p>
 <code className="jarombek-inline-code">const loggerMiddleware = createLogger()</code> creates a logging middleware for
 Redux using the <strong>redux-logger</strong> library.  Redux middleware is a means for adding third party extensions
-to Redux.  These third party libraries are invoked after actions are dispatched to the store, but before the store
+to Redux.  Third party libraries are invoked after actions are dispatched to the store, but before the store
 invokes a reducer function<sup>8</sup>.  <strong>redux-logger</strong> provides middleware for logging actions to the
 console output of a web browser.  This is very helpful for debugging.
 </p>
@@ -299,14 +297,14 @@ console output of a web browser.  This is very helpful for debugging.
 <code className="jarombek-inline-code">loggerMiddleware</code> is utilized in the line
 <code className="jarombek-inline-code">const middleware = [routerMiddleware(history), loggerMiddleware, thunkMiddleware]
 </code>.  <code className="jarombek-inline-code">middleware</code> is a list of Redux middlewares used in my
-application.  <code className="jarombek-inline-code">routerMiddleware</code> is a React Router middleware, and
+application.  <code className="jarombek-inline-code">routerMiddleware</code> is a React Router middleware and
 <code className="jarombek-inline-code">thunkMiddleware</code> is a middleware for writing asynchronous code that
 interacts with the Redux store (for example, dispatching an action based on the result of an API request)<sup>9</sup>.
 </p>
 <p>
 <code className="jarombek-inline-code">const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore)</code>
 is a complicated looking piece of code.  <code className="jarombek-inline-code">applyMiddleware</code> is a higher
-order function (it is a function that returns another function).  It takes my list of Redux middlewares as an argument.
+order function (a function that returns another function).  It takes my list of Redux middlewares as an argument.
 The result of <code className="jarombek-inline-code">applyMiddleware</code> is a function that takes
 <code className="jarombek-inline-code">createStore</code> as an argument.  The result is
 <code className="jarombek-inline-code">createStoreWithMiddleware</code>, which itself is a function.
@@ -371,18 +369,18 @@ Each of these files is referred to as a Redux Ducks module<sup>11</sup>.
 <SectionTitle title="Redux Ducks Modules">Redux Ducks Modules</SectionTitle>
 <p>
 Each Redux Ducks module is a JavaScript or TypeScript file containing Redux actions, action creators, and a reducer.
-When using TypeScript, a module can also contain type definitions for actions.  For example, in my React/TypeScript
-application, one of my Redux Ducks modules is <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/src/
-redux/modules/teams.ts">teams.ts</a>.
+When using TypeScript, a module can also contain type definitions for actions.
 </p>
 <p>
-<strong>teams.ts</strong> contains Redux logic for a single feature of my website - teams that users can be members
+For example, in my React/TypeScript application, one of my Redux Ducks modules is <a href="https://github.com/AJarombek/
+saints-xctf-web/blob/master/src/redux/modules/teams.ts">teams.ts</a>.
+  <strong>teams.ts</strong> contains Redux logic for a single feature of my website - teams that users can be members
 of.  My Redux Ducks modules are logically split into five sections: actions, action types, reducers, action creators,
 and redux thunk functions.
 </p>
 <SubTitle title="Actions">Actions</SubTitle>
 <p>
-In Redux, actions have a type property, which is a unique identifier for the type.  The
+In Redux, actions have a type property, which is a unique identifier for the action.  The
 <code className="jarombek-inline-code">type</code> property is a string; all the type strings used in a module are
 defined at the top of the module.  For example, these are the type strings defined in my <a href="https://github.com/
 AJarombek/saints-xctf-web/blob/master/src/redux/modules/teams.ts#L15-L23">teams.ts</a> module.
@@ -482,7 +480,7 @@ type TeamActionTypes =
 Each action has a corresponding <code className="jarombek-inline-code">interface</code>, containing a
 <code className="jarombek-inline-code">type</code> property and zero to many additional properties.  For example, type
 <code className="jarombek-inline-code">GetTeamSuccessAction</code> has a
-<code className="jarombek-inline-code">type</code> along with <code className="jarombek-inline-code">team</code> and
+<code className="jarombek-inline-code">type</code> property along with <code className="jarombek-inline-code">team</code> and
 <code className="jarombek-inline-code">teamName</code> properties.  All these types are unioned together into a single
 <code className="jarombek-inline-code">TeamActionTypes</code> type.
 </p>
@@ -527,7 +525,7 @@ The root reducer is written as the <code className="jarombek-inline-code">reduce
 <code className="jarombek-inline-code">reducer()</code> is the main export of the Redux Ducks module.
 <code className="jarombek-inline-code">reducer()</code> takes two arguments: <code className="jarombek-inline-code">
 state</code> and <code className="jarombek-inline-code">action</code>.  <code className="jarombek-inline-code">
-state</code> holds the existing state of the Redux store for my application, and <code className="jarombek-inline-code">
+state</code> holds the existing state of the Redux store, and <code className="jarombek-inline-code">
 action</code> holds an action object that was dispatched to the store.  The <code className="jarombek-inline-code">
 type</code> property of the <code className="jarombek-inline-code">action</code> object determines which reducer
 function to invoke from the root reducer.
@@ -624,10 +622,10 @@ Redux store.  Other times, they are dispatched as part of Redux Thunk functions.
 </p>
 <SubTitle title="Redux Thunk Functions">Redux Thunk Functions</SubTitle>
 <p>
-Redux Thunk functions use the <a href="https://github.com/reduxjs/redux-thunk">redux-thunk</a> library,  Redux thunk
-functions are action creators, except they return a function instead of an action<sup>12</sup>.  These functions can
-run asynchronous code and dispatch actions to the Redux store depending on certain conditions.  The main use of
-<strong>redux-thunk</strong> in my application is to make API calls, and to dispatch actions dependent on API
+Redux Thunk functions are created using the <a href="https://github.com/reduxjs/redux-thunk">redux-thunk</a> library.  Redux thunk
+functions are action creators, except they return a function instead of an action<sup>12</sup>.  These functions
+ run asynchronous code and dispatch actions to the Redux store depending on certain conditions.  The main use of
+<strong>redux-thunk</strong> in my application is to make API calls and dispatch actions depending on API
 responses.
 </p>
 <p>
@@ -662,7 +660,7 @@ export function getTeam(teamName: string): AppThunk&lt;Promise&lt;void>, TeamSta
 <code className="jarombek-inline-code">dispatch</code>, which is a Redux function that dispatches actions to the
 store.  <code className="jarombek-inline-code">dispatch</code> is used three times.  The first,
 <code className="jarombek-inline-code">dispatch(getTeamRequest(teamName))</code>, dispatches an action indicating that
-the API request is about to be made.  This is useful for implementing loading icons or screens.  Inside the
+ an API request is about to be made.  This is useful for implementing loading icons or loading screens.  Inside the
 <code className="jarombek-inline-code">try… catch</code> block, <code className="jarombek-inline-code">
 await api.get(`teams/${teamName}`)</code> makes the actual API call.  The second dispatch,
 <code className="jarombek-inline-code">dispatch(getTeamSuccess(team, teamName))</code>, dispatches an action when the
@@ -671,8 +669,8 @@ body.  The third dispatch, <code className="jarombek-inline-code">dispatch(getTe
 dispatches an action when the API call returns an error.
 </p>
 <p>
-If you look through the Redux Thunk functions in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
-src/redux/modules/teams.ts#L339-L397">teams.ts</a> module or throughout the <a href="https://github.com/AJarombek/
+If you look at the Redux Thunk functions in my <a href="https://github.com/AJarombek/saints-xctf-web/blob/master/
+src/redux/modules/teams.ts#L339-L397">teams.ts</a> module or throughout my <a href="https://github.com/AJarombek/
 saints-xctf-web/tree/master/src/redux/modules">entire application</a>, you will notice that most follow this same
 pattern.
 </p>
@@ -766,7 +764,7 @@ First, notice that <code className="jarombek-inline-code">useDispatch()</code> a
 react-redux</code>.  <code className="jarombek-inline-code">useDistpatch()</code> is invoked to get a
 <code className="jarombek-inline-code">dispatch</code> function, with the line <code className="jarombek-inline-code">
 const dispatch = useDispatch()</code>.  On the next two lines, <code className="jarombek-inline-code">useSelector</code>
-is used to retrieve data from the Redux store, specifically user profiles and teams, saved in
+is used to retrieve data from the Redux store; specifically, user profiles and teams are retrieved, saved in
 <code className="jarombek-inline-code">userProfiles</code> and <code className="jarombek-inline-code">teams</code>
 variables, respectively.
 </p>
@@ -775,7 +773,8 @@ variables, respectively.
 useEffect()</code> React hooks.  <code className="jarombek-inline-code">useEffect()</code> is beyond the scope of this
 article; however, in general terms, this setup dispatches the results of action creators and Redux Thunk functions to
 the Redux store when the webpage loads or React props/state change.  These Redux Thunk functions make the API calls
-that supply data for the front-end application.
+that supply data for the front-end application.  For example, <code className="jarombek-inline-code">
+dispatch(getUserMemberships(user.username))</code> gets all the team memberships from the API for the signed in user.
 </p>
 <p>
 The return statement is the JSX for the React  component, which is translated into HTML when displayed on a web browser.
@@ -783,8 +782,8 @@ The return statement is the JSX for the React  component, which is translated in
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 Redux is a great way to store complex front-end application state.  It integrates seamlessly with React and TypeScript.
-While I don’t recommend its use for basic applications, any time a website requires state across pages or persisted
-sign in data, I recommend giving Redux a look.  All the front-end code for my application which uses Redux,
-SaintsXCTF, is available on <a href="https://github.com/AJarombek/saints-xctf-web">GitHub</a>.
+While I don't recommend its use for basic applications, any time a website requires shared state across pages or persisted
+sign in data, I recommend giving Redux a try.  All the front-end code for my SaintsXCTF application, which uses Redux,
+ is available on <a href="https://github.com/AJarombek/saints-xctf-web">GitHub</a>.
 </p>
 </div>
