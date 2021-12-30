@@ -1,0 +1,34 @@
+<div>
+<p>
+Unsecured AWS S3 buckets have been a major source of data leaks in the Software Engineering industry for years.  Enter
+a Google search for <a href="https://bit.ly/3ECsVSc">"S3 bucket public data leak"</a> and you will find countless
+examples of hackers leaking data from Amazon S3.
+</p>
+<p>
+The biggest reason why S3 data leaks are so common is that objects (files) in S3 buckets are public over HTTP by
+default.  This means that unless an engineer explicitly restricts access to the S3 bucket, its contents are public for
+anyone in the world to view.  For engineers new to AWS and the S3 service, the mistake of leaving S3 buckets public is
+very common.
+</p>
+<p>
+Over the years, AWS has provided more ways to secure S3 buckets and provide explicit warnings to users if S3 buckets
+are not properly protected.  AWS accounts can even have account-wide restrictions which prevent the creation of public
+buckets.
+</p>
+<p>
+In my AWS account, most of the S3 buckets have restrictions for who can access their contents.  However, just a week
+ago, some buckets in my account were public, such as those used for static websites or those containing assets such as
+images and fonts for my websites.  While there isn’t much danger in keeping these buckets public - they don’t contain
+any sensitive data - it is still best practice to keep them private.  This article discusses how to restrict access to
+these S3 buckets, while still keeping their contents publicly available via HTTP.  All the infrastructure changes
+needed to restrict S3 access are written using Terraform.
+</p>
+<SectionTitle title="Problem to Solve">Problem to Solve</SectionTitle>
+<p>
+In the AWS Console, if an S3 bucket is publicly accessible, a warning icon is displayed.
+</p>
+<InlineImage filename="1-2-22-public-buckets.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<SectionTitle title="Restricting Access to S3 Buckets">Restricting Access to S3 Buckets</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
