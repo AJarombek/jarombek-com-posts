@@ -5,10 +5,9 @@ a Google search for <a href="https://bit.ly/3ECsVSc">"S3 bucket public data leak
 examples of hackers leaking data from Amazon S3.
 </p>
 <p>
-The biggest reason why S3 data leaks are so common is that objects (files) in S3 buckets are public over HTTP by
-default.  This means that unless an engineer explicitly restricts access to the S3 bucket, its contents are public for
-anyone in the world to view.  For engineers new to AWS and the S3 service, the mistake of leaving S3 buckets public is
-very common.
+The biggest reason why S3 data leaks are so common is that objects (files) in S3 buckets are easily misconfigured to be
+public over HTTP.  When an S3 bucket is public, its contents are available for anyone in the world to view.  For
+engineers new to AWS and the S3 service, the mistake of configuring S3 buckets to be public is very common.
 </p>
 <p>
 Over the years, AWS has provided more ways to secure S3 buckets and provide explicit warnings to users if S3 buckets
@@ -29,6 +28,50 @@ In the AWS Console, if an S3 bucket is publicly accessible, a warning icon is di
 </p>
 <InlineImage filename="1-2-22-public-buckets.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
+<p>
+This warning is meant to deter users from leaving S3 buckets without any security.  In 2018, AWS added a "Block Public
+Access" feature to S3, allowing engineers to restrict the creation of public buckets account-wide.  If an account’s
+"Block Public Access" settings aren’t restrictive towards public S3 buckets, the AWS Console provides additional
+warning messages.
+</p>
+<InlineImage filename="1-2-22-block-public-access.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The public S3 buckets shown from my account are used as static websites.  These static websites are distributed and
+given domain names using the AWS CloudFront CDN.  For example, one of my S3 buckets,
+<strong>react16-3.demo.jarombek.com</strong>, is distributed using CloudFront and accessible at the
+<a href="https://www.react16-3.demo.jarombek.com/">https://www.react16-3.demo.jarombek.com</a> domain.  Back in February
+2020, I wrote an <a href="https://jarombek.com/blog/feb-15-2020-s3-react">article</a> about how to write the AWS
+infrastructure for this static website using Terraform.
+</p>
+<p>
+S3 buckets are also given Amazon domain names.  For example, my bucket has the domain
+<a href="http://react16-3.demo.jarombek.com.s3-website-us-east-1.amazonaws.com/">
+http://react16-3.demo.jarombek.com.s3-website-us-east-1.amazonaws.com/</a>.  For buckets with public access, anyone
+with internet access can read the contents of the S3 bucket from this URL.
+</p>
+<p>
+If you navigate to my S3 bucket’s Amazon domain name now, you will receive an HTTP 403 Forbidden error message.  This is
+because my S3 bucket is now private.  However, at the time I took the AWS Console screenshots above (back when the
+<strong>react16-3.demo.jarombek.com</strong> bucket was still public), navigating to
+<a href="http://react16-3.demo.jarombek.com.s3-website-us-east-1.amazonaws.com/">
+http://react16-3.demo.jarombek.com.s3-website-us-east-1.amazonaws.com/</a> showed the same static website as the
+official CloudFront URL, <a href="https://www.react16-3.demo.jarombek.com/">https://www.react16-3.demo.jarombek.com</a>.
+</p>
+<InlineImage filename="1-2-22-static-website.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+While re-evaluating my S3 infrastructure recently, I decided it would be a good idea to make all my S3 buckets, even
+those for static websites, private.  This way, their contents would be inaccessible through Amazon URLs, but still
+accessible via the CloudFront CDN.  I also decided to change the "Block Public Access" settings for my account.  This
+way, no S3 buckets can be made public in my account in the future.
+</p>
 <SectionTitle title="Restricting Access to S3 Buckets">Restricting Access to S3 Buckets</SectionTitle>
+<p>
+To demonstrate how I made my S3 buckets private, I’ll again use the <strong>react16-3.demo.jarombek.com</strong> bucket
+as an example.  The Terraform infrastructure for this bucket exists on GitHub in my <a href="https://github.com/
+AJarombek/jarombek-com-infrastructure/tree/master/jarombek-com-react16-3-demo">jarombek-com-infrastructure</a>
+repository.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
