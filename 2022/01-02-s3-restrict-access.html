@@ -70,8 +70,92 @@ way, no S3 buckets can be made public in my account in the future.
 <p>
 To demonstrate how I made my S3 buckets private, I’ll again use the <strong>react16-3.demo.jarombek.com</strong> bucket
 as an example.  The Terraform infrastructure for this bucket exists on GitHub in my <a href="https://github.com/
-AJarombek/jarombek-com-infrastructure/tree/master/jarombek-com-react16-3-demo">jarombek-com-infrastructure</a>
+AJarombek/jarombek-com-infrastructure/tree/v1.1.0/jarombek-com-react16-3-demo">jarombek-com-infrastructure</a>
 repository.
 </p>
+<p>
+The first piece of infrastructure to create is the <a href="https://github.com/AJarombek/jarombek-com-infrastructure/
+blob/v1.1.0/jarombek-com-react16-3-demo/main.tf#L47-L61">S3 bucket</a>, which is provisioned with the
+<code className="jarombek-inline-code">aws_s3_bucket</code> Terraform resource.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_s3_bucket" "react16-3-demo-jarombek" {
+  bucket = "react16-3.demo.jarombek.com"
+  acl = "private"
+
+  tags = {
+    Name = "react16-3.demo.jarombek.com"
+    Environment = "production"
+    Application = "react-16-3-demo"
+  }
+
+  website {
+    index_document = "index.html"
+    error_document = "index.html"
+  }
+}
+</CodeSnippet>
+<p>
+In regards to security, the important argument in the <code className="jarombek-inline-code">aws_s3_bucket</code>
+resource is <code className="jarombek-inline-code">acl</code>.  <code className="jarombek-inline-code">acl</code>
+configures the Access Control List (ACL) value for the S3 bucket.  <code className="jarombek-inline-code">acl</code>
+defaults to <code className="jarombek-inline-code">private</code>, which gives the owner of the S3 bucket (my AWS
+account) full access to the bucket and provides no access for everyone else.  Back when my S3 buckets were publicly
+accessible, the value of <code className="jarombek-inline-code">acl</code> was <code className="jarombek-inline-code">
+public</code>.  The full list of ACL options for S3 buckets are available in the <a href="https://docs.aws.amazon.com/
+AmazonS3/latest/userguide/acl-overview.html#canned-acl">AWS documentation</a>.
+</p>
+<p>
+The next piece of infrastructure is a <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/v1.1.0/
+jarombek-com-react16-3-demo/main.tf#L85-L92">Public Access Block configuration for the S3 bucket</a>, which is
+provisioned with the <code className="jarombek-inline-code">aws_s3_bucket_public_access_block</code> resource.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_s3_bucket_public_access_block" "react16-3-demo-jarombek" {
+  bucket = aws_s3_bucket.react16-3-demo-jarombek.id
+
+  block_public_acls = true
+  block_public_policy = true
+  restrict_public_buckets = true
+  ignore_public_acls = true
+}
+</CodeSnippet>
+<p>
+Public Access Block configurations can be applied account-wide or to a specific S3 bucket.  The example above is
+configured for an individual bucket.  Public Access Block configurations contain four settings, represented by the
+<code className="jarombek-inline-code">block_public_acls</code>, <code className="jarombek-inline-code">
+block_public_policy</code>, <code className="jarombek-inline-code">restrict_public_buckets</code>, and
+<code className="jarombek-inline-code">ignore_public_acls</code> fields.  Giving these fields a value of
+<code className="jarombek-inline-code">true</code> turns them on, while values of
+<code className="jarombek-inline-code">false</code> (the default value) keep them off.  Since I want these settings
+applied for additional security, I assign them values of <code className="jarombek-inline-code">true</code>.
+</p>
+<p>
+For full details on what these four Public Access Block settings achieve, check out the
+<a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html#access-control-block-public-access-options">
+AWS documentation</a> on the subject.  The gist is that with these settings applied, requests to create buckets or
+objects in buckets with public IAM policies or public ACLs is prohibited.
+</p>
+<p>
+As I mentioned earlier, Public Access Block settings can be applied to individual S3 buckets or an entire AWS account.
+If Public Access Block settings are applied to both, the more restrictive of the two settings is enforced.  For example,
+if the account-wide settings are turned on and the settings for a S3 bucket, let’s say
+<strong>react16-3.demo.jarombek.com</strong>, are turned off, the restrictiveness of the account-wide settings are
+applied to the bucket<sup>1</sup>.
+</p>
+<p>
+Account-wide Public Access Block settings are created using a <code className="jarombek-inline-code">
+aws_s3_account_public_access_block</code> resource.  The account-wide settings for my AWS account, which exist in my
+<a href="https://github.com/AJarombek/global-aws-infrastructure/blob/v2.0.3/s3/main.tf#L52-L57">
+global-aws-infrastructure</a> repository, are shown below.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_s3_account_public_access_block" "access" {
+  block_public_acls = true
+  block_public_policy = true
+  restrict_public_buckets = true
+  ignore_public_acls = true
+}
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
