@@ -157,5 +157,88 @@ resource "aws_s3_account_public_access_block" "access" {
   ignore_public_acls = true
 }
 </CodeSnippet>
+<p>
+With account-wide Public Access Block settings turned on, the AWS Console displays the following screen:
+</p>
+<InlineImage filename="1-2-22-s3-block-public-access-on.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+After the Public Access Block settings are properly configured, I create a CloudFront distribution for the S3 bucket
+with the <code className="jarombek-inline-code">aws_cloudfront_distribution</code> resource.  The CloudFront
+distribution also has a corresponding <code className="jarombek-inline-code">aws_cloudfront_origin_access_identity</code>
+resource.  Shortened versions of both are shown below, with the full code available on <a href="https://github.com/
+AJarombek/jarombek-com-infrastructure/blob/v1.1.0/jarombek-com-react16-3-demo/main.tf#L94-L174">GitHub</a>.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_cloudfront_distribution" "react16-3-demo-jarombek-distribution" {
+  origin {
+    domain_name = aws_s3_bucket.react16-3-demo-jarombek.bucket_regional_domain_name
+    ...
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin-access-identity.cloudfront_access_identity_path
+    }
+  }
+
+  ...
+}
+
+resource "aws_cloudfront_origin_access_identity" "origin-access-identity" {
+  comment = "react16-3.demo.jarombek.com origin access identity"
+}
+</CodeSnippet>
+<p>
+As far as security is concerned, the <code className="jarombek-inline-code">aws_cloudfront_origin_access_identity</code>
+resource is important for granting CloudFront access to a private S3 bucket.  It is assigned to the CloudFront
+distribution with the <code className="jarombek-inline-code">origin.s3_origin_config.origin_access_identity</code>
+Terraform attribute.  The CloudFront Origin Access Identity (OAI) is a user that can be assigned to CloudFront
+distributions.  The key is to provide read access on a private S3 bucket to an OAI, thus giving CloudFront access to
+the bucket's contents.
+</p>
+<p>
+OAIs are given access to S3 buckets using <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/
+v1.1.0/jarombek-com-react16-3-demo/main.tf#L63-L83">S3 bucket policies</a>, created with the
+<code className="jarombek-inline-code">aws_s3_bucket_policy</code> resource.  The following Terraform configuration
+gives the OAI access to my S3 bucket.
+</p>
+<CodeSnippet language="HCL">
+resource "aws_s3_bucket_policy" "react16-3-demo-jarombek" {
+  bucket = aws_s3_bucket.react16-3-demo-jarombek.id
+  policy = data.aws_iam_policy_document.react16-3-demo-jarombek.json
+}
+
+data "aws_iam_policy_document" "react16-3-demo-jarombek" {
+  statement {
+    sid = "CloudfrontOAI"
+
+    principals {
+      identifiers = [aws_cloudfront_origin_access_identity.origin-access-identity.iam_arn]
+      type = "AWS"
+    }
+
+    actions = ["s3:GetObject", "s3:ListBucket"]
+    resources = [
+      aws_s3_bucket.react16-3-demo-jarombek.arn,
+      "${aws_s3_bucket.react16-3-demo-jarombek.arn}/*"
+    ]
+  }
+}
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">aws_iam_policy_document</code> data source creates the S3 bucket policy
+document.  It provides <code className="jarombek-inline-code">s3:GetObject</code> and
+<code className="jarombek-inline-code">s3:ListObject</code> access to the OAI for the
+<code className="jarombek-inline-code">react16-3.demo.jarombek.com</code> bucket.
+</p>
+<p>
+After all this infrastructure is created, I have a private S3 bucket, whose contents are still accessible to the public
+through a CloudFront distribution.  All the infrastructure shown in this article is available on
+<a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/v1.1.0/jarombek-com-react16-3-demo">GitHub</a>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Keeping S3 buckets private, even when they hold publicly accessible assets such as static website files, is critical
+for cloud infrastructure security.  The approach of using a CloudFront OAI to access a private S3 bucket is very easy
+to implement, and AWS recommends implementing it.
+</p>
 </div>
