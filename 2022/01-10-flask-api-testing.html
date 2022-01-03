@@ -41,7 +41,7 @@ of code aren't being tested.
 <p>
 In the Flask application source code, I created a custom CLI command which triggers the <strong>unittest</strong> tests
 with code coverage enabled.  This way, application tests are triggered from the command line with a
-<code className="jarombek-inline-code">python -m flask test</code> command.  In Flask code, the CLI command is a Python
+<code className="jarombek-inline-code">flask test</code> command.  In Flask code, the CLI command is a Python
 function <code className="jarombek-inline-code">test()</code>, located within a <a href="https://github.com/AJarombek/
 saints-xctf-api/blob/v2.0.1/api/src/commands.py#L20-L46">commands.py</a> file.  <code className="jarombek-inline-code">
 test()</code> is added to the Flask application in my <a href="https://github.com/AJarombek/saints-xctf-api/blob/
@@ -95,6 +95,114 @@ def test():
 AJarombek/saints-xctf-api/tree/v2.0.1/api/src/tests">test</a> directory of my application.
 </p>
 <SectionTitle title="Testing Approach">Testing Approach</SectionTitle>
+<p>
+Most of the tests in my application invoke API endpoints and assert they return certain HTTP response bodies and
+response status codes.  This means that in order for my tests to execute successfully, a running instance of the API is
+needed.  Instead of using the API running in production, I use a test API that can be quickly spun up before tests
+begin and spun down after tests stop.  All the configuration for this test API and the execution environment for the
+tests themselves is accomplished using Docker and Docker Compose.
+</p>
+<p>
+In general, each component of my application backend has a corresponding Docker Compose file.  There is also a Docker
+Compose file for the API tests.  These Docker Compose files exist in a <a href="https://github.com/AJarombek/
+saints-xctf-api/tree/v2.0.1/infra/docker-compose">docker-compose</a> directory in my repository.
+</p>
+<p>
+There are five Docker Compose files in total, each running a single Docker container.  The four Docker Compose files
+that together form my application backend are for the <a href="https://github.com/AJarombek/saints-xctf-api/blob/
+v2.0.1/infra/docker-compose/docker-compose-db-local.yml">database</a>, <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/v2.0.1/infra/docker-compose/docker-compose-auth-local.yml">authentication API</a>,
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/infra/docker-compose/docker-compose-fn-local.yml">
+AWS Lambda function API</a>, and <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/infra/docker-compose/
+docker-compose-api-local.yml">main Flask API</a>.  These four Docker Compose configurations need to be started using
+the <code className="jarombek-inline-code">docker-compose up</code> command before the API tests are run.  Once they
+are running, the <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/infra/docker-compose/
+docker-compose-test-local.yml">API test</a> Docker Compose file can be run.  This Docker Compose file starts a
+container, runs the API tests on that container, and then stops the container.
+</p>
+<CodeSnippet language="YAML">
+# docker-compose-test-local.yml
+
+version: '3.7'
+services:
+  test:
+    build:
+      context: ../../api/src/
+      dockerfile: local.test.dockerfile
+      network: host
+    networks:
+      - local-saints-xctf-api-net
+
+networks:
+  local-saints-xctf-api-net:
+    driver: bridge
+</CodeSnippet>
+<p>
+This Docker Compose file runs a <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/
+local.test.dockerfile">local.test.dockerfile</a> Dockerfile, which has the following configuration:
+</p>
+<CodeSnippet language="Dockerfile">
+FROM python:3.8-alpine
+
+RUN apk update \
+    && apk add --virtual .build-deps gcc python3-dev libc-dev libffi-dev g++ \
+    && pip install --upgrade pip \
+    && pip install pipenv
+
+COPY . /src
+WORKDIR /src
+
+RUN pipenv install
+
+ENV FLASK_APP app.py
+ENV ENV localtest
+
+COPY credentials .aws/
+ENV AWS_DEFAULT_REGION us-east-1
+ENV AWS_SHARED_CREDENTIALS_FILE .aws/credentials
+
+ENTRYPOINT ["pipenv", "run", "flask", "test"]
+</CodeSnippet>
+<p>
+At its core, this container uses a <code className="jarombek-inline-code">python:3.8-alpine</code> container as its
+base, installs necessary dependencies for the API code, and runs the <code className="jarombek-inline-code">
+flask test</code> command in the container <code className="jarombek-inline-code">ENTRYPOINT</code>.  Running this
+container shows a console output similar to the following:
+</p>
+<CodeSnippet>
+Starting docker-compose_test_1 ... done
+Attaching to docker-compose_test_1
+test_1  | test_app_exists (test_src.testApp.TestApp) ... ok
+test_1  | test_non_existent_route (test_src.testApp.TestApp)
+test_1  | ...
+test_1  | test_user_update_last_login_by_username_put_route_unauthorized (test_src.test_route.testUserRoute.TestUserRoute)
+test_1  | Test performing an unauthorized HTTP PUT request on the '/v2/users/&lt;username>/update_last_login' route. ... ok
+test_1  |
+test_1  | ----------------------------------------------------------------------
+test_1  | Ran 467 tests in 77.992s
+test_1  |
+test_1  | OK (skipped=11)
+test_1  | Coverage Summary:
+test_1  | Name                           Stmts   Miss Branch BrPart  Cover
+test_1  | ----------------------------------------------------------------
+test_1  | app.py                            73     35      6      0    48%
+test_1  | dao/activationCodeDao.py          25      0      0      0   100%
+test_1  | dao/basicDao.py                   15      0      0      0   100%
+test_1  | dao/userDao.py                    40      3      0      0    92%
+test_1  | model/User.py                     75      0      0      0   100%
+test_1  | model/UserData.py                 30      2      4      2    88%
+test_1  | route/userRoute.py               486     31    138     30    90%
+test_1  | utils/exerciseFilters.py          19      2     14      2    88%
+test_1  | ...
+test_1  | ----------------------------------------------------------------
+test_1  | TOTAL                           3625    261    692    154    90%
+test_1  | HTML version: file:///src/tmp/coverage/index.html
+docker-compose_test_1 exited with code 0
+</CodeSnippet>
+<p>
+This output states that the container started, 467 tests ran in 78 seconds with a successful (OK) status, and the code
+coverage of the API is 90%.
+</p>
 <SectionTitle title="Test Code">Test Code</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
