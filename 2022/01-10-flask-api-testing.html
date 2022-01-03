@@ -4,6 +4,13 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You
 <strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
 </Note>
+<p>
+In a <a href="https://jarombek.com/blog/jan-2-2022-s3-restrict-access">prior article</a>, I discussed my Flask API
+written for <a href="https://saintsxctf.com/">SaintsXCTF</a>, an application which allows users and their teammates to
+log running exercises and keep track of their running mileage.  As with any piece of software, this Flask API requires
+extensive testing to keep it functional and maintainable.  In this article, I discuss the automated testing approach I
+implemented for the API.
+</p>
 <SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
 <ul>
 <li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
@@ -23,4 +30,71 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <li>Database Client on Kubernetes</li>
 <li>Testing and Continuous Deployment on Jenkins</li>
 </ul>
+<SectionTitle title="Configuring Automated Tests">Configuring Automated Tests</SectionTitle>
+<p>
+The tests for my application use the built-in Python <strong>unittest</strong> library, along with the
+<strong>coverage</strong> library for code coverage.  Code coverage determines which lines of the API source code are
+covered by tests, allowing me to find gaps in testing.  The <strong>coverage</strong> library shows both textual and
+HTML reports of code coverage, making it extremely easy to drill down into specific source files and find which lines
+of code aren't being tested.
+</p>
+<p>
+In the Flask application source code, I created a custom CLI command which triggers the <strong>unittest</strong> tests
+with code coverage enabled.  This way, application tests are triggered from the command line with a
+<code className="jarombek-inline-code">python -m flask test</code> command.  In Flask code, the CLI command is a Python
+function <code className="jarombek-inline-code">test()</code>, located within a <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/v2.0.1/api/src/commands.py#L20-L46">commands.py</a> file.  <code className="jarombek-inline-code">
+test()</code> is added to the Flask application in my <a href="https://github.com/AJarombek/saints-xctf-api/blob/
+v2.0.1/api/src/app.py#L61">app.py</a> file with the following line:
+</p>
+<CodeSnippet language="Python">
+application.cli.add_command(test)
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">test()</code> starts code coverage, runs the tests, and then collects a code
+coverage report.  The code is shown below, and is inspired by a function found in the book
+<a href="https://www.oreilly.com/library/view/flask-web-development/9781491991725/">Flask Web Development</a><sup>1</sup>.
+</p>
+<CodeSnippet language="Python">
+cov = None
+if os.environ.get('FLASK_COVERAGE'):
+    cov = coverage.coverage(branch=True, include=['app.py', 'dao/*', 'model/*', 'route/*', 'utils/*'])
+    cov.start()
+
+
+@click.command()
+@with_appcontext
+def test():
+    """
+    Create a Flask command for running unit tests.  Execute with 'flask test' from a command line.
+    """
+    if not os.environ.get('FLASK_COVERAGE'):
+        os.environ['FLASK_COVERAGE'] = '1'
+        os.execvp(sys.executable, [sys.executable] + sys.argv)
+
+    # Create a test runner an execute the test suite
+    tests = unittest.TestLoader().discover('tests')
+    runner = unittest.TextTestRunner(verbosity=3)
+    result: unittest.TestResult = runner.run(tests)
+
+    if cov:
+        cov.stop()
+        cov.save()
+        print('Coverage Summary:')
+        cov.report()
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        cov_dir = os.path.join(basedir, 'tmp/coverage')
+        cov.html_report(directory=cov_dir)
+        print('HTML version: file://%s/index.html' % cov_dir)
+        cov.erase()
+
+    exit(len(result.errors))
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">test()</code> runs all the Python files in the <a href="https://github.com/
+AJarombek/saints-xctf-api/tree/v2.0.1/api/src/tests">test</a> directory of my application.
+</p>
+<SectionTitle title="Testing Approach">Testing Approach</SectionTitle>
+<SectionTitle title="Test Code">Test Code</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
