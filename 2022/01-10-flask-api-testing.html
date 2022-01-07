@@ -204,5 +204,133 @@ This output states that the container started, 467 tests ran in 78 seconds with 
 coverage of the API is 90%.
 </p>
 <SectionTitle title="Test Code">Test Code</SectionTitle>
+<p>
+The test code for my API exists within a <a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.1/api/src/
+tests">tests</a> directory.  The directory structure of the <strong>tests</strong> directory matches the application
+source code directory.  For example, inside <strong>tests</strong> is a <a href="https://github.com/AJarombek/
+saints-xctf-api/tree/v2.0.1/api/src/tests/test_src">test_src</a> directory, which matches the
+<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.1/api/src">src</a> directory of the application.  Inside
+<strong>test_src</strong> is a <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/
+test_src/testApp.py">testApp.py</a> file, which is a test file corresponding to an <a href="https://github.com/
+AJarombek/saints-xctf-api/blob/v2.0.1/api/src/app.py">app.py</a> file in the source code.  As you can see, in the test
+code, both source code directories and files are prefixed with <strong>test</strong>.  Source code directories are in
+snake case while source code files are in camel case.  This isn’t a required convention, but it makes it easy to
+associate test files with source code.
+</p>
+<p>
+The contents of <strong>testApp.py</strong>, which tests the entrypoint of the Flask application, is shown below.
+</p>
+<CodeSnippet language="Python">
+from flask import current_app, Response
+from tests.TestSuite import TestSuite
+
+
+class TestApp(TestSuite):
+
+    def test_app_exists(self):
+        self.assertTrue(current_app is not None)
+
+    def test_non_existent_route(self) -> None:
+        """
+        Test performing an HTTP GET request against an endpoint that doesn't exist. This query should invoke the
+        custom 404 error handler.
+        """
+        response: Response = self.client.get('/path/doesnt/exist')
+        response_json: dict = response.get_json()
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response_json.get('error_description'), 'Page Not Found')
+        self.assertGreater(len(response_json.get('exception')), 0)
+        self.assertEqual(response_json.get('contact'), 'andrew@jarombek.com')
+        self.assertEqual(response_json.get('api_index'), '/versions')
+</CodeSnippet>
+<p>
+Each test file has a single class, which contains functions for individual tests.  These test classes,
+<code className="jarombek-inline-code">TestApp</code> in the example above, extend a base class called
+<code className="jarombek-inline-code">TestSuite</code>.  <code className="jarombek-inline-code">TestSuite</code>
+performs setup and cleanup work for tests.  <code className="jarombek-inline-code">TestSuite</code> extends a
+<code className="jarombek-inline-code">unittest.TestCase</code> class, which <a href="https://docs.python.org/3.8/
+library/unittest.html#test-cases">exposes methods</a> for performing setup and cleanup logic.
+<code className="jarombek-inline-code">TestSuite</code> overrides these methods, as shown below.  The full code is
+available in my <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/tests/TestSuite.py">
+TestSuite.py</a> file.
+</p>
+<CodeSnippet language="Python">
+import unittest
+import os
+import asyncio
+import json
+
+import boto3
+import aiohttp
+from flask.testing import FlaskClient
+
+from config import config
+from app import create_app
+from database import db
+
+
+class TestSuite(unittest.TestCase):
+    jwt = None
+    auth_url = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """
+        Set up logic performed before each test class executes.
+        """
+        flask_env = os.getenv('FLASK_ENV') or 'local'
+        auth_url = config[flask_env].AUTH_URL
+        TestSuite.auth_url = auth_url
+
+        secretsmanager = boto3.client('secretsmanager')
+        response = secretsmanager.get_secret_value(SecretId=f'saints-xctf-andy-password')
+        secret_string = response.get("SecretString")
+        secret_dict = json.loads(secret_string)
+        client_secret = secret_dict.get("password")
+
+        async def token():
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    url=f"{auth_url}/token",
+                    json={'clientId': 'andy', 'clientSecret': client_secret}
+                ) as response:
+                    response_body = await response.json()
+                    result = response_body.get('result')
+                    if result:
+                        TestSuite.jwt = result
+
+        asyncio.run(token())
+
+    def setUp(self) -> None:
+        """
+        Set up logic performed before every test.
+        """
+        if os.environ.get('ENV') == 'localtest':
+            env = 'localtest'
+        else:
+            env = 'test'
+
+        self.app = create_app(env)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.client: FlaskClient = self.app.test_client()
+        self.jwt = TestSuite.jwt
+        self.auth_url = TestSuite.auth_url
+        self.jwts = {}
+
+    def tearDown(self) -> None:
+        """
+        Tear down logic performed after every test.
+        """
+        db.session.remove()
+        self.app_context.pop()
+</CodeSnippet>
+<p>
+The setup functions perform actions such as retrieving an authentication token (JWT) for the API to use in tests and
+creating a test client for the API of type <code className="jarombek-inline-code">FlaskClient</code>.  More expensive
+operations, such as making an external API to receive a JWT, are performed in <code className="jarombek-inline-code">
+setUpClass()</code> instead of <code className="jarombek-inline-code">setUp()</code>.  This way, long running tasks
+don’t take place before each test function, only at the start of each class.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
