@@ -1,0 +1,82 @@
+<div>
+<p>
+Over the last six months, I’ve been using Apache Airflow extensively at work.  Airflow is a platform and framework for
+building and automating data pipelines<sup>1</sup>.  Airflow data pipelines are written in Python and interoperate with
+many different technologies, such as databases, cloud platforms, containers, and more.  Often, Airflow is used in
+realms of data analytics and machine learning.
+</p>
+<p>
+While Airflow data pipelines are written in Python, the software they automate and schedule do not need to be Python
+related.  However, the fact that Python is used makes Airflow data pipelines highly configurable and customizable.
+Since Python is very popular and simpler to learn compared to other languages, most engineers will be able to work with
+Airflow easily.
+</p>
+<p>
+There are three main objectives to this article: introducing the basic concepts of Airflow, creating an Airflow
+development environment, and exploring basic Airflow pipelines.  The code discussed in this article is available on
+<a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow">GitHub</a>.
+</p>
+<SectionTitle title="Airflow Concepts">Airflow Concepts</SectionTitle>
+<Definition word="Airflow">
+Airflow is a platform and framework for building, automating, and scheduling data pipelines<sup>2</sup>.  Data
+pipelines in Airflow are known as workflows or Directed Acyclic Graphs (DAGs).  Airflow DAGs are configured as code
+using Python, and can be run ad hoc or on a schedule.  The Airflow platform creates an execution and scheduling
+environment for DAGs, viewable from a web interface.
+</Definition>
+<p>
+The main objective of Airflow is to run DAGs either manually or based on a schedule.
+</p>
+<Definition word="Airflow DAG">
+A Directed Acyclic Graph (DAG), also referred to as a data pipeline or workflow, is a schedulable graph of tasks
+which is run based on a schedule.  Since DAGs are acyclic, the graph of tasks in a DAG can’t contain any cycles, but
+can branch and converge as needed.  Airflow DAGs are written and configured in Python.  DAGs contain information such
+as a list of tasks, the execution order (graph) of the tasks, an execution schedule, and additional metadata.
+</Definition>
+<p>
+An image of an Airflow DAG, as seen from the Airflow UI, is shown below.
+</p>
+<InlineImage filename="1-17-22-airflow-dag.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<Definition word="Airflow Task">
+
+</Definition>
+<p>
+The Airflow platform consists of multiple components; most importantly, Airflow consists of a web server, scheduler,
+and metastore.
+</p>
+<ComparisonTable title="Airflow Components">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Web Server
+</h5>
+<div className="jarombek-cte-body">
+<p>
+
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Scheduler
+</h5>
+<div className="jarombek-cte-body">
+<p>
+
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Metastore
+</h5>
+<div className="jarombek-cte-body">
+<p>
+
+</p>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
+<SectionTitle title="Airflow Development Environment">Airflow Development Environment</SectionTitle>
+<SectionTitle title="Basic Airflow Pipelines">Basic Airflow Pipelines</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
