@@ -244,12 +244,20 @@ class TestApp(TestSuite):
         self.assertEqual(response_json.get('api_index'), '/versions')
 </CodeSnippet>
 <p>
+This test code contains two test functions: <code className="jarombek-inline-code">test_app_exists()</code> and
+<code className="jarombek-inline-code">test_non_existent_route()</code>.  <code className="jarombek-inline-code">
+test_app_exists()</code> checks if <code className="jarombek-inline-code">current_app</code>, a proxy to the Flask
+application object, exists as expected<sup>2</sup>.  <code className="jarombek-inline-code">test_non_existent_route()
+</code> tests that making an HTTP request to an invalid route in the API returns a specific JSON response with a 404
+status code.
+</p>
+<p>
 Each test file has a single class, which contains functions for individual tests.  These test classes,
 <code className="jarombek-inline-code">TestApp</code> in the example above, extend a base class called
 <code className="jarombek-inline-code">TestSuite</code>.  <code className="jarombek-inline-code">TestSuite</code>
 performs setup and cleanup work for tests.  <code className="jarombek-inline-code">TestSuite</code> extends a
 <code className="jarombek-inline-code">unittest.TestCase</code> class, which <a href="https://docs.python.org/3.8/
-library/unittest.html#test-cases">exposes methods</a> for performing setup and cleanup logic.
+library/unittest.html#test-cases">exposes methods</a> for performing setup and cleanup logic<sup>3</sup>.
 <code className="jarombek-inline-code">TestSuite</code> overrides these methods, as shown below.  The full code is
 available in my <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/tests/TestSuite.py">
 TestSuite.py</a> file.
@@ -332,5 +340,108 @@ operations, such as making an external API to receive a JWT, are performed in <c
 setUpClass()</code> instead of <code className="jarombek-inline-code">setUp()</code>.  This way, long running tasks
 don’t take place before each test function, only at the start of each class.
 </p>
+<p>
+I already showed some basic tests in the <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/
+tests/test_src/testApp.py">testApp.py</a> file, but now let's look at a more complex example.
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/tests/test_src/test_route/testGroupRoute.py">
+testGroupRoute.py</a> is a file that tests all the API routes defined in my <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/master/api/src/route/groupRoute.py">groupRoute.py</a> source code file.  Let’s walk through a few
+tests, starting with <code className="jarombek-inline-code">test_group_get_all_route_200()</code>.
+</p>
+<CodeSnippet language="Python">
+def test_group_get_all_route_200(self) -> None:
+    """
+    Test performing an HTTP GET request on the '/v2/groups/' route.  This test proves that the endpoint returns
+    a list of groups.
+    """
+    response: Response = self.client.get('/v2/groups/', headers={'Authorization': f'Bearer {self.jwt}'})
+    response_json: dict = response.get_json()
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response_json.get('self'), '/v2/groups')
+    self.assertGreater(len(response_json.get('groups')), 1)
+</CodeSnippet>
+<p>
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/test_src/test_route/testGroupRoute.py#L42-L51">
+This test</a> checks that API calls to the <strong>/v2/groups/</strong> endpoint returns a 200 status code and a specific
+JSON body.  It is very similar to the <code className="jarombek-inline-code">test_non_existent_route()</code> test,
+except this API endpoint requires authentication, which is passed to the endpoint in the
+<code className="jarombek-inline-code">Authorization</code> header.
+</p>
+<p>
+A slightly more complex test is <code className="jarombek-inline-code">test_group_by_id_put_route_400_not_an_admin()</code>.
+</p>
+<CodeSnippet language="Python">
+def test_group_by_id_put_route_400_not_an_admin(self) -> None:
+    """
+    Test performing an HTTP PUT request on the '/v2/groups/&lt;group_id>' route.  This test proves that
+    a user trying to update a group they are not an administrator of results in a 400 error.
+    """
+    response: Response = self.client.get(
+        '/v2/groups/saintsxctf/wmenstf',
+        headers={'Authorization': f'Bearer {self.jwt}'}
+    )
+    response_json: dict = response.get_json()
+    self.assertEqual(response.status_code, 200)
+    self.assertIsNotNone(response_json.get('group'))
+    group_id = response_json.get('group').get('id')
+
+    response: Response = self.client.put(f'/v2/groups/{group_id}', headers={'Authorization': f'Bearer {self.jwt}'})
+    response_json: dict = response.get_json()
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(response_json.get('self'), f'/v2/groups/{group_id}')
+    self.assertFalse(response_json.get('updated'))
+    self.assertIsNone(response_json.get('group'))
+    self.assertEqual(
+        response_json.get('error'),
+        f'User andy is not authorized to update a group with id {group_id}.'
+    )
+</CodeSnippet>
+<p>
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/test_src/test_route/
+testGroupRoute.py#L269-L292">This test</a> asserts that if my user tries to update a group it is not a member of (the
+Women’s Track & Field group), the API returns a 400 error. Two API calls are needed to complete the test, which adds
+some complexity.  The first API call (a GET request) receives Women’s Track & Field group information, including a
+unique identifier for the group.  This unique identifier is stored in <code className="jarombek-inline-code">
+group_id</code> and is used in the next API call, a PUT request to <code className="jarombek-inline-code">
+/v2/groups/{group_id}</code>.
+</p>
+<p>
+A successful variant of the Women’s Track & Field group test is <code className="jarombek-inline-code">
+test_group_by_id_put_route_200()</code>, which asserts that my user can update an Alumni group, which I am a member of.
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/test_src/test_route/testGroupRoute.py#L326-L355">
+This test</a> also requires two API calls.
+</p>
+<CodeSnippet language="Python">
+def test_group_by_id_put_route_200(self) -> None:
+    """
+    Test performing an HTTP PUT request on the '/v2/groups/&lt;group_id>' route.  This test proves that if the updated
+    group object is valid and the user is an admin of the group, the group is updated and a 200 status code is
+    returned.
+    """
+    response: Response = self.client.get(
+        '/v2/groups/saintsxctf/alumni',
+        headers={'Authorization': f'Bearer {self.jwt}'}
+    )
+    response_json: dict = response.get_json()
+    self.assertEqual(response.status_code, 200)
+    self.assertIsNotNone(response_json.get('group'))
+    group_id = response_json.get('group').get('id')
+
+    group_dict: dict = response_json.get('group')
+    group_dict['description'] = f"Updated: {datetime.now()}"
+    request_body = json.dumps(group_dict)
+
+    response: Response = self.client.put(
+        f'/v2/groups/{group_id}',
+        data=request_body,
+        content_type='application/json',
+        headers={'Authorization': f'Bearer {self.jwt}'}
+    )
+    response_json: dict = response.get_json()
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(response_json.get('self'), f'/v2/groups/{group_id}')
+    self.assertTrue(response_json.get('updated'))
+    self.assertIsNotNone(response_json.get('group'))
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
