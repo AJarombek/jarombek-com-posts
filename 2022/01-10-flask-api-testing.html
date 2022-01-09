@@ -443,5 +443,126 @@ def test_group_by_id_put_route_200(self) -> None:
     self.assertTrue(response_json.get('updated'))
     self.assertIsNotNone(response_json.get('group'))
 </CodeSnippet>
+<p>
+All the API endpoint tests in my application follow a similar pattern to the ones I’ve shown.  There are two other
+types of tests for my Flask application.  The first type is unit tests for utility functions in my API, such as those
+found in <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/test_src/test_utils/testLogs.py">
+testLogs.py</a>.  This file tests conversions between distance units, such as converting miles to kilometers.  The
+second type is unit tests for <a href="https://jarombek.com/blog/dec-24-2021-flask-python-api#database-models">
+SQLAlchemy Model classes</a>.  SQLAlchemy model class tests are located in a <a href="https://github.com/AJarombek/
+saints-xctf-api/tree/v2.0.1/api/src/tests/test_src/test_model">test_model</a> directory.  One example is
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/test_src/test_model/testUser.py">
+testUser.py</a>, which tests the <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/model/User.py">
+User.py</a> model.
+</p>
+<CodeSnippet language="Python">
+from datetime import datetime
+from tests.TestSuite import TestSuite
+from model.User import User
+
+
+class TestUser(TestSuite):
+    user1_dict = {
+        'username': "andy",
+        'first': 'Andy',
+        'last': 'Jarombek',
+        'salt': None,
+        'password': 'hashed_and_salted_password',
+        'profilepic': None,
+        'profilepic_name': None,
+        'description': "Andy's Profile",
+        'member_since': datetime.fromisoformat('2016-12-23'),
+        'class_year': 2017,
+        'location': 'Riverside, CT',
+        'favorite_event': '8K, 5000m',
+        'activation_code': 'ABC123',
+        'email': 'andrew@jarombek.com',
+        'subscribed': 1,
+        'last_signin': datetime.fromisoformat('2019-12-10'),
+        'week_start': 'monday',
+        'deleted': False
+    }
+
+    user2_dict = {
+        'username': "andy2",
+        'first': 'Andrew',
+        'last': 'Jarombek',
+        'salt': None,
+        'password': 'hashed_and_salted_password',
+        'profilepic': None,
+        'profilepic_name': None,
+        'description': None,
+        'member_since': datetime.fromisoformat('2019-12-10'),
+        'class_year': 2017,
+        'location': None,
+        'favorite_event': None,
+        'activation_code': 'DEF456',
+        'email': 'andrew@jarombek.com',
+        'subscribed': None,
+        'last_signin': datetime.now(),
+        'week_start': None,
+        'deleted': False
+    }
+
+    user1 = User(user1_dict)
+    user1copy = User(user1_dict)
+    user2 = User(user2_dict)
+
+    def test_user_str(self) -> None:
+        """
+        Prove that the human readable string representation of a User object is as expected.
+        """
+        log_str = 'User: [username: andy, first: Andy, last: Jarombek, salt: None, ' \
+                  'password: hashed_and_salted_password, ' \
+                  "description: Andy's Profile, member_since: 2016-12-23 00:00:00, class_year: 2017, " \
+                  'location: Riverside, CT, favorite_event: 8K, 5000m, activation_code: ABC123, ' \
+                  'email: andrew@jarombek.com, subscribed: 1, last_signin: 2019-12-10 00:00:00, week_start: monday, ' \
+                  'deleted: False]'
+
+        self.maxDiff = None
+        self.assertEquals(str(self.user1), log_str)
+        self.assertEquals(self.user1.__str__(), log_str)
+
+    def test_user_repr(self) -> None:
+        """
+        Prove that the machine readable string representation of a User object is as expected.
+        """
+        self.assertEquals(repr(self.user1), "&lt;User 'andy'>")
+        self.assertEquals(self.user1.__repr__(), "&lt;User 'andy'>")
+
+    def test_user_eq(self) -> None:
+        """
+        Prove that two User objects with the same property values test positive for value equality.
+        """
+        self.assertTrue(self.user1 == self.user1copy)
+        self.assertTrue(self.user1.__eq__(self.user1copy))
+
+    def test_user_ne(self) -> None:
+        """
+        Prove that two User objects with different property values test negative for value equality.
+        """
+        self.assertTrue(self.user1 != self.user2)
+        self.assertTrue(self.user1.__ne__(self.user2))
+</CodeSnippet>
+<p>
+There are a couple aspects of the model classes that I prioritize in these tests.
+<code className="jarombek-inline-code">def test_user_str()</code> tests that the string representation of a model class
+(passing an instance of the class to <code className="jarombek-inline-code">str()</code>) is as expected.
+<code className="jarombek-inline-code">test_user_repr()</code> tests that the machine representation of a model class
+(passing an instance of the class to <code className="jarombek-inline-code">repr()</code>) is as expected.
+<code className="jarombek-inline-code">test_user_eq()</code> and <code className="jarombek-inline-code">
+test_user_ne()</code> test for value equality between instances of the model class.
+</p>
+<p>
+One piece of my API that is not directly under test is the <a href="https://jarombek.com/blog/
+dec-24-2021-flask-python-api#data-access-objects">Data Access Objects (DAOs)</a>.  My reasoning for this decision is
+that the DAOs are invoked by the API routes, so they are already indirectly tested by the API endpoint tests.  Testing
+them individually would be a duplication of these existing endpoint tests, just written in a different format.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Writing automated tests is critical for the reliability of any application, and hopefully this article helped illustrate
+that tests for Flask APIs are easy to set up and write.  All the code discussed in this article is available in my
+<a href="https://github.com/AJarombek/saints-xctf-api">saints-xctf-api</a> repository on GitHub.
+</p>
 </div>
