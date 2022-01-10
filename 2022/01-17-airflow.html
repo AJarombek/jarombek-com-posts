@@ -38,7 +38,12 @@ An image of an Airflow DAG, as seen from the Airflow UI, is shown below.
 <InlineImage filename="1-17-22-airflow-dag.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <Definition word="Airflow Task">
-
+In Airflow, tasks are the smallest unit of execution<sup>3</sup>.  Tasks are units within a DAG, with upstream and
+downstream dependencies within the graph.  Tasks can perform simple operations such as running a Python function or
+Bash script, or more complex operations like running a Docker container.  There are many different types of tasks,
+which are created using Airflow Operators.  Operators are templates for building tasks; for example, a
+<code className="jarombek-inline-code">PythonOperator</code> is used to create a task that runs a Python
+function<sup>4</sup>.
 </Definition>
 <p>
 The Airflow platform consists of multiple components; most importantly, Airflow consists of a web server, scheduler,
@@ -51,7 +56,8 @@ Web Server
 </h5>
 <div className="jarombek-cte-body">
 <p>
-
+In Airflow, the web server is the UI in which users can view and trigger DAGs. The web server is also helpful for
+viewing DAG run results and debug DAGs by looking through execution logs.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -61,7 +67,11 @@ Scheduler
 </h5>
 <div className="jarombek-cte-body">
 <p>
-
+The Airflow scheduler is a constantly running program that monitors all DAGs in the Airflow environment<sup>5</sup>.
+Python DAG files exist in a specific directory in the Airflow environment, and the scheduler is responsible for parsing
+these DAG files and storing information about them within the Airflow metastore.  The scheduler also checks if DAGs and
+tasks within DAGs are eligible for execution.  When tasks are eligible for execution, the scheduler places them in a
+queued state, and then executes them<sup>6</sup>.  In many ways, the scheduler is the heart of the Airflow platform.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -71,11 +81,53 @@ Metastore
 </h5>
 <div className="jarombek-cte-body">
 <p>
-
+The Airflow metastore holds metadata about an Airflow environment, including configuration details and DAG information.
+Everything that happens within the Airflow environment also exists in the metastore, including DAG run information.
+The metastore is a relational database, commonly MySQL or PostgreSQL.  <a href="https://www.astronomer.io/guides/
+airflow-database">This article</a> provides a good high-level overview of the data stored in the metastore.
 </p>
 </div>
 </ComparisonTableEntry>
 </ComparisonTable>
+<SectionTitle title="Airflow Webserver Tour">Airflow Webserver Tour</SectionTitle>
+<p>
+After signing into the Airflow UI, the initial view displays all the DAGs in the Airflow environment.
+</p>
+<InlineImage filename="1-17-22-airflow-home.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The list of DAGs displays basic information about each DAG, such as their execution schedules, and the results of
+recent runs.  It also gives options to toggle DAGs on and off (the switch to the left of the DAG name) and run DAGs
+(the play button in the "Actions" column).  Clicking on a DAG shows the following view:
+</p>
+<InlineImage filename="1-17-22-airflow-graph-view.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Airflow DAGs have multiple views; the view shown above is called the Graph view.  The Graph view shows the DAG and the
+result of the previous run.  In this case, both tasks ran successfully, as denoted by both tasks being outlined in
+green.  Hovering over a task supplies more information about it, and clicking on the task provides options such as
+viewing the logs or re-running the task.
+</p>
+<InlineImage filename="1-17-22-airflow-graph-view-hover.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="1-17-22-airflow-graph-view-click.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Clicking on the "Log" button displays the logs for the task run, which is very useful for debugging.
+</p>
+<InlineImage filename="1-17-22-airflow-log-view.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Another useful page is the DAGs tree view.  This page shows the results of all the prior DAG runs.  In the image below,
+the last two runs of the <code className="jarombek-inline-code">hello_world</code> DAG are shown, both of which were
+successful.
+</p>
+<InlineImage filename="1-17-22-airflow-tree-view.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Airflow provides many ways to view DAGs and environment configurations, but the pages shown above are the ones I’ve
+found most useful these past six months.
+</p>
 <SectionTitle title="Airflow Development Environment">Airflow Development Environment</SectionTitle>
 <SectionTitle title="Basic Airflow Pipelines">Basic Airflow Pipelines</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
