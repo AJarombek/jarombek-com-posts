@@ -129,6 +129,107 @@ Airflow provides many ways to view DAGs and environment configurations, but the 
 found most useful these past six months.
 </p>
 <SectionTitle title="Airflow Development Environment">Airflow Development Environment</SectionTitle>
+<p>
+While it is possible to run Airflow on the host machine of your development environment, a more elegant approach is to
+use Docker.  With Docker, you have an Airflow environment that works across different operating systems and is started
+with a single command.  No Airflow dependencies are needed on your host machine with this approach.  Since Airflow
+often has a complex setup with multiple containers, I use Docker Compose to orchestrate them.
+</p>
+<p>
+I’ve created multiple Airflow development environments of varying degrees of complexity.  The major difference between
+these environments comes down to the executor, which is the component of Airflow which runs scheduled tasks.  The three
+development environments in my <a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow">
+data-analytics-prototypes</a> repository utilize <a href="https://github.com/AJarombek/data-analytics-prototypes/tree/
+master/Airflow/sequential-executor">sequential</a>, <a href="https://github.com/AJarombek/data-analytics-prototypes/
+tree/master/Airflow/local-executor">local</a>, and <a href="https://github.com/AJarombek/data-analytics-prototypes/
+tree/master/Airflow/celery-executor">celery</a> executors.
+</p>
+<p>
+The simplest executor is the sequential executor, which is not recommended for production usage.  Even for development
+use it can become a bottleneck, because it runs tasks sequentially, one at a time.  However, when you are just getting
+started, the sequential executor is likely sufficient.
+</p>
+<p>
+The configuration for the sequential executor local environment consists of a <a href="https://github.com/AJarombek/
+data-analytics-prototypes/blob/master/Airflow/sequential-executor/Dockerfile">Dockerfile</a> and a
+<a href="https://github.com/AJarombek/data-analytics-prototypes/blob/master/Airflow/sequential-executor/
+docker-compose.yml">docker-compose.yml</a> file.  The contents of these files are shown below.
+</p>
+<CodeSnippet language="Dockerfile">
+# Dockerfile
+
+FROM apache/airflow:2.2.0-python3.8
+
+RUN airflow db init \
+    && airflow users create --username admin --password admin --firstname Anonymous --lastname Admin --role Admin --email admin@example.org
+</CodeSnippet>
+<CodeSnippet language="YAML">
+# docker-compose.yml
+
+version: '3.8'
+
+x-environment: &airflow_environment
+  - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+  - AIRFLOW__CORE__LOAD_EXAMPLES=False
+  - AIRFLOW__CORE__STORE_DAG_CODE=True
+  - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
+  - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+  - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-postgres==2.3.0
+
+services:
+  airflow:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment: *airflow_environment
+    ports:
+      - "8080:8080"
+    volumes:
+      - logs:/opt/airflow/logs
+      - ../dags:/opt/airflow/dags
+    networks:
+      - airflow-net
+    entrypoint: /bin/bash
+    command: -c 'airflow webserver & airflow scheduler'
+
+volumes:
+  logs:
+
+networks:
+  airflow-net:
+    driver: bridge
+</CodeSnippet>
+<p>
+The Docker Compose file runs a container based on the Dockerfile.  With this setup, a simple
+<code className="jarombek-inline-code">docker-compose up</code> command from the command line will start the Airflow
+server.
+</p>
+<p>
+Let’s go over these files in a bit more detail.  The <strong>Dockerfile</strong> uses an official Airflow image,
+<code className="jarombek-inline-code">apache/airflow:2.2.0-python3.8</code>, as its base image.  The
+<code className="jarombek-inline-code">RUN</code> command initializes the Airflow metastore database
+(<code className="jarombek-inline-code">airflow db init</code>) and creates a user that can sign into the Airflow
+webserver (<code className="jarombek-inline-code">airflow users create</code>).  For the sequential executor, the
+Airflow metastore uses SQLite as its database engine.
+</p>
+<p>
+The <strong>docker-compose.yml</strong> file runs a single <code className="jarombek-inline-code">airflow</code> service
+using the <strong>Dockerfile</strong>, as specified by <code className="jarombek-inline-code">dockerfile: Dockerfile
+</code>.  The <code className="jarombek-inline-code">airflow</code> service starts a container, executing the
+<code className="jarombek-inline-code">airflow webserver & airflow scheduler</code> command.  This command starts the
+Airflow webserver in the background and the Airflow scheduler in the foreground.  The Airflow webserver is exposed on
+port <strong>8080</strong>, and accessible when run locally at <strong>http://localhost:8080/</strong>.
+</p>
+<p>
+There are two volumes attached to the container.  The first is a location to hold Airflow logs, specified by
+<code className="jarombek-inline-code">logs:/opt/airflow/logs</code>.  The second is a location in my local filesystem
+holding Airflow DAGs, specified by <code className="jarombek-inline-code">../dags:/opt/airflow/dags</code>.  The
+relative path from my <a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow/
+sequential-executor">docker-compose.yml</a> file to my <a href="https://github.com/AJarombek/data-analytics-prototypes/
+tree/master/Airflow/dags">dags</a> directory is <strong>../dags</strong>.  This <strong>dags</strong> directory is
+mounted on the container within <strong>/opt/airflow/dags</strong>.  This directory is where the Airflow scheduler reads
+DAGs from.
+</p>
 <SectionTitle title="Basic Airflow Pipelines">Basic Airflow Pipelines</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
