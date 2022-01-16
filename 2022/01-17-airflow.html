@@ -230,6 +230,80 @@ tree/master/Airflow/dags">dags</a> directory is <strong>../dags</strong>.  This 
 mounted on the container within <strong>/opt/airflow/dags</strong>.  This directory is where the Airflow scheduler reads
 DAGs from.
 </p>
+<p>
+The Docker Compose setup also includes environment variables that configure Airflow.  These environment variables are
+defined under <code className="jarombek-inline-code">x-environment: &airflow_environment</code> and are attached to the
+container with the <code className="jarombek-inline-code">environment: *airflow_environment</code> configuration.
+<code className="jarombek-inline-code">AIRFLOW__CORE__EXECUTOR</code> sets the type of executor that Airflow uses.
+Setting <code className="jarombek-inline-code">AIRFLOW__CORE__LOAD_EXAMPLES=False</code> tells Airflow to exclude
+example DAGs from the Airflow environment; Airflow loads example DAGs for reference by default.  Setting
+<code className="jarombek-inline-code">AIRFLOW__CORE__STORE_DAG_CODE=True</code> stores DAG files in the Airflow
+metastore and setting <code className="jarombek-inline-code">AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True</code> serializes
+the DAGs when storing them in the metastore.  <code className="jarombek-inline-code">
+AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True</code> allows users to view the Airflow configuration from the web server.
+<code className="jarombek-inline-code">_PIP_ADDITIONAL_REQUIREMENTS</code> is used to install additional Python
+dependencies in the Airflow environment.  In my case, I install a single additional dependency,
+<code className="jarombek-inline-code">apache-airflow-providers-postgres</code>.  This library supplies Airflow
+operators (templates for Airflow tasks) that work with a PostgreSQL database.
+</p>
+<p>
+Development environments using the local executor and the celery executor build upon the Docker configuration for the
+sequential executor.  The local executor operates on a single machine, similar to the sequential executor.  However,
+unlike the sequential executor, which runs only one task at a time, the local executor runs multiple tasks in
+parallel<sup>7</sup>.  The celery executor not only runs tasks in parallel, but can also distribute tasks across
+multiple machines. The <a href="https://github.com/AJarombek/data-analytics-prototypes/blob/master/Airflow/
+local-executor/docker-compose.yml">local executor environment</a> and the <a href="https://github.com/AJarombek/
+data-analytics-prototypes/blob/master/Airflow/celery-executor/docker-compose.yml">celery executor environment</a> Docker
+Compose files are available on GitHub.
+</p>
 <SectionTitle title="Basic Airflow Pipelines">Basic Airflow Pipelines</SectionTitle>
+<p>
+Let’s shift our attention to building pipelines (DAGs) in Airflow.  All the DAGs in my Airflow environment exist in a
+<a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow/dags">dags</a> directory.  To follow
+along, you can run a <code className="jarombek-inline-code">docker-compose up</code> command from the
+<a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow/sequential-executor">
+Airflow/sequential-executor</a> directory of my repository and navigate to <strong>http://localhost:8080/</strong> in a
+web browser.
+</p>
+<p>
+To get started, here is a <a href="https://github.com/AJarombek/data-analytics-prototypes/blob/master/Airflow/
+dags/hello_world.py">"Hello World" style DAG</a> that contains two simple tasks.
+</p>
+<CodeSnippet language="Python">
+from datetime import datetime, timedelta
+
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from airflow.utils.dates import days_ago
+
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False
+}
+
+
+def task():
+    print(f"The current time is {datetime.now().strftime('%b. %d, %Y %-I:%M %p UTC')}")
+
+
+with DAG(
+    dag_id="hello_world",
+    description="A hello world DAG which shows the basic execution flow of Airflow",
+    default_args=default_args,
+    dagrun_timeout=timedelta(hours=2),
+    start_date=days_ago(1),
+    schedule_interval=None,
+    default_view="graph",
+    tags=["sample", "python", "bash"]
+) as dag:
+    bash_task = BashOperator(task_id='bash_task', bash_command='echo "Hello from Airflow!"')
+    python_task = PythonOperator(task_id='python_task', python_callable=task)
+
+    bash_task >> python_task
+</CodeSnippet>
+<InlineImage filename="1-17-22-airflow-hello-world-dag.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
