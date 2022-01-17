@@ -305,5 +305,106 @@ with DAG(
 </CodeSnippet>
 <InlineImage filename="1-17-22-airflow-hello-world-dag.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
+<p>
+Airflow contains a <code className="jarombek-inline-code">DAG</code> class, which is used to create a DAG.  One way to
+initialize a DAG is with the <code className="jarombek-inline-code">with DAG(...) as dag:</code> syntax, as shown in
+the code above. Inside the <code className="jarombek-inline-code">with</code> statement, Airflow Tasks are defined which
+are part of the DAG.  The DAG above has two tasks: <code className="jarombek-inline-code">bash_task</code> and
+<code className="jarombek-inline-code">python_task</code>.  <code className="jarombek-inline-code">bash_task</code> runs
+a Bash script, and <code className="jarombek-inline-code">python_task</code> runs a Python function.  The order in which
+these tasks are run is defined with the <code className="jarombek-inline-code">bash_task >> python_task</code> operator
+syntax.  This line says that <code className="jarombek-inline-code">bash_task</code> runs first, followed by
+<code className="jarombek-inline-code">python_task</code>.  More details about the order between tasks (task
+relationships) can be found in the <a href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/
+tasks.html#relationships">Airflow documentation</a>.
+</p>
+<p>
+<code className="jarombek-inline-code">bash_task</code> is created with <code className="jarombek-inline-code">
+BashOperator()</code>.  <code className="jarombek-inline-code">BashOperator()</code> takes a
+<code className="jarombek-inline-code">bash_command</code> argument containing a command to run in a Bash shell.  The
+command, <code className="jarombek-inline-code">echo "Hello from Airflow!"'</code> prints "Hello from Airflow!" to the
+Airflow logs.  <code className="jarombek-inline-code">python_task</code> is created with
+<code className="jarombek-inline-code">PythonOperator()</code>.  <code className="jarombek-inline-code">PythonOperator()
+</code> takes a <code className="jarombek-inline-code">python_callable</code> argument, which is a Python function.  The
+Python function, <code className="jarombek-inline-code">task()</code>, prints out the current time to the Airflow logs.
+</p>
+<p>
+The <code className="jarombek-inline-code">DAG()</code> initializer takes arguments which configure the DAG.  The DAG
+is given the name <strong>hello_world</strong> (<code className="jarombek-inline-code">dag_id="hello_world"</code>),
+provided a description (<code className="jarombek-inline-code">description="..."</code>), and is provided default
+arguments (<code className="jarombek-inline-code">default_args=default_args</code>).  Default arguments are arguments
+that are passed along to all the tasks within a DAG<sup>8</sup>.  Similar to DAGs, tasks take arguments to alter their
+configuration.
+</p>
+<p>
+The DAG is also given a timeout of two hours (<code className="jarombek-inline-code">dagrun_timeout=timedelta(hours=2)
+</code>).  If two hours are exceeded, the DAG is stopped and marked as a failure.  The DAG is not given a schedule
+interval, meaning that it does not get triggered on any specified time (<code className="jarombek-inline-code">
+schedule_interval=None</code>).  <code className="jarombek-inline-code">default_view="graph"</code> means that when
+clicking on the DAG in the Airflow web server, the graph view is shown by default (as shown in the image above).
+<code className="jarombek-inline-code">tags=["sample", "python", "bash"]</code> attaches three tags to the DAG.  Tags
+are searchable in the DAG list page of the web server, allowing you to easily find data pipelines as the number of DAGs
+grows.  For example, the following screenshot shows the result of me filtering by the "python" tag.
+</p>
+<InlineImage filename="1-17-22-airflow-tag-search.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Now let’s look at a slightly more complex DAG.  A <strong>branch</strong> DAG is shown below.
+</p>
+<CodeSnippet language="Python">
+from datetime import timedelta, datetime
+
+from airflow import DAG
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.utils.dates import days_ago
+
+
+def branch():
+    if datetime.now().weekday() >= 5:
+        return 'weekend_task'
+    else:
+        return 'weekday_task'
+
+
+def weekend():
+    print(
+        "Schedule:\n"
+        "8 AM - 12 PM: Run & Workout\n"
+        "12 PM - 10 PM: Code & Relax"
+    )
+
+
+def weekday():
+    print(
+        "Schedule:\n"
+        "6 AM - 9 AM: Run & Workout\n"
+        "9 AM - 5 PM: Work\n"
+        "5 PM - 10 PM: Code & Relax"
+    )
+
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False
+}
+
+
+with DAG(
+    dag_id="branch",
+    description="A DAG that branches",
+    default_args=default_args,
+    dagrun_timeout=timedelta(hours=2),
+    start_date=days_ago(1),
+    schedule_interval="@daily",
+    default_view="graph",
+    is_paused_upon_creation=False,
+    tags=["sample", "branch", "python"]
+) as dag:
+    branch_task = BranchPythonOperator(task_id='branch', python_callable=branch)
+    weekend_task = PythonOperator(task_id='weekend_task', python_callable=weekend)
+    weekday_task = PythonOperator(task_id='weekday_task', python_callable=weekday)
+
+    branch_task >> [weekend_task, weekday_task]
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
