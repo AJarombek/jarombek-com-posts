@@ -406,5 +406,56 @@ with DAG(
 
     branch_task >> [weekend_task, weekday_task]
 </CodeSnippet>
+<InlineImage filename="1-17-22-airflow-branch-dag.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+This DAG contains three tasks, all of which run Python functions.  The DAG is configured similar to the
+<strong>hello_world</strong> DAG, except that there is now a schedule interval.  The interval
+<code className="jarombek-inline-code">"@daily"</code> says that the DAG is automatically triggered every day.  Airflow
+provides different types of schedule intervals; specifically, there are preset, cron, and frequency intervals.
+<code className="jarombek-inline-code">@daily</code> is a preset interval; other examples of preset intervals include
+<code className="jarombek-inline-code">@hourly</code>, <code className="jarombek-inline-code">@weekly</code>, and
+<code className="jarombek-inline-code">@monthly</code>.  I have example DAGs of <a href="https://github.com/AJarombek/
+data-analytics-prototypes/blob/master/Airflow/dags/scheduled_preset.py">preset</a>, <a href="https://github.com/
+AJarombek/data-analytics-prototypes/blob/master/Airflow/dags/scheduled_cron.py">cron</a>, and
+<a href="https://github.com/AJarombek/data-analytics-prototypes/blob/master/Airflow/dags/scheduled_frequency.py">
+frequency</a> intervals in my GitHub repository.
+</p>
+<p>
+The other major difference between the <strong>hello_world</strong> DAG and the <strong>branch</strong> DAG is that the
+tasks in <strong>branch</strong> follow a branching pattern.  That is, a task in the DAG has two downstream tasks,
+creating a branch in the task dependency tree.  In the <strong>branch</strong> DAG, the
+<code className="jarombek-inline-code">branch_task</code> task has two downstream tasks:
+<code className="jarombek-inline-code">weekend_task</code> and <code className="jarombek-inline-code">
+weekday_task</code>.  This relationship is defined by the line <code className="jarombek-inline-code">
+branch_task >> [weekend_task, weekday_task]</code>.
+</p>
+<p>
+I also introduced a new operator in this DAG: <code className="jarombek-inline-code">BranchPythonOperator()</code>.
+<code className="jarombek-inline-code">BranchPythonOperator()</code> runs a Python function that returns the name of a
+single task or a list of tasks.  The tasks returned by the Python function are triggered as downstream dependencies of
+the current task.  <code className="jarombek-inline-code">BranchPythonOperator()</code> provides flexibility to DAGs,
+allowing tasks to be triggered conditionally.
+</p>
+<p>
+In my <strong>branch</strong> DAG, <code className="jarombek-inline-code">BranchPythonOperator()</code> takes a
+<code className="jarombek-inline-code">python_callable</code> argument with the value of a
+<code className="jarombek-inline-code">branch()</code> function.  This function returns the task name
+<code className="jarombek-inline-code">weekend_task</code> if the current day is a weekend, otherwise it returns the
+task name <code className="jarombek-inline-code">weekday_task</code>.  In other words,
+<code className="jarombek-inline-code">weekend_task</code> is triggered on weekends, while
+<code className="jarombek-inline-code">weekday_task</code> is triggered on weekdays.
+</p>
+<p>
+Airflow provides too many options for configuring workflows to discuss in a single article, let alone an entire book.
+The <a href="https://airflow.apache.org/docs/apache-airflow/stable/index.html">Airflow documentation</a> has a lot of
+useful information for working with Airflow.  If you are looking to truly master Airflow, I recommend reading the book
+<a href="https://www.manning.com/books/data-pipelines-with-apache-airflow">Data Pipelines with Apache Airflow</a>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Airflow is a useful platform for building data pipelines.  It’s been production-tested, handling data workloads at
+large companies in the software engineering industry.  All the code shown in this article is available on
+<a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow">GitHub</a>.
+</p>
 </div>
