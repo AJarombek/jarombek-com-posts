@@ -1,6 +1,6 @@
 <div>
 <p>
-Unsecured AWS S3 buckets have been a major source of data leaks in the Software Engineering industry for years.  Enter
+For years, unsecured AWS S3 buckets have been a major source of data leaks in the Software Engineering industry.  Enter
 a Google search for <a href="https://bit.ly/3ECsVSc">"S3 bucket public data leak"</a> and you will find countless
 examples of hackers leaking data from Amazon S3.
 </p>
@@ -10,17 +10,17 @@ public over HTTP.  When an S3 bucket is public, its contents are available for a
 engineers new to AWS and the S3 service, the mistake of configuring S3 buckets to be public is very common.
 </p>
 <p>
-Over the years, AWS has provided more ways to secure S3 buckets and provide explicit warnings to users if S3 buckets
-are not properly protected.  AWS accounts can even have account-wide restrictions which prevent the creation of public
+Over the years, AWS has provided many ways to secure S3 buckets and provide explicit warnings to users if S3 buckets
+are not properly protected.  AWS accounts can even have account-wide restrictions, preventing the creation of public
 buckets.
 </p>
 <p>
 In my AWS account, most of the S3 buckets have restrictions for who can access their contents.  However, just a week
 ago, some buckets in my account were public, such as those used for static websites or those containing assets such as
-images and fonts for my websites.  While there isn’t much danger in keeping these buckets public - they don’t contain
+images and fonts for my websites.  While there isn't much danger in keeping these buckets public - they don't contain
 any sensitive data - it is still best practice to keep them private.  This article discusses how to restrict access to
 these S3 buckets, while still keeping their contents publicly available via HTTP.  All the infrastructure changes
-needed to restrict S3 access are written using Terraform.
+ I made to restrict S3 access are written with Terraform.
 </p>
 <SectionTitle title="Problem to Solve">Problem to Solve</SectionTitle>
 <p>
@@ -30,14 +30,14 @@ In the AWS Console, if an S3 bucket is publicly accessible, a warning icon is di
 </InlineImage>
 <p>
 This warning is meant to deter users from leaving S3 buckets without any security.  In 2018, AWS added a "Block Public
-Access" feature to S3, allowing engineers to restrict the creation of public buckets account-wide.  If an account’s
-"Block Public Access" settings aren’t restrictive towards public S3 buckets, the AWS Console provides additional
+Access" feature to S3, allowing engineers to restrict the creation of public buckets account-wide.  If an account's
+"Block Public Access" settings aren't restrictive towards public S3 buckets, the AWS Console provides additional
 warning messages.
 </p>
 <InlineImage filename="1-2-22-block-public-access.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
-The public S3 buckets shown from my account are used as static websites.  These static websites are distributed and
+The public S3 buckets shown in my account are used as static websites.  These static websites are distributed and
 given domain names using the AWS CloudFront CDN.  For example, one of my S3 buckets,
 <strong>react16-3.demo.jarombek.com</strong>, is distributed using CloudFront and accessible at the
 <a href="https://www.react16-3.demo.jarombek.com/">https://www.react16-3.demo.jarombek.com</a> domain.  Back in February
@@ -51,7 +51,7 @@ http://react16-3.demo.jarombek.com.s3-website-us-east-1.amazonaws.com/</a>.  For
 with internet access can read the contents of the S3 bucket from this URL.
 </p>
 <p>
-If you navigate to my S3 bucket’s Amazon domain name now, you will receive an HTTP 403 Forbidden error message.  This is
+If you navigate to my S3 bucket's Amazon domain name now, you will receive a HTTP 403 Forbidden error message.  This is
 because my S3 bucket is now private.  However, at the time I took the AWS Console screenshots above (back when the
 <strong>react16-3.demo.jarombek.com</strong> bucket was still public), navigating to
 <a href="http://react16-3.demo.jarombek.com.s3-website-us-east-1.amazonaws.com/">
@@ -68,7 +68,7 @@ way, no S3 buckets can be made public in my account in the future.
 </p>
 <SectionTitle title="Restricting Access to S3 Buckets">Restricting Access to S3 Buckets</SectionTitle>
 <p>
-To demonstrate how I made my S3 buckets private, I’ll again use the <strong>react16-3.demo.jarombek.com</strong> bucket
+To demonstrate how I made my S3 buckets private, I'll again use the <strong>react16-3.demo.jarombek.com</strong> bucket
 as an example.  The Terraform infrastructure for this bucket exists on GitHub in my <a href="https://github.com/
 AJarombek/jarombek-com-infrastructure/tree/v1.1.0/jarombek-com-react16-3-demo">jarombek-com-infrastructure</a>
 repository.
@@ -96,11 +96,11 @@ resource "aws_s3_bucket" "react16-3-demo-jarombek" {
 }
 </CodeSnippet>
 <p>
-In regards to security, the important argument in the <code className="jarombek-inline-code">aws_s3_bucket</code>
-resource is <code className="jarombek-inline-code">acl</code>.  <code className="jarombek-inline-code">acl</code>
+In regards to security, the important argument in <code className="jarombek-inline-code">aws_s3_bucket</code>
+ is <code className="jarombek-inline-code">acl</code>.  <code className="jarombek-inline-code">acl</code>
 configures the Access Control List (ACL) value for the S3 bucket.  <code className="jarombek-inline-code">acl</code>
 defaults to <code className="jarombek-inline-code">private</code>, which gives the owner of the S3 bucket (my AWS
-account) full access to the bucket and provides no access for everyone else.  Back when my S3 buckets were publicly
+account) full access to the bucket and provides no access to everyone else.  Back when my S3 buckets were publicly
 accessible, the value of <code className="jarombek-inline-code">acl</code> was <code className="jarombek-inline-code">
 public</code>.  The full list of ACL options for S3 buckets are available in the <a href="https://docs.aws.amazon.com/
 AmazonS3/latest/userguide/acl-overview.html#canned-acl">AWS documentation</a>.
@@ -125,7 +125,7 @@ Public Access Block configurations can be applied account-wide or to a specific 
 configured for an individual bucket.  Public Access Block configurations contain four settings, represented by the
 <code className="jarombek-inline-code">block_public_acls</code>, <code className="jarombek-inline-code">
 block_public_policy</code>, <code className="jarombek-inline-code">restrict_public_buckets</code>, and
-<code className="jarombek-inline-code">ignore_public_acls</code> fields.  Giving these fields a value of
+<code className="jarombek-inline-code">ignore_public_acls</code> arguments.  Giving these arguments a value of
 <code className="jarombek-inline-code">true</code> turns them on, while values of
 <code className="jarombek-inline-code">false</code> (the default value) keep them off.  Since I want these settings
 applied for additional security, I assign them values of <code className="jarombek-inline-code">true</code>.
@@ -139,7 +139,7 @@ objects in buckets with public IAM policies or public ACLs is prohibited.
 <p>
 As I mentioned earlier, Public Access Block settings can be applied to individual S3 buckets or an entire AWS account.
 If Public Access Block settings are applied to both, the more restrictive of the two settings is enforced.  For example,
-if the account-wide settings are turned on and the settings for a S3 bucket, let’s say
+if the account-wide settings are turned on and the settings for a S3 bucket, let's say
 <strong>react16-3.demo.jarombek.com</strong>, are turned off, the restrictiveness of the account-wide settings are
 applied to the bucket<sup>1</sup>.
 </p>
@@ -160,7 +160,7 @@ resource "aws_s3_account_public_access_block" "access" {
 <p>
 With account-wide Public Access Block settings turned on, the AWS Console displays the following screen:
 </p>
-<InlineImage filename="1-2-22-s3-block-public-access-on.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="1-2-22-block-public-access-on.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
 After the Public Access Block settings are properly configured, I create a CloudFront distribution for the S3 bucket
@@ -227,18 +227,25 @@ data "aws_iam_policy_document" "react16-3-demo-jarombek" {
 <p>
 The <code className="jarombek-inline-code">aws_iam_policy_document</code> data source creates the S3 bucket policy
 document.  It provides <code className="jarombek-inline-code">s3:GetObject</code> and
-<code className="jarombek-inline-code">s3:ListObject</code> access to the OAI for the
-<code className="jarombek-inline-code">react16-3.demo.jarombek.com</code> bucket.
+<code className="jarombek-inline-code">s3:ListObject</code> access to the OAI
+ (<code className="jarombek-inline-code">aws_cloudfront_origin_access_identity.origin-access-identity.iam_arn</code>)
+ for the <code className="jarombek-inline-code">react16-3.demo.jarombek.com</code> bucket.
 </p>
 <p>
 After all this infrastructure is created, I have a private S3 bucket, whose contents are still accessible to the public
-through a CloudFront distribution.  All the infrastructure shown in this article is available on
+through a CloudFront distribution.  With all my public s3 buckets made private, the AWS console lists them as
+follows:
+</p>
+<InlineImage filename="1-2-22-private-buckets.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+All the infrastructure shown in this article is available on
 <a href="https://github.com/AJarombek/jarombek-com-infrastructure/blob/v1.1.0/jarombek-com-react16-3-demo">GitHub</a>.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 Keeping S3 buckets private, even when they hold publicly accessible assets such as static website files, is critical
 for cloud infrastructure security.  The approach of using a CloudFront OAI to access a private S3 bucket is very easy
-to implement, and AWS recommends implementing it.
+to configure, and AWS recommends implementing it.
 </p>
 </div>

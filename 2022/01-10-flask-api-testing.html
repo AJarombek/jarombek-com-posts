@@ -5,7 +5,7 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
 </Note>
 <p>
-In a <a href="https://jarombek.com/blog/jan-2-2022-s3-restrict-access">prior article</a>, I discussed my Flask API
+In a <a href="https://jarombek.com/blog/dec-24-2021-flask-python-api">prior article</a>, I discussed my Flask API
 written for <a href="https://saintsxctf.com/">SaintsXCTF</a>, an application which allows users and their teammates to
 log running exercises and keep track of their running mileage.  As with any piece of software, this Flask API requires
 extensive testing to keep it functional and maintainable.  In this article, I discuss the automated testing approach I
@@ -23,7 +23,6 @@ implemented for the API.
 <li><a href="https://jarombek.com/blog/jun-30-2021-react-jss">Web Application JSS Modular Design</a></li>
 <li><a href="https://jarombek.com/blog/dec-24-2021-flask-python-api">Flask Python API</a></li>
 <li><strong>Flask API Testing</strong></li>
-<li>Flask API Docker & Docker Compose Configuration</li>
 <li>Function API Using API Gateway & Lambda</li>
 <li>Auth API Using API Gateway & Lambda</li>
 <li>Database Deployments Using Jenkins</li>
@@ -33,7 +32,7 @@ implemented for the API.
 <SectionTitle title="Configuring Automated Tests">Configuring Automated Tests</SectionTitle>
 <p>
 The tests for my application use the built-in Python <strong>unittest</strong> library, along with the
-<strong>coverage</strong> library for code coverage.  Code coverage determines which lines of the API source code are
+ <a href="https://coverage.readthedocs.io/en/6.2/">coverage</a> library for code coverage.  Code coverage determines which lines of API source code are
 covered by tests, allowing me to find gaps in testing.  The <strong>coverage</strong> library shows both textual and
 HTML reports of code coverage, making it extremely easy to drill down into specific source files and find which lines
 of code aren't being tested.
@@ -51,7 +50,7 @@ v2.0.1/api/src/app.py#L61">app.py</a> file with the following line:
 application.cli.add_command(test)
 </CodeSnippet>
 <p>
-<code className="jarombek-inline-code">test()</code> starts code coverage, runs the tests, and then collects a code
+<code className="jarombek-inline-code">test()</code> starts code coverage, runs the tests, and generates a code
 coverage report.  The code is shown below, and is inspired by a function found in the book
 <a href="https://www.oreilly.com/library/view/flask-web-development/9781491991725/">Flask Web Development</a><sup>1</sup>.
 </p>
@@ -98,7 +97,7 @@ AJarombek/saints-xctf-api/tree/v2.0.1/api/src/tests">test</a> directory of my ap
 <p>
 Most of the tests in my application invoke API endpoints and assert they return certain HTTP response bodies and
 response status codes.  This means that in order for my tests to execute successfully, a running instance of the API is
-needed.  Instead of using the API running in production, I use a test API that can be quickly spun up before tests
+needed.  Instead of using the API running in production, I use a test API that is quickly spun up before tests
 begin and spun down after tests stop.  All the configuration for this test API and the execution environment for the
 tests themselves is accomplished using Docker and Docker Compose.
 </p>
@@ -108,8 +107,8 @@ Compose file for the API tests.  These Docker Compose files exist in a <a href="
 saints-xctf-api/tree/v2.0.1/infra/docker-compose">docker-compose</a> directory in my repository.
 </p>
 <p>
-There are five Docker Compose files in total, each running a single Docker container.  The four Docker Compose files
-that together form my application backend are for the <a href="https://github.com/AJarombek/saints-xctf-api/blob/
+There are five Docker Compose files in total, each running a single Docker container.  There are four Docker Compose files
+that together complete my application backend.  They are for my <a href="https://github.com/AJarombek/saints-xctf-api/blob/
 v2.0.1/infra/docker-compose/docker-compose-db-local.yml">database</a>, <a href="https://github.com/AJarombek/
 saints-xctf-api/blob/v2.0.1/infra/docker-compose/docker-compose-auth-local.yml">authentication API</a>,
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/infra/docker-compose/docker-compose-fn-local.yml">
@@ -118,7 +117,7 @@ docker-compose-api-local.yml">main Flask API</a>.  These four Docker Compose con
 the <code className="jarombek-inline-code">docker-compose up</code> command before the API tests are run.  Once they
 are running, the <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/infra/docker-compose/
 docker-compose-test-local.yml">API test</a> Docker Compose file can be run.  This Docker Compose file starts a
-container, runs the API tests on that container, and then stops the container.
+container, runs the API tests on that container, and then stops the container.  Its configuration is shown below.
 </p>
 <CodeSnippet language="YAML">
 # docker-compose-test-local.yml
@@ -206,15 +205,15 @@ coverage of the API is 90%.
 <SectionTitle title="Test Code">Test Code</SectionTitle>
 <p>
 The test code for my API exists within a <a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.1/api/src/
-tests">tests</a> directory.  The directory structure of the <strong>tests</strong> directory matches the application
+tests">tests</a> directory.  The file structure of the <strong>tests</strong> directory matches the application
 source code directory.  For example, inside <strong>tests</strong> is a <a href="https://github.com/AJarombek/
 saints-xctf-api/tree/v2.0.1/api/src/tests/test_src">test_src</a> directory, which matches the
 <a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.1/api/src">src</a> directory of the application.  Inside
 <strong>test_src</strong> is a <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/
 test_src/testApp.py">testApp.py</a> file, which is a test file corresponding to an <a href="https://github.com/
 AJarombek/saints-xctf-api/blob/v2.0.1/api/src/app.py">app.py</a> file in the source code.  As you can see, in the test
-code, both source code directories and files are prefixed with <strong>test</strong>.  Source code directories are in
-snake case while source code files are in camel case.  This isn’t a required convention, but it makes it easy to
+code, directories and files are prefixed with <strong>test</strong>.  Directories are in
+snake case while files are in camel case.  This isn’t a required convention, but consistent naming makes it easy to
 associate test files with source code.
 </p>
 <p>
@@ -252,7 +251,7 @@ application object, exists as expected<sup>2</sup>.  <code className="jarombek-i
 status code.
 </p>
 <p>
-Each test file has a single class, which contains functions for individual tests.  These test classes,
+Each test file contains a single class with functions for individual tests.  These test classes,
 <code className="jarombek-inline-code">TestApp</code> in the example above, extend a base class called
 <code className="jarombek-inline-code">TestSuite</code>.  <code className="jarombek-inline-code">TestSuite</code>
 performs setup and cleanup work for tests.  <code className="jarombek-inline-code">TestSuite</code> extends a
@@ -334,15 +333,15 @@ class TestSuite(unittest.TestCase):
         self.app_context.pop()
 </CodeSnippet>
 <p>
-The setup functions perform actions such as retrieving an authentication token (JWT) for the API to use in tests and
+The setup functions perform actions such as retrieving an authentication token (JWT) to use in tests and
 creating a test client for the API of type <code className="jarombek-inline-code">FlaskClient</code>.  More expensive
-operations, such as making an external API to receive a JWT, are performed in <code className="jarombek-inline-code">
+operations, such as making an external API call to receive a JWT, are performed in <code className="jarombek-inline-code">
 setUpClass()</code> instead of <code className="jarombek-inline-code">setUp()</code>.  This way, long running tasks
 don’t take place before each test function, only at the start of each class.
 </p>
 <p>
 I already showed some basic tests in the <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/
-tests/test_src/testApp.py">testApp.py</a> file, but now let's look at a more complex example.
+tests/test_src/testApp.py">testApp.py</a> file, but now let's look at more complex examples.
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/master/api/src/tests/test_src/test_route/testGroupRoute.py">
 testGroupRoute.py</a> is a file that tests all the API routes defined in my <a href="https://github.com/AJarombek/
 saints-xctf-api/blob/master/api/src/route/groupRoute.py">groupRoute.py</a> source code file.  Let’s walk through a few
@@ -406,7 +405,7 @@ group_id</code> and is used in the next API call, a PUT request to <code classNa
 /v2/groups/{group_id}</code>.
 </p>
 <p>
-A successful variant of the Women’s Track & Field group test is <code className="jarombek-inline-code">
+A successful variant of the test above is <code className="jarombek-inline-code">
 test_group_by_id_put_route_200()</code>, which asserts that my user can update an Alumni group, which I am a member of.
 <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.1/api/src/tests/test_src/test_route/testGroupRoute.py#L326-L355">
 This test</a> also requires two API calls.
@@ -546,10 +545,10 @@ class TestUser(TestSuite):
 </CodeSnippet>
 <p>
 There are a couple aspects of the model classes that I prioritize in these tests.
-<code className="jarombek-inline-code">def test_user_str()</code> tests that the string representation of a model class
-(passing an instance of the class to <code className="jarombek-inline-code">str()</code>) is as expected.
+<code className="jarombek-inline-code">test_user_str()</code> tests that the string representation of a model class
+(created by passing an instance of the class to <code className="jarombek-inline-code">str()</code>) is as expected.
 <code className="jarombek-inline-code">test_user_repr()</code> tests that the machine representation of a model class
-(passing an instance of the class to <code className="jarombek-inline-code">repr()</code>) is as expected.
+(created by passing an instance of the class to <code className="jarombek-inline-code">repr()</code>) is as expected.
 <code className="jarombek-inline-code">test_user_eq()</code> and <code className="jarombek-inline-code">
 test_user_ne()</code> test for value equality between instances of the model class.
 </p>
