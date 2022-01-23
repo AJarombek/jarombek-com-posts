@@ -1,0 +1,51 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You
+<strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
+</Note>
+<p>
+My <a href="https://saintsxctf.com/">SaintsXCTF</a> application has multiple APIs.  One of these APIs,
+<strong>fn.saintsxctf.com</strong>, is hosted on AWS API Gateway and AWS Lambda.  Its main purpose is to send emails to
+users based on certain website actions, such as changing a password or signing up.  In this article, I discuss the
+infrastructure needed to make the API, the source code of the API endpoints, and the approach used to deploy the API
+to AWS.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">AWS Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">Kubernetes Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/nov-1-2021-saints-xctf-v2-react-web-app">React Web Application Overview</a></li>
+<li><a href="https://jarombek.com/blog/nov-15-2021-react-typescript">Web Application React and TypeScript</a></li>
+<li><a href="https://jarombek.com/blog/dec-3-2021-redux-react">Web Application Redux State Configuration</a></li>
+<li><a href="https://jarombek.com/blog/aug-11-2021-cypress-typescript">Web Application Cypress E2E Tests</a></li>
+<li><a href="https://jarombek.com/blog/jun-30-2021-react-jss">Web Application JSS Modular Design</a></li>
+<li><a href="https://jarombek.com/blog/dec-24-2021-flask-python-api">Flask Python API</a></li>
+<li><a href="https://jarombek.com/blog/jan-10-2022-flask-api-testing">Flask API Testing</a></li>
+<li><strong>Function API Using API Gateway & Lambda</strong></li>
+<li>Auth API Using API Gateway & Lambda</li>
+<li>Database Deployments Using Jenkins</li>
+<li>Database Client on Kubernetes</li>
+<li>Testing and Continuous Deployment on Jenkins</li>
+</ul>
+<SectionTitle title="API Infrastructure">API Infrastructure</SectionTitle>
+<p>
+The Infrastructure for my email sending API is written using Terraform and exists in my <a href="https://github.com/
+AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-fn">saints-xctf-infrastructure</a> repository.  The
+Terraform configuration contains three modules, two of which I’ll discuss in this article: <a href="https://github.com/
+AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-fn/modules/api-gateway">api-gateway</a> and
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-fn/modules/email-lambda">
+email-lambda</a>.  <strong>api-gateway</strong> contains API Gateway infrastructure, and <strong>email-lambda</strong>
+contains AWS Lambda infrastructure.
+</p>
+<p>
+The following infrastructure diagram represents the <strong>fn.saintsxctf.com</strong> API, with the two Terraform
+modules outlined.
+</p>
+<InlineImage filename="1-28-22-api-infrastructure.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<SectionTitle title="Endpoint Application Code">Endpoint Application Code</SectionTitle>
+<SectionTitle title="Deployment Approach">Deployment Approach</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
