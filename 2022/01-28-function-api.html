@@ -45,7 +45,82 @@ modules outlined.
 </p>
 <InlineImage filename="1-28-22-api-infrastructure.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
+<p>
+This infrastructure creates a REST API that clients can access over HTTPS.  Clients make HTTP requests, for example, a
+POST request to the <strong>https://fn.saintsxctf.com/email/welcome</strong> endpoint.  API Gateway handles these HTTP
+requests to endpoints and triggers corresponding AWS Lambda functions.  Once the AWS Lambda function completes, its
+result is returned back to API Gateway and sent to the client in the HTTP response body.
+</p>
+<p>
+Infrastructure for AWS API Gateway is centered around a <a href="https://github.com/AJarombek/
+saints-xctf-infrastructure/blob/master/saints-xctf-com-fn/modules/api-gateway/main.tf">main.tf</a> file within the
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-fn/modules/api-gateway">
+api-gateway</a> Terraform module.  Infrastructure for AWS Lambda is centered around a <a href="https://github.com/
+AJarombek/saints-xctf-infrastructure/blob/master/saints-xctf-com-fn/modules/email-lambda/main.tf">main.tf</a> file
+within the <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-fn/modules/
+email-lambda">email-lambda</a> Terraform module.  I won’t discuss infrastructure specifics, but if you want to learn
+more about writing Terraform for API Gateway and Lambda I’ve written <a href="https://jarombek.com/blog/
+sep-7-2018-aws-lambda-api-gateway">an article</a> about it in the past.
+</p>
 <SectionTitle title="Endpoint Application Code">Endpoint Application Code</SectionTitle>
+<p>
+The API endpoints are configured as AWS Lambda functions written in JavaScript.  All the Lambda functions exist in a
+<a href="https://github.com/AJarombek/saints-xctf-functions">saints-xctf-functions</a> repository on GitHub.
+</p>
+<p>
+Since most of the endpoints in this API are similar, let’s look at a single endpoint, <strong>
+https://fn.saintsxctf.com/email/welcome</strong>, in detail.  This endpoint sends a welcome email to new users when they
+initially sign up.  An example of a welcome email is displayed below.
+</p>
+<InlineImage filename="1-28-22-welcome-email.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The Lambda function code for the welcome email endpoint exists in an npm module.  The module has two entrypoint files:
+<a href="https://github.com/AJarombek/saints-xctf-functions/blob/main/welcome/sendEmailAWS.js">sendEmailAWS.js</a> and
+<a href="https://github.com/AJarombek/saints-xctf-functions/blob/main/welcome/sendEmailNode.js">sendEmailNode.js</a>.
+<strong>sendEmailAWS.js</strong> is used for sending emails from AWS Lambda and <strong>sendEmailNode.js</strong> is
+used for sending emails locally.
+</p>
+<CodeSnippet language="JavaScript">
+// sendEmailAWS.js
+
+const AWS = require('aws-sdk');
+const sendWelcomeEmail = require('./email');
+
+AWS.config.update({region: 'us-east-1'});
+
+/**
+ * Invoke an AWS function via the handler object
+ * @param event - information about the AWS Lambda function request
+ * @param context - runtime information regarding the AWS lambda function
+ * @param callback - used to return information back to the caller.
+ */
+exports.sendWelcomeEmail = (event, context, callback) => {
+    try {
+        sendWelcomeEmail(event.to, event.firstName, event.lastName, event.username);
+        callback(null, true);
+    } catch (err) {
+        console.error(err);
+        callback(Error(err), false);
+    }
+};
+</CodeSnippet>
+<CodeSnippet language="JavaScript">
+// sendEmailNode.js
+
+const sendWelcomeEmail = require('./email');
+
+const [_, __, to, firstName, lastName, username] = process.argv;
+
+sendWelcomeEmail(to, firstName, lastName, username);
+</CodeSnippet>
+<p>
+<strong>sendEmailNode.js</strong> is great for testing because sending an email is as simple as running the following
+command from the command line.
+</p>
+<CodeSnippet language="Bash">
+node sendEmailNode andrew@jarombek.com Andrew Jarombek andy
+</CodeSnippet>
 <SectionTitle title="Deployment Approach">Deployment Approach</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
