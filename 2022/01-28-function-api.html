@@ -121,6 +121,72 @@ command from the command line.
 <CodeSnippet language="Bash">
 node sendEmailNode andrew@jarombek.com Andrew Jarombek andy
 </CodeSnippet>
+<p>
+In <strong>sendEmailAWS.js</strong>, <code className="jarombek-inline-code">exports.sendWelcomeEmail()</code> is the main
+function.  In the Lambda function's <a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/
+saints-xctf-com-fn/modules/email-lambda/main.tf#L42">Terraform</a> <a href="https://github.com/AJarombek/
+saints-xctf-infrastructure/blob/master/saints-xctf-com-fn/modules/email-lambda/main.tf#L72">configuration</a>, it is
+configured as the entrypoint to the AWS Lambda function using the <code className="jarombek-inline-code">handler</code>
+attribute.
+</p>
+<p>
+In <code className="jarombek-inline-code">sendWelcomeEmail()</code>, the <code className="jarombek-inline-code">
+event</code> argument holds the values sent by the user invoking the API through a JSON request body.  They include the
+recipient's email address (<code className="jarombek-inline-code">to</code>) and the first name,
+(<code className="jarombek-inline-code">firstName</code>), last name (<code className="jarombek-inline-code">
+lastName</code>), and username (<code className="jarombek-inline-code">username</code>) of the new user.
+<code className="jarombek-inline-code">to</code> is the address that will receive the email and the other three fields
+replace values in a templated email body.
+</p>
+<p>
+Both <strong>sendEmailNode.js</strong> and <strong>sendEmailAWS.js</strong> invoke a
+<code className="jarombek-inline-code">sendWelcomeEmail()</code> function which is imported from an
+<strong>./email</strong> file with the line <code className="jarombek-inline-code">
+const sendWelcomeEmail = require('./email')</code>.
+</p>
+<CodeSnippet language="JavaScript">
+// email.js
+
+const send = require('aws-lambda-emails');
+
+/**
+ * Send a welcome email to a new user.
+ * @param to Recipient email address.
+ * @param firstName First name of the new user.
+ * @param lastName Last name of the new user.
+ * @param username Unique username of the new user.
+ */
+function sendWelcomeEmail(to, firstName, lastName, username) {
+    const subject = "Welcome to SaintsXCTF";
+    const attachments = [
+        {
+            filename: 'saintsxctf.png',
+            path: './assets/saintsxctf.png',
+            cid: 'saintsxctf@jarombek.com'
+        }
+    ];
+
+    const htmlFilename="email";
+    const cssFilename="email";
+
+    const replacementValues = {
+        firstName,
+        lastName,
+        username,
+        prefix: process.env.PREFIX || ''
+    };
+
+    send(subject, to, attachments, htmlFilename, cssFilename, replacementValues);
+}
+
+module.exports = sendWelcomeEmail;
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">sendWelcomeEmail()</code> invokes an <code className="jarombek-inline-code">
+email()</code> method from a <a href="https://github.com/AJarombek/aws-lambda-emails">aws-lambda-emails</a> npm module
+I created.  The <code className="jarombek-inline-code">email()</code> method takes care of sending the email, but takes
+parameters to configure how the email is composed.
+</p>
 <SectionTitle title="Deployment Approach">Deployment Approach</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
