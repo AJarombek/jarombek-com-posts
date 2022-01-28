@@ -183,10 +183,187 @@ module.exports = sendWelcomeEmail;
 </CodeSnippet>
 <p>
 <code className="jarombek-inline-code">sendWelcomeEmail()</code> invokes an <code className="jarombek-inline-code">
-email()</code> method from a <a href="https://github.com/AJarombek/aws-lambda-emails">aws-lambda-emails</a> npm module
-I created.  The <code className="jarombek-inline-code">email()</code> method takes care of sending the email, but takes
+send()</code> method from a <a href="https://github.com/AJarombek/aws-lambda-emails">aws-lambda-emails</a> npm module
+I created.  The <code className="jarombek-inline-code">send()</code> method takes care of sending the email, but takes
 parameters to configure how the email is composed.
 </p>
+<p>
+<code className="jarombek-inline-code">send()</code> is invoked with the line <code className="jarombek-inline-code">
+send(subject, to, attachments, htmlFilename, cssFilename, replacementValues)</code>.
+<code className="jarombek-inline-code">subject</code> is the title of the email and
+<code className="jarombek-inline-code">to</code> is the email’s recipient address.
+<code className="jarombek-inline-code">attachments</code> is a list of attachments for the email.  In the case of the
+welcome email, there is a single <a href="https://github.com/AJarombek/saints-xctf-functions/blob/main/welcome/assets/
+saintsxctf.png">saintsxctf.png</a> image attachment.  <code className="jarombek-inline-code">htmlFilename</code> and
+<code className="jarombek-inline-code">cssFilename</code> are the names of the HTML and CSS files that form the email
+body.  In the welcome email code, both these variables have the value <code className="jarombek-inline-code">
+email</code>, which reference the <a href="https://github.com/AJarombek/saints-xctf-functions/blob/main/welcome/
+email.html">email.html</a> and <a href="https://github.com/AJarombek/saints-xctf-functions/blob/main/welcome/
+email.css">email.css</a> files in my repository.  <strong>email.html</strong> is shown below.
+</p>
+<CodeSnippet language="HTML">
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;head>
+  &lt;meta charset="UTF-8">
+  &lt;title>Welcome to SaintsXCTF&lt;/title>
+&lt;/head>
+&lt;body bgcolor="#f6f8f1">
+&lt;table class="emailBody" width="100%" bgcolor="#f6f8f1" border="0"
+       cellpadding="0" cellspacing="0">
+  &lt;tr>
+    &lt;td>
+      &lt;div class="emailContent">
+        &lt;table class="emailMain" width="100%" align="center" border="0"
+               cellpadding="10" cellspacing="10">
+          &lt;tr>
+            &lt;td>
+              &lt;table border="0" cellspacing="0" cellpadding="0">
+                &lt;tr>
+                  &lt;td>
+                    &lt;table class="emailHeader" border="0" cellpadding="0" cellspacing="0">
+                      &lt;tbody>
+                      &lt;tr>
+                        &lt;td>
+                          &lt;table border="0" cellpadding="0" cellspacing="0">
+                            &lt;tbody>
+                            &lt;tr>
+                              &lt;td width="80" height="80">
+                                &lt;img class="emailLogo" src="cid:saintsxctf@jarombek.com" alt=""/>
+                              &lt;/td>
+                              &lt;td>
+                                &lt;p class="emailTitle">
+                                  SaintsXCTF
+                                &lt;/p>
+                              &lt;/td>
+                            &lt;/tr>
+                            &lt;/tbody>
+                          &lt;/table>
+                        &lt;/td>
+                      &lt;/tr>
+                      &lt;/tbody>
+                    &lt;/table>
+                    &lt;p class="emailh5">
+                      Welcome to SaintsXCTF
+                    &lt;/p>
+                    &lt;p class="emailp">
+                      Hello {{firstName}} {{lastName}},
+                    &lt;/p>
+                    &lt;p class="emailp">
+                      Welcome to SaintsXCTF, an application for logging exercises with your Cross
+                      Country and Track & Field teams. Your username is &lt;b>{{username}}&lt;/b>.
+                    &lt;/p>
+                    &lt;p class="emailp">
+                      If you experience any issues using the website, please contact Andrew
+                      Jarombek at &lt;b>andrew@jarombek.com&lt;/b> (or if you are currently a St.
+                      Lawrence athlete, contact a member of the coaching staff). I won't be able
+                      to fix issues if I don't know they exist, so your help is appreciated!
+                    &lt;/p>
+                    &lt;p class="emailp">
+                      I hope you enjoy the website and have a great journey at St. Lawrence
+                      University!
+                    &lt;/p>
+                    &lt;p class="emailp">
+                      - Andrew Jarombek (Website Creator & Class of 2017)
+                    &lt;/p>
+                    &lt;table class="buttonContainer" align="center"
+                           border="0" cellpadding="0" cellspacing="0">
+                      &lt;tbody>
+                      &lt;tr>
+                        &lt;td align="center">
+                          &lt;table border="0" cellpadding="0" cellspacing="0">
+                            &lt;tbody>
+                            &lt;tr>
+                              &lt;td class="button" height="40" width="250">
+                                &lt;a href="https://{{prefix}}saintsxctf.com">
+                                  BEGIN LOGGING EXERCISES
+                                &lt;/a>
+                              &lt;/td>
+                            &lt;/tr>
+                            &lt;/tbody>
+                          &lt;/table>
+                        &lt;/td>
+                      &lt;/tr>
+                      &lt;/tbody>
+                    &lt;/table>
+                  &lt;/td>
+                &lt;/tr>
+              &lt;/table>
+            &lt;/td>
+          &lt;/tr>
+        &lt;/table>
+      &lt;/div>
+    &lt;/td>
+  &lt;/tr>
+&lt;/table>
+&lt;/body>
+&lt;/html>
+</CodeSnippet>
+<p>
+Notice that there are words in the email surrounded by double curly braces, such as
+<code className="jarombek-inline-code">{{firstName}}</code>, <code className="jarombek-inline-code">{{lastName}}</code>,
+and <code className="jarombek-inline-code">{{username}}</code>.  These are template variables that are replaced with
+values when the email is rendered.  This is where the final parameter of <code className="jarombek-inline-code">
+send()</code>, <code className="jarombek-inline-code">replacementValues</code>, comes into play.
+<code className="jarombek-inline-code">replacementValues</code> is an object where the field names are the template
+variables (such as <code className="jarombek-inline-code">{{firstName}}</code>) and the field values are the replacement
+values (such as <strong>Andy</strong>).  This approach allows me to create personalized emails for users of the
+SaintsXCTF website.
+</p>
+<p>
+The last piece of the puzzle is the <code className="jarombek-inline-code">send()</code> function in the <strong>
+aws-lambda-emails</strong> module.  <code className="jarombek-inline-code">send()</code> exists in a
+<a href="https://github.com/AJarombek/aws-lambda-emails/blob/master/index.js">index.js</a> file.
+</p>
+<CodeSnippet language="JavaScript">
+const AWS = require('aws-sdk');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const juice = require('juice');
+
+/**
+ * Main function to configure and send an email.
+ * @param subject The subject line of the email.
+ * @param to Who the email is sent to.
+ * @param attachments Email attachment files.
+ * @param htmlFilename Name of the html file to use for the email body.
+ * @param cssFilename Name of the css file used to style the email body.
+ * @param replacementValues Values in the HTML file to replace.  The name of the properties in the
+ * object matches values in the html to replace.  These properties values are the
+ * replacement values.
+ */
+function send(subject, to="andrew@jarombek.com", attachments = [], htmlFilename="email",
+                   cssFilename="email", replacementValues = {}) {
+
+    // Read the contents of the HTML and CSS files to send with the email
+    let html = fs.readFileSync(`./${htmlFilename}.html`, 'utf8');
+    const css = fs.readFileSync(`./${cssFilename}.css`, 'utf8');
+
+    // Replace the templates in the HTML
+    for (const key in replacementValues) {
+        html = replace(html, key, replacementValues[key]);
+    }
+
+    // Inline the CSS styles in the HTML document
+    const styledHtml = juice.inlineContent(html, css);
+
+    console.info(styledHtml);
+
+    const secretsManager = new AWS.SecretsManager({ region: 'us-east-1' });
+    secretsManager.getSecretValue({ SecretId: 'google-account-secret' }, (err, data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            const { SecretString } = data;
+            const secretObject = JSON.parse(SecretString);
+            const password = secretObject.password;
+
+            const transport = createTransport(password);
+            sendMail(transport, subject, to, attachments, styledHtml);
+        }
+    });
+}
+</CodeSnippet>
 <SectionTitle title="Deployment Approach">Deployment Approach</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
