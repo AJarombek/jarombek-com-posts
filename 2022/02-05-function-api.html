@@ -43,7 +43,7 @@ contains AWS Lambda infrastructure.
 The following infrastructure diagram represents the <strong>fn.saintsxctf.com</strong> API, with the two Terraform
 modules outlined.
 </p>
-<InlineImage filename="1-28-22-api-infrastructure.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="2-5-22-api-infrastructure.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
 This infrastructure creates a REST API that clients can access over HTTPS.  Clients make HTTP requests, for example, a
@@ -72,7 +72,7 @@ Since most of the endpoints in this API are similar, let’s look at a single en
 https://fn.saintsxctf.com/email/welcome</strong>, in detail.  This endpoint sends a welcome email to new users when they
 initially sign up.  An example of a welcome email is displayed below.
 </p>
-<InlineImage filename="1-28-22-welcome-email.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="2-5-22-welcome-email.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
 The Lambda function code for the welcome email endpoint exists in an npm module.  The module has two entrypoint files:
@@ -347,8 +347,6 @@ function send(subject, to="andrew@jarombek.com", attachments = [], htmlFilename=
     // Inline the CSS styles in the HTML document
     const styledHtml = juice.inlineContent(html, css);
 
-    console.info(styledHtml);
-
     const secretsManager = new AWS.SecretsManager({ region: 'us-east-1' });
     secretsManager.getSecretValue({ SecretId: 'google-account-secret' }, (err, data) => {
         if (err) {
@@ -363,7 +361,101 @@ function send(subject, to="andrew@jarombek.com", attachments = [], htmlFilename=
         }
     });
 }
+
+/**
+ * Configure how the email is transported.
+ * @param password Application specific Gmail password used to send emails in a secure manner.
+ */
+function createTransport(password) {
+    return nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: 'andrew@jarombek.com',
+            pass: password
+        }
+    });
+}
+
+/**
+ * Helper method to send the email and check for errors.
+ * @param transport Transport object used to send emails.
+ * @param subject The subject line of the email.
+ * @param to Who the email is sent to.
+ * @param attachments Email attachment files.
+ * @param html Styled HTML file used as the email body.
+ */
+function sendMail(transport, subject, to, attachments, html) {
+    transport.sendMail({
+        from: 'Andrew Jarombek&lt;andrew@jarombek.com>',
+        to,
+        subject,
+        html,
+        attachments
+    }, (err) => {
+        if (err) {
+            console.error(`Something went wrong sending mail: ${err}`);
+        }
+    });
+}
+
+/**
+ * Replace a template item in a string.  Templates are denoted by the {{&lt;template>}} pattern
+ * @param string -The string with the template items
+ * @param substring The &lt;template> identifier
+ * @param replacement String that will replace the template item
+ * @return {Object|string|void|*} A new string - note strings are immutable so a new string
+ * object will be made.
+ */
+function replace(string, substring, replacement) {
+    return string.replace(`{{${substring}}}`, replacement);
+}
+
+module.exports = send;
 </CodeSnippet>
+<p>
+I included <code className="jarombek-inline-code">send()</code> and all its helper functions in the code above.  At its
+core, the code uses a <a href="https://nodemailer.com/about/">nodemailer</a> module to send emails.
+<code className="jarombek-inline-code">nodemailer.createTransport()</code> configures the transportation layer of the
+email by authenticating with my Gmail account.  My Gmail account password is stored on AWS Secrets Manager and is
+retrieved with the <code className="jarombek-inline-code">
+secretsManager.getSecretValue({ SecretId: 'google-account-secret' })</code> function call.  It’s important to note that
+for this code to work for you, you will also need an AWS account with a secret of the same name.  For local development
+purposes only, you can hardcode the account password instead.
+</p>
+<p>
+<code className="jarombek-inline-code">transport.sendMail({...})</code> sends an email based on the arguments passed to
+<code className="jarombek-inline-code">send()</code>.  The email body is configured and styled within
+<code className="jarombek-inline-code">send()</code>.  <code className="jarombek-inline-code">styledHtml</code> holds
+the final styled HTML that is sent.  The following few lines from <code className="jarombek-inline-code">send()</code>
+generate the email body:
+</p>
+<CodeSnippet language="JavaScript">
+// Read the contents of the HTML and CSS files to send with the email
+let html = fs.readFileSync(`./${htmlFilename}.html`, 'utf8');
+const css = fs.readFileSync(`./${cssFilename}.css`, 'utf8');
+
+// Replace the templates in the HTML
+for (const key in replacementValues) {
+    html = replace(html, key, replacementValues[key]);
+}
+
+// Inline the CSS styles in the HTML document
+const styledHtml = juice.inlineContent(html, css);
+</CodeSnippet>
+<p>
+Node.js’ <code className="jarombek-inline-code">fs</code> module reads the email’s HTML and CSS files into
+<code className="jarombek-inline-code">html</code> and <code className="jarombek-inline-code">css</code> variables,
+respectively.  I iterate through all the key-value pairs in <code className="jarombek-inline-code">
+replacementValues</code>, replacing the templates with their designated values in the HTML.  This is accomplished with
+the help of my <code className="jarombek-inline-code">replace()</code> function.
+</p>
+<p>
+<code className="jarombek-inline-code">juice.inlineContent(html, css)</code> uses the <a href="https://www.npmjs.com/
+package/juice">juice</a> library to inline CSS styles in HTML elements.  The result, 
+<code className="jarombek-inline-code">styledHtml</code>, is the HTML sent in the email body.
+</p>
 <SectionTitle title="Deployment Approach">Deployment Approach</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
