@@ -24,7 +24,7 @@ to AWS.
 <li><a href="https://jarombek.com/blog/dec-24-2021-flask-python-api">Flask Python API</a></li>
 <li><a href="https://jarombek.com/blog/jan-10-2022-flask-api-testing">Flask API Testing</a></li>
 <li><strong>Function API Using API Gateway & Lambda</strong></li>
-<li>Auth API Using API Gateway & Lambda</li>
+<li><a href="https://jarombek.com/blog/feb-18-2022-auth-api">Auth API Using API Gateway & Lambda</a></li>
 <li>Database Deployments Using Jenkins</li>
 <li>Database Client on Kubernetes</li>
 <li>Testing and Continuous Deployment on Jenkins</li>
@@ -453,9 +453,176 @@ the help of my <code className="jarombek-inline-code">replace()</code> function.
 </p>
 <p>
 <code className="jarombek-inline-code">juice.inlineContent(html, css)</code> uses the <a href="https://www.npmjs.com/
-package/juice">juice</a> library to inline CSS styles in HTML elements.  The result, 
+package/juice">juice</a> library to inline CSS styles in HTML elements<sup>1</sup>.  The result,
 <code className="jarombek-inline-code">styledHtml</code>, is the HTML sent in the email body.
 </p>
 <SectionTitle title="Deployment Approach">Deployment Approach</SectionTitle>
+<p>
+The approach for deploying the API and its corresponding AWS Lambda functions is a CI/CD pipeline in the form of a
+<a href="https://jarombek.com/blog?query=jenkins&page=1">Jenkins</a> job.  Jenkins is a CI/CD platform that I’ve
+discussed many times in the past.  Jenkins jobs are pipelines written in Groovy that automate tasks such as deploying an
+application to a specific environment or unit testing source code.
+</p>
+<p>
+The <a href="https://github.com/AJarombek/global-jenkins-jobs/blob/master/saints-xctf/infrastructure/
+create-saints-xctf-com-fn/Jenkinsfile.groovy">Jenkins job</a> for my API contains two general steps: creating AWS Lambda
+Zip files and applying Terraform infrastructure.  The <strong>Jenkinsfile</strong> for the Jenkins job, shown below,
+utilizes some helper functions from my <a href="https://github.com/AJarombek/global-jenkins-library">
+global-jenkins-library</a> repository.
+</p>
+<InlineImage filename="2-5-22-jenkins-job.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<CodeSnippet language="Groovy">
+@Library(['global-jenkins-library@master']) _
+
+pipeline {
+    agent {
+        label 'master'
+    }
+    parameters {
+        booleanParam(
+            name: 'autoApply',
+            defaultValue: true,
+            description: "Whether the Terraform infrastructure should be automatically approved."
+        )
+        choice(
+            name: 'environment',
+            choices: ['dev', 'prod'],
+            description: 'Environment to build the infrastructure in.'
+        )
+    }
+    options {
+        ansiColor('xterm')
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '10', numToKeepStr: '5'))
+    }
+    stages {
+        stage("Clean Workspace") { steps { script { cleanWs() } } }
+        stage("Checkout Repositories") { steps { script { checkoutRepos() } } }
+        stage("Get Lambda Zip Files") { steps { script { createLambdaZipFiles() } } }
+        stage("Terraform Init") { steps { script { terraformInit() } } }
+        stage("Terraform Validate") { steps { script { terraformValidate() } } }
+        stage("Terraform Plan") { steps { script { terraformPlan() } } }
+        stage("Terraform Apply") {
+            when {
+                allOf {
+                    environment name: 'TERRAFORM_NO_CHANGES', value: 'false'
+                    environment name: 'TERRAFORM_PLAN_ERRORS', value: 'false'
+                }
+            }
+            steps { script { terraformApply() } }
+        }
+    }
+    post {
+        always {
+            script {
+                postScript()
+            }
+        }
+    }
+}
+
+def checkoutRepos() {
+    genericsteps.checkoutRepo('saints-xctf-infrastructure', 'master')
+    genericsteps.checkoutRepo('saints-xctf-functions', 'main')
+}
+
+def createLambdaZipFiles() {
+    dir('repos/saints-xctf-functions/forgot-password') {
+        sh """
+            yarn install --production=true
+            zip -r9 SaintsXCTFForgotPasswordEmail.zip .
+            cp SaintsXCTFForgotPasswordEmail.zip ../../saints-xctf-infrastructure/saints-xctf-com-fn/modules/email-lambda
+        """
+    }
+
+    dir('repos/saints-xctf-functions/send-activation') {
+        sh """
+            yarn install --production=true
+            zip -r9 SaintsXCTFActivationCodeEmail.zip .
+            cp SaintsXCTFActivationCodeEmail.zip ../../saints-xctf-infrastructure/saints-xctf-com-fn/modules/email-lambda
+        """
+    }
+
+    dir('repos/saints-xctf-functions/report') {
+        sh """
+            yarn install --production=true
+            zip -r9 SaintsXCTFReportEmail.zip .
+            cp SaintsXCTFReportEmail.zip ../../saints-xctf-infrastructure/saints-xctf-com-fn/modules/email-lambda
+        """
+    }
+
+    dir('repos/saints-xctf-functions/welcome') {
+        sh """
+            yarn install --production=true
+            zip -r9 SaintsXCTFWelcomeEmail.zip .
+            cp SaintsXCTFWelcomeEmail.zip ../../saints-xctf-infrastructure/saints-xctf-com-fn/modules/email-lambda
+        """
+    }
+
+    dir('repos/saints-xctf-functions/upload-profile-picture') {
+        sh """
+            yarn install --production=true
+            zip -r9 SaintsXCTFUassetUser.zip .
+            cp SaintsXCTFUassetUser.zip ../../saints-xctf-infrastructure/saints-xctf-com-fn/modules/uasset-lambda
+        """
+    }
+
+    dir('repos/saints-xctf-functions/upload-group-picture') {
+        sh """
+            yarn install --production=true
+            zip -r9 SaintsXCTFUassetGroup.zip .
+            cp SaintsXCTFUassetGroup.zip ../../saints-xctf-infrastructure/saints-xctf-com-fn/modules/uasset-lambda
+        """
+    }
+}
+
+def terraformInit() {
+    INFRA_DIR = "repos/saints-xctf-infrastructure/saints-xctf-com-fn/env/$params.environment"
+    terraform.terraformInit(INFRA_DIR)
+}
+
+def terraformValidate() {
+    terraform.terraformValidate(INFRA_DIR)
+}
+
+def terraformPlan() {
+    terraform.terraformPlan(INFRA_DIR)
+}
+
+def terraformApply() {
+    terraform.terraformApply(INFRA_DIR, params.autoApply)
+}
+
+def postScript() {
+    email.sendEmail(
+        "Create ${params.environment.toUpperCase()} SaintsXCTF Functions AWS Infrastructure",
+        "",
+        env.JOB_NAME,
+        currentBuild.result,
+        env.BUILD_NUMBER,
+        env.BUILD_URL
+    )
+
+    cleanWs()
+}
+</CodeSnippet>
+<p>
+Note that this pipeline is able to deploy infrastructure to development (<code className="jarombek-inline-code">
+dev</code>) and production (<code className="jarombek-inline-code">prod</code>) environments. Running this pipeline is
+the only step needed to deploy a new version of the API to AWS.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+This approach of building an API with AWS API Gateway and AWS Lambda is great for small APIs with a few endpoints.
+These API endpoints for sending emails are a good fit for AWS Lambda because they run infrequently and are not very
+time sensitive.  Due to the nature of AWS Lambda functions cold starts, these endpoints sometimes take over a second to
+execute, which could be unacceptable for more performance-critical endpoints.  For more complex APIs written with AWS
+Lambda, I’d also recommend trying a more sophisticated framework such as <a href="https://www.serverless.com/framework/
+docs/getting-started">serverless</a>.  The code discussed in this article is available in <a href="https://github.com/
+AJarombek/saints-xctf-functions">saints-xctf-functions</a>, <a href="https://github.com/AJarombek/
+saints-xctf-infrastructure/tree/master/saints-xctf-com-fn">saints-xctf-infrastructure</a>, <a href="https://github.com/
+AJarombek/aws-lambda-emails">aws-lambda-emails</a>, and <a href="https://github.com/AJarombek/global-jenkins-jobs/tree/
+master/saints-xctf/infrastructure/create-saints-xctf-com-fn">global-jenkins-jobs</a> repositories.
+</p>
 </div>
