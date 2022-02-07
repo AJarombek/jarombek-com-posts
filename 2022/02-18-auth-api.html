@@ -4,6 +4,12 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You
 <strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
 </Note>
+<p>
+My <a href="https://saintsxctf.com/">SaintsXCTF</a> application has multiple APIs.  One of these APIs,
+<strong>auth.saintsxctf.com</strong>, is hosted on AWS API Gateway and AWS Lambda.  Its main purpose is to provide an
+authentication mechanism for the application.  In this article, I discuss the API endpoints and how they provide
+application authentication using JWTs.
+</p>
 <SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
 <ul>
 <li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
@@ -22,4 +28,57 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <li>Database Client on Kubernetes</li>
 <li>Testing and Continuous Deployment on Jenkins</li>
 </ul>
+<SectionTitle title="API Overview">API Overview</SectionTitle>
+<p>
+The authentication API consists of two REST API endpoints backed by AWS Lambda functions and two standalone AWS Lambda
+functions.
+</p>
+<InlineImage filename="2-18-22-api-infrastructure.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+AWS infrastructure for the API is created using Terraform.  This Terraform configuration exists in my
+<a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/saints-xctf-com-auth">
+saints-xctf-infrastructure</a> repository.  Infrastructure is <a href="https://github.com/AJarombek/global-jenkins-jobs/
+tree/master/saints-xctf/infrastructure/create-saints-xctf-com-auth/Jenkinsfile.groovy">created</a> and
+<a href="https://github.com/AJarombek/global-jenkins-jobs/blob/master/saints-xctf/infrastructure/
+destroy-saints-xctf-com-auth/Jenkinsfile.groovy">destroyed</a> using Jenkins jobs.  In this article I focus on the
+functionality of the authentication API instead of the infrastructure, so I will not discuss infrastructure and CI/CD
+code in any more depth.
+</p>
+<p>
+The idea behind this API was to have authentication logic separated from the main application logic.  You can think of
+this API as a microservice for user authentication.  The authentication approach for my application is to use JWT
+tokens.  Users pass their username and password in exchange for a JWT token, which is used for all subsequent API
+requests.  Behind the scenes, my main application API checks whether the JWT passed from a user is valid.  If the token
+is valid, the API request is processed and a response is returned.  Otherwise, an error message is returned.  JWTs
+expire after a certain amount of time, and the RSA key used to generate JWTs is rotated weekly for additional security.
+</p>
+<p>
+The authentication API exposes two endpoints to users: <strong>/token</strong> and <strong>/authenticate</strong>.  Both
+endpoints are backed by AWS Lambda functions.  The API has two additional AWS Lambda functions designed for internal
+usage: <code className="jarombek-inline-code">SaintsXCTFAuthorizer</code> and <code className="jarombek-inline-code">
+SaintsXCTFRotate</code>.  Let’s take a look at all these AWS Lambda functions in more detail.
+</p>
+<SectionTitle title="Token Endpoint">Token Endpoint</SectionTitle>
+<p>
+The <strong>/token</strong> API endpoint is used to exchange user credentials for a JWT.  <strong>/token</strong>
+accepts a JSON request body containing a username and a password.  The following CURL request shows how to properly use
+the endpoint.
+</p>
+<CodeSnippet language="Bash">
+RequestBody='{"clientId":"andy","clientSecret":"my_password"}'
+curl -X POST \
+    -d "${RequestBody}" \
+    -H "Content-Type: application/json" \
+    https://auth.saintsxctf.com/token
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+    "result": "j.w.t"
+}
+</CodeSnippet>
+<SectionTitle title="Authenticate Endpoint">Authenticate Endpoint</SectionTitle>
+<SectionTitle title="Rotate Lambda Function">Rotate Lambda Function</SectionTitle>
+<SectionTitle title="Authorizer Lambda Function">Authorizer Lambda Function</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
