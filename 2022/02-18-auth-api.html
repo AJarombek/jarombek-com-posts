@@ -66,16 +66,196 @@ accepts a JSON request body containing a username and a password.  The following
 the endpoint.
 </p>
 <CodeSnippet language="Bash">
-RequestBody='{"clientId":"andy","clientSecret":"my_password"}'
+RequestBody='{"clientId":"my_username","clientSecret":"my_password"}'
 curl -X POST \
     -d "${RequestBody}" \
     -H "Content-Type: application/json" \
     https://auth.saintsxctf.com/token
 </CodeSnippet>
+<p>
+In the request body, <code className="jarombek-inline-code">my_username</code> and
+<code className="jarombek-inline-code">my_password</code> are replaced with the user's username and password,
+respectively.  The response body will look something like the following, with <code className="jarombek-inline-code">
+j.w.t</code> replaced with a valid JWT.
+</p>
 <CodeSnippet language="JSON">
 {
     "result": "j.w.t"
 }
+</CodeSnippet>
+<p>
+As previously mentioned, each endpoint is backed by an AWS Lambda function.  The function for the
+<strong>/token</strong> endpoint is shown below, and exists in a <a href="https://github.com/AJarombek/saints-xctf-auth/
+blob/master/token/function.py">function.py</a> file within my <a href="https://github.com/AJarombek/saints-xctf-auth">
+saints-xctf-auth</a> repository.
+</p>
+<CodeSnippet language="Python">
+import os
+import boto3
+import json
+import re
+from datetime import datetime
+from typing import Any
+
+import jwt
+import bcrypt
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from boto3_type_annotations.secretsmanager import Client as SecretsManagerClient
+from boto3_type_annotations.rds import Client as RDSClient
+
+from User import User
+
+
+def lambda_handler(event, context):
+    client_id = event['clientId']
+    client_secret = event['clientSecret']
+    env = os.environ['ENV']
+    print(f"Client: {client_id}, Environment: {env}")
+
+    secretsmanager: SecretsManagerClient = boto3.client('secretsmanager', region_name='us-east-1')
+    rds: RDSClient = boto3.client('rds', region_name='us-east-1')
+
+    private_key = get_jwt_private_key(secretsmanager, env)
+    db_secret = get_rds_credentials(secretsmanager, env)
+    session = create_database_session(rds, db_secret, env)
+    print("Database Session Initialized and Secrets Retrieved")
+
+    email_pattern = re.compile('^(([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\\.([a-zA-Z])+([a-zA-Z])+)?$')
+
+    if email_pattern.match(client_id):
+        print("Retrieving User by Email")
+        user = session.query(User).filter_by(email=client_id).first()
+    else:
+        print("Retrieving User by Username")
+        user = session.query(User).filter_by(username=client_id).first()
+
+    if user is None:
+        print(f"No user exists with username/email: {client_id}")
+        return None
+    else:
+        print("A user exists with given client ID.")
+        if bcrypt.checkpw(client_secret.encode('utf-8'), user.password.encode('utf-8')):
+            print("User credentials valid.")
+            iat = int(datetime.utcnow().timestamp())
+            exp = iat + 2419200
+
+            return jwt.encode(
+                payload={
+                    'iat': iat,
+                    'exp': exp,
+                    'iss': 'auth.saintsxctf.com',
+                    'sub': user.username,
+                    'email': user.email,
+                    'name': f'{user.first} {user.last}'
+                },
+                key=private_key,
+                algorithm='RS256'
+            )
+        else:
+            print(f"Invalid password for user with username/email: {client_id}")
+            return None
+
+
+def get_jwt_private_key(secretsmanager: SecretsManagerClient, env: str) -> str:
+    """
+    Get the RSA encrypted private key used to create JWT tokens.
+    :param secretsmanager: boto3 client for working with SecretsManager.
+    :param env: Environment of the SaintsXCTF authentication private key.
+    :return: A string representing the RSA encrypted private key.
+    """
+    print("Getting JWT Private Key")
+    secret = secretsmanager.get_secret_value(SecretId=f"saints-xctf-auth-{env}")
+
+    secret_string = secret.get('SecretString')
+    secret_dict: dict = json.loads(secret_string)
+    return secret_dict["PrivateKey"]
+
+
+def get_rds_credentials(secretsmanager: SecretsManagerClient, env: str) -> dict:
+    """
+    Get the RDS username and password.
+    :param secretsmanager: boto3 client for working with SecretsManager.
+    :param env: Environment of the SaintsXCTF database.
+    :return: A dictionary containing username and password keys.
+    """
+    print("Getting RDS Credentials")
+    response = secretsmanager.get_secret_value(SecretId=f'saints-xctf-rds-{env}-secret')
+    secret_string = response.get("SecretString")
+    return json.loads(secret_string)
+
+
+def create_database_session(rds: RDSClient, db_secret: dict, env: str) -> Any:
+    """
+    Create a database session with RDS in a given environment.
+    :param rds: boto3 client for working with RDS.
+    :param db_secret: Dictionary containing the username and password for the SaintsXCTF RDS/MySQL database.
+    :param env: Environment of the SaintsXCTF database.
+    :return: A session with the database.
+    """
+    print("Creating Database Session")
+    rds_instances = rds.describe_db_instances(DBInstanceIdentifier=f'saints-xctf-mysql-database-{env}')
+    instance = rds_instances.get('DBInstances')[0]
+    hostname = instance.get('Endpoint').get('Address')
+
+    username = db_secret.get("username")
+    password = db_secret.get("password")
+    database = 'saintsxctf'
+
+    db_url = f'mysql+pymysql://{username}:{password}@{hostname}/{database}'
+
+    engine = create_engine(db_url)
+
+    Session = sessionmaker()
+    Session.configure(bind=engine)
+
+    return Session()
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">lambda_handler()</code> is the entrypoint to the AWS Lambda function.  Within
+<code className="jarombek-inline-code">lambda_handler()</code>, the first two lines extract the JSON request body fields
+into <code className="jarombek-inline-code">client_id</code> and <code className="jarombek-inline-code">
+client_secret</code> variables.  The function works in both development and production environments, as determined by an
+<code className="jarombek-inline-code">ENV</code> environment variable.  The environment is retrieved with the line
+<code className="jarombek-inline-code">env = os.environ['ENV']</code>.  The environment is important because different
+databases and RSA keys are used in different environments.
+</p>
+<p>
+Next comes a series of helper function invocations.  The first, <code className="jarombek-inline-code">
+get_jwt_private_key(secretsmanager, env)</code>, retrieves an RSA private key from AWS Secrets Manager.  This private
+key is used to create JWTs.  The second, <code className="jarombek-inline-code">
+get_rds_credentials(secretsmanager, env)</code>, retrieves MySQL database credentials.  The database is queried to
+determine if the username and password sent to the API are valid.  The third and final helper function,
+<code className="jarombek-inline-code">create_database_session(rds, db_secret, env)</code>, uses the database
+credentials to start a session with my application’s MySQL database.
+</p>
+<p>
+Optionally, the <strong>/token</strong> endpoint takes an email instead of a username.  This option is expressed by an
+<code className="jarombek-inline-code">if</code> statement and a <code className="jarombek-inline-code">
+email_pattern.match(client_id)</code> condition.  If an email is used, the user in the database is retrieved with
+<code className="jarombek-inline-code">session.query(User).filter_by(email=client_id).first()</code>.  Otherwise, the
+user is retrieved with <code className="jarombek-inline-code">session.query(User).filter_by(username=client_id).first()
+</code>.  In both cases, a SQLAlchemy model class <code className="jarombek-inline-code">User</code> is utilized to
+query the database.  I wrote about SQLAlchemy and model classes in <a href="https://jarombek.com/blog/
+~dec-24-2021-flask-python-api">an article on my SaintsXCTF API</a>.  The <code className="jarombek-inline-code">User
+</code> model class exists in a <a href="https://github.com/AJarombek/saints-xctf-auth/blob/master/token/User.py">
+User.py</a> file and is shown below.
+</p>
+<CodeSnippet language="Python">
+from sqlalchemy import Column, VARCHAR
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = 'users'
+
+    username = Column(VARCHAR(20), primary_key=True)
+    first = Column(VARCHAR(30), nullable=False, index=True)
+    last = Column(VARCHAR(30), nullable=False, index=True)
+    password = Column(VARCHAR(255), nullable=False)
+    email = Column(VARCHAR(50), index=True)
 </CodeSnippet>
 <SectionTitle title="Authenticate Endpoint">Authenticate Endpoint</SectionTitle>
 <SectionTitle title="Rotate Lambda Function">Rotate Lambda Function</SectionTitle>
