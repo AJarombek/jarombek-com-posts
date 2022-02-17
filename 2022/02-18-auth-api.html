@@ -341,7 +341,121 @@ first line in <code className="jarombek-inline-code">lambda_handler()</code> get
 used to validate the JWT.  The RSA keys are stored in a <code className="jarombek-inline-code">secret_dict</code>
 variable.
 </p>
+<p>
+The remainder of the code attempts to decode the JWT token using a <code className="jarombek-inline-code">jwt.decode()
+</code> function.  If the JWT token is deemed valid, the function returns <code className="jarombek-inline-code">
+True</code>.  Otherwise, there are two possible scenarios, both of which cause the function to return
+<code className="jarombek-inline-code">False</code>.  The first scenario is when the token is expired, resulting in a
+<code className="jarombek-inline-code">jwt.ExpiredSignatureError</code> exception.  The second is for an invalid token,
+which can result in any number of exceptions.
+</p>
 <SectionTitle title="Rotate Lambda Function">Rotate Lambda Function</SectionTitle>
+<p>
+The "Rotate" AWS Lambda function is used internally by the authentication API.  It’s purpose is to rotate the RSA public
+key and private key used to create and decode JWTs after a certain amount of time.  The benefit of rotating RSA keys is
+in the scenario of a malicious user gaining access to the keys.  In this case, the malicious user can create their own
+JWTs with the RSA keys.  These JWTs will appear as valid to my application, even though my application did not create
+them.  By rotating the RSA keys, the damage is limited in this scenario because the malicious user will only have access
+to valid RSA keys until the next rotation.  After a key rotation occurs, the old RSA keys are no longer able to create
+or validate JWT tokens.  The malicious user will no longer be able to cause harm to the application.
+</p>
+<p>
+The "Rotate" AWS Lambda function is written in Python and exists in a <a href="https://github.com/AJarombek/
+saints-xctf-auth/blob/master/rotate/function.py">function.py</a> file within my <a href="https://github.com/AJarombek/
+saints-xctf-auth">saints-xctf-auth</a> repository.  It is based off a <a href="https://github.com/aws-samples/
+aws-secrets-manager-ssh-key-rotation/tree/master/lambda">sample AWS Lambda function</a> for rotating
+secrets<sup>1</sup>.  More information on rotating secrets using AWS Secrets Manager and AWS Lambda can be found in the
+<a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotate-secrets_how.html">AWS documentation</a>
+<sup>2</sup>.
+</p>
 <SectionTitle title="Authorizer Lambda Function">Authorizer Lambda Function</SectionTitle>
+<p>
+The "Authorizer" AWS Lambda function is used as an <a href="https://docs.aws.amazon.com/apigateway/latest/
+developerguide/apigateway-use-lambda-authorizer.html">API Gateway authorizer</a><sup>3</sup>.  API Gateway authorizers
+enable custom authentication for API Gateway endpoints, such as the ones in my <a href="https://jarombek.com/blog/
+feb-5-2022-function-api">fn.saintsxctf.com</a> API.
+</p>
+<p>
+This authorizer checks if a JWT token passed in an API request is valid for my application.  If the token is valid,
+requests are forwarded to API endpoints in AWS API Gateway.  If the token is invalid, requests are denied.  The function
+is very similar to the one behind my <strong>/authenticate</strong> endpoint, except this time it is for internal use
+by API Gateway, not publicly accessible over HTTP.
+</p>
+<p>
+The "Authorizer" function is shown below, and exists in a
+<a href="https://github.com/AJarombek/saints-xctf-auth/blob/master/authenticate/function.py">function.py</a> file within
+my <a href="https://github.com/AJarombek/saints-xctf-auth">saints-xctf-auth</a> repository.
+</p>
+<CodeSnippet language="Python">
+import os
+import json
+import traceback
+
+import jwt
+from boto3_type_annotations.secretsmanager import Client
+
+
+def lambda_handler(event, context):
+    token = event['authorizationToken']
+    method_arn = event['methodArn']
+    env = os.environ['ENV']
+    print(f"Token: {token}, Environment: {env}")
+
+    secretsmanager: Client = boto3.client('secretsmanager')
+    secret = secretsmanager.get_secret_value(SecretId=f"saints-xctf-auth-{env}")
+
+    secret_string = secret['SecretString']
+    secret_dict: dict = json.loads(secret_string)
+
+    try:
+        jwt.decode(
+            jwt=token,
+            key=secret_dict["PublicKey"],
+            verify=True,
+            algorithms='RS256',
+            options={'require': ['exp', 'iat', 'iss']}
+        )
+        return allow_policy(method_arn)
+    except jwt.ExpiredSignatureError:
+        # The date of the 'exp' claim is in the past, meaning the token is expired
+        print("This token has expired.")
+        return deny_policy()
+    except Exception as e:
+        print("Unknown error occurred.")
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return deny_policy()
+
+
+def allow_policy(method_arn: str) -> dict:
+    return {
+        "principalId": "apigateway.amazonaws.com",
+        "policyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Action": "execute-api:Invoke",
+                    "Effect": "Allow",
+                    "Resource": method_arn
+                }
+            ]
+        }
+    }
+
+
+def deny_policy() -> dict:
+    return {
+        "principalId": "*",
+        "policyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Action": "*",
+                    "Effect": "Deny",
+                    "Resource": "*"
+                }
+            ]
+        }
+    }
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
