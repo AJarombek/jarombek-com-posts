@@ -457,5 +457,27 @@ def deny_policy() -> dict:
         }
     }
 </CodeSnippet>
+<p>
+Similar to the <strong>/authenticate</strong> endpoint, the result of <code className="jarombek-inline-code">
+jwt.decode()</code> determines the output of the AWS Lambda function.  However, instead of returning a boolean of
+whether a JWT is valid, the authorizer returns a Python dictionary.  This dictionary represents a JSON IAM policy that
+is used to invoke API Gateway endpoints.  If the JWT token is valid, the IAM policy defined in
+<code className="jarombek-inline-code">allow_policy()</code> is returned.  If the JWT token is invalid, the IAM policy
+defined in <code className="jarombek-inline-code">deny_policy()</code> is returned.  The policy in
+<code className="jarombek-inline-code">allow_policy()</code> allows access to API endpoints while the policy in
+<code className="jarombek-inline-code">deny_policy()</code> denies access.
+</p>
+<p>
+These four functions fulfill all the authentication needs of my application!  Potential enhancements to this approach
+include making the JWT tokens <a href="https://developer.okta.com/docs/concepts/oauth-openid/
+#authentication-api-vs-oauth-2-0-vs-openid-connect">OAuth2 or OpenID Connect protocol compliant</a><sup>3</sup>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Using AWS API Gateway and AWS Lambda is an effective way to create a basic authentication API for an application.  The
+main drawback to remember with this approach is the downsides of AWS Lambda cold starts and the expenses involved with
+mitigating them.  Otherwise, its a great way to separate authentication logic into their own serverless microservice.
+All the code discussed in this article is available in my <a href="https://github.com/AJarombek/saints-xctf-auth">
+saints-xctf-auth</a> repository.
+</p>
 </div>
