@@ -1,0 +1,115 @@
+<div>
+<p>
+SwiftUI is a new framework that creates user interfaces for iOS and other Apple operating system applications.  SwiftUI
+is completely programmatic (user interfaces in SwiftUI are built exclusively by writing Swift code).  This is in stark
+contrast to previous frameworks such as UIKit which use a combination of Swift or Objective-C code and storyboards.
+Storyboards are graphical interfaces which allow engineers or designers to build user interfaces without writing code.
+</p>
+<p>
+As someone who prefers solutions that involve writing code exclusively, SwiftUI is a welcome addition to the iOS
+landscape and a positive change in direction from Apple.  Using GUIs such as storyboard to build interfaces have many
+downsides, such as difficulties when working in large groups on a single UI file and confusing merge conflicts when
+using version control systems. Since I’m very passionate about programming (as most software engineers are), altering
+values in a GUI to change a UI is a lot less exciting than coding!
+</p>
+<p>
+This article introduces SwiftUI and walks through a page in an existing iOS application that I converted to SwiftUI
+from UIKit and Storyboard.  I also describe the steps needed to integrate  SwiftUI components into a UIKit application.
+All the code discussed in this article comes from my
+<a href="https://apps.apple.com/nz/app/saintsxctf/id1298285886?platform=iphone">SaintsXCTF</a> iOS application and
+lives in a <a href="https://github.com/AJarombek/saints-xctf-ios">saints-xctf-ios</a> repository.
+</p>
+<SectionTitle title="SwiftUI Overview">SwiftUI Overview</SectionTitle>
+<p>
+SwiftUI is a new approach for creating user interfaces in Apple operating system applications, such as iPhone and Apple
+Watch apps.  Released in September 2019, SwiftUI allows UIs to be built entirely in Swift code.  Apple has
+<a href="https://developer.apple.com/tutorials/swiftui/creating-and-combining-views">excellent tutorials</a> for getting
+started with SwiftUI and learning how to code SwiftUI views in XCode.
+</p>
+<p>
+SwiftUI is a declarative UI framework, similar to React.js.  Declarative programming frameworks involve coding the
+desired end state instead of coding iterative commands to achieve an end state.  Behind the scenes, SwiftUI is able to
+translate the desired end state into iterative commands which build the UI.  Engineers do not need to worry about these
+details as SwiftUI abstracts them away.  Declarative frameworks are often easier to work with and faster to code in.  A
+comparison in the front-end programming world is how the declarative library React.js is easier to work with then the
+iterative library JQuery for building web pages.
+</p>
+<SectionTitle title="UI Component Overview">UI Component Overview</SectionTitle>
+<p>
+In my SaintsXCTF iOS application, the page I converted from UIKit and Storyboard to SwiftUI is the create exercise log
+page.  When loaded, this page appears like so:
+</p>
+<InlineImage filename="2-26-22-exercise-log-view.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Users enter details about their exercise, such as the time taken and mileage.
+</p>
+<InlineImage filename="2-26-22-exercise-log-editing.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+After entering information about an exercise, users can create the exercise log, which will display it on the
+application home page and on their profile page.
+</p>
+<InlineImage filename="2-26-22-exercise-log-created.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+User’s can also edit existing exercise logs and resubmit them.
+</p>
+<InlineImage filename="2-26-22-exercise-logs.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="2-26-22-edit-exercise-log.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<SectionTitle title="Building Views">Building Views</SectionTitle>
+<p>
+SwiftUI applications are split into many views (components) that make up the user interface.  For my exercise log page,
+there are two top level views.  The first, <code className="jarombek-inline-code">CreateExerciseLogView</code>, is for
+creating a new exercise log.  The second, <code className="jarombek-inline-code">EditExerciseLogView</code>, is for
+editing an existing exercise log.
+</p>
+<p>
+<code className="jarombek-inline-code">CreateExerciseLogView</code>, which is located in a <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/CreateExerciseLogView.swift">CreateExerciseLogView.swift</a> file, has
+the following content:
+</p>
+<CodeSnippet language="Swift">
+import SwiftUI
+
+struct CreateExerciseLogView: View {
+    @StateObject var log = ExerciseLog()
+    @StateObject var meta = ExerciseLogMeta(isExisting: false)
+    @StateObject var createLog = CreateExerciseLog()
+    @StateObject var form = ExerciseLogForm()
+
+    var body: some View {
+        ExerciseLogView(log: log, meta: meta, createLog: createLog, form: form)
+    }
+}
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">CreateExerciseLogView</code>, which is located in a <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/EditExerciseLogView.swift">EditExerciseLogView.swift</a> file, is coded
+very similarly.
+</p>
+<CodeSnippet language="Swift">
+import SwiftUI
+
+struct EditExerciseLogView: View {
+    @ObservedObject var log = ExerciseLog()
+
+    @StateObject var meta = ExerciseLogMeta(isExisting: true)
+    @StateObject var createLog = CreateExerciseLog()
+    @StateObject var form = ExerciseLogForm()
+
+    var body: some View {
+        ExerciseLogView(log: log, meta: meta, createLog: createLog, form: form)
+            .onAppear(perform: {
+                if !meta.existingLogInitialized {
+                    form.displayedTime = log.time
+                }
+            })
+    }
+}
+</CodeSnippet>
+<SectionTitle title="Integrating SwiftUI with UIKit">Integrating SwiftUI with UIKit</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
