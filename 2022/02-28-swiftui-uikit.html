@@ -86,7 +86,7 @@ struct CreateExerciseLogView: View {
 }
 </CodeSnippet>
 <p>
-<code className="jarombek-inline-code">CreateExerciseLogView</code>, which is located in a <a href="https://github.com/
+<code className="jarombek-inline-code">EditExerciseLogView</code>, which is located in a <a href="https://github.com/
 AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/EditExerciseLogView.swift">EditExerciseLogView.swift</a> file, is coded
 very similarly.
 </p>
@@ -107,6 +107,78 @@ struct EditExerciseLogView: View {
                     form.displayedTime = log.time
                 }
             })
+    }
+}
+</CodeSnippet>
+<p>
+Both <code className="jarombek-inline-code">CreateExerciseLogView</code> and <code className="jarombek-inline-code">
+EditExerciseLogView</code> are structs of type <code className="jarombek-inline-code">View</code>.  The
+<code className="jarombek-inline-code">View</code> protocol defines a struct that is part of a user interface.  When a
+custom view is created that follows the <code className="jarombek-inline-code">View</code> protocol, the
+<code className="jarombek-inline-code">body</code> property of type <code className="jarombek-inline-code">some View
+</code> must be implemented.  Both <code className="jarombek-inline-code">CreateExerciseLogView</code> and
+<code className="jarombek-inline-code">EditExerciseLogView</code> have bodies containing an
+<code className="jarombek-inline-code">ExerciseLogView</code> view.  <code className="jarombek-inline-code">
+ExerciseLogView</code> is the main view holding the create/edit exercise log form.  It takes four objects as arguments
+which help customize the views appearance: <code className="jarombek-inline-code">log</code>,
+<code className="jarombek-inline-code">meta</code>, <code className="jarombek-inline-code">createLog</code>, and
+<code className="jarombek-inline-code">form</code>.
+</p>
+<p>
+These four variables are initialized with the <code className="jarombek-inline-code">@StateObject</code> annotation in
+both <code className="jarombek-inline-code">CreateExerciseLogView</code> and <code className="jarombek-inline-code">
+EditExerciseLogView</code>; except for <code className="jarombek-inline-code">log</code> in
+<code className="jarombek-inline-code">EditExerciseLogView</code>, which is initialized with
+<code className="jarombek-inline-code">@ObservedObject</code>.  These annotations are property wrappers which define
+variables that hold state in Swift views.  Swift views are controlled by application state; every time the state within
+a view changes, the view re-renders.  For a more in-depth analysis on these annotations, check out
+<a href="https://www.hackingwithswift.com/quick-start/swiftui/whats-the-difference-between-observedobject-state-and-environmentobject">
+this article on SwiftUI property wrappers</a><sup>1</sup>.  In short, <code className="jarombek-inline-code">
+@ObservedObject</code> holds an object in application state with a value that is passed from another view.
+<code className="jarombek-inline-code">@StateObject</code> also holds an object in application state, but that object is
+initialized within the current view.  In other words, <code className="jarombek-inline-code">@ObservedObject</code>
+watches a state object that is owned by another view, while <code className="jarombek-inline-code">@StateObject</code>
+creates a state object in the current view.
+</p>
+<p>
+In the <code className="jarombek-inline-code">EditExerciseLogView</code> view, <code className="jarombek-inline-code">
+log</code> is annotated with <code className="jarombek-inline-code">@ObservedObject</code> because its parent view sends
+information about a log that needs to be edited.  All the other state objects are created in and owned by
+<code className="jarombek-inline-code">CreateExerciseLogView</code> and <code className="jarombek-inline-code">
+EditExerciseLogView</code>.
+</p>
+<p>
+Objects annotated with <code className="jarombek-inline-code">@StateObject</code> and
+<code className="jarombek-inline-code">@ObservedObject</code> must conform to a <code className="jarombek-inline-code">
+ObservableObject</code> protocol.  For example, the <code className="jarombek-inline-code">log</code> object is a class
+of type <code className="jarombek-inline-code">ExerciseLog</code>, which is defined in <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/ExerciseLog.swift">ExerciseLog.swift</a>.
+</p>
+<CodeSnippet language="Swift">
+import SwiftUI
+
+class ExerciseLog: ObservableObject {
+    @Published var id: Int? = nil
+    @Published var name = ""
+    @Published var location = ""
+    var date = Date()
+    @Published var exerciseType = ExerciseType.run
+    @Published var distance = ""
+    @Published var metric = Metric.miles
+    @Published var time = ""
+    @Published var feel = 6.0
+    @Published var description = ""
+
+    func reset() {
+        name = ""
+        location = ""
+        date = Date()
+        exerciseType = ExerciseType.run
+        distance = ""
+        metric = Metric.miles
+        time = ""
+        feel = 6.0
+        description = ""
     }
 }
 </CodeSnippet>
