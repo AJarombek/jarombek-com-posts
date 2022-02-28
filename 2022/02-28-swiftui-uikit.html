@@ -405,6 +405,120 @@ struct ExerciseLogView: View {
     }
 }
 </CodeSnippet>
+<p>
+In <code className="jarombek-inline-code">ExerciseLogView</code>, properties <code className="jarombek-inline-code">
+log</code>, <code className="jarombek-inline-code">meta</code>, <code className="jarombek-inline-code">createLog</code>,
+and <code className="jarombek-inline-code">form</code> are all annotated with <code className="jarombek-inline-code">
+@ObservedObject</code> because they are owned by parent views and are passed as parameters to the current view.  This
+view introduces a new property <code className="jarombek-inline-code">existingLog</code> with a
+<code className="jarombek-inline-code">@EnvironmentObject</code> annotation.  Properties annotated with
+<code className="jarombek-inline-code">@EnvironmentObject</code> are accessible to all other views in the
+application<sup>3</sup>.  You can think of it as SwiftUI’s mechanism for global state.  If the user is editing an
+existing exercise log, the <code className="jarombek-inline-code">existingLog</code> property will be populated with
+its contents.
+</p>
+<p>
+The <code className="jarombek-inline-code">body</code> property of <code className="jarombek-inline-code">
+ExerciseLogView</code> initializes some elements in the user interface.  The outermost element,
+<code className="jarombek-inline-code">ScrollView</code>, creates a view with scrollable content<sup>3</sup>.  Inside
+view inside the scroll view is defined as <code className="jarombek-inline-code">VStack(alignment: .leading)</code>.
+<code className="jarombek-inline-code">VStack</code> is a view whose children are arranged vertically<sup>4</sup>.  The
+<code className="jarombek-inline-code">alignment: .leading</code> argument sets the alignment of children in the
+<code className="jarombek-inline-code">VStack</code> view on the x and y axis<sup>5</sup>.  Inside
+<code className="jarombek-inline-code">VStack</code> is a <code className="jarombek-inline-code">Text</code> view, which
+is the header of the page.  It either contains the text <strong>"Create Exercise Log"</strong> or
+<strong>"Edit Exercise Log"</strong>.
+</p>
+<p>
+Method calls can be chained on views to customize them.  For example, the <code className="jarombek-inline-code">Text</code>
+view has <code className="jarombek-inline-code">font()</code>, <code className="jarombek-inline-code">foregroundColor()</code>,
+<code className="jarombek-inline-code">bold()</code>, and <code className="jarombek-inline-code">alert()</code> method
+calls attached to it.  The first three methods customize the appearance of the text.  The fourth method,
+<code className="jarombek-inline-code">alert()</code>, displays an alert in case an error occurs while creating or
+editing an exercise log.
+</p>
+<p>
+<code className="jarombek-inline-code">ExerciseLogView</code> contains another custom view,
+<code className="jarombek-inline-code">ExerciseLogFormView</code>.  It exists in a <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/ExerciseLogFormView.swift">ExerciseLogFormView.swift</a> file.  This
+view along with <code className="jarombek-inline-code">ExerciseLogActionsView</code> in the <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/ExerciseLogActionsView.swift">ExerciseLogActionsView.swift</a> file
+makes up the remainder of the create/edit exercise log page.  Feel free to view them and use their code in your own
+projects.
+</p>
 <SectionTitle title="Integrating SwiftUI with UIKit">Integrating SwiftUI with UIKit</SectionTitle>
+<p>
+Integrating SwiftUI views into a UIKit application is relatively straightforward.  The main approach is to wrap SwiftUI
+views within a <code className="jarombek-inline-code">UIViewController</code> class.  For the create/edit exercise log
+page, I have two <code className="jarombek-inline-code">UIViewController</code> classes that wrap SwiftUI views -
+<code className="jarombek-inline-code">CreateExerciseLogViewController</code> and <code className="jarombek-inline-code">
+EditExerciseLogViewController</code>.  Both are shown below and are available in <a href="https://github.com/AJarombek/
+saints-xctf-ios/blob/master/SaintsXCTF/CreateExerciseLogViewController.swift">CreateExerciseLogViewController.swift</a>
+and <a href="https://github.com/AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/EditExerciseLogViewController.swift">
+EditExerciseLogViewController.swift</a> files, respectively.
+</p>
+<CodeSnippet language="Swift">
+// CreateExerciseLogViewController.swift
+
+import UIKit
+import SwiftUI
+
+class CreateExerciseLogViewController: UIViewController {
+    @IBOutlet weak var container: UIView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let childView = UIHostingController(rootView: CreateExerciseLogView())
+        addChild(childView)
+        childView.view.frame = container.bounds
+        container.addSubview(childView.view)
+        childView.didMove(toParent: self)
+    }
+}
+</CodeSnippet>
+<CodeSnippet language="Swift">
+// EditExerciseLogViewController.swift
+
+import UIKit
+import SwiftUI
+
+class EditExerciseLogViewController: UIViewController {
+    @IBOutlet weak var container: UIView!
+
+    var log: Log? = nil
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let exerciseLog = ExerciseLog()
+
+        if let logObject = log {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let dateObject = dateFormatter.date(from: logObject.date) ?? Date()
+
+            exerciseLog.id = logObject.log_id
+            exerciseLog.name = logObject.name
+            exerciseLog.location = logObject.location ?? ""
+            exerciseLog.date = dateObject
+            exerciseLog.exerciseType = ExerciseType(rawValue: logObject.type!) ?? ExerciseType.run
+            exerciseLog.distance = logObject.distance != nil ? String(logObject.distance!) : ""
+            exerciseLog.metric = Metric(rawValue: logObject.metric!) ?? Metric.miles
+            exerciseLog.time = logObject.time ?? ""
+            exerciseLog.feel = Double(logObject.feel)
+            exerciseLog.description = logObject.log_description ?? ""
+        }
+
+        let existingLog = ExistingLog(log ?? Log())
+
+        let childView = UIHostingController(rootView: EditExerciseLogView(log: exerciseLog).environmentObject(existingLog))
+        addChild(childView)
+        childView.view.frame = container.bounds
+        container.addSubview(childView.view)
+        childView.didMove(toParent: self)
+    }
+}
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
