@@ -182,6 +182,229 @@ class ExerciseLog: ObservableObject {
     }
 }
 </CodeSnippet>
+<p>
+<code className="jarombek-inline-code">ExerciseLog</code> contains properties representing the attributes of an exercise
+log.  Some of these properties, such as <code className="jarombek-inline-code">id</code>, are annotated with
+<code className="jarombek-inline-code">@Published</code>.  When properties with the
+<code className="jarombek-inline-code">@Published</code> annotation update, the UI also updates<sup>2</sup>.  Properties
+without the <code className="jarombek-inline-code">@Published</code> do not cause UI re-renders when they update.
+</p>
+<p>
+<code className="jarombek-inline-code">reset()</code> is simply a helper method to revert properties to their default
+values.
+</p>
+<p>
+The other three state objects in <code className="jarombek-inline-code">CreateExerciseLogView</code> and
+<code className="jarombek-inline-code">EditExerciseLogView</code> are coded similarly to
+<code className="jarombek-inline-code">ExerciseLog</code>.  <code className="jarombek-inline-code">meta</code> of type
+<code className="jarombek-inline-code">ExerciseLogMeta</code> (located in <a href="https://github.com/AJarombek/
+saints-xctf-ios/blob/master/SaintsXCTF/ExerciseLogMeta.swift">ExerciseLogMeta.swift</a>),
+<code className="jarombek-inline-code">createLog</code> of type <code className="jarombek-inline-code">
+CreateExerciseLog</code> (located in <a href="https://github.com/AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/
+CreateExerciseLog.swift">CreateExerciseLog.swift</a>), and <code className="jarombek-inline-code">form</code> of type
+<code className="jarombek-inline-code">ExerciseLogForm</code> (located in <a href="https://github.com/AJarombek/
+saints-xctf-ios/blob/master/SaintsXCTF/ExerciseLogForm.swift">ExerciseLogForm.swift</a>) are shown below.
+</p>
+<CodeSnippet language="Swift">
+// ExerciseLogMeta.swift
+
+import SwiftUI
+
+class ExerciseLogMeta: ObservableObject {
+
+    init(isExisting: Bool) {
+        self.isExistingLog = isExisting
+    }
+
+    var isExistingLog = false
+    var existingLogInitialized = false
+}
+</CodeSnippet>
+<CodeSnippet language="Swift">
+// CreateExerciseLog.swift
+
+import SwiftUI
+
+class CreateExerciseLog: ObservableObject {
+    @Published var creating = false
+    @Published var created = false
+    @Published var error = false
+    @Published var errorMessage: String? = nil
+
+    func createExerciseLog(exerciseLog: ExerciseLog, completion: @escaping () -> Void) -> Void {
+        creating = true
+        created = false
+        error = false
+        errorMessage = nil
+
+        let log = convertToLog(exerciseLog)
+
+        APIClient.logPostRequest(withLog: log, fromController: nil) {
+            (newlog) -> Void in
+
+            self.creating = false
+
+            if newlog != nil {
+                self.created = true
+                completion()
+            } else {
+                self.error = true
+                self.errorMessage = "Failed to Create New Exercise Log"
+            }
+        }
+    }
+
+    func updateExerciseLog(newLog: ExerciseLog, existingLog: Log, completion: @escaping () -> Void) -> Void {
+        creating = true
+        created = false
+        error = false
+        errorMessage = nil
+
+        let log = convertToLog(newLog, existingLog)
+        log.log_id = existingLog.log_id
+
+        APIClient.logPutRequest(withLogID: log.log_id!, andLog: log, fromController: nil) {
+            (newlog) -> Void in
+
+            self.creating = false
+
+            if newlog != nil {
+                self.created = true
+                completion()
+            } else {
+                self.error = true
+                self.errorMessage = "Failed to Create New Exercise Log"
+            }
+        }
+    }
+
+    func convertToLog(_ exerciseLog: ExerciseLog, _ existingLog: Log = Log()) -> Log {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let formattedDate = dateFormatter.string(from: exerciseLog.date)
+
+        let timeFormat = "00:00:00"
+        let end = timeFormat.index(timeFormat.endIndex, offsetBy: 0 - exerciseLog.time.count - 1)
+        let formattedTime = "\(timeFormat[timeFormat.startIndex...end])\(exerciseLog.time)"
+
+        let user = SignedInUser.user
+
+        let log = existingLog
+        log.name = exerciseLog.name
+        log.username = user.username
+        log.first = user.first
+        log.last = user.last
+        log.location = exerciseLog.location
+        log.date = formattedDate
+        log.type = exerciseLog.exerciseType.rawValue
+        log.distance = Double(exerciseLog.distance)
+        log.metric = exerciseLog.metric.rawValue
+        log.time = formattedTime
+        log.feel = Int(exerciseLog.feel)
+        log.log_description = exerciseLog.description
+
+        return log
+    }
+}
+</CodeSnippet>
+<CodeSnippet language="Swift">
+// ExerciseLogForm.swift
+
+class ExerciseLogForm: ObservableObject {
+    @Published var isEditingName = false
+    @Published var nameStatus = InputStatus.initial
+    @Published var isEditingLocation = false
+    @Published var isEditingDate = false
+    @Published var distanceStatus = InputStatus.initial
+    @Published var isEditingDistance = false
+    @Published var displayedTime = ""
+    @Published var timeStatus = InputStatus.initial
+    @Published var isEditingTime = false
+    @Published var isEditingDescription = false
+    @Published var showCanceling = false
+
+    func reset() {
+        nameStatus = InputStatus.initial
+        distanceStatus = InputStatus.initial
+        displayedTime = ""
+        timeStatus = InputStatus.initial
+    }
+}
+</CodeSnippet>
+<p>
+The class that is significantly different than the others is <code className="jarombek-inline-code">
+CreateExerciseLog</code>.  Not only does it contain state data in properties with
+<code className="jarombek-inline-code">@Published</code> annotations, but it also has functions for making API calls.
+<code className="jarombek-inline-code">createExerciseLog()</code> and <code className="jarombek-inline-code">
+updateExerciseLog()</code> make API calls to create and update exercise logs, respectively.
+</p>
+<p>
+As previously mentioned, both <code className="jarombek-inline-code">CreateExerciseLogView</code> and
+<code className="jarombek-inline-code">EditExerciseLogView</code> are wrappers around a
+<code className="jarombek-inline-code">ExerciseLogView</code> view, which displays a form to create or edit an exercise
+log.  <code className="jarombek-inline-code">ExerciseLogView</code>, which is located in a <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTF/ExerciseLogView.swift">ExerciseLogView.swift</a> file, is shown below.
+</p>
+<CodeSnippet language="Swift">
+import SwiftUI
+
+struct ExerciseLogView: View {
+    @EnvironmentObject var existingLog: ExistingLog
+
+    @ObservedObject var log: ExerciseLog
+    @ObservedObject var meta: ExerciseLogMeta
+    @ObservedObject var createLog: CreateExerciseLog
+    @ObservedObject var form: ExerciseLogForm
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading) {
+                Text(meta.isExistingLog ? "Edit Exercise Log" : "Create Exercise Log")
+                    .font(.title)
+                    .foregroundColor(.black)
+                    .bold()
+                    .alert(isPresented: $createLog.error) {
+                        Alert(
+                            title: Text(
+                                meta.isExistingLog ?
+                                    "An unexpected error occurred while updating the exercise log." :
+                                    "An unexpected error occurred while creating an exercise log."
+                            ),
+                            primaryButton: .default(
+                                Text("Cancel"),
+                                action: {
+                                    createLog.error = false
+                                }
+                            ),
+                            secondaryButton: .cancel(
+                                Text("Try Again"),
+                                action: {
+                                    createLog.error = false
+
+                                    if meta.isExistingLog {
+                                        createLog.updateExerciseLog(newLog: log, existingLog: existingLog.log ?? Log()) {}
+                                    } else {
+                                        createLog.createExerciseLog(exerciseLog: log) {
+                                            log.reset()
+                                            form.reset()
+                                        }
+                                    }
+                                }
+                            )
+                        )
+                    }
+
+                ExerciseLogFormView(log: log, meta: meta, createLog: createLog, form: form)
+            }
+            .padding()
+            .padding(.top, 20)
+        }
+        .progressViewStyle(
+            CircularProgressViewStyle(tint: Color(UIColor(Constants.saintsXctfRed)))
+        )
+    }
+}
+</CodeSnippet>
 <SectionTitle title="Integrating SwiftUI with UIKit">Integrating SwiftUI with UIKit</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
