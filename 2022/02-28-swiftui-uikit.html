@@ -520,5 +520,39 @@ class EditExerciseLogViewController: UIViewController {
     }
 }
 </CodeSnippet>
+<p>
+Within both the <code className="jarombek-inline-code">CreateExerciseLogViewController</code> and
+<code className="jarombek-inline-code">EditExerciseLogViewController</code> views, a variable
+<code className="jarombek-inline-code">container</code> of type <code className="jarombek-inline-code">UIView</code>
+exists.  This container view holds SwiftUI views.  Configuring <code className="jarombek-inline-code">container</code>
+to hold SwiftUI views is done within the <code className="jarombek-inline-code">viewDidLoad()</code> method.
+</p>
+<p>
+The <code className="jarombek-inline-code">UIHostingController()</code> class is used to create a UIKit view controller
+for SwiftUI views<sup>6</sup>.  Once a SwiftUI view is wrapped within a <code className="jarombek-inline-code">
+UIHostingController()</code> instance, it can be added as a subview to a UIKit view.
+</p>
+<p>
+The main difference between <code className="jarombek-inline-code">CreateExerciseLogViewController</code> and
+<code className="jarombek-inline-code">EditExerciseLogViewController</code> is that
+<code className="jarombek-inline-code">CreateExerciseLogViewController</code> wraps SwiftUI views within UIKit using
+<code className="jarombek-inline-code">UIHostingController(rootView: CreateExerciseLogView())</code>, and
+<code className="jarombek-inline-code">EditExerciseLogViewController</code> wraps SwiftUI views within UIKit using
+<code className="jarombek-inline-code">UIHostingController(rootView: EditExerciseLogView(log: exerciseLog).environmentObject(existingLog))</code>.
+The SwiftUI view <code className="jarombek-inline-code">CreateExerciseLogView</code> takes no arguments while
+<code className="jarombek-inline-code">EditExerciseLogView</code> takes a single
+<code className="jarombek-inline-code">log</code> argument.  The <code className="jarombek-inline-code">
+exerciseLog</code> object passed to <code className="jarombek-inline-code">EditExerciseLogView()</code> is used in a
+property annotation with <code className="jarombek-inline-code">@ObservedObject</code> within the
+<code className="jarombek-inline-code">EditExerciseLogView</code> SwiftUI view.  Similarly, the
+<code className="jarombek-inline-code">exerciseLog</code> object passed to <code className="jarombek-inline-code">
+EditExerciseLogView().environmentObject()</code> is used in properties annotated with
+<code className="jarombek-inline-code">@EnvironmentObject</code>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+With the addition of SwiftUI, I’m excited to create user interfaces in Apple applications again.  Configuring user
+interfaces in code using Swift is fun and I can’t wait to learn more.  All the code discussed in this article is
+available in my <a href="https://github.com/AJarombek/saints-xctf-ios">saints-xctf-ios</a> repository on GitHub.
+</p>
 </div>
