@@ -1,0 +1,58 @@
+<div>
+<p>
+In my <a href="https://jarombek.com/blog/feb-28-2022-swiftui-uikit">previous article</a>, I discussed SwiftUI and how to
+integrate SwiftUI components into a UIKit application.  SwiftUI is a (relatively) new framework for creating user
+interfaces in Apple ecosystem applications.  User interfaces built using SwiftUI are configured completely in code with
+Swift.  In this article, I discuss how to UI test SwiftUI views in an iOS application.
+</p>
+<SectionTitle title="Introduction to UI Testing">Introduction to UI Testing</SectionTitle>
+<p>
+UI testing is a form of integration test and end to end test where a user interface is tested in a manner similar to
+how a user interacts with it.  For example, a UI test may click a button in a user interface, and assert that something
+appears on the screen in response to that button click.  I’ve discussed UI testing frameworks such as
+<a href="https://jarombek.com/blog/aug-11-2021-cypress-typescript">Cypress</a> and <a href="https://jarombek.com/blog/
+jul-26-2021-aws-synthetics-canary">AWS Synthetics Canary Functions (which utilize Selenium and Puppeteer)</a> in prior
+articles, both of which are designed for testing web applications.
+</p>
+<p>
+If you are looking for a step by step guide for how to get started with building UI tests in the XCode IDE,
+<a href="https://www.hackingwithswift.com/articles/83/how-to-test-your-user-interface-using-xcode">this article</a> is a
+good place to start<sup>1</sup>.  If you want to view the UI test code discussed in this article, it is available in my
+<a href="https://github.com/AJarombek/saints-xctf-ios/tree/master/SaintsXCTFUITests">saints-xctf-ios</a> repository on
+GitHub.
+</p>
+<SectionTitle title="Writing UI Tests">Writing UI Tests</SectionTitle>
+<p>
+The application under test is my <a href="https://apps.apple.com/nz/app/saintsxctf/id1298285886?platform=iphone">
+SaintsXCTF</a> iOS app, which allows users to log their running exercises.  It was built for my college cross country
+and track & field teams.  The page under test is a SwiftUI view that allows users to create exercise logs.  This view is
+shown below.
+</p>
+<InlineImage filename="2-26-22-exercise-log-view.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+In my codebase, there is a <a href="https://github.com/AJarombek/saints-xctf-ios/blob/master/SaintsXCTFUITests/
+ExerciseLogUITests.swift">ExerciseLogUITests.swift</a> file which contains the UI tests for the create exercise log
+view.  UI tests are outlined with the following Swift code.
+</p>
+<CodeSnippet language="Swift">
+// ExerciseLogUITests.swift
+    
+import XCTest
+
+class ExerciseLogUITests: XCTestCase {
+
+    lazy var app = XCUIApplication()
+
+    override func setUpWithError() throws {
+        app.launchArguments += ["UI_TESTING"]
+        continueAfterFailure = false
+    }
+
+    override func tearDownWithError() throws {}
+
+    ...
+}
+</CodeSnippet>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
