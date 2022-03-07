@@ -164,5 +164,84 @@ func testSliderChangesFeel() throws {
     XCTAssert(elementsQuery.staticTexts["Fantastic"].exists)
 }
 </CodeSnippet>
+<p>
+<code className="jarombek-inline-code">testSliderChangesFeel()</code> tests a slider on the create exercise log page.
+This slider is used to indicate how an athlete felt while exercising.
+</p>
+<InlineImage filename="3-12-22-feel-slider.gif" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+<code className="jarombek-inline-code">testSliderChangesFeel()</code> starts off the same as the previous test.  It
+launches the application (<code className="jarombek-inline-code">app.launch()</code>), signs in a test user
+(<code className="jarombek-inline-code">signIn(app: app)</code>), and navigates to the create exercise log page
+(<code className="jarombek-inline-code">buttons["New Log"].tap()</code>).  <code className="jarombek-inline-code">
+testSliderChangesFeel()</code> is a bit more complex than the previous test because it interacts with the page along
+with making assertions.  Method invocations to <code className="jarombek-inline-code">
+feelSlider.adjust(toNormalizedSliderPosition: _)</code> move the slider to different positions.  Then,
+<code className="jarombek-inline-code">XCTAssert()</code> checks that text displaying how the athlete felt is displayed
+on the screen.
+</p>
+<p>
+Let's look at one more UI test.
+</p>
+<CodeSnippet language="Swift">
+func testNameFormValidation() throws {
+    app.launch()
+    signIn(app: app)
+
+    let tabBar = app.tabBars["Tab Bar"]
+    tabBar.buttons["New Log"].tap()
+
+    let scrollViewsQuery = app.scrollViews
+    let elementsQuery = scrollViewsQuery.otherElements
+
+    let nameField = elementsQuery.textFields["Name Field"]
+    let nameValidationText = elementsQuery.staticTexts["Name Validation Text"]
+
+    XCTAssertEqual(nameField.value as? String, "")
+    XCTAssertFalse(nameValidationText.exists)
+
+    nameField.tap()
+    nameField.typeText("5th Ave Mile")
+
+    XCTAssertEqual(nameField.value as? String, "5th Ave Mile")
+    XCTAssertFalse(nameValidationText.exists)
+
+    nameField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 12))
+    XCTAssertEqual(nameField.value as? String, "")
+    XCTAssert(nameValidationText.exists)
+
+    nameField.typeText("A")
+    XCTAssertEqual(nameField.value as? String, "A")
+    XCTAssertFalse(nameValidationText.exists)
+
+    nameField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 1))
+    XCTAssertEqual(nameField.value as? String, "")
+    XCTAssert(nameValidationText.exists)
+}
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">testNameFormValidation()</code> tests that form validation is functional for an
+input field on the create exercise log page.  The test types text into a "Name Field" and then deletes it, asserting
+that a validation message appears when the text is gone.
+</p>
+<InlineImage filename="3-12-22-input-validation.gif" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Again, this test starts the same as the previous two.  Once on the create exercise log page, two new assertion functions
+are used - <code className="jarombek-inline-code">XCTAssertEqual()</code> and <code className="jarombek-inline-code">
+XCTAssertFalse()</code>.  Like any other testing library, XCTest provides many different assertion functions to make
+testing easier.  <code className="jarombek-inline-code">XCTAssertEqual(nameField.value as? String, "")</code> checks
+that the "Name" field is empty when the page first loads, and <code className="jarombek-inline-code">
+XCTAssertFalse(nameValidationText.exists)</code> checks that no validation text is shown when the page first loads.
+</p>
+<p>
+<code className="jarombek-inline-code">nameField.typeText("5th Ave Mile")</code> types a value into the "Name" field.
+Assertions follow which ensure that the text typed is displayed on the screen.  The text is then deleted by passing
+<code className="jarombek-inline-code">String(repeating: XCUIKeyboardKey.delete.rawValue, count: 12)</code> to
+<code className="jarombek-inline-code">nameField.typeText()</code>.  The assertion <code className="jarombek-inline-code">
+XCTAssert(nameValidationText.exists)</code> ensures that the validation message is properly displayed.
+</p>
+<SectionTitle title="Writing UI Tests with Network Stubs">Writing UI Tests with Network Stubs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
