@@ -243,5 +243,118 @@ Assertions follow which ensure that the text typed is displayed on the screen.  
 XCTAssert(nameValidationText.exists)</code> ensures that the validation message is properly displayed.
 </p>
 <SectionTitle title="Writing UI Tests with Network Stubs">Writing UI Tests with Network Stubs</SectionTitle>
+<p>
+Many applications use API calls to populate their user interfaces with data.  The UI tests I’ve shown so far make API
+calls in the same way as the production application.  However, sometimes we want to manipulate API responses to help
+perform UI tests.  For example, if we want to test an error scenario, we can manipulate the API to return an error
+response instead of a typical successful response.
+</p>
+<p>
+In E2E testing frameworks such as Cypress, manipulated API responses (mocked/stubbed responses) are achieved with
+<a href="https://jarombek.com/blog/aug-11-2021-cypress-typescript">fixtures</a>.  Fixtures are JSON files that represent
+API response objects.  When writing iOS UI tests, a similar approach can be implemented.
+</p>
+<p>
+The approach for mocking/stubbing API calls for UI tests is to start an API server when running the tests.  From this
+API, custom API responses can be implemented.  Classes for UI tests with stubbed API calls are configured slightly
+differently than classes with standard API calls.  The following code, which comes from my <a href="https://github.com/
+AJarombek/saints-xctf-ios/blob/master/SaintsXCTFUITests/ExerciseLogUIStubTests.swift">ExerciseLogUIStubTests.swift</a>
+file, shows a class outline for my "create exercise log" page UI tests with stubbed API calls.
+</p>
+<CodeSnippet language="Swift">
+import XCTest
+
+class ExerciseLogUIStubTests: XCTestCase {
+
+    let apiStubs = Stubs()
+
+    lazy var app = XCUIApplication()
+
+    override func setUpWithError() throws {
+        try! apiStubs.server.start(9080)
+        app.launchArguments += ["UI_STUB_TESTING"]
+        continueAfterFailure = false
+    }
+
+    override func tearDownWithError() throws {
+        apiStubs.server.stop()
+    }
+
+    ...
+}
+</CodeSnippet>
+<p>
+Compared to the <code className="jarombek-inline-code">ExerciseLogUITests</code> class shown previously,
+<code className="jarombek-inline-code">ExerciseLogUIStubTests</code> adds another instance variable
+(<code className="jarombek-inline-code">apiStubs</code>) and additional lines of code to
+<code className="jarombek-inline-code">setUpWithError()</code> and <code className="jarombek-inline-code">
+tearDownWithError()</code>.  Within <code className="jarombek-inline-code">setUpWithError()</code>, the line
+<code className="jarombek-inline-code">try! apiStubs.server.start(9080)</code> starts an API server on port 9080.  The
+UI sends requests to this API during tests.  The line <code className="jarombek-inline-code">
+app.launchArguments += ["UI_STUB_TESTING"]</code> configures the environment of the application.  My application is
+configured to use the local API server running on port 9080 when the environment is <code className="jarombek-inline-code">
+UI_STUB_TESTING</code>.  Within <code className="jarombek-inline-code">tearDownWithError()</code>, the line
+<code className="jarombek-inline-code">apiStubs.server.stop()</code> stops the API server after testing completes.
+</p>
+<p>
+The <code className="jarombek-inline-code">apiStubs</code> instance variable is used for both starting and stopping the
+local API server.  <code className="jarombek-inline-code">apiStubs</code> is an instance of
+<code className="jarombek-inline-code">Stubs</code>, which is a custom class containing an instance variable
+representing the API server and a factory function for stubbing API endpoints.  <code className="jarombek-inline-code">
+Stubs</code> exists in a <a href="https://github.com/AJarombek/saints-xctf-ios/blob/master/SaintsXCTFUITests/
+Stubs.swift">Stubs.swift</a> file and is shown below.
+</p>
+<CodeSnippet language="Swift">
+import Foundation
+import Swifter
+
+enum StubHttpVerb: String, CaseIterable, Identifiable {
+    case get
+    case post
+    case put
+    case delete
+
+    var id: String {
+        self.rawValue
+    }
+}
+
+enum StubHttpStatus: String, CaseIterable, Identifiable {
+    case ok
+    case badRequest
+
+    var id: String {
+        self.rawValue
+    }
+}
+
+class Stubs {
+    let server = HttpServer()
+
+    func stubRequest(path: String, jsonData: Data, verb: StubHttpVerb = .get, status: StubHttpStatus = .ok) {
+        guard let json = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) else {
+            return
+        }
+
+        let response: ((HttpRequest) -> HttpResponse) = { _ in
+            if status == .badRequest {
+                return HttpResponse.badRequest(.json(json as AnyObject))
+            } else {
+                return HttpResponse.ok(.json(json as AnyObject))
+            }
+        }
+
+        if verb == .post {
+            server.post[path] = response
+        } else if verb == .put {
+            server.put[path] = response
+        } else if verb == .delete {
+            server.delete[path] = response
+        } else {
+            server.get[path] = response
+        }
+    }
+}
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
