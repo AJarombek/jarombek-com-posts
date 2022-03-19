@@ -356,5 +356,88 @@ class Stubs {
     }
 }
 </CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">Swifter</code> library is used to create a server in Swift code.  This server
+is represented in code by the <code className="jarombek-inline-code">server</code> instance variable, initialized with
+the line <code className="jarombek-inline-code">let server = HttpServer()</code>.  <code className="jarombek-inline-code">
+stubRequest()</code> is the factory function for stubbing API endpoints that I mentioned previously.
+</p>
+<p>
+<code className="jarombek-inline-code">stubRequest()</code> takes four arguments: <code className="jarombek-inline-code">
+path</code>, <code className="jarombek-inline-code">jsonData</code>, <code className="jarombek-inline-code">verb</code>,
+and <code className="jarombek-inline-code">status</code>.  <code className="jarombek-inline-code">path</code> is the
+path of an endpoint in an API to be stubbed.  <code className="jarombek-inline-code">verb</code> is the HTTP verb of the
+endpoint and <code className="jarombek-inline-code">jsonData</code> is the JSON response body of the endpoint.
+<code className="jarombek-inline-code">status</code> is the HTTP status code returned by the API endpoint.
+</p>
+<p>
+Although <code className="jarombek-inline-code">stubRequest()</code> doesn't return any value, it configures a new
+API endpoint with the desired configuration on the <code className="jarombek-inline-code">server</code> object.  Once
+execution of <code className="jarombek-inline-code">stubRequest()</code> is complete, this API endpoint can be invoked
+with HTTP requests.   For UI tests that utilize stubbed API calls, every API endpoint that the application calls is
+configured with <code className="jarombek-inline-code">stubRequest()</code>.
+</p>
+<p>
+Let’s look at one of these tests.  The following test, from the <a href="https://github.com/AJarombek/saints-xctf-ios/
+blob/master/SaintsXCTFUITests/ExerciseLogUIStubTests.swift">ExerciseLogUIStubTests.swift</a> file, tests the successful
+creation of an exercise log.
+</p>
+<CodeSnippet language="Swift">
+func testCreateLogSuccess() throws {
+    apiStubs.stubRequest(path: "/v2/logs/", jsonData: LogStubs().createdData, verb: .post)
+    app.launch()
+    signIn(app: app)
+
+    let tabBar = app.tabBars["Tab Bar"]
+    tabBar.buttons["New Log"].tap()
+
+    let scrollViewsQuery = app.scrollViews
+    let elementsQuery = scrollViewsQuery.otherElements
+
+    let nameField = elementsQuery.textFields["Name Field"]
+    let locationField = elementsQuery.textFields["Location Field"]
+    let distanceField = elementsQuery.textFields["Distance Field"]
+    let timeField = elementsQuery.textFields["Time Field"]
+    let descriptionField = elementsQuery.textFields["Description Field"]
+    let feelSlider = elementsQuery.sliders["Feel"]
+
+    nameField.tap()
+    nameField.typeText("Central Park")
+
+    locationField.tap()
+    locationField.typeText("New York, NY")
+
+    distanceField.tap()
+    distanceField.typeText("6.3")
+
+    timeField.tap()
+    timeField.typeText("43")
+    timeField.typeText("21")
+
+    feelSlider.adjust(toNormalizedSliderPosition: 0.7)
+
+    descriptionField.tap()
+    descriptionField.typeText("Wednesday AM Run")
+
+    let alert = app.alerts["Exercise log created!"]
+    XCTAssertFalse(alert.exists)
+
+    let createButton = elementsQuery.buttons["Create"]
+    createButton.tap()
+
+    XCTAssert(elementsQuery.staticTexts["Average"].waitForExistence(timeout: 2))
+    XCTAssert(alert.exists)
+
+    alert.buttons["Continue"].tap()
+    XCTAssertFalse(alert.exists)
+
+    XCTAssertEqual(nameField.value as? String, "")
+    XCTAssertEqual(locationField.value as? String, "")
+    XCTAssertEqual(distanceField.value as? String, "")
+    XCTAssertEqual(timeField.value as? String, "")
+    XCTAssert(elementsQuery.staticTexts["Average"].exists)
+    XCTAssertEqual(descriptionField.value as? String, "")
+}
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
