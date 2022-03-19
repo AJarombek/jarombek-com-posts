@@ -379,7 +379,7 @@ configured with <code className="jarombek-inline-code">stubRequest()</code>.
 </p>
 <p>
 Let’s look at one of these tests.  The following test, from the <a href="https://github.com/AJarombek/saints-xctf-ios/
-blob/master/SaintsXCTFUITests/ExerciseLogUIStubTests.swift">ExerciseLogUIStubTests.swift</a> file, tests the successful
+blob/v2.1.0/SaintsXCTFUITests/ExerciseLogUIStubTests.swift#L27-L81">ExerciseLogUIStubTests.swift</a> file, tests the successful
 creation of an exercise log.
 </p>
 <CodeSnippet language="Swift">
@@ -439,5 +439,103 @@ func testCreateLogSuccess() throws {
     XCTAssertEqual(descriptionField.value as? String, "")
 }
 </CodeSnippet>
+<p>
+The first line of the test, <code className="jarombek-inline-code">
+apiStubs.stubRequest(path: "/v2/logs/", jsonData: LogStubs().createdData, verb: .post)</code>, stubs an HTTP POST
+request to a <strong>/v2/logs/</strong> endpoint.  This endpoint is used to create an exercise log.  The remainder of
+the test fills values into the form displayed on the UI using the <code className="jarombek-inline-code">
+typeText()</code> method.  Once all values are filled in, the "Create" button is clicked using the
+<code className="jarombek-inline-code">createButton.tap()</code> command.
+</p>
+<p>
+Because the test uses a stubbed API call, no exercise log is created in the application database.  However, from the
+UI’s perspective, it appears that the log was successfully created.  This is one of the great benefits of subbed API
+calls - they aren't dependent on and don't impact an applications backend system.
+</p>
+<p>
+Let’s look at another example.  The following test, also from the <a href="https://github.com/AJarombek/saints-xctf-ios/
+blob/v2.1.0/SaintsXCTFUITests/ExerciseLogUIStubTests.swift#L83-L140">ExerciseLogUIStubTests.swift</a> file, tests a
+scenario where an internal server error occurs while creating an exercise log.
+</p>
+<CodeSnippet language="Swift">
+func testCreateLogFailure() throws {
+    apiStubs.stubRequest(path: "/v2/logs/", jsonData: LogStubs().createdData, verb: .post, status: .badRequest)
+    app.launch()
+    signIn(app: app)
+
+    let tabBar = app.tabBars["Tab Bar"]
+    tabBar.buttons["New Log"].tap()
+
+    let scrollViewsQuery = app.scrollViews
+    let elementsQuery = scrollViewsQuery.otherElements
+
+    let nameField = elementsQuery.textFields["Name Field"]
+    let locationField = elementsQuery.textFields["Location Field"]
+    let distanceField = elementsQuery.textFields["Distance Field"]
+    let timeField = elementsQuery.textFields["Time Field"]
+    let descriptionField = elementsQuery.textFields["Description Field"]
+    let feelSlider = elementsQuery.sliders["Feel"]
+
+    nameField.tap()
+    nameField.typeText("Central Park Hills")
+
+    locationField.tap()
+    locationField.typeText("New York, NY")
+
+    distanceField.tap()
+    distanceField.typeText("10.75")
+
+    timeField.tap()
+    timeField.typeText("1")
+    timeField.typeText("13")
+    timeField.typeText("02")
+
+    feelSlider.adjust(toNormalizedSliderPosition: 0.8)
+
+    descriptionField.tap()
+    descriptionField.typeText("Thursday Hill Workout")
+
+    let alert = app.alerts["An unexpected error occurred while creating an exercise log."]
+    XCTAssertFalse(alert.exists)
+
+    let createButton = elementsQuery.buttons["Create"]
+    createButton.tap()
+
+    XCTAssert(alert.waitForExistence(timeout: 2))
+
+    alert.buttons["Try Again"].tap()
+    XCTAssert(alert.waitForExistence(timeout: 2))
+
+    alert.buttons["Cancel"].tap()
+    XCTAssertFalse(alert.exists)
+
+    XCTAssertEqual(nameField.value as? String, "Central Park Hills")
+    XCTAssertEqual(locationField.value as? String, "New York, NY")
+    XCTAssertEqual(distanceField.value as? String, "10.75")
+    XCTAssertEqual(timeField.value as? String, "1:13:02")
+    XCTAssert(elementsQuery.staticTexts["Good"].exists)
+    XCTAssertEqual(descriptionField.value as? String, "Thursday Hill Workout")
+}
+</CodeSnippet>
+<p>
+Right off the bat, the stubbed API request for this test is configured to result in an HTTP error code with the
+<code className="jarombek-inline-code">status: .badRequest</code> argument.  Similar to the previous example, this test
+fills out the form shown on the UI and clicks the "Create" button to create a new exercise log.  The line
+<code className="jarombek-inline-code">let alert = app.alerts["An unexpected error occurred while creating an exercise log."]
+</code> assigns a UI alert for an unexpected error to the variable <code className="jarombek-inline-code">alert</code>.
+The UI test checks to make sure this alert is shown on the UI when an API call fails unexpectedly.  This is accomplished
+with the <code className="jarombek-inline-code">XCTAssert(alert.waitForExistence(timeout: 2))</code> function call,
+which asserts that the alert is displayed on the UI within two seconds.
+</p>
+<p>
+This test demonstrates another benefit of stubbed API calls - testing unexpected application states, such as those when
+errors occur.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Writing UI tests is a great way to automate the testing of an application.  With UI tests in place, applications have an
+additional safety net, ensuring that they are operating as a user would expect.  Creating UI tests for SwiftUI views is
+relatively easy, so it's definitely worth the effort.  All the UI test code shown in this article is available on
+<a href="https://github.com/AJarombek/saints-xctf-ios/tree/master/SaintsXCTFUITests">GitHub</a>.
+</p>
 </div>
