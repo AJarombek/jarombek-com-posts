@@ -1,0 +1,41 @@
+<div>
+<Note type="info">
+This is part of a series of articles on SaintsXCTF Version 2.0. The first article in the series provides an
+<a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">overview of the application</a>.  You
+<strong>DO NOT</strong> need to read prior articles in the series to fully understand this article.
+</Note>
+<p>
+In the first version of my <a href="https://saintsxctf.com/">SaintsXCTF application</a>, one underdeveloped aspect of
+the technology stack was the infrastructure around the MySQL database.  The only way to access the production database
+was to create a Bastion host and interact with it via the command line.  This bastion host was a server that was only
+accessible from my IP address and could only interact with my MySQL database.  All other network ports were closed.
+</p>
+<p>
+While this was an okay start, I really wanted a user interface to interact with the MySQL database with similar
+functionality to a local MySQL IDE, such as DataGrip.  After researching different options, I decided to use phpMyAdmin,
+a MySQL administrative client that can be run on a web server.  My approach is to run phpMyAdmin on a container within
+a Kubernetes deployment.  This way, I can spin the phpMyAdmin client up and down quickly depending on my needs.
+</p>
+<p>
+In this article, I’ll give an overview of phpMyAdmin and share the infrastructure needed to create it.
+</p>
+<SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
+<ul>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">Architectural Overview</a></li>
+<li><a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">AWS Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure">Kubernetes Infrastructure</a></li>
+<li><a href="https://jarombek.com/blog/nov-1-2021-saints-xctf-v2-react-web-app">React Web Application Overview</a></li>
+<li><a href="https://jarombek.com/blog/nov-15-2021-react-typescript">Web Application React and TypeScript</a></li>
+<li><a href="https://jarombek.com/blog/dec-3-2021-redux-react">Web Application Redux State Configuration</a></li>
+<li><a href="https://jarombek.com/blog/aug-11-2021-cypress-typescript">Web Application Cypress E2E Tests</a></li>
+<li><a href="https://jarombek.com/blog/jun-30-2021-react-jss">Web Application JSS Modular Design</a></li>
+<li><a href="https://jarombek.com/blog/dec-24-2021-flask-python-api">Flask Python API</a></li>
+<li><a href="https://jarombek.com/blog/jan-10-2022-flask-api-testing">Flask API Testing</a></li>
+<li><a href="https://jarombek.com/blog/feb-5-2022-function-api">Function API Using API Gateway & Lambda</a></li>
+<li><a href="https://jarombek.com/blog/feb-18-2022-auth-api">Auth API Using API Gateway & Lambda</a></li>
+<li><strong>Database Client on Kubernetes</strong></li>
+</ul>
+<SectionTitle title="phpMyAdmin Overview">phpMyAdmin Overview</SectionTitle>
+<SectionTitle title="Kubernetes Infrastructure">Kubernetes Infrastructure</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
