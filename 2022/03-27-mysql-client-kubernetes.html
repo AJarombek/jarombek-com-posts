@@ -168,5 +168,24 @@ resource "kubernetes_deployment" "deployment" {
   }
 }
 </CodeSnippet>
+<p>
+The Kubernetes Deployment runs a <code className="jarombek-inline-code">phpmyadmin/phpmyadmin:latest</code> container,
+which starts a phpMyAdmin web server.  Importantly, a <code className="jarombek-inline-code">PMA_ARBITRARY</code>
+environment variable on the container is given a value of <code className="jarombek-inline-code">1</code>.  This
+determines that any arbitrary MySQL database can be connected to from phpMyAdmin<sup>1</sup>.  The alternative is to
+make phpMyAdmin purpose-built for a single MySQL database.
+</p>
+<p>
+The remainder of the infrastructure deals with networking and setting up a domain name for the phpMyAdmin server.  You
+can view it in the <a href="https://github.com/AJarombek/saints-xctf-infrastructure/blob/master/database-client/main.tf">
+main.tf</a> file, and read more about how this setup works in my <a href="https://jarombek.com/blog/
+oct-25-2021-saints-xctf-v2-k8s-infrastructure">SaintsXCTF Kubernetes Infrastructure</a> article.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Creating a phpMyAdmin server on Kubernetes is a quick way to administer a MySQL database.  It can be spun up and down at
+a moments notice, and provides similar functionality to a desktop IDE application.  All the code discussed in this
+article is available on <a href="https://github.com/AJarombek/saints-xctf-infrastructure/tree/master/database-client">
+GitHub</a>.
+</p>
 </div>
