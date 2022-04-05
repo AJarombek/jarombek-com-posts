@@ -7,7 +7,7 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 <p>
 My <a href="https://saintsxctf.com/">SaintsXCTF</a> application has multiple APIs.  One of these APIs,
 <strong>auth.saintsxctf.com</strong>, is hosted on AWS API Gateway and AWS Lambda.  Its main purpose is to provide an
-authentication mechanism for the application.  In this article, I discuss the API endpoints and how they provide
+authentication mechanism for the application.  In this article, I discuss endpoints within this API and how they provide
 application authentication using JWTs.
 </p>
 <SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
@@ -40,22 +40,22 @@ saints-xctf-infrastructure</a> repository.  Infrastructure is <a href="https://g
 tree/master/saints-xctf/infrastructure/create-saints-xctf-com-auth/Jenkinsfile.groovy">created</a> and
 <a href="https://github.com/AJarombek/global-jenkins-jobs/blob/master/saints-xctf/infrastructure/
 destroy-saints-xctf-com-auth/Jenkinsfile.groovy">destroyed</a> using Jenkins jobs.  In this article I focus on the
-functionality of the authentication API instead of the infrastructure, so I will not discuss infrastructure and CI/CD
-code in any more depth.
+functionality of the authentication API instead of the infrastructure, so I will not discuss infrastructure or CI/CD
+ processes in any more depth.
 </p>
 <p>
-The idea behind this API was to have authentication logic separated from the main application logic.  You can think of
-this API as a microservice for user authentication.  The authentication approach for my application is to use JWT
-tokens.  Users pass their username and password in exchange for a JWT token, which is used for all subsequent API
-requests.  Behind the scenes, my main application API checks whether the JWT passed from a user is valid.  If the token
-is valid, the API request is processed and a response is returned.  Otherwise, an error message is returned.  JWTs
+The idea behind this API is to have authentication logic separated from main application logic.  You can think of
+this API as a microservice for user authentication.  The authentication mechanism for the application is JWT
+tokens.  Users pass their username and password in exchange for a JWT token, which is used in subsequent API
+requests.  Behind the scenes, the application API checks whether a JWT token passed in an HTTP request is valid.  If the token
+is valid, the API request is processed and a response is returned.  If the token is invalid, an error message is returned.  JWTs
 expire after a certain amount of time, and the RSA key used to generate JWTs is rotated weekly for additional security.
 </p>
 <p>
 The authentication API exposes two endpoints to users: <strong>/token</strong> and <strong>/authenticate</strong>.  Both
 endpoints are backed by AWS Lambda functions.  The API has two additional AWS Lambda functions designed for internal
 usage: <code className="jarombek-inline-code">SaintsXCTFAuthorizer</code> and <code className="jarombek-inline-code">
-SaintsXCTFRotate</code>.  Let’s take a look at all these AWS Lambda functions in more detail.
+SaintsXCTFRotate</code>.  Let's take a look at all these AWS Lambda functions in more detail.
 </p>
 <SectionTitle title="Token Endpoint">Token Endpoint</SectionTitle>
 <p>
@@ -72,7 +72,7 @@ curl -X POST \
 </CodeSnippet>
 <p>
 In the request body, <code className="jarombek-inline-code">my_username</code> and
-<code className="jarombek-inline-code">my_password</code> are replaced with the user's username and password,
+<code className="jarombek-inline-code">my_password</code> are replaced with a user's username and password,
 respectively.  The response body will look something like the following, with <code className="jarombek-inline-code">
 j.w.t</code> replaced with a valid JWT.
 </p>
@@ -219,13 +219,13 @@ client_secret</code> variables.  The function works in both development and prod
 databases and RSA keys are used in different environments.
 </p>
 <p>
-Next comes a series of helper function invocations.  The first, <code className="jarombek-inline-code">
-get_jwt_private_key(secretsmanager, env)</code>, retrieves an RSA private key from AWS Secrets Manager.  This private
-key is used to create JWTs.  The second, <code className="jarombek-inline-code">
-get_rds_credentials(secretsmanager, env)</code>, retrieves MySQL database credentials.  The database is queried to
+Next comes a series of helper function invocations.  First, <code className="jarombek-inline-code">
+get_jwt_private_key(secretsmanager, env)</code> retrieves an RSA private key from AWS Secrets Manager.  This private
+key is used to create JWTs.  Second, <code className="jarombek-inline-code">
+get_rds_credentials(secretsmanager, env)</code> retrieves MySQL database credentials.  The database is queried to
 determine if the username and password sent to the API are valid.  The third and final helper function,
 <code className="jarombek-inline-code">create_database_session(rds, db_secret, env)</code>, uses the database
-credentials to start a session with my application’s MySQL database.
+credentials to start a session with the application's MySQL database.
 </p>
 <p>
 Optionally, the <strong>/token</strong> endpoint takes an email instead of a username.  This option is expressed by an
@@ -235,7 +235,7 @@ email_pattern.match(client_id)</code> condition.  If an email is used, the user 
 user is retrieved with <code className="jarombek-inline-code">session.query(User).filter_by(username=client_id).first()
 </code>.  In both cases, a SQLAlchemy model class <code className="jarombek-inline-code">User</code> is utilized to
 query the database.  I wrote about SQLAlchemy and model classes in <a href="https://jarombek.com/blog/
-~dec-24-2021-flask-python-api">an article on my SaintsXCTF API</a>.  The <code className="jarombek-inline-code">User
+dec-24-2021-flask-python-api">an article on my SaintsXCTF API</a>.  The <code className="jarombek-inline-code">User
 </code> model class exists in a <a href="https://github.com/AJarombek/saints-xctf-auth/blob/master/token/User.py">
 User.py</a> file and is shown below.
 </p>
@@ -257,7 +257,7 @@ class User(Base):
 </CodeSnippet>
 <p>
 If the database query for a user with a certain username or email returns no records, the AWS Lambda function returns
-<code className="jarombek-inline-code">None</code>.  Otherwise, it checks if the user’s password matches the one in the
+<code className="jarombek-inline-code">None</code>.  Otherwise, it checks if the user's password matches the one in the
 API request body (<code className="jarombek-inline-code">client_secret</code>).  Passwords are encrypted in my database
 using Bcrypt, so a <code className="jarombek-inline-code">bcrypt.checkpw()</code> function is used to check for password
 equality.
@@ -268,7 +268,7 @@ Otherwise, a JWT is created and returned using the <code className="jarombek-inl
 </p>
 <SectionTitle title="Authenticate Endpoint">Authenticate Endpoint</SectionTitle>
 <p>
-The <strong>/authenticate</strong> API endpoint is used to validate a JWT.  <strong>/authenticate</strong> accepts a
+The <strong>/authenticate</strong> API endpoint is used to validate a JWT and accepts a
 JSON request body containing a JWT.  The following CURL request shows how to properly use the endpoint.
 </p>
 <CodeSnippet language="Bash">
@@ -280,7 +280,7 @@ curl -X POST \
 </CodeSnippet>
 <p>
 In the request body, <code className="jarombek-inline-code">my_jwt</code> is replaced with the user's JWT.  The response
-body looks like the following JSON; in this case, <code className="jarombek-inline-code">true</code> is returned due to
+body looks like the following JSON.  In this example, <code className="jarombek-inline-code">true</code> is returned due to
 a valid JWT.
 </p>
 <CodeSnippet language="JSON">
@@ -343,18 +343,18 @@ variable.
 The remainder of the code attempts to decode the JWT token using a <code className="jarombek-inline-code">jwt.decode()
 </code> function.  If the JWT token is deemed valid, the function returns <code className="jarombek-inline-code">
 True</code>.  Otherwise, there are two possible scenarios, both of which cause the function to return
-<code className="jarombek-inline-code">False</code>.  The first scenario is when the token is expired, resulting in a
-<code className="jarombek-inline-code">jwt.ExpiredSignatureError</code> exception.  The second is for an invalid token,
-which can result in any number of exceptions.
+<code className="jarombek-inline-code">False</code>.  The first scenario is when the token expired, resulting in a
+<code className="jarombek-inline-code">jwt.ExpiredSignatureError</code> exception.  The second is when the token is invalid,
+ which can result in any number of exceptions.
 </p>
 <SectionTitle title="Rotate Lambda Function">Rotate Lambda Function</SectionTitle>
 <p>
-The "Rotate" AWS Lambda function is used internally by the authentication API.  It’s purpose is to rotate the RSA public
-key and private key used to create and decode JWTs after a certain amount of time.  The benefit of rotating RSA keys is
-in the scenario of a malicious user gaining access to the keys.  In this case, the malicious user can create their own
-JWTs with the RSA keys.  These JWTs will appear as valid to my application, even though my application did not create
-them.  By rotating the RSA keys, the damage is limited in this scenario because the malicious user will only have access
-to valid RSA keys until the next rotation.  After a key rotation occurs, the old RSA keys are no longer able to create
+The "Rotate" AWS Lambda function is used internally by the authentication API.  It's purpose is to rotate the RSA public
+ and private keys, which are used to create and decode JWTs.  In my application, key rotation occurs every seven days.  RSA key rotation is done
+ to defend the application from malicious users attempting to gain access to the keys.  If malicious users gain access to the keys, they can create their own
+JWTs.  These JWTs would be valid to my application, even though my application did not create
+them.  By rotating the RSA keys, the damage is limited because the malicious user will only have access
+to valid RSA keys until the next rotation.  After a key rotation occurs, existing RSA keys are no longer able to create
 or validate JWT tokens.  The malicious user will no longer be able to cause harm to the application.
 </p>
 <p>
@@ -457,10 +457,10 @@ def deny_policy() -> dict:
 </CodeSnippet>
 <p>
 Similar to the <strong>/authenticate</strong> endpoint, the result of <code className="jarombek-inline-code">
-jwt.decode()</code> determines the output of the AWS Lambda function.  However, instead of returning a boolean of
-whether a JWT is valid, the authorizer returns a Python dictionary.  This dictionary represents a JSON IAM policy that
-is used to invoke API Gateway endpoints.  If the JWT token is valid, the IAM policy defined in
-<code className="jarombek-inline-code">allow_policy()</code> is returned.  If the JWT token is invalid, the IAM policy
+jwt.decode()</code> determines the output of the AWS Lambda function.  However, instead of returning a boolean
+ to determine whether a JWT is valid, the authorizer returns a Python dictionary.  This dictionary represents a JSON IAM policy that
+is used to invoke API Gateway endpoints.  If the JWT is valid, the IAM policy defined in
+<code className="jarombek-inline-code">allow_policy()</code> is returned.  If the JWT is invalid, the IAM policy
 defined in <code className="jarombek-inline-code">deny_policy()</code> is returned.  The policy in
 <code className="jarombek-inline-code">allow_policy()</code> allows access to API endpoints while the policy in
 <code className="jarombek-inline-code">deny_policy()</code> denies access.
@@ -473,8 +473,8 @@ include making the JWT tokens <a href="https://developer.okta.com/docs/concepts/
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
 Using AWS API Gateway and AWS Lambda is an effective way to create a basic authentication API for an application.  The
-main drawback to remember with this approach is the downsides of AWS Lambda cold starts and the expenses involved with
-mitigating them.  Otherwise, its a great way to separate authentication logic into their own serverless microservice.
+main drawback of this approach is AWS Lambda cold starts and the expenses involved with
+mitigating them.  Otherwise, its a great way to separate authentication logic into its own serverless microservice.
 All the code discussed in this article is available in my <a href="https://github.com/AJarombek/saints-xctf-auth">
 saints-xctf-auth</a> repository.
 </p>
