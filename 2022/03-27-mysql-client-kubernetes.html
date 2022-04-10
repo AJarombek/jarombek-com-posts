@@ -6,18 +6,21 @@ This is part of a series of articles on SaintsXCTF Version 2.0. The first articl
 </Note>
 <p>
 In the first version of my <a href="https://saintsxctf.com/">SaintsXCTF application</a>, one underdeveloped aspect of
-the technology stack was the infrastructure around the MySQL database.  The only way to access the production database
-was to create a Bastion host and interact with it via the command line.  This bastion host was a server that was only
+the technology stack was the MySQL database infrastructure.  The only way to access the production database
+was to create a bastion host and interact with it via the command line.  This bastion host was a server that was only
 accessible from my IP address and could only interact with my MySQL database.  All other network ports were closed.
 </p>
 <p>
 While this was an okay start, I really wanted a user interface to interact with the MySQL database with similar
 functionality to a local MySQL IDE, such as DataGrip.  After researching different options, I decided to use phpMyAdmin,
-a MySQL administrative client that can be run on a web server.  My approach is to run phpMyAdmin on a container within
-a Kubernetes deployment.  This way, I can spin the phpMyAdmin client up and down quickly depending on my needs.
+a MySQL administrative client that can run on a web server.
 </p>
 <p>
-In this article, I’ll give an overview of phpMyAdmin and share the infrastructure needed to create it.
+My approach is to run phpMyAdmin on a container within a Kubernetes deployment.  This way, I can create and destroy the phpMyAdmin 
+ client quickly depending on my needs.
+</p>
+<p>
+In this article, I'll give an overview of phpMyAdmin and share the infrastructure needed to create it.
 </p>
 <SubTitle title="SaintsXCTF Version 2.0 Articles">SaintsXCTF Version 2.0 Articles</SubTitle>
 <ul>
@@ -53,7 +56,7 @@ following webpage is displayed.
 <InlineImage filename="3-27-22-homepage.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
-Multiple options are presented on this page, including viewing schemas within the database or writing SQL statements.
+Multiple options are presented on this page, such as viewing schemas within the database or writing SQL statements.
 SQL statements can be entered into a text box and executed, with results shown in the UI.
 </p>
 <InlineImage filename="3-27-22-write-query.png" paddingTop="true" paddingBottom="true">
@@ -70,9 +73,9 @@ repository.
 </p>
 <p>
 My phpMyAdmin server infrastructure has its own Terraform module named <a href="https://github.com/AJarombek/
-saints-xctf-infrastructure/tree/master/database-client">database-client</a>, which exists within my
+saints-xctf-infrastructure/tree/master/database-client">database-client</a>, which exists in my
 <a href="https://github.com/AJarombek/saints-xctf-infrastructure">saints-xctf-infrastructure</a> repository.  This
-diagram shows all the components of the infrastructure.
+diagram shows all the infrastructure components.
 </p>
 <InlineImage filename="3-27-22-infra-diagram.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
@@ -172,7 +175,7 @@ resource "kubernetes_deployment" "deployment" {
 The Kubernetes Deployment runs a <code className="jarombek-inline-code">phpmyadmin/phpmyadmin:latest</code> container,
 which starts a phpMyAdmin web server.  Importantly, a <code className="jarombek-inline-code">PMA_ARBITRARY</code>
 environment variable on the container is given a value of <code className="jarombek-inline-code">1</code>.  This
-determines that any arbitrary MySQL database can be connected to from phpMyAdmin<sup>1</sup>.  The alternative is to
+determines that any arbitrary MySQL database can be accessed from phpMyAdmin<sup>1</sup>.  The alternative is to
 make phpMyAdmin purpose-built for a single MySQL database.
 </p>
 <p>
