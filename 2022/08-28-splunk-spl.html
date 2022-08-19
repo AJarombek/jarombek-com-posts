@@ -1,0 +1,41 @@
+<div>
+<p>
+Recently at work, I’ve used Splunk Enterprise extensively to analyze application logs.  In Splunk, I’m able to query
+logs, set alerts when certain scenarios occur within logs, and create dashboards to visualize logs for fellow engineers
+and business analysts.  Splunk provides its own query language to interact with logs on its platform; Splunk Processing
+Language (SPL) is used for searching, alerting, and dashboard creation<sup>1</sup>.
+</p>
+<p>
+Although Splunk querying has been part of my work-life for years, I never explored it on my own or used it in any
+personal projects.  Recently I decided to run a local Splunk Enterprise server to test out its most basic properties.
+This groundwork may one day lead to me adopting Splunk for monitoring my applications logs.  In this article, I
+describe the basics of Splunk and how to set up a local instance on Docker.  I also discuss basic SPL commands and
+queries, and how some can be run before you upload any logs of your own.
+</p>
+<SectionTitle title="Splunk Overview">Splunk Overview</SectionTitle>
+<Definition word="Splunk Enterprise">
+Splunk Enterprise is software enabling log analysis on application, infrastructure, and security logs.  Splunk
+consists of a web interface, query language (SPL), and command line interface<sup>2</sup>.  Users forward logs from
+different sources into Splunk, where it is then indexed and made available to query.  Building upon SPL queries:
+alerts, dashboards, and reports can be created.  With these tools, Splunk allows individuals and organizations to view
+and react to the status of logs in real-time or near real-time<sup>3</sup>.
+</Definition>
+<Definition word="Centralized Log Analysis Tools">
+A centralized log analysis tool, like Splunk, brings together logs from across an organization or department into a
+single, searchable platform.  Centralized logging brings many quality-of-life improvements to engineers; it is
+considerably easier to search on Splunk for logs across many applications with a common query language instead of
+accessing individual servers where logs are initially generated.
+</Definition>
+<p>
+Splunk is often compared to another log analysis platform called Elasticsearch, which is part of the ELK stack.  I have
+written about the <a href="https://jarombek.com/blog?query=elasticsearch&page=1">ELK Stack</a> in prior articles, mostly
+because it was used at my prior company.  The biggest difference between the two is Splunk requires a license while the
+ELK Stack is open source.  Beyond that, I view the choice between the two platforms as a
+<a href="https://www.gartner.com/reviews/market/security-information-event-management/compare/elasticsearch-vs-splunk">
+personal preference</a><sup>4</sup>.
+</p>
+<SectionTitle title="Running Splunk Locally on Docker">Running Splunk Locally on Docker</SectionTitle>
+<SectionTitle title="Basic SPL Queries and Commands">Basic SPL Queries and Commands</SectionTitle>
+<SectionTitle title="Querying Application Logs">Querying Application Logs</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
