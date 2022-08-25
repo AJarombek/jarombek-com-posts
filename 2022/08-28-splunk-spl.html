@@ -35,6 +35,58 @@ ELK Stack is open source.  Beyond that, I view the choice between the two platfo
 personal preference</a><sup>4</sup>.
 </p>
 <SectionTitle title="Running Splunk Locally on Docker">Running Splunk Locally on Docker</SectionTitle>
+<p>
+Splunk Enterprise provides <a href="https://hub.docker.com/r/splunk/splunk/tags">official Docker images</a> on
+DockerHub.  If Docker is installed and running on your computer, starting a Splunk server is as simple as the following
+two shell commands.
+</p>
+<CodeSnippet language="Bash">
+docker pull splunk/splunk:latest
+docker run -d \
+    -p 8000:8000 \
+    -e "SPLUNK_START_ARGS=--accept-license" \
+    -e "SPLUNK_PASSWORD=splunkadmin" \
+    --name splunk \
+    splunk/splunk:latest
+</CodeSnippet>
+<p>
+It may take a minute for the container to be ready.  With the Docker container running, navigating to
+<strong>localhost:8080</strong> in a web browser should show the following sign-in screen.
+</p>
+<InlineImage filename="8-28-22-splunk-sign-in.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Sign in with the credentials configured in the shell command: <strong>admin</strong> for the username and
+<strong>splunkadmin</strong> for the password.  After signing in, you are presented with the homepage for Splunk
+Enterprise!
+</p>
+<InlineImage filename="8-28-22-splunk-homepage.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Now we are ready to start using Splunk.  Before forwarding any logs to Splunk, we can utilize Splunk’s default indexes
+to practice writing simple queries.  An index in Splunk is a repository of data (logs), and the act of indexing
+transforms raw data sitting in files at an index into searchable events<sup>5,6</sup>.  One of these indexes present
+on every Splunk installation by default is <code className="jarombek-inline-code">_internal</code>.  From the Splunk
+homepage, clicking on "Search & Reporting" on the left-hand sidebar presents the search screen.  From here, entering
+the following query will retrieve events from the <code className="jarombek-inline-code">_internal</code> index.
+</p>
+<CodeSnippet language="SPL">
+index=_internal
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-query.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+On the left-hand side of the screen, a list of fields are shown which exist in events and are queryable on the current
+index.  A slightly more complex query might perform statistical analysis on one of these fields.  The following query
+aggregates the events and checks the count of each unique value in the
+<code className="jarombek-inline-code">source</code> field.
+</p>
+<CodeSnippet language="SPL">
+index=_internal
+| stats count by source
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-count-query.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <SectionTitle title="Basic SPL Queries and Commands">Basic SPL Queries and Commands</SectionTitle>
 <SectionTitle title="Querying Application Logs">Querying Application Logs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
