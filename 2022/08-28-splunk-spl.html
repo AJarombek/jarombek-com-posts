@@ -62,6 +62,7 @@ Enterprise!
 </p>
 <InlineImage filename="8-28-22-splunk-homepage.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
+<SectionTitle title="Basic SPL Queries and Commands">Basic SPL Queries and Commands</SectionTitle>
 <p>
 Now we are ready to start using Splunk.  Before forwarding any logs to Splunk, we can utilize Splunk’s default indexes
 to practice writing simple queries.  An index in Splunk is a repository of data (logs), and the act of indexing
@@ -87,7 +88,57 @@ index=_internal
 </CodeSnippet>
 <InlineImage filename="8-28-22-splunk-count-query.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
-<SectionTitle title="Basic SPL Queries and Commands">Basic SPL Queries and Commands</SectionTitle>
+<p>
+In the second line of the query above, <code className="jarombek-inline-code">stats</code> is an SPL command which
+performs statistical aggregations<sup>7</sup>.  <code className="jarombek-inline-code">count</code> is a function for
+counting the number of elements, <code className="jarombek-inline-code">by</code> is a clause to group the aggregation
+function by, and <code className="jarombek-inline-code">source</code> is the name of a field.  All together, the
+command <code className="jarombek-inline-code">stats count by source</code> means "perform a statistical aggregation,
+grouped by the source field, where the number of events are counted."
+</p>
+<p>
+Another basic query technique is to filter an index to specific events.  One way to accomplish this is the
+<code className="jarombek-inline-code">where</code> SPL command.  For those experienced with SQL, the following query
+has the same functionality as a <code className="jarombek-inline-code">WHERE expression LIKE pattern</code> statement.
+</p>
+<CodeSnippet language="SPL">
+index=_internal
+| where source LIKE "%health.log"
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-filter-query.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+A more complex Splunk query may chain together multiple statements using pipes, similar in functionality to Unix pipes
+in shell commands.  For example, the following SPL command pipes together multiple statements, returning all the
+prior run SPL queries on the Splunk server.
+</p>
+<CodeSnippet language="SPL">
+index=_audit
+| where action="search"
+| where isnotnull(search)
+| sort -_time
+| table _time, search
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-prior-queries.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Queries can also be used to display visualizations, such as the following query which charts memory utilization by
+Splunk over time.
+</p>
+<CodeSnippet language="SPL">
+index="_introspection"
+| where isnotnull("data.pct_memory") AND component="PerProcess"
+| chart max(data.pct_memory) by _time
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-memory-chart.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The goal of showing these queries is not to make you an expert at Splunk, but to provide a general sense of how Splunk
+querying works.  Complex queries can be written and experimented with before any custom indexes are created, which is
+great for beginners wishing to experiment.  <a href="https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/
+SearchReference/WhatsInThisManual">Splunk documentation</a> provides lots of great information on how to structure
+queries along with documentation on each SPL command<sup>8</sup>.
+</p>
 <SectionTitle title="Querying Application Logs">Querying Application Logs</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
