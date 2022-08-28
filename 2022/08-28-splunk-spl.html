@@ -140,5 +140,54 @@ SearchReference/WhatsInThisManual">Splunk documentation</a> provides lots of gre
 queries along with documentation on each SPL command<sup>8</sup>.
 </p>
 <SectionTitle title="Querying Application Logs">Querying Application Logs</SectionTitle>
+<p>
+In order to query application logs, a custom index must be created.  In a production environment, Splunk forwarders
+are used to send logs to the Splunk Enterprise server where they are placed in an index.  For demonstration purposes,
+we can skip the setup of a forwarder and manually upload log data to Splunk.  To do this, navigate to the homepage
+and click on "Add Data".
+</p>
+<InlineImage filename="8-28-22-splunk-add-data.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+On the following page, scroll down and click "Upload files from my computer".
+</p>
+<InlineImage filename="8-28-22-splunk-upload-files.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+A multi-step process is required to upload a file manually.  For full details, check out the
+<a href="https://docs.splunk.com/Documentation/Splunk/latest/SearchTutorial/GetthetutorialdataintoSplunk">
+uploading tutorial data</a> article provided by Splunk<sup>9</sup>.  In my scenario, I uploaded a sample log file from
+my <a href="https://github.com/AJarombek/saints-xctf-api">saints-xctf-api</a> application (accessible from
+<a href="https://api.saintsxctf.com/">api.saintsxctf.com</a>).  This sample log is available in a
+<a href="https://github.com/AJarombek/devops-prototypes/blob/v1.0.1/splunk/logs/saints-xctf-api.log">
+saints-xctf-api.log</a> file in my <a href="https://github.com/AJarombek/devops-prototypes">devops-prototypes</a>
+repository.
+</p>
+<p>
+While uploading my log file, I also created an index for its data to be stored within.  This index, called
+<code className="jarombek-inline-code">saints_xctf_api</code>, is queryable the same as the default indexes I showed
+before.
+</p>
+<CodeSnippet language="SPL">
+source="saints-xctf-api.log" index="saints_xctf_api"
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-custom-index.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Even with a small log file like <strong>saints-xctf-api.log</strong>, interesting queries can be run, such as the
+following one which calculates the number of requests based on HTTP status codes.  More queries that can be run on
+this log file are available in a <a href="https://github.com/AJarombek/devops-prototypes/blob/master/splunk/
+saints_xctf_api_queries.spl">saints_xctf_api_queries.spl</a> file on GitHub.
+</p>
+<CodeSnippet language="SPL">
+source="saints-xctf-api.log" index="saints_xctf_api"
+| rex field=_raw "] \"(?&lt;verb>[A-Z]+) (?&lt;endpoint>.+) (?&lt;http_version>.+)\" (?&lt;status>[0-9]+)"
+| table _time verb, endpoint, http_version, status
+| where isnotnull(endpoint)
+| stats count by status
+</CodeSnippet>
+<InlineImage filename="8-28-22-splunk-http-codes.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<SectionTitle title="Creating a Splunk Dashboard">Creating a Splunk Dashboard</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
