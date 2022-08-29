@@ -188,6 +188,47 @@ source="saints-xctf-api.log" index="saints_xctf_api"
 </CodeSnippet>
 <InlineImage filename="8-28-22-splunk-http-codes.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
-<SectionTitle title="Creating a Splunk Dashboard">Creating a Splunk Dashboard</SectionTitle>
+<SectionTitle title="Splunk Dashboards">Splunk Dashboards</SectionTitle>
+<p>
+One of the great advantages of a centralized logging tool is the ability to create visualizations for data, potentially
+from multiple different sources and applications.  In Splunk, multiple visualizations can be combined together into a
+dashboard.  Dashboards are great to analyze logs and application logs quickly.  They also help business analysts with
+limited or no programming background to gain insight into the state of the processes they manage.
+</p>
+<p>
+Splunk Enterprise has a "Dashboard" tab from which dashboards are created, edited, and viewed.  I usually create
+dashboards using the newer "Dashboard Studio" format, which backs each dashboard with JSON code.  Dashboards are
+edited using no-code in the UI or by manually editing their JSON code.  Usually, development of dashboards beyond
+the simplest examples require a combination of both approaches.
+</p>
+<InlineImage filename="8-28-22-splunk-dashboards.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The following dashboard, saved in a <a href="https://github.com/AJarombek/devops-prototypes/blob/v1.0.1/splunk/
+splunk_internals.json">splunk_internals.json</a> file, uses two SPL queries to display information about Splunk memory
+utilization and previously run queries.
+</p>
+<InlineImage filename="8-28-22-splunk-internal-dashboard.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Using the JSON files, dashboards can be passed from one Splunk environment to another.  For example, using the
+<strong>splunk_internals.json</strong> file, my dashboard can be easily replicated.  To do this, first create a new
+dashboard on Splunk Enterprise, and then paste the JSON code into the "Source" section of the dashboard.
+</p>
+<InlineImage filename="8-28-22-splunk-dashboard-create.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<InlineImage filename="8-28-22-splunk-dashboard-source.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+There is a lot more to show with dashboards, such as how to add custom styling in JSON code.  I will try to cover
+that in a future article, but for newcomers to Splunk, it’s important to begin by leveraging the basic no-code
+capabilities of Splunk dashboards to meet business needs.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Splunk is a great way to centralize and perform analysis on logs from a multitude of sources.  Creating dashboards to
+display commonly used queries is a great way to provide engineers and business analysts with insights into data and
+application state.  All the code shown in this article is available on <a href="https://github.com/AJarombek/
+devops-prototypes/tree/v1.0.1/splunk">GitHub</a>.
+</p>
 </div>
