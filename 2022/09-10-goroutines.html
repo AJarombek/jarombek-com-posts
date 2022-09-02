@@ -1,0 +1,43 @@
+<div>
+<p>
+Recently I read <a href="https://www.gopl.io/">The Go Programming Language</a> in hopes to better understand Go and
+discover what makes it unique as a language.  One feature of Go that peaked my interest was goroutines.  Goroutines are a
+mechanism for achieving concurrency and parallelism in Go programs.  Many programming languages provide libraries for
+using multiple threads to achieve concurrency and sometimes even multiple processes, but Go takes a more distinct
+approach with goroutines.
+</p>
+<p>
+Goroutines as a means of concurrent programming lead me to ask many questions, all of which I’ll attempt to answer in
+this article.  These questions are as follows:
+</p>
+<ul>
+<li><a href="#">What is a goroutine?</a></li>
+<li><a href="#">Why does Go use goroutines instead of threads?</a></li>
+<li><a href="#">What are channels and how do they relate to goroutines?</a></li>
+<li><a href="#">What is the difference between a thread and a goroutine?</a></li>
+<li><a href="#">What is the difference between a coroutine and a goroutine?</a></li>
+</ul>
+<SectionTitle title="What is a goroutine">What is a goroutine?</SectionTitle>
+<Definition word="Goroutine">
+A goroutine is an activity within a Go program<sup>1</sup>.  Using goroutines, engineers can write concurrent and
+parallel programs.  When a Go program starts and calls its <code className="jarombek-inline-code">main()</code> method,
+it runs in a <strong>main goroutine</strong><sup>2</sup>.  This is similar in concept to a <strong>main thread</strong>
+in languages like Java and Python, although goroutines and threads are distinct entities.  A new goroutine is created
+in a Go program using the <code className="jarombek-inline-code">go</code> keyword.  In a program with multiple
+goroutines, each goroutine runs concurrently, and if the computer running the program has multiple CPUs or cores,
+potentially in parallel.
+</Definition>
+<SectionTitle title="Why does Go use goroutines instead of threads">
+Why does Go use goroutines instead of threads?
+</SectionTitle>
+<SectionTitle title="What are channels and how do they relate to goroutines">
+What are channels and how do they relate to goroutines?
+</SectionTitle>
+<SectionTitle title="What is the difference between a thread and a goroutine">
+What is the difference between a thread and a goroutine?
+</SectionTitle>
+<SectionTitle title="What is the difference between a coroutine and a goroutine">
+What is the difference between a coroutine and a goroutine?
+</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
