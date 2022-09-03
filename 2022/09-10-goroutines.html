@@ -12,29 +12,103 @@ this article.  These questions are as follows:
 </p>
 <ul>
 <li><a href="#">What is a goroutine?</a></li>
+<li><a href="#">What is the difference between a thread and a goroutine?</a></li>
 <li><a href="#">Why does Go use goroutines instead of threads?</a></li>
 <li><a href="#">What are channels and how do they relate to goroutines?</a></li>
-<li><a href="#">What is the difference between a thread and a goroutine?</a></li>
 <li><a href="#">What is the difference between a coroutine and a goroutine?</a></li>
 </ul>
 <SectionTitle title="What is a goroutine">What is a goroutine?</SectionTitle>
 <Definition word="Goroutine">
 A goroutine is an activity within a Go program<sup>1</sup>.  Using goroutines, engineers can write concurrent and
-parallel programs.  When a Go program starts and calls its <code className="jarombek-inline-code">main()</code> method,
+parallel programs.  When a Go program starts and calls its <code className="jarombek-inline-code">main()</code> function,
 it runs in a <strong>main goroutine</strong><sup>2</sup>.  This is similar in concept to a <strong>main thread</strong>
 in languages like Java and Python, although goroutines and threads are distinct entities.  A new goroutine is created
 in a Go program using the <code className="jarombek-inline-code">go</code> keyword.  In a program with multiple
 goroutines, each goroutine runs concurrently, and if the computer running the program has multiple CPUs or cores,
 potentially in parallel.
 </Definition>
+<p>
+As a basic example, the <a href="https://github.com/AJarombek/go-programming/blob/main/goroutines/basic_example/
+basic_example.go">following code</a> starts a separate goroutine from the main goroutine of an application.  Both
+goroutines simply print text to stdout and exit.
+</p>
+<CodeSnippet language="Go">
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func otherGoroutine() {
+	fmt.Println("Other Goroutine")
+}
+
+func main() {
+	go otherGoroutine()
+
+	// Wait a second in the main goroutine to make it more likely
+	// for the other goroutine to run until completion
+	time.Sleep(1 * time.Second)
+
+	fmt.Println("Main Goroutine")
+}
+</CodeSnippet>
+<p>
+One thing to note is when the main goroutine exists (the <code className="jarombek-inline-code">main()</code> function
+completes), all other goroutines are forced to exit as well<sup>3</sup>.  Therefore it is possible the child goroutine
+is forced to close before it can print its text.  In production code, there are ways to wait until other goroutines
+complete.
+</p>
+<SectionTitle title="What is the difference between a thread and a goroutine">
+What is the difference between a thread and a goroutine?
+</SectionTitle>
+<p>
+A <a href="https://jarombek.com/blog/nov-1-2020-python-concurrency#thread">thread</a>, also known as a lightweight
+process, is the most basic unit of scheduling on most computers.  In case you want more background information, I wrote
+about threads, the difference between concurrency and parallelism, along with other multithreading concepts in a
+<a href="https://jarombek.com/blog/nov-1-2020-python-concurrency">previous article on Python</a>.
+</p>
+<p>
+Threads come in two different forms: kernel threads and user threads.
+</p>
+<ComparisonTable title="Threads">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Kernel Thread
+</h5>
+<div className="jarombek-cte-body">
+<p>
+Kernel threads, also known as OS threads, are threads that are managed by the operating system in kernel mode.
+Running in Kernel mode allows OS threads to have unrestricted access to the underlying hardware they are run
+on<sup>4</sup>.  Kernel threads contain a virtualized processor, stack space, and program state from the process they
+run within<sup>5</sup>.  Although kernel threads require operating system support, all modern operating systems support
+them<sup>6</sup>.  An example of a kernel thread library is <a href="https://en.wikipedia.org/wiki/Pthreads">
+Pthreads</a>.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+User Thread
+</h5>
+<div className="jarombek-cte-body">
+<p>
+A user thread is similar to an OS thread, except it exists in user space and isn’t managed by the operating system.
+Instead, user threads are written and managed in code, such as the standard libraries for programming languages.
+While they require lots of user space code to implement, the benefits of user threads include fewer expenses from
+context switches and more application control<sup>7</sup>.  Examples of user threads include
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html">Java threads</a> and
+<a href="https://docs.python.org/3/library/threading.html">Python threads</a>.
+</p>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
 <SectionTitle title="Why does Go use goroutines instead of threads">
 Why does Go use goroutines instead of threads?
 </SectionTitle>
 <SectionTitle title="What are channels and how do they relate to goroutines">
 What are channels and how do they relate to goroutines?
-</SectionTitle>
-<SectionTitle title="What is the difference between a thread and a goroutine">
-What is the difference between a thread and a goroutine?
 </SectionTitle>
 <SectionTitle title="What is the difference between a coroutine and a goroutine">
 What is the difference between a coroutine and a goroutine?
