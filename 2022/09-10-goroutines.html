@@ -97,9 +97,68 @@ User Thread
 A user thread is similar to an OS thread, except it exists in user space and isn’t managed by the operating system.
 Instead, user threads are written and managed in code, such as the standard libraries for programming languages.
 While they require lots of user space code to implement, the benefits of user threads include fewer expenses from
-context switches and more application control<sup>7</sup>.  Examples of user threads include
-<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html">Java threads</a> and
-<a href="https://docs.python.org/3/library/threading.html">Python threads</a>.
+context switches and more application control<sup>7</sup>.
+</p>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
+<p>
+There are multiple threading models for mapping user threads to kernel threads.  In reality, all threads used in
+application code are user threads.  However, depending on the threading model, user threads can utilize kernel threads
+for their execution strategy (as is the case with the 1:1 threading model) or be dependent on user space code to
+handle threading (as is the case with n:1 and n:m threading models).  Knowing the differences between threading
+models along with kernel threads and user threads is critical for understanding goroutines.
+</p>
+<ComparisonTable title="Threading Models">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+1:1 (Kernel-Level Threading)
+</h5>
+<div className="jarombek-cte-body">
+<p>
+The 1:1 threading model is where every user thread is mapped to a single kernel thread.  Different ways to think of
+this threading model is user threads implementing kernel threading functionality, or user threads being a wrapper
+around kernel threads.  1:1 Threading is also known as kernel-level threading<sup>7</sup>.  Pthreads is an example of
+a library using the 1:1 threading model, which is why I previously described it as an example of a kernel thread.
+While its code isn’t strictly in kernel space, every user thread created with pthreads maps directly to a single,
+unique kernel thread; user threads and kernel threads in pthreads form a one-to-one relationship.
+</p>
+<p>
+The benefit of 1:1 threading is that kernel threads can be scheduled and run on separate CPUs or cores.  This means
+that kernel threads can run in parallel on a multicore or multiprocessor machine.  The downside of 1:1 threading is
+that context switches between threads are expensive, and operating systems set a (configurable) limit to the number
+of kernel threads that can be created.  For example, on Linux, the maximum number of threads is viewable with the
+<code className="jarombek-inline-code">cat /proc/sys/kernel/threads-max</code> command<sup>8</sup>.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+N:1 (User-Level Threading)
+</h5>
+<div className="jarombek-cte-body">
+<p>
+The n:1 threading model is where multiple user threads are all mapped to a single kernel thread.  N:1 threading is
+also known as user-level threading.  Historically, the Java threading library used n:1 threading (known as green
+threads), although this system is no longer used<sup>9,10</sup>.
+</p>
+<p>
+The benefits of N:1 threading are less performance costs related to context switching and more control in user space.
+However, on modern architectures, it is important for threads to take advantage of multiple cores and processors.
+Since the N:1 threading model maps user threads to a single kernel thread, all user-level threads are executed on a
+single core and a single processor.  The performance loss of not taking advantage of multiple cores or processors
+far outweighs any benefits gained from reducing context switches (on multicore/multiprocessor machines), making N:1
+threading a rarely used approach.  Also, the amount of complex user level code needed to maintain user-level threads
+is another detriment to N:1 threading.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+N:M (Hybrid Threading)
+</h5>
+<div className="jarombek-cte-body">
+<p>
 </p>
 </div>
 </ComparisonTableEntry>
