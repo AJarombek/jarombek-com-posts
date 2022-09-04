@@ -84,7 +84,8 @@ Running in Kernel mode allows OS threads to have unrestricted access to the unde
 on<sup>4</sup>.  Kernel threads contain a virtualized processor, stack space, and program state from the process they
 run within<sup>5</sup>.  Although kernel threads require operating system support, all modern operating systems support
 them<sup>6</sup>.  An example of a kernel thread library is <a href="https://en.wikipedia.org/wiki/Pthreads">
-Pthreads</a>.
+Pthreads</a>.  You can find examples of pthreads in my <a href="https://github.com/AJarombek/
+system-programming-prototypes/tree/main/pthreads">system-programming-prototypes</a> repository.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -143,13 +144,13 @@ also known as user-level threading.  Historically, the Java threading library us
 threads), although this system is no longer used<sup>9,10</sup>.
 </p>
 <p>
-The benefits of N:1 threading are less performance costs related to context switching and more control in user space.
+The benefits of n:1 threading are less performance costs related to context switching and more control in user space.
 However, on modern architectures, it is important for threads to take advantage of multiple cores and processors.
-Since the N:1 threading model maps user threads to a single kernel thread, all user-level threads are executed on a
+Since the n:1 threading model maps user threads to a single kernel thread, all user-level threads are executed on a
 single core and a single processor.  The performance loss of not taking advantage of multiple cores or processors
 far outweighs any benefits gained from reducing context switches (on multicore/multiprocessor machines), making N:1
 threading a rarely used approach.  Also, the amount of complex user level code needed to maintain user-level threads
-is another detriment to N:1 threading.
+is another detriment to n:1 threading.
 </p>
 </div>
 </ComparisonTableEntry>
@@ -159,13 +160,57 @@ N:M (Hybrid Threading)
 </h5>
 <div className="jarombek-cte-body">
 <p>
+The n:m threading model is where <i>m</i> user threads are mapped to <i>n</i> kernel threads.  N:M threading is also
+known as hybrid threading.
+</p>
+<p>
+For example, take a program that implements hybrid threading and distributes 20 user threads to four kernel threads.  If
+the computer this program runs on has a four core processor, these four kernel threads can be distributed evenly across the
+processing cores, allowing kernel threads to run in parallel.  However, from the appearance of the application,
+20 threads were created, not four.
+</p>
+<p>
+Hybrid threading attempts to benefit from both kernel-level threading and user-level threading.  By utilizing kernel
+threads, hybrid threads are able to achieve parallelism on multicore or multiprocessor machines.  By utilizing user
+threads, hybrid threads reduce the cost of context switches and provide more power to user-space code.  The downside of
+hybrid threads is they are complex to implement<sup>11</sup>.
 </p>
 </div>
 </ComparisonTableEntry>
 </ComparisonTable>
+<p>
+Many programming languages utilize kernel-level threads (the 1:1 threading model).  Modern implementations of
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html">Java threads</a> and
+<a href="https://docs.python.org/3/library/threading.html">Python threads</a> utilize kernel threading under the hood
+(In Java, this is referred to as native threading)<sup>12,13</sup>.  One differentiating factor for goroutines compared
+to Java or Python threads is that Go maps <i>m</i> goroutines to <i>n</i> kernel threads, thus making it follow the
+hybrid threading (n:m) model<sup>14</sup>.
+</p>
 <SectionTitle title="Why does Go use goroutines instead of threads">
 Why does Go use goroutines instead of threads?
 </SectionTitle>
+<p>
+After learning that Go uses hybrid threading instead of a more common kernel threading approach, the question I began
+to wonder was why?  Go is a much newer language than Java and Python, which were first released in 1996 and 1991,
+respectively.  Therefore, Go had the benefit of hindsight when it chose its threading model.  By using hybrid
+threading, goroutines (which exist in user space) are able to have custom functionality that makes concurrent code
+easier to use and write.  Hybrid threading also reduces the cost of context switching in the scenario where the number
+of goroutines is greater than the number of cores and processors in a machine.  This can result in more efficient
+concurrent code while still leveraging a machine's architecture for parallelism.
+</p>
+<p>
+While reading Go documentation and <a href="https://www.gopl.io/">The Go Programming Language</a>, writers are quick to
+point out that goroutines are not threads.  In many ways, I find it easier to think of goroutines as user threads with
+some unique attributes, making them distinct.  One of the biggest differences between goroutines and typical
+threads is that threads have a fixed-sized stack space while goroutines have a dynamically-sized stack
+space<sup>15</sup>.
+</p>
+<p>
+I believe dynamically-sized stack space is the best feature of goroutines.  Kernel threads have a fixed-size stack
+space whose size is architecture dependent, but is often fairly large to prevent a stack overflow.  As I previously
+mentioned, there is also a configurable limit to the number of kernel threads on a machine.  This leads to scalability
+issues when a program attempts to execute many operations concurrently.
+</p>
 <SectionTitle title="What are channels and how do they relate to goroutines">
 What are channels and how do they relate to goroutines?
 </SectionTitle>
