@@ -207,13 +207,86 @@ space<sup>15</sup>.
 </p>
 <p>
 I believe dynamically-sized stack space is the best feature of goroutines.  Kernel threads have a fixed-size stack
-space whose size is architecture dependent, but is often fairly large to prevent a stack overflow.  As I previously
-mentioned, there is also a configurable limit to the number of kernel threads on a machine.  This leads to scalability
+space whose size is architecture dependent, but is often fairly large to prevent a stack overflow.  There is also a
+configurable limit to the number of kernel threads on a machine.  This leads to scalability
 issues when a program attempts to execute many operations concurrently.
+</p>
+<p>
+When goroutines are initialized, their stack space is small, often around 2KB according to the
+documentation<sup>15</sup>.  The stack space of a thread is often 100 times as big, 2MB in the case of pthreads on a 64
+bit x86 architecture<sup>16</sup>.  In some cases, the stack size for a thread is even larger than 2MB.  The small
+(and scalable) stack space of goroutines allows magnitudes more of them to be created compared to threads<sup>17</sup>.
+</p>
+<p>
+The scalable nature of goroutines has the same impact on concurrent code as scalable cloud resources has on
+infrastructure; goroutines make concurrent code easier to write and manage and allows for architectural designs
+impossible in more rigid systems.  As cloud platforms like AWS allow infrastructure to scale with consumer demand,
+goroutines are able to scale with growing concurrent workloads.  Concurrent processes that are difficult to create
+with threads in libraries like pthreads or languages like Java and Python may be easier in Go with goroutines.
+</p>
+<p>
+The ease of creating goroutines is also beneficial towards simplifying the complexity around concurrent code.  In my
+opinion, prefixing any Go function with the <code className="jarombek-inline-code">go</code> keyword is an elegant way
+to implement a concurrency library; goroutines are easier to use and learn compared to threading libraries in my
+experience.
 </p>
 <SectionTitle title="What are channels and how do they relate to goroutines">
 What are channels and how do they relate to goroutines?
 </SectionTitle>
+<p>
+In Go, channels are a way to communicate between goroutines.  Let’s take a basic example where integer values are
+passed to a goroutine via a channel and returned from the same goroutine via another channel.
+</p>
+<CodeSnippet language="Go">
+package main
+
+import (
+	"fmt"
+)
+
+func double(out chan int, in chan int) {
+	for {
+		value := <-in
+		result := value * 2
+		out <- result
+	}
+}
+
+func main() {
+	out := make(chan int)
+	in := make(chan int)
+	go double(out, in)
+
+	in <- 2
+	result := <-out
+	fmt.Printf("Double 2 = %d\n", result) // Double 2 = 4
+
+	in <- 5
+	result = <-out
+	fmt.Printf("Double 5 = %d\n", result) // Double 5 = 10
+
+	close(out)
+	close(in)
+}
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">make(chan int)</code> syntax creates a new integer channel.  The
+<code className="jarombek-inline-code">double()</code> function, which is run as a goroutine with the
+<code className="jarombek-inline-code">go double(out, in)</code> statement, takes two channels as arguments.  Within
+<code className="jarombek-inline-code">double()</code>, the statement <code className="jarombek-inline-code">
+value := <-in</code> reads a value from the <code className="jarombek-inline-code">in</code> channel.  After doubling
+the value, the statement <code className="jarombek-inline-code">out <- result</code> writes the doubled value to the
+<code className="jarombek-inline-code">out</code> channel.
+</p>
+<p>
+In the main goroutine, the <code className="jarombek-inline-code">in <- 2</code> statement sends a value to the
+<code className="jarombek-inline-code">in</code> channel and the <code className="jarombek-inline-code">
+result := <-out</code> statement reads a value from the <code className="jarombek-inline-code">out</code> channel and
+assigns it to <code className="jarombek-inline-code">result</code>.  The <code className="jarombek-inline-code">
+double()</code> function can be refactored to use unidirectional channels, which specify the directional flow of data
+through channels in their type definitions<sup>18</sup>.  The directional flow of data in a unidirectional channel must
+be obeyed.
+</p>
 <SectionTitle title="What is the difference between a coroutine and a goroutine">
 What is the difference between a coroutine and a goroutine?
 </SectionTitle>
