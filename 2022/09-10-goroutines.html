@@ -255,6 +255,7 @@ func double(out chan int, in chan int) {
 func main() {
 	out := make(chan int)
 	in := make(chan int)
+
 	go double(out, in)
 
 	in <- 2
@@ -287,8 +288,73 @@ double()</code> function can be refactored to use unidirectional channels, which
 through channels in their type definitions<sup>18</sup>.  The directional flow of data in a unidirectional channel must
 be obeyed.
 </p>
+<CodeSnippet language="Go">
+func double(out chan<- int, in <-chan int) {
+	for {
+		value := <-in
+		result := value * 2
+		out <- result
+	}
+}
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">chan<- int</code> is a send-only integer channel and
+<code className="jarombek-inline-code"><-chan int</code> is a receive only channel<sup>18</sup>.
+</p>
+<p>
+Another way to refactor this example is to use buffered channels.  Buffered channels represent a queue with a
+specified size, compared to a standard channel which holds a single element.  Here is a final version of the code
+example using buffered channels and unidirectional channels.
+</p>
+<CodeSnippet language="Go">
+package main
+
+import (
+	"fmt"
+)
+
+func double(out chan<- int, in <-chan int) {
+	for {
+		value := <-in
+		result := value * 2
+		out <- result
+	}
+}
+
+func main() {
+	out := make(chan int, 2)
+	in := make(chan int, 2)
+
+	go double(out, in)
+
+	in <- 2
+    in <- 5
+
+	result := <-out
+	fmt.Printf("Double 2 = %d\n", result) // Double 2 = 4
+
+	result = <-out
+	fmt.Printf("Double 5 = %d\n", result) // Double 5 = 10
+
+	close(out)
+	close(in)
+}
+</CodeSnippet>
+<p>
+Channels in Go remind me of multiple different technologies, ranging from message brokers like RabbitMQ to generators
+and coroutines in Python.  In Go, the syntax for channels is simple, making them easy to work with.
+</p>
 <SectionTitle title="What is the difference between a coroutine and a goroutine">
 What is the difference between a coroutine and a goroutine?
 </SectionTitle>
+<Definition word="Coroutine">
+A coroutine is a function or subroutine that allows its execution to be suspended and resumed
+cooperatively<sup>19</sup>.  In Python, coroutines are functions that yield their control flow; they are functions
+containing a <code className="jarombek-inline-code">yield</code> keyword in their bodies<sup>20</sup>.  Coroutines are
+similar to kernel threads in the sense that they enable concurrent execution, but unlike threads do not enable
+parallelism<sup>21</sup>.  Coroutines also follow cooperative multitasking, unlike kernel threads which follow
+preemptive multitasking<sup>22</sup>.  In other words, coroutines yield control of a program on their own terms
+whenever they wish, while kernel threads are forced to yield control by the operating system.
+</Definition>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
