@@ -328,7 +328,7 @@ func main() {
 	go double(out, in)
 
 	in <- 2
-    in <- 5
+	in <- 5
 
 	result := <-out
 	fmt.Printf("Double 2 = %d\n", result) // Double 2 = 4
@@ -356,5 +356,59 @@ parallelism<sup>21</sup>.  Coroutines also follow cooperative multitasking, unli
 preemptive multitasking<sup>22</sup>.  In other words, coroutines yield control of a program on their own terms
 whenever they wish, while kernel threads are forced to yield control by the operating system.
 </Definition>
+<p>
+Coroutines are a programming concept I first encountered while learning Python.  The
+<code className="jarombek-inline-code">double()</code> goroutine used in the previous section is easily rewritten as a
+Python coroutine.  This code is available in a <a href="https://github.com/AJarombek/python-programming/blob/
+v1.0.0/coroutines/coroutines.py">coroutines.py</a> file on GitHub.
+</p>
+<CodeSnippet language="Python">
+def double():
+    """
+    A coroutine that takes a number and multiples it by two.
+    The result is yielded back to the caller.
+    """
+    while True:
+        value = yield
+        result = value * 2
+        yield result
+
+
+if __name__ == '__main__':
+    double_coroutine = double()
+
+    next(double_coroutine)
+    result = double_coroutine.send(2)
+    assert result == 4
+
+    next(double_coroutine)
+    result = double_coroutine.send(5)
+    assert result == 10
+</CodeSnippet>
+<p>
+In many ways, <code className="jarombek-inline-code">double()</code> implemented as a goroutine in Go and a coroutine
+in Python are functionally the same.  Both are unblocking calls that yield execution, waiting for a value.  In the
+Python coroutine, the <code className="jarombek-inline-code">yield</code> keyword is used to wait for a value to be
+passed by its caller.  In the goroutine, a channel is used to wait for a value to be passed by another goroutine.  Both
+the coroutine and the goroutine emit values as well.  The coroutine passes values back to its caller using the
+<code className="jarombek-inline-code">yield</code> keyword, while the goroutine passes values to other goroutines
+through a channel.
+</p>
+<p>
+While it's reasonable to guess that goroutines are simply coroutines, there are crucial differences.  Coroutines do not
+enable concurrency or parallelism on their own<sup>23</sup>.  Meanwhile, goroutines implement hybrid threading and
+preemptive multitasking.  A library such as <a href="https://jarombek.com/blog/nov-1-2020-python-concurrency
+#concurrent-programming-with-asyncio">asyncio</a>, which is built on top of coroutines in Python, has more in common
+with goroutines than coroutines.  I wrote about <strong>asyncio</strong> along with other
+<a href="https://jarombek.com/blog/nov-1-2020-python-concurrency">Python concurrent programming concepts</a> in a
+prior article.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Goroutines are a very interesting part of the Go programming language, and make me want to leverage Go next time I have
+a codebase with large amounts of concurrency and parallelism. Goroutines make concurrent programming easy, hiding a
+complex hybrid threading model behind simplistic language syntax and semantics.  Go code shown in this article along
+with other goroutine and channel examples are available in my <a href="https://github.com/AJarombek/go-programming/
+tree/main/goroutines">go-programming repository on GitHub</a>.
+</p>
 </div>
