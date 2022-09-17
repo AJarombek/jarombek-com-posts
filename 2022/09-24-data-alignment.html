@@ -57,7 +57,7 @@ within a struct.
 <p>
 The value returned by <code className="jarombek-inline-code">unsafe.Sizeof()</code> can be machine dependent.  For
 types such as booleans, the return value is always <strong>1</strong>, representing one byte<sup>8</sup>.  However, for
-other data types such as integers, strings, arrays, etc.; the return value is dependent on the word size of a
+other data types, such as integers, strings, arrays, etc., the return value is dependent on the word size of a
 computer's CPU architecture.
 </p>
 <CodeSnippet language="Go">
@@ -118,13 +118,79 @@ the case of <code className="jarombek-inline-code">bool</code> on a 64-bit machi
 and another seven bytes are padding.
 </p>
 <p>
-If this is the case and a boolean actually takes up a full word size in memory, why does
+If this is the case and a boolean actually takes up a full word size in memory, why do
 <code className="jarombek-inline-code">unsafe.Sizeof()</code> and <code className="jarombek-inline-code">
 unsafe.Alignof()</code> return <code className="jarombek-inline-code">1</code>?  The answer is within a struct, it is
 possible to "pack" data such that multiple pieces of data are stored within a single word size worth of
 memory<sup>10</sup>.  Data packing is commonly used to save space in a data structure.  The side-effect of data
 structure packing is the order in which struct fields are defined can alter the amount of memory allocated to hold a
 struct instance.
+</p>
+<p>
+Let’s look at an example.  The following two structs appear to be equivalent, since they have the same fields defined
+in a different order.
+</p>
+<CodeSnippet language="Go">
+type Sample1 struct {
+	a bool
+	b bool
+	c float64
+}
+
+type Sample2 struct {
+	a bool
+	c float64
+	b bool
+}
+</CodeSnippet>
+<p>
+However, calling <code className="jarombek-inline-code">unsafe.Sizeof()</code> on instances of these two structs
+reveals their sizes in memory are different.
+</p>
+<CodeSnippet language="Go">
+one := Sample1{a: true, b: true, c: 1.0}
+two := Sample2{a: true, b: true, c: 1.0}
+
+// Return value (on a 64-bit processor): 16
+unsafe.Sizeof(one)
+
+// Return value (on a 64-bit processor): 24
+unsafe.Sizeof(two)
+</CodeSnippet>
+<p>
+While <code className="jarombek-inline-code">Sample1</code> creates a struct the size of two words (16 bytes),
+<code className="jarombek-inline-code">Sample2</code> creates a struct the size of three words (24 bytes).  This is the
+result of extra padding needed in <code className="jarombek-inline-code">Sample2</code> due to the field order in the
+struct definition.
+</p>
+<p>
+The first two fields in <code className="jarombek-inline-code">Sample1</code>, <code className="jarombek-inline-code">
+a</code> and <code className="jarombek-inline-code">b</code>, are type <code className="jarombek-inline-code">
+bool</code>.  Since the size and alignment of type <code className="jarombek-inline-code">bool</code> is one, both
+<code className="jarombek-inline-code">a</code> and <code className="jarombek-inline-code">b</code> can be packed
+together into a single word in memory.  This means the first eight bytes of memory for a struct of type
+<code className="jarombek-inline-code">Sample1</code> consists of <code className="jarombek-inline-code">a</code> and
+<code className="jarombek-inline-code">b</code> in the first two bytes followed by six bytes of padding.  The third
+field in <code className="jarombek-inline-code">Sample1</code>, <code className="jarombek-inline-code">c</code>, is a
+<code className="jarombek-inline-code">float64</code>, which takes up a full eight bytes on a 64-bit machine.  In
+total, the struct takes up 16 bytes (2 words).
+</p>
+<p>
+Next, let's take the case of <code className="jarombek-inline-code">Sample2</code>.  The first field in
+<code className="jarombek-inline-code">Sample2</code>, <code className="jarombek-inline-code">a</code>, is a
+<code className="jarombek-inline-code">bool</code> that is placed in the first byte of memory for the struct.  Since
+the second field is <code className="jarombek-inline-code">c</code>, a <code className="jarombek-inline-code">
+float64</code> that takes up a full eight bytes, seven bytes of padding are added after
+<code className="jarombek-inline-code">a</code>.  The third field is <code className="jarombek-inline-code">b</code>,
+which takes up one byte followed by another seven bytes of padding.  In total, the struct takes up 24 bytes (3 words).
+</p>
+<p>
+Luckily for application engineers, outside of field packing in structs, data alignment in memory is not a concern that
+arises when writing Go programs.  The code examples I showed above can be viewed in more detail in my
+<a href="https://github.com/AJarombek/go-programming">go-programming</a> repository, specifically within
+<a href="https://github.com/AJarombek/go-programming/blob/main/low-level-programming/sizeof_test.go">sizeof_test.go</a>
+and <a href="https://github.com/AJarombek/go-programming/blob/main/low-level-programming/alignment_offset_test.go">
+alignment_offset_test.go</a>.
 </p>
 <SectionTitle title="Data Alignment in C and C++">Data Alignment in C and C++</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
