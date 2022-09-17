@@ -34,7 +34,98 @@ language variables, the size of the data type is often used to determine the ali
 16-bit integer (of type <code className="jarombek-inline-code">int16</code>) should be aligned in memory at a location
 that is a multiple of 16 to be naturally aligned.
 </Definition>
+<p>
+In languages with manual memory management, like C and C++, functions to allocate memory such as
+<code className="jarombek-inline-code">malloc()</code> and <code className="jarombek-inline-code">calloc()</code> are
+guaranteed to properly align the memory space they return via a pointer<sup>4</sup>.  Manual memory management is when
+memory needs to be explicitly managed by a programmer throughout its lifecycle, from creation to garbage
+collection<sup>7</sup>.  Since Go is a programming language with automatic memory management (memory is automatically
+allocated using <code className="jarombek-inline-code">new()</code> or <code className="jarombek-inline-code">
+make()</code> and automatically garbage collected), instances where data alignment is top of mind for engineers are
+infrequent.
+</p>
 <SectionTitle title="Data Alignment in Go">Data Alignment in Go</SectionTitle>
+<p>
+Go has three functions for finding the size and alignment of data: <code className="jarombek-inline-code">
+unsafe.Sizeof()</code>, <code className="jarombek-inline-code">unsafe.Alignof()</code>, and
+<code className="jarombek-inline-code">unsafe.Offsetof()</code>.  <code className="jarombek-inline-code">
+unsafe.Sizeof()</code> returns the size of a variable's data type and <code className="jarombek-inline-code">
+unsafe.Alignof()</code> returns the proper alignment of a variable’s data type.  <code className="jarombek-inline-code">
+unsafe.Offsetof()</code> is used specifically for struct fields to determine the offset of a field's memory location
+within a struct.
+</p>
+<p>
+The value returned by <code className="jarombek-inline-code">unsafe.Sizeof()</code> can be machine dependent.  For
+types such as booleans, the return value is always <strong>1</strong>, representing one byte<sup>8</sup>.  However, for
+other data types such as integers, strings, arrays, etc.; the return value is dependent on the word size of a
+computer's CPU architecture.
+</p>
+<CodeSnippet language="Go">
+// Bool
+// Return value: 1
+unsafe.Sizeof(false)
+
+// int (on a 64-bit processor)
+// Return value: 8
+unsafe.Sizeof(false)
+
+// string (on a 64-bit processor)
+// Return value: 16
+unsafe.Sizeof("Andy")
+
+// []T (array) (on a 64-bit processor)
+// Return value: 24
+unsafe.Sizeof([]string{})
+</CodeSnippet>
+<p>
+On a 64-bit architecture, the word size is 8 bytes.  That means that integers, strings, and arrays have sizes of 1
+word, 2 words, and 3 words, respectively.  Sizes represent the fixed size of a data type, so the return value of
+<code className="jarombek-inline-code">unsafe.Sizeof()</code> is consistent no matter how long a string is or how many
+elements an array contains.  For basic types like <code className="jarombek-inline-code">bool</code> and
+<code className="jarombek-inline-code">int</code>, <code className="jarombek-inline-code">unsafe.Alignof()</code>
+returns the same value as <code className="jarombek-inline-code">unsafe.Sizeof()</code>.  For more complex types like
+<code className="jarombek-inline-code">string</code> and <code className="jarombek-inline-code">[]T</code>,
+<code className="jarombek-inline-code">unsafe.Alignof()</code> returns the CPU word size in bytes.
+</p>
+<CodeSnippet language="Go">
+// Bool
+// Return value: 1
+unsafe.Alignof(false)
+
+// int (on a 64-bit processor)
+// Return value: 8
+unsafe.Alignof(false)
+
+// string (on a 64-bit processor)
+// Return value: 8
+unsafe.Alignof("Andy")
+
+// []T (array) (on a 64-bit processor)
+// Return value: 8
+unsafe.Alignof([]string{})
+</CodeSnippet>
+<p>
+<code className="jarombek-inline-code">unsafe.Alignof()</code> returns the necessary data alignment for its argument’s
+type in memory.  Therefore, it makes sense that larger types return the word size of the computer processor, which is
+equal to the natural alignment in memory.
+</p>
+<p>
+Things get a bit more interesting for data types whose size is less than the word size of a computer’s architecture.
+Data types such as <code className="jarombek-inline-code">bool</code>, whose size is one byte, still must be naturally
+aligned in memory (its location in memory must be a multiple of the word size, such as 8-bytes on a 64-bit
+architecture).  To achieve this, padding is added after the data type in memory to keep it aligned<sup>9</sup>.  In
+the case of <code className="jarombek-inline-code">bool</code> on a 64-bit machine, one byte is used to store the data
+and another seven bytes are padding.
+</p>
+<p>
+If this is the case and a boolean actually takes up a full word size in memory, why does
+<code className="jarombek-inline-code">unsafe.Sizeof()</code> and <code className="jarombek-inline-code">
+unsafe.Alignof()</code> return <code className="jarombek-inline-code">1</code>?  The answer is within a struct, it is
+possible to "pack" data such that multiple pieces of data are stored within a single word size worth of
+memory<sup>10</sup>.  Data packing is commonly used to save space in a data structure.  The side-effect of data
+structure packing is the order in which struct fields are defined can alter the amount of memory allocated to hold a
+struct instance.
+</p>
 <SectionTitle title="Data Alignment in C and C++">Data Alignment in C and C++</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
