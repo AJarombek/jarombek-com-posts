@@ -188,10 +188,105 @@ which takes up one byte followed by another seven bytes of padding.  In total, t
 Luckily for application engineers, outside of field packing in structs, data alignment in memory is not a concern that
 arises when writing Go programs.  The code examples I showed above can be viewed in more detail in my
 <a href="https://github.com/AJarombek/go-programming">go-programming</a> repository, specifically within
-<a href="https://github.com/AJarombek/go-programming/blob/main/low-level-programming/sizeof_test.go">sizeof_test.go</a>
-and <a href="https://github.com/AJarombek/go-programming/blob/main/low-level-programming/alignment_offset_test.go">
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/low-level-programming/sizeof_test.go">sizeof_test.go</a>
+and <a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/low-level-programming/alignment_offset_test.go">
 alignment_offset_test.go</a>.
 </p>
 <SectionTitle title="Data Alignment in C and C++">Data Alignment in C and C++</SectionTitle>
+<p>
+As I mentioned previously, C and C++ are programming languages with manual memory management, and standard library
+functions such as <code className="jarombek-inline-code">malloc()</code> and <code className="jarombek-inline-code">
+calloc()</code> are guaranteed to properly align allocated memory.  Similar to Go, a common instance where data
+alignment impacts application code is when dealing with structs.  The struct example I showed in Go with two structs,
+<code className="jarombek-inline-code">Sample1</code> and <code className="jarombek-inline-code">Sample2</code>, is
+implemented in C and C++ below.
+</p>
+<CodeSnippet language="C">
+#include &lt;stdbool.h>
+#include &lt;assert.h>
+#include &lt;stdio.h>
+
+struct Sample1 {
+    bool a;
+    bool b;
+    double c;
+};
+
+struct Sample2 {
+    bool a;
+    double c;
+    bool b;
+};
+
+int main() {
+    struct Sample1 first = {true, false, 1.0};
+    struct Sample2 second = {true, 1.0, false};
+
+	// Return value (on a 64-bit processor): 16
+	sizeof(first);
+
+	// Return value (on a 64-bit processor): 24
+	sizeof(second);
+}
+</CodeSnippet>
+<CodeSnippet language="C++">
+#include &lt;cassert>
+#include &lt;iostream>
+
+using namespace std;
+
+struct Sample1 {
+    bool a;
+    bool b;
+    double c;
+};
+
+struct Sample2 {
+    bool a;
+    double c;
+    bool b;
+};
+
+int main() {
+    auto first = Sample1{true, false, 1.0};
+    auto second = Sample2{true, 1.0, false};
+
+	// Return value (on a 64-bit processor): 16
+    sizeof(first);
+
+	// Return value (on a 64-bit processor): 24
+    sizeof(second);
+}
+</CodeSnippet>
+<p>
+Just like Go, an instance of <code className="jarombek-inline-code">Sample1</code> takes up two word sizes of memory
+while <code className="jarombek-inline-code">Sample2</code> takes up three word sizes of memory.  These code samples
+are available in my <a href="https://github.com/AJarombek/cpp-c-programming">cpp-c-programming</a> repository, within
+<a href="https://github.com/AJarombek/cpp-c-programming/blob/main/c/data-alignment/data_alignment.c">data_alignment.c</a>
+and <a href="https://github.com/AJarombek/cpp-c-programming/blob/main/cpp/data-alignment/data_alignment.cpp">
+data_alignment.cpp</a> files, respectively.
+</p>
+<SubTitle title="Linux System Programming">Linux System Programming</SubTitle>
+<p>
+While writing system programs, specifically in Linux, an engineer has a bit more control over how allocated memory is
+aligned.  POSIX defines a function <code className="jarombek-inline-code">posix_memalign()</code> which allocates
+memory and aligns it at a multiple of its second argument<sup>11,12</sup>.  The first argument of
+<code className="jarombek-inline-code">posix_memalign()</code> is a pointer that will point to the allocated memory
+and the third (and final) argument is the number of bytes to allocate in memory.  The example below allocates 1024
+bytes of memory and aligns it at a multiple of eight.  It frees the memory before using it.
+</p>
+<CodeSnippet language="C">
+char *buf;
+
+// Allocate 1024 bytes of memory aligned at a multiple of 8.
+int ret = posix_memalign(&buf, 8, 1024);
+
+if (ret) {
+	perror("posix_memalign");
+	return -1;
+}
+
+free(buf);
+</CodeSnippet>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
