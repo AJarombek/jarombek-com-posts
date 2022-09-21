@@ -288,5 +288,24 @@ if (ret) {
 
 free(buf);
 </CodeSnippet>
+<p>
+Although I aligned the allocated memory on the 64-bit architecture page size (8 bytes) above, any value that is a
+multiple of two and a multiple of <code className="jarombek-inline-code">sizeof(void *)</code> can be used.  On a
+64-bit architecture, <code className="jarombek-inline-code">sizeof(void *)</code> likely returns
+<code className="jarombek-inline-code">8</code> (the page size).  The full code example is available in a
+<a href="https://github.com/AJarombek/system-programming-prototypes/blob/main/memory_management/alignment.c">
+alignment.c</a> file and is based on my reading of <a href="https://www.oreilly.com/library/view/
+linux-system-programming/9781449341527/">Linux System Programming</a> by Robert Love.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+Although data alignment may not be top of mind for application engineers, it’s important to understand how it works and
+its impact on high-level programming languages.  In general, knowing low-level operating system functionality helps
+engineers write better programs in high-level languages, just as knowing data structures and algorithms helps write
+faster and less memory intensive code.  All the code discussed in this article is available in my
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/low-level-programming">go-programming</a>,
+<a href="https://github.com/AJarombek/system-programming-prototypes/tree/main/memory_management">
+system-programming-prototypes</a>, and <a href="https://github.com/AJarombek/cpp-c-programming">cpp-c-programming</a>
+repositories.
+</p>
 </div>
