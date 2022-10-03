@@ -1,0 +1,45 @@
+<div>
+<p>
+During software development, it’s important to test logic and perform static code analysis to ensure programs meet
+certain standards.  Build tools and CI/CD platforms help developers automate these tasks.  There are so many different
+build tools, such as Make, <a href="https://jarombek.com/blog?query=Bazel&page=1">Bazel</a>,
+<a href="https://jarombek.com/blog?query=Please&page=1">Please</a>, and CI/CD platforms, such as
+<a href="https://jarombek.com/blog?query=Jenkins&page=1">Jenkins</a>,
+<a href="https://jarombek.com/blog?query=TravisCI&page=1">TravisCI</a>,
+<a href="https://jarombek.com/blog?query=GitHub%20Actions&page=1">GitHub Actions</a> (to name a few), that it can
+become overwhelming for engineers to pick the best option for their codebase.
+</p>
+<p>
+Although I’ve experimented a bit with TravisCI in the past, most of my CI/CD work up until now has been on Jenkins.
+Outside of language or platform specific build tools (such as CMake or Webpack), I haven’t used many language-agnostic
+build tools in my code to this point.  While designing my <a href="https://github.com/AJarombek/go-programming">
+go-programming</a> repository, a codebase containing Go programming language sample programs, I decided to work with a
+new build tool and CI/CD platform.
+</p>
+<p>
+For a build tool, I decided to use <a href="https://please.build/">Please Build</a>, a language agnostic build platform
+based on Google’s internal Blaze build tool, which was ported to the open source community as Bazel<sup>1</sup>.  For a
+CI/CD platform, I decided to use <a href="https://github.com/features/actions">GitHub Actions</a>, which is built-in to
+GitHub.  In this article, I’ll discuss the basics of Please Build and GitHub Actions, along with how I integrated both
+into my <a href="https://github.com/AJarombek/go-programming">go-programming</a> repository.
+</p>
+<SectionTitle title="Repository Overview">Repository Overview</SectionTitle>
+<p>
+The <a href="https://github.com/AJarombek/go-programming">go-programming</a> repository consists of many subdirectories
+containing Go code.  This Go code contains tests that I ensure are successful and libraries that I build and compile
+into machine specific binaries.  For example, the <a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/
+goroutines">goroutines</a> subdirectory contains test code, such as <a href="https://github.com/AJarombek/
+go-programming/blob/v1.1.0/goroutines/basics_test.go">basics_test.go</a>, along with libraries, such as
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/goroutines/goroutine_example/goroutine_example.go">
+goroutine_example.go</a>.
+</p>
+<p>
+I use the GoLand IDE by Jetbrains for Go development.  One of the great features of Jetbrains IDEs, GoLand included, is
+run configurations.  Run configurations enable an easy way to run or test Go code through the GoLand UI<sup>2</sup>.
+Run configurations can optionally run on a Docker container, and configurations can be saved and committed to a
+repository in XML files.
+</p>
+<SectionTitle title="Please Build Setup">Please Build Setup</SectionTitle>
+<SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
