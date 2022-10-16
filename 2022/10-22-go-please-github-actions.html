@@ -39,6 +39,69 @@ run configurations.  Run configurations enable an easy way to run or test Go cod
 Run configurations can optionally run on a Docker container, and configurations can be saved and committed to a
 repository in XML files.
 </p>
+<p>
+In the <a href="https://github.com/AJarombek/go-programming/tree/v1.1.0">go-programming</a> repository, run
+configurations are stored in a <a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/.run">.run</a>
+directory.  These run configurations execute on Docker containers, which are defined in a
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/base">base</a> directory.  Currently, all my run
+configurations execute on docker containers derived from a base <strong>Dockerfile</strong>, which is specified in
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/base/Dockerfile">base/Dockerfile</a>, with the
+following setup.
+</p>
+<CodeSnippet language="Dockerfile">
+FROM golang:1.18.3-alpine3.16
+
+RUN apk add gcc libc-dev linux-headers
+
+STOPSIGNAL SIGTERM
+</CodeSnippet>
+<p>
+Each subdirectory in the repository has its own Dockerfile, using <a href="https://github.com/AJarombek/go-programming/
+blob/v1.1.0/base/Dockerfile">base/Dockerfile</a> as its base image. Subdirectory Dockerfiles contain commands
+needed to execute the code within the subdirectory.  For example, the <a href="https://github.com/AJarombek/
+go-programming/tree/v1.1.0/goroutines">goroutines</a> subdirectory contains the following <a href="https://github.com/
+AJarombek/go-programming/blob/v1.1.0/goroutines/Dockerfile">Dockerfile</a>
+</p>
+<CodeSnippet language="Dockerfile">
+FROM ajarombek/go-alpine-linux-programming:latest
+
+WORKDIR src
+COPY . .
+
+ENTRYPOINT ["go", "test", "-v", "."]
+</CodeSnippet>
+<p>
+GoLand run configurations are XML files, and in my repository they simply specify a docker container to run.  For the
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/goroutines">goroutines</a> subdirectory, I created a
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/.run/goroutines.run.xml">goroutines.run.xml</a> run
+configuration which starts a Docker container.
+</p>
+<CodeSnippet language="XML">
+&lt;component name="ProjectRunConfigurationManager">
+    &lt;configuration default="false" name="goroutines" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+        &lt;deployment type="dockerfile">
+            &lt;settings>
+                &lt;option name="containerName" value="go_programming_goroutines" />
+                &lt;option name="sourceFilePath" value="goroutines/Dockerfile" />
+            &lt;/settings>
+        &lt;/deployment>
+        &lt;method v="2" />
+    &lt;/configuration>
+&lt;/component>
+</CodeSnippet>
+<p>
+This run configuration specifies the creation of a Docker image named <code className="jarombek-inline-code">
+go_programming_goroutines</code> created using the Dockerfile <code className="jarombek-inline-code">
+goroutines/Dockerfile</code>. Putting all the pieces together, the following image shows what it looks like to trigger
+the run configuration and view its console log.
+</p>
+<InlineImage filename="10-22-22-goland-run-config.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+Run configurations are great for manually executing tests or running code.  However, for CI/CD purposes, operations
+like executing tests, compiling code, and packaging binaries should be automated.  This is where Please Build and
+GitHub Actions can help.
+</p>
 <SectionTitle title="Please Build Setup">Please Build Setup</SectionTitle>
 <SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
