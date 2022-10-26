@@ -27,10 +27,10 @@ into my <a href="https://github.com/AJarombek/go-programming">go-programming</a>
 <p>
 The <a href="https://github.com/AJarombek/go-programming">go-programming</a> repository consists of many subdirectories
 containing Go code.  This Go code contains tests that I ensure are successful and libraries that I build and compile
-into machine specific binaries.  For example, the <a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/
+into machine specific binaries.  For example, the <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/
 goroutines">goroutines</a> subdirectory contains test code, such as <a href="https://github.com/AJarombek/
-go-programming/blob/v1.1.0/goroutines/basics_test.go">basics_test.go</a>, along with libraries, such as
-<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/goroutines/goroutine_example/goroutine_example.go">
+go-programming/blob/v1.1.1/goroutines/basics_test.go">basics_test.go</a>, along with libraries, such as
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/goroutines/goroutine_example/goroutine_example.go">
 goroutine_example.go</a>.
 </p>
 <p>
@@ -40,12 +40,12 @@ Run configurations can optionally run on a Docker container, and configurations 
 repository in XML files.
 </p>
 <p>
-In the <a href="https://github.com/AJarombek/go-programming/tree/v1.1.0">go-programming</a> repository, run
-configurations are stored in a <a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/.run">.run</a>
+In the <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1">go-programming</a> repository, run
+configurations are stored in a <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/.run">.run</a>
 directory.  These run configurations execute on Docker containers, which are defined in a
-<a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/base">base</a> directory.  Currently, all my run
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/base">base</a> directory.  Currently, all my run
 configurations execute on docker containers derived from a base <strong>Dockerfile</strong>, which is specified in
-<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/base/Dockerfile">base/Dockerfile</a>, with the
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/base/Dockerfile">base/Dockerfile</a>, with the
 following setup.
 </p>
 <CodeSnippet language="Dockerfile">
@@ -53,14 +53,26 @@ FROM golang:1.18.3-alpine3.16
 
 RUN apk add gcc libc-dev linux-headers
 
+RUN curl https://get.please.build > please.sh && \
+    bash ./please.sh
+
+ENV PATH="${PATH}:/root/.please/bin"
+
 STOPSIGNAL SIGTERM
 </CodeSnippet>
 <p>
+The most important thing this base Dockerfile does is install Please Build from the URL <strong>
+https://get.please.build</strong> and append its installation directory onto the <code className="jarombek-inline-code">
+PATH</code> environment variable.  Go is installed and configured in the <code className="jarombek-inline-code">golang</code>
+image, which is specified as the base image using the <code className="jarombek-inline-code">
+FROM golang:1.18.3-alpine3.16</code> command.
+</p>
+<p>
 Each subdirectory in the repository has its own Dockerfile, using <a href="https://github.com/AJarombek/go-programming/
-blob/v1.1.0/base/Dockerfile">base/Dockerfile</a> as its base image. Subdirectory Dockerfiles contain commands
+blob/v1.1.1/base/Dockerfile">base/Dockerfile</a> as its base image. Subdirectory Dockerfiles contain commands
 needed to execute the code within the subdirectory.  For example, the <a href="https://github.com/AJarombek/
-go-programming/tree/v1.1.0/goroutines">goroutines</a> subdirectory contains the following <a href="https://github.com/
-AJarombek/go-programming/blob/v1.1.0/goroutines/Dockerfile">Dockerfile</a>
+go-programming/tree/v1.1.1/goroutines">goroutines</a> subdirectory contains the following <a href="https://github.com/
+AJarombek/go-programming/blob/v1.1.1/goroutines/Dockerfile">Dockerfile</a>
 </p>
 <CodeSnippet language="Dockerfile">
 FROM ajarombek/go-alpine-linux-programming:latest
@@ -71,9 +83,16 @@ COPY . .
 ENTRYPOINT ["go", "test", "-v", "."]
 </CodeSnippet>
 <p>
-GoLand run configurations are XML files, and in my repository they simply specify a docker container to run.  For the
-<a href="https://github.com/AJarombek/go-programming/tree/v1.1.0/goroutines">goroutines</a> subdirectory, I created a
-<a href="https://github.com/AJarombek/go-programming/blob/v1.1.0/.run/goroutines.run.xml">goroutines.run.xml</a> run
+This Dockerfile uses my base image <code className="jarombek-inline-code">ajarombek/go-alpine-linux-programming:latest
+</code>, which is available on <a href="https://hub.docker.com/repository/docker/ajarombek/go-alpine-linux-programming">
+DockerHub</a>.  It copies files from my repository onto the containers filesystem and runs the command
+<code className="jarombek-inline-code">go test -v .</code>, which executes all the Go tests.
+</p>
+<p>
+This Dockerfile is also used in a run configuration for the repository.  GoLand run configurations are XML files, and
+in my repository they simply specify a docker container to run.  For the
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/goroutines">goroutines</a> subdirectory, I created a
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/.run/goroutines.run.xml">goroutines.run.xml</a> run
 configuration which starts a Docker container.
 </p>
 <CodeSnippet language="XML">
@@ -95,7 +114,7 @@ go_programming_goroutines</code> created using the Dockerfile <code className="j
 goroutines/Dockerfile</code>. Putting all the pieces together, the following image shows what it looks like to trigger
 the run configuration and view its console log.
 </p>
-<InlineImage filename="10-22-22-goland-run-config.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="11-5-22-goland-run-config.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
 Run configurations are great for manually executing tests or running code.  However, for CI/CD purposes, operations
@@ -103,6 +122,40 @@ like executing tests, compiling code, and packaging binaries should be automated
 GitHub Actions can help.
 </p>
 <SectionTitle title="Please Build Setup">Please Build Setup</SectionTitle>
+<Definition word="Please Build">
+Please Build is a language agnostic build system derived from Bazel and Blaze, which are open source and proprietary
+build systems originating at Google.  Like Bazel and Blaze, Please Build uses the Starlark programming language for its
+build files.  Build files, named <strong>BUILD</strong>, contain build targets, which are units of deployable
+code<sup>3</sup>.  Build targets are written using rules, which appear as Python functions.  Rules are configurable
+using arguments and they determine what occurs when a build target is run.  Builds are run in isolation from
+application source code; they are given a separate <strong>plz-out</strong> directory to run it.  Build results are
+also cached, which makes subsequent builds on unchanged code very fast.
+</Definition>
+<Definition word="Starlark Programming Language">
+Starlark is a programming language that is syntactically similar to and inspired by Python<sup>4</sup>.  Starlark is
+used in <strong>BUILD</strong> files for the Blaze and Bazel build tools, along with their derivatives such as Please
+Build.  Starlark has different language rules than Python despite its syntactic similarities;  Starlark is neither a
+superset or subset of Python.
+</Definition>
+<p>
+When configuring Please Build in a repository, a <code className="jarombek-inline-code">plz init</code> command is run
+from the root of the codebase.  This command creates a <a href="https://github.com/AJarombek/go-programming/blob/
+v1.1.1/.plzconfig">.plzconfig</a> file in the repository, which configures the execution of Please
+commands<sup>5</sup>.  This is how <a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/.plzconfig">
+.plzconfig</a> appears in my <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1">go-programming</a>
+repository.
+</p>
+<CodeSnippet language="TOML">
+[please]
+version = 16.22.1
+
+[build]
+PassEnv = PATH
+path = $PATH:/usr/local/bin:/usr/bin:/bin
+
+[buildenv]
+test-env = plz
+</CodeSnippet>
 <SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
