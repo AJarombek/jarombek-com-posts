@@ -156,6 +156,93 @@ path = $PATH:/usr/local/bin:/usr/bin:/bin
 [buildenv]
 test-env = plz
 </CodeSnippet>
+<p>
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/.plzconfig">.plzconfig</a> lists out different build
+options to use in the repository<sup>6</sup>.  <code className="jarombek-inline-code">version = 16.22.1</code> sets the
+version of Please Build to use while performing builds.  <code className="jarombek-inline-code">PassEnv = PATH</code>
+takes the <code className="jarombek-inline-code">PATH</code> environment variable and makes it accessible while Please
+Build rules are executed.  <code className="jarombek-inline-code">path = $PATH:/usr/local/bin:/usr/bin:/bin</code> then
+takes this path and appends <code className="jarombek-inline-code">/usr/local/bin:/usr/bin:/bin</code> to it.  Finally,
+<code className="jarombek-inline-code">test-env = plz</code> creates a new environment variable named
+<code className="jarombek-inline-code">TEST_ENV</code> and assigns it a value of <code className="jarombek-inline-code">
+plz</code>.  <code className="jarombek-inline-code">TEST_ENV</code> is accessible while running Please Build commands.
+These are just a few of the configuration options available with Please Build; a full list of options is available in
+the <a href="https://please.build/config.html">Please Build documentation</a>.
+</p>
+<p>
+As previously mentioned, Please Build consists of <strong>BUILD</strong> files written in Starlark.  In my
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.1">go-programming</a> repository, the root directory
+contains a <a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/BUILD">BUILD</a> file with the following
+contents.
+</p>
+<CodeSnippet language="Starlark">
+package(default_visibility = ["PUBLIC"])
+
+go_toolchain(
+    name = "go_download",
+    version = "1.18",
+)
+
+go_module(
+    name = "testify",
+    module = "github.com/stretchr/testify",
+    install = ["..."],
+    version = "v1.7.0",
+    deps = [
+        ":go_difflib",
+        ":go_yaml",
+        ":go_spew",
+        ":objx",
+    ],
+)
+
+go_module(
+    name = "go_difflib",
+    module = "github.com/pmezard/go-difflib",
+    install = ["..."],
+    version = "v1.0.0",
+    deps = [":go_download"],
+)
+
+go_module(
+    name = "go_yaml",
+    module = "gopkg.in/yaml.v3",
+    install = ["..."],
+    version = "v3.0.0-20200313102051-9f266ea9e77c",
+    deps = [":go_download"],
+)
+
+go_module(
+    name = "go_spew",
+    module = "github.com/davecgh/go-spew",
+    install = ["..."],
+    version = "v1.1.0",
+    deps = [":go_download"],
+)
+
+go_module(
+    name = "objx",
+    module = "github.com/stretchr/objx",
+    install = ["..."],
+    version = "v0.1.0",
+    deps = [":go_download"],
+)
+</CodeSnippet>
+<p>
+On the first line of code, <code className="jarombek-inline-code">package()</code>, a Please Build built-in function,
+sets configuration details for all the ensuing rules<sup>6</sup>.  In my code, it sets the visibility of all the rules
+in the file to <code className="jarombek-inline-code">PUBLIC</code>, which makes them accessible to all the other rules
+in the repository<sup>7</sup>.
+</p>
+<p>
+The next rule, <code className="jarombek-inline-code">go_toolchain()</code>, downloads Go for other
+<code className="jarombek-inline-code">go_</code> prefixed rules to use.  Based on my configurations,
+<code className="jarombek-inline-code">go_toolchain()</code> downloads version 1.18 of Go.  The
+<code className="jarombek-inline-code">name</code> argument of <code className="jarombek-inline-code">
+go_toolchain()</code>, defines a unique name for the rule that can be used as a dependency for other rules.
+<code className="jarombek-inline-code">name</code> is considered a common rule, and exists on every rule in Please
+Build<sup>8</sup>.
+</p>
 <SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
