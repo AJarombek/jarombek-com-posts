@@ -243,6 +243,86 @@ go_toolchain()</code>, defines a unique name for the rule that can be used as a 
 <code className="jarombek-inline-code">name</code> is considered a common rule, and exists on every rule in Please
 Build<sup>8</sup>.
 </p>
+<p>
+The first <code className="jarombek-inline-code">go_module()</code> rule, named <code className="jarombek-inline-code">
+testify</code>, downloads and installs a Go module that is used by other <code className="jarombek-inline-code">go_
+</code> prefixed rules.  This Go module contains assertion functions which I use in unit tests.   The full path of the
+module is <code className="jarombek-inline-code">github.com/stretchr/testify</code> and the version I install is
+<code className="jarombek-inline-code">v1.7.0</code>.  <code className="jarombek-inline-code">testify</code> depends on
+four Go modules itself, which are defined in the <code className="jarombek-inline-code">deps</code> argument.  Each
+dependency declares its own <code className="jarombek-inline-code">go_module()</code> rule in the <strong>BUILD</strong>
+file. The colon (<code className="jarombek-inline-code">:</code>) before each dependency name informs Please Build that
+the dependency is another rule declared in the same package.
+</p>
+<p>
+With that in mind, notice how the rules in this <strong>BUILD</strong> file define a dependency tree.
+<code className="jarombek-inline-code">testify</code> is dependent on four dependencies,
+<code className="jarombek-inline-code">go_difflib</code>, <code className="jarombek-inline-code">go_yaml</code>,
+<code className="jarombek-inline-code">go_spew</code>, <code className="jarombek-inline-code">objx</code>, which in turn
+are all dependent on <code className="jarombek-inline-code">go_download</code>.  This is often the case in Please Build,
+where rules build on each other to create a functional build system for an application.
+</p>
+<p>
+Rules in the root <a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/BUILD">BUILD</a> file create a
+foundation for other rules in the repository.  Let’s take a look at another <strong>BUILD</strong> file.
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/unit-testing/BUILD">unit-testing/BUILD</a> defines
+rules that run unit tests for a Go program.  The <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/
+unit-testing">unit-testing</a> directory contains code samples I created based on my learnings from chapter 11 of
+<a href="https://www.gopl.io/">The Go Programming Language</a>.  The <strong>BUILD</strong> file contains two rules.
+</p>
+<CodeSnippet language="Starlark">
+go_library(
+    name = "license_plates",
+    srcs = ["license_plates.go"],
+    deps = ["//:go_download"],
+    labels = ["unit_testing"],
+)
+
+go_test(
+    name = "test",
+    srcs = ["license_plates_test.go"],
+    deps = [":license_plates"],
+    labels = [
+        "unit_testing",
+        "test",
+    ],
+)
+</CodeSnippet>
+<p>
+First, <code className="jarombek-inline-code">go_library()</code> defines a rule, named
+<code className="jarombek-inline-code">license_plates</code>, that creates a Go library usable by other Go programs.
+<code className="jarombek-inline-code">license_plates</code> contains a single Go file
+<code className="jarombek-inline-code">license_plates.go</code> and is dependent on
+<code className="jarombek-inline-code">//:go_download</code>, which downloads and installs Go. The
+<code className="jarombek-inline-code">//:</code> prefix to the dependency tells Please Build that
+<code className="jarombek-inline-code">go_download</code> is a rule located in the root of the repository.
+</p>
+<p>
+Second, <code className="jarombek-inline-code">go_test()</code> defines a rule, named
+<code className="jarombek-inline-code">test</code>, to run Go tests.  <code className="jarombek-inline-code">test</code>
+contains a single Go file <code className="jarombek-inline-code">license_plates_test.go</code>, which implements
+multiple unit test cases, and is dependent on the <code className="jarombek-inline-code">license_plates</code> rule.
+</p>
+<p>
+<code className="jarombek-inline-code">test</code> is executed from the command line to verify that all Go tests are
+successful. Running a test rule is done with a <code className="jarombek-inline-code">plz test</code> command; in my
+scenario, <code className="jarombek-inline-code">plz test //unit-testing:test -vvv</code> runs my
+<code className="jarombek-inline-code">test</code> rule.  <code className="jarombek-inline-code">//unit-testing:test
+</code> specifies the path and name of the rule to execute, and <code className="jarombek-inline-code">-vvv</code> sets
+the verbosity level of the console output logs.  Running this command in my repository generates an output similar to
+the following log.
+</p>
+<CodeSnippet>
+...
+//unit-testing:test 5 tests run in 121ms; 5 passed
+    TestValidCountryCode    PASS  0s
+    TestInvalidCountryCode  PASS  0s
+    TestCollected           PASS  0s
+    Collected               PASS  0s
+    CountryCode             PASS  0s
+1 test target and 5 tests run; 5 passed.
+Total time: 15.22s real, 120ms compute.
+</CodeSnippet>
 <SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
