@@ -412,5 +412,93 @@ Build finished; total time 140ms, incrementality 100.0%. Outputs:
   plz-out/bin/goroutines/channel_example/channel_example
 </CodeSnippet>
 <SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
+<Definition word="GitHub Actions">
+GitHub Actions is a CI/CD platform integrated with the GitHub version control hosting service.  GitHub Actions allows
+engineers to create workflows that run on virtual machines, containers, or self-hosted infrastructure<sup>10</sup>.
+Workflows, written in YAML, contain one or many jobs that run on a schedule or respond to events within a repository,
+such as code commits or pull request creation.
+</Definition>
+<p>
+GitHub Actions workflows exist in a <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/.github/workflows">
+.github/workflows</a> directory of GitHub repositories.  In my repository, this file contains two YAML files, each
+corresponding to a workflow.  Let’s look at the first workflow, <a href="https://github.com/AJarombek/go-programming/
+blob/v1.1.1/.github/workflows/go_tests.yml">go_tests.yml</a>, which runs all the Go tests in the
+<a href="https://github.com/AJarombek/go-programming/tree/v1.1.1">go-programming</a> repository.
+</p>
+<CodeSnippet language="YAML">
+name: Go Tests
+
+on:
+  push:
+    branches: ["main", "feature/*"]
+  pull_request:
+    branches: ["main"]
+
+  schedule:
+    - cron: "0 5 * * 1,3,5"
+
+  workflow_dispatch:
+
+jobs:
+  go_tests:
+    runs-on: ubuntu-latest
+    container: ajarombek/go-alpine-linux-programming:latest
+    steps:
+      - run: echo "Job running on a ${{ runner.os }} server"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
+
+      - name: Files installed from repository
+        run: ls -ltra
+
+      - name: Run Go tests using Please Build
+        run: plz test //... -i test -vvv
+</CodeSnippet>
+<p>
+This YAML document creates a workflow named <code className="jarombek-inline-code">Go Tests</code>.  The
+<code className="jarombek-inline-code">on</code> dictionary configures events that trigger the workflow and an
+additional cron schedule for the workflow to run on.  <code className="jarombek-inline-code">on</code> contains four
+keys.  The first key, <code className="jarombek-inline-code">push</code>, triggers the workflow anytime code is pushed
+to the <code className="jarombek-inline-code">main</code> branch or any branch matching the
+<code className="jarombek-inline-code">feature/*</code> pattern.  <code className="jarombek-inline-code">
+pull_request</code> triggers the workflow anytime a pull request is made that merges code into the
+<code className="jarombek-inline-code">main</code>  branch.  <code className="jarombek-inline-code">schedule</code> sets
+a cron schedule for the workflow to run on, in my case 5:00am every Monday, Wednesday, and Friday.  Finally,
+<code className="jarombek-inline-code">workflow_dispatch</code> enables manual triggers of the pipeline from the GitHub
+UI or API<sup>11</sup>.
+</p>
+<p>
+The <code className="jarombek-inline-code">jobs</code> dictionary configures one or many jobs within a workflow.  My
+workflow contains a single job named <code className="jarombek-inline-code">go_tests</code>.  The
+<code className="jarombek-inline-code">runs-on</code> key-value pair determines the machine and operating system to run
+on, in my case an Ubuntu distribution of Linux (<code className="jarombek-inline-code">ubuntu-latest</code>).  On top of
+Ubuntu, my job runs in a Docker container, with the image name and tag specified by
+<code className="jarombek-inline-code">container</code>.  <code className="jarombek-inline-code">
+ajarombek/go-alpine-linux-programming:latest</code> is a Docker image stored on <a href="https://hub.docker.com/
+repository/docker/ajarombek/go-alpine-linux-programming">DockerHub</a> and defined in a <a href="https://github.com/
+AJarombek/go-programming/blob/v1.1.1/base/Dockerfile">Dockerfile</a> in my repository.
+</p>
+<p>
+<code className="jarombek-inline-code">steps</code> is a list of steps within a job.  Steps with a
+<code className="jarombek-inline-code">run</code> key execute their corresponding value from the shell as a command
+line program<sup>12</sup>.  <code className="jarombek-inline-code">name</code> keys give steps a name that is displayed
+in the GitHub UI and <code className="jarombek-inline-code">uses</code> keys run an action for a step<sup>13</sup>.
+</p>
+<p>
+Actions are a unit of execution within GitHub Actions.  They are programs, often written in JavaScript, that perform
+commonly repeated tasks<sup>14</sup>.  In my case, I use a <code className="jarombek-inline-code">
+actions/checkout@v3</code> action, which is <a href="https://github.com/actions/checkout">maintained by GitHub</a>.
+</p>
+<p>
+As a whole, my <code className="jarombek-inline-code">Go Tests</code> workflow runs on a custom Docker container,
+performs a checkout of my <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1">go-programming</a>
+repository, and runs a <code className="jarombek-inline-code">plz test //... -i test -vvv</code> command, which
+executes all Go tests in my code.  The <code className="jarombek-inline-code">-i test</code> flag in the
+<code className="jarombek-inline-code">plz test</code> command runs every Please Build rule that has a label of value
+<code className="jarombek-inline-code">test</code>.
+</p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
