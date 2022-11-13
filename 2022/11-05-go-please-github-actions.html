@@ -323,6 +323,94 @@ the following log.
 1 test target and 5 tests run; 5 passed.
 Total time: 15.22s real, 120ms compute.
 </CodeSnippet>
+<p>
+Let’s look at a similar example in my <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/reflection">
+reflection</a> directory, which analyzes how to use reflection to gain runtime information about types in Go programs.
+<strong>reflection</strong> contains zero library files and two unit test files, with the following
+<a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/reflection/BUILD">BUILD</a> configuration.
+</p>
+<CodeSnippet language="Starlark">
+filegroup(
+    name = "test_files",
+    srcs = glob(["*.go"]),
+)
+
+go_test(
+    name = "test",
+    srcs = [":test_files"],
+    deps = [
+        "//:go_download",
+        "//:testify",
+    ],
+    labels = [
+        "reflection",
+        "test"
+    ],
+)
+</CodeSnippet>
+<p>
+Instead of explicitly writing names of Go files in the <code className="jarombek-inline-code">srcs</code> argument of
+the <code className="jarombek-inline-code">go_test()</code> rule, I use a separate
+<code className="jarombek-inline-code">filegroup()</code> rule to collect all the files matching the glob pattern
+<code className="jarombek-inline-code">*.go</code>.  In the end, running these tests is the same as it was in the
+<strong>unit-testing</strong> directory, with a <code className="jarombek-inline-code">
+plz test //reflection:test -vvv</code> command.
+</p>
+<p>
+Let’s look at one more example in my <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1/goroutines/
+channel_example">goroutines/channel_example</a> directory.  <strong>channel_example</strong> contains a single Go
+application file, and has the following <a href="https://github.com/AJarombek/go-programming/blob/v1.1.1/goroutines/
+channel_example/BUILD">BUILD</a> configuration.
+</p>
+<CodeSnippet language="Starlark">
+go_binary(
+    name = "binary",
+    srcs = ["channel_example.go"],
+    out = "channel_example",
+    deps = ["//:go_download"],
+    labels = [
+        "goroutines",
+        "binary",
+    ],
+)
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">go_binary()</code> rule creates an executable binary file from compiled Go
+code.  After Go is installed from the <code className="jarombek-inline-code">//:go_download</code> dependency rule, a
+single <code className="jarombek-inline-code">channel_example.go</code> file is compiled.  Running a binary rule is
+done with a <code className="jarombek-inline-code">plz build</code> command; in my scenario,
+<code className="jarombek-inline-code">plz build //goroutines/channel_example:binary -vvv</code> runs the
+<code className="jarombek-inline-code">binary</code> rule.  Running this command in my repository generates an output
+similar to the following log.
+</p>
+<CodeSnippet>
+...
+Build finished; total time 12.67s, incrementality 66.7%. Outputs:
+//goroutines/channel_example:binary:
+  plz-out/bin/goroutines/channel_example/channel_example
+</CodeSnippet>
+<p>
+The <code className="jarombek-inline-code">plz build</code> command created a binary file within a <strong>plz-out/bin
+</strong> directory.  From a command prompt (in my case running Bash), this binary file can be executed.
+</p>
+<CodeSnippet language="Bash">
+./plz-out/bin/goroutines/channel_example/channel_example
+</CodeSnippet>
+<p>
+Every subdirectory in my <a href="https://github.com/AJarombek/go-programming/tree/v1.1.1">go-programming</a> repository
+contains a <strong>BUILD</strong> file with additional rules in case you want to explore more.  One last thing to
+mention is that re-running any Please Build commands without altering the source code results in a faster build.  This
+is because stages of builds are cached, similar to layers on images being cached in a Dockerfile build.  For example,
+the previous <code className="jarombek-inline-code">plz build</code> command, <code className="jarombek-inline-code">
+plz build //goroutines/channel_example:binary -vvv</code>, took 12.67 seconds the first time it ran on my machine.
+Running it a second time took just 140 milliseconds.
+</p>
+<CodeSnippet>
+...
+Build finished; total time 140ms, incrementality 100.0%. Outputs:
+//goroutines/channel_example:binary:
+  plz-out/bin/goroutines/channel_example/channel_example
+</CodeSnippet>
 <SectionTitle title="Enabling GitHub Actions">Enabling GitHub Actions</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
