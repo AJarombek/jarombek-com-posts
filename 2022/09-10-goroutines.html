@@ -1,27 +1,26 @@
 <div>
 <p>
 Recently I read <a href="https://www.gopl.io/">The Go Programming Language</a> in hopes to better understand Go and
-discover what makes it unique as a language.  One feature of Go that peaked my interest was goroutines.  Goroutines are a
-mechanism for achieving concurrency and parallelism in Go programs.  Many programming languages provide libraries for
-using multiple threads to achieve concurrency and sometimes even multiple processes, but Go takes a more distinct
-approach with goroutines.
+discover what makes it a unique language.  One Go feature that peaked my interest was goroutines.  Goroutines are a
+mechanism for achieving concurrency and parallelism in Go programs.  Many programming languages provide libraries that
+ use multiple threads or processes to achieve concurrency, but Go takes a more distinct approach.
 </p>
 <p>
-Goroutines as a means of concurrent programming lead me to ask many questions, all of which I’ll attempt to answer in
-this article.  These questions are as follows:
+Go's use of Goroutines to achieve concurrent programming lead me to ask many questions, all of which I'll attempt to answer in
+this article.  The questions are as follows:
 </p>
 <ul>
-<li><a href="#">What is a goroutine?</a></li>
-<li><a href="#">What is the difference between a thread and a goroutine?</a></li>
-<li><a href="#">Why does Go use goroutines instead of threads?</a></li>
-<li><a href="#">What are channels and how do they relate to goroutines?</a></li>
-<li><a href="#">What is the difference between a coroutine and a goroutine?</a></li>
+<li><a href="#what-is-a-goroutine">What is a goroutine?</a></li>
+<li><a href="#what-is-the-difference-between-a-thread-and-a-goroutine">What is the difference between a thread and a goroutine?</a></li>
+<li><a href="#why-does-go-use-goroutines-instead-of-threads">Why does Go use goroutines instead of threads?</a></li>
+<li><a href="#what-are-channels-and-how-do-they-relate-to-goroutines">What are channels and how do they relate to goroutines?</a></li>
+<li><a href="#what-is-the-difference-between-a-coroutine-and-a-goroutine">What is the difference between a coroutine and a goroutine?</a></li>
 </ul>
 <SectionTitle title="What is a goroutine">What is a goroutine?</SectionTitle>
 <Definition word="Goroutine">
 A goroutine is an activity within a Go program<sup>1</sup>.  Using goroutines, engineers can write concurrent and
 parallel programs.  When a Go program starts and calls its <code className="jarombek-inline-code">main()</code> function,
-it runs in a <strong>main goroutine</strong><sup>2</sup>.  This is similar in concept to a <strong>main thread</strong>
+it runs in a <strong>main goroutine</strong><sup>2</sup>.  This is similar conceptually to a <strong>main thread</strong>
 in languages like Java and Python, although goroutines and threads are distinct entities.  A new goroutine is created
 in a Go program using the <code className="jarombek-inline-code">go</code> keyword.  In a program with multiple
 goroutines, each goroutine runs concurrently, and if the computer running the program has multiple CPUs or cores,
@@ -30,7 +29,7 @@ potentially in parallel.
 <p>
 As a basic example, the <a href="https://github.com/AJarombek/go-programming/blob/main/goroutines/basic_example/
 basic_example.go">following code</a> starts a separate goroutine from the main goroutine of an application.  Both
-goroutines simply print text to stdout and exit.
+goroutines simply print text to standard output and exit.
 </p>
 <CodeSnippet language="Go">
 package main
@@ -56,16 +55,16 @@ func main() {
 </CodeSnippet>
 <p>
 One thing to note is when the main goroutine exists (the <code className="jarombek-inline-code">main()</code> function
-completes), all other goroutines are forced to exit as well<sup>3</sup>.  Therefore it is possible the child goroutine
-is forced to close before it can print its text.  In production code, there are ways to wait until other goroutines
-complete.
+completes), all other goroutines are forced to exit as well<sup>3</sup>.  Therefore, it is possible the child goroutine
+is forced to close before it can print "Other Goroutine".  In production code, there are ways to wait for other goroutines
+ to run until completion.
 </p>
 <SectionTitle title="What is the difference between a thread and a goroutine">
 What is the difference between a thread and a goroutine?
 </SectionTitle>
 <p>
 A <a href="https://jarombek.com/blog/nov-1-2020-python-concurrency#thread">thread</a>, also known as a lightweight
-process, is the most basic unit of scheduling on most computers.  In case you want more background information, I wrote
+process, is the most basic unit of scheduling on most computers.  I wrote
 about threads, the difference between concurrency and parallelism, along with other multithreading concepts in a
 <a href="https://jarombek.com/blog/nov-1-2020-python-concurrency">previous article on Python</a>.
 </p>
@@ -80,7 +79,7 @@ Kernel Thread
 <div className="jarombek-cte-body">
 <p>
 Kernel threads, also known as OS threads, are threads that are managed by the operating system in kernel mode.
-Running in Kernel mode allows OS threads to have unrestricted access to the underlying hardware they are run
+Running in Kernel mode allows OS threads to have unrestricted access to the underlying hardware they run
 on<sup>4</sup>.  Kernel threads contain a virtualized processor, stack space, and program state from the process they
 run within<sup>5</sup>.  Although kernel threads require operating system support, all modern operating systems support
 them<sup>6</sup>.  An example of a kernel thread library is <a href="https://en.wikipedia.org/wiki/Pthreads">
@@ -95,8 +94,8 @@ User Thread
 </h5>
 <div className="jarombek-cte-body">
 <p>
-A user thread is similar to an OS thread, except it exists in user space and isn’t managed by the operating system.
-Instead, user threads are written and managed in code, such as the standard libraries for programming languages.
+A user thread is similar to an OS thread, except it exists in user space and isn't managed by the operating system.
+Instead, user threads are written and managed in code, such as within the standard libraries for programming languages.
 While they require lots of user space code to implement, the benefits of user threads include fewer expenses from
 context switches and more application control<sup>7</sup>.
 </p>
@@ -118,10 +117,10 @@ models along with kernel threads and user threads is critical for understanding 
 <div className="jarombek-cte-body">
 <p>
 The 1:1 threading model is where every user thread is mapped to a single kernel thread.  Different ways to think of
-this threading model is user threads implementing kernel threading functionality, or user threads being a wrapper
-around kernel threads.  1:1 Threading is also known as kernel-level threading<sup>7</sup>.  Pthreads is an example of
-a library using the 1:1 threading model, which is why I previously described it as an example of a kernel thread.
-While its code isn’t strictly in kernel space, every user thread created with pthreads maps directly to a single,
+this threading model are user threads implementing kernel threading functionality, or user threads existing as a wrapper
+around kernel threads.  1:1 Threading is also known as kernel-level threading<sup>7</sup>.  Pthreads are an example of
+ the 1:1 threading model, which is why I previously described them as an example of a kernel thread.
+While their code isn't strictly in kernel space, every user thread created with pthreads maps directly to a single,
 unique kernel thread; user threads and kernel threads in pthreads form a one-to-one relationship.
 </p>
 <p>
@@ -144,12 +143,12 @@ also known as user-level threading.  Historically, the Java threading library us
 threads), although this system is no longer used<sup>9,10</sup>.
 </p>
 <p>
-The benefits of n:1 threading are less performance costs related to context switching and more control in user space.
+The benefits of n:1 threading are reduced performance costs related to context switching and more control in user space.
 However, on modern architectures, it is important for threads to take advantage of multiple cores and processors.
 Since the n:1 threading model maps user threads to a single kernel thread, all user-level threads are executed on a
 single core and a single processor.  The performance loss of not taking advantage of multiple cores or processors
 far outweighs any benefits gained from reducing context switches (on multicore/multiprocessor machines), making N:1
-threading a rarely used approach.  Also, the amount of complex user level code needed to maintain user-level threads
+threading a seldomly used approach.  Also, the amount of complex user level code needed to maintain user-level threads
 is another detriment to n:1 threading.
 </p>
 </div>
@@ -194,20 +193,20 @@ After learning that Go uses hybrid threading instead of a more common kernel thr
 to wonder was why?  Go is a much newer language than Java and Python, which were first released in 1996 and 1991,
 respectively.  Therefore, Go had the benefit of hindsight when it chose its threading model.  By using hybrid
 threading, goroutines (which exist in user space) are able to have custom functionality that makes concurrent code
-easier to use and write.  Hybrid threading also reduces the cost of context switching in the scenario where the number
-of goroutines is greater than the number of cores and processors in a machine.  This can result in more efficient
+easier to use and write.  Hybrid threading also reduces the cost of context switching in a scenario where the number
+of goroutines is greater than the number of cores and processors in a machine.  This results in more efficient
 concurrent code while still leveraging a machine's architecture for parallelism.
 </p>
 <p>
 While reading Go documentation and <a href="https://www.gopl.io/">The Go Programming Language</a>, writers are quick to
 point out that goroutines are not threads.  In many ways, I find it easier to think of goroutines as user threads with
-some unique attributes, making them distinct.  One of the biggest differences between goroutines and typical
+some unique attributes.  One of the biggest differences between goroutines and typical
 threads is that threads have a fixed-sized stack space while goroutines have a dynamically-sized stack
 space<sup>15</sup>.
 </p>
 <p>
 I believe dynamically-sized stack space is the best feature of goroutines.  Kernel threads have a fixed-size stack
-space whose size is architecture dependent, but is often fairly large to prevent a stack overflow.  There is also a
+space where the size is architecture dependent, but is often large enough to prevent a stack overflow.  There is also a
 configurable limit to the number of kernel threads on a machine.  This leads to scalability
 issues when a program attempts to execute many operations concurrently.
 </p>
@@ -225,16 +224,16 @@ goroutines are able to scale with growing concurrent workloads.  Concurrent proc
 with threads in libraries like pthreads or languages like Java and Python may be easier in Go with goroutines.
 </p>
 <p>
-The ease of creating goroutines is also beneficial towards simplifying the complexity around concurrent code.  In my
+Goroutines also abstract away much of the complexity around concurrent code.  In my
 opinion, prefixing any Go function with the <code className="jarombek-inline-code">go</code> keyword is an elegant way
-to implement a concurrency library; goroutines are easier to use and learn compared to threading libraries in my
-experience.
+to implement a concurrency library; in my experience, goroutines are easier to use and learn compared to other
+threading libraries.
 </p>
 <SectionTitle title="What are channels and how do they relate to goroutines">
 What are channels and how do they relate to goroutines?
 </SectionTitle>
 <p>
-In Go, channels are a way to communicate between goroutines.  Let’s take a basic example where integer values are
+In Go, channels are a way to communicate between goroutines.  Let's take a basic example where integer values are
 passed to a goroutine via a channel and returned from the same goroutine via another channel.
 </p>
 <CodeSnippet language="Go">
@@ -283,10 +282,12 @@ the value, the statement <code className="jarombek-inline-code">out <- result</c
 In the main goroutine, the <code className="jarombek-inline-code">in <- 2</code> statement sends a value to the
 <code className="jarombek-inline-code">in</code> channel and the <code className="jarombek-inline-code">
 result := <-out</code> statement reads a value from the <code className="jarombek-inline-code">out</code> channel and
-assigns it to <code className="jarombek-inline-code">result</code>.  The <code className="jarombek-inline-code">
-double()</code> function can be refactored to use unidirectional channels, which specify the directional flow of data
-through channels in their type definitions<sup>18</sup>.  The directional flow of data in a unidirectional channel must
-be obeyed.
+assigns it to <code className="jarombek-inline-code">result</code>.
+</p>
+<p>
+The <code className="jarombek-inline-code">double()</code> function can be refactored to use unidirectional channels,
+ which specify the directional flow of data through channels in their type definitions<sup>18</sup>.  The directional
+ flow of data in a unidirectional channel must be obeyed.
 </p>
 <CodeSnippet language="Go">
 func double(out chan<- int, in <-chan int) {
@@ -298,13 +299,13 @@ func double(out chan<- int, in <-chan int) {
 }
 </CodeSnippet>
 <p>
-<code className="jarombek-inline-code">chan<- int</code> is a send-only integer channel and
-<code className="jarombek-inline-code"><-chan int</code> is a receive only channel<sup>18</sup>.
+Type <code className="jarombek-inline-code">chan<- int</code> is a send-only integer channel and
+ type <code className="jarombek-inline-code"><-chan int</code> is a receive only integer channel<sup>18</sup>.
 </p>
 <p>
-Another way to refactor this example is to use buffered channels.  Buffered channels represent a queue with a
+Another way to refactor this example is to use buffered channels.  Buffered channels represent queues with a
 specified size, compared to a standard channel which holds a single element.  Here is a final version of the code
-example using buffered channels and unidirectional channels.
+ using buffered channels and unidirectional channels.
 </p>
 <CodeSnippet language="Go">
 package main
@@ -351,7 +352,7 @@ What is the difference between a coroutine and a goroutine?
 A coroutine is a function or subroutine that allows its execution to be suspended and resumed
 cooperatively<sup>19</sup>.  In Python, coroutines are functions that yield their control flow; they are functions
 containing a <code className="jarombek-inline-code">yield</code> keyword in their bodies<sup>20</sup>.  Coroutines are
-similar to kernel threads in the sense that they enable concurrent execution, but unlike threads do not enable
+similar to kernel threads because they enable concurrent execution, but unlike threads do not enable
 parallelism<sup>21</sup>.  Coroutines also follow cooperative multitasking, unlike kernel threads which follow
 preemptive multitasking<sup>22</sup>.  In other words, coroutines yield control of a program on their own terms
 whenever they wish, while kernel threads are forced to yield control by the operating system.
@@ -405,7 +406,7 @@ prior article.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Goroutines are a very interesting part of the Go programming language, and make me want to leverage Go next time I have
+Goroutines are a very interesting part of the Go programming language, and I'll likely leverage them next time I have
 a codebase with large amounts of concurrency and parallelism. Goroutines make concurrent programming easy, hiding a
 complex hybrid threading model behind simplistic language syntax and semantics.  Go code shown in this article along
 with other goroutine and channel examples are available in my <a href="https://github.com/AJarombek/go-programming/
