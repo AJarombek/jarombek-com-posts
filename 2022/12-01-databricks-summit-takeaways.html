@@ -13,7 +13,56 @@ by the end, after taking part in many breakout sessions, I had some clear takeaw
 platform and the Data Science and AI industry at large.
 </p>
 <SectionTitle title="Evolving Data Towards AI">Evolving Data Towards AI</SectionTitle>
+<p>
+Databricks is continuously adding new features in attempts to become a one-stop cloud solution for data science and AI.
+Databricks isn’t alone with this vision; Snowflake is also trying to build out a platform that customers can use for
+all their data science needs.  During the conference, Databricks emphasized the evolution of data science within a
+company and how moving from analyzing historical data to predicting future data gives companies a competitive
+edge<sup>1</sup>.  While the benefits of AI aren’t a new revelation, hearing this said at the beginning of the
+conference resonated with me.  My AI programming experience is rusty at best, and is something I hope to sharpen up
+soon.  As someone who works with Databricks every day at work, I should also look for opportunities to experiment with
+predictive modeling.
+</p>
+<p>
+The evolution of data science within a company was broken down into seven distinct stages<sup>2</sup>.
+</p>
+<ol>
+<li>Clean Data</li>
+<li>Reports</li>
+<li>Ad Hoc Queries</li>
+<li>Data Exploration</li>
+<li>Predictive Modeling</li>
+<li>Prescriptive Analytics</li>
+<li>Automated Decision Making</li>
+</ol>
+<p>
+Cleaning data, generating reports, ad hoc querying, and data exploration are activities I perform all the time, but
+trying to find opportunities to move into stage five and beyond is equally important to iterating upon and continuously
+learning within stages 1-4.  All Databricks infrastructure and data analytics code I’ve written for personal use is
+available in my <a href="https://github.com/AJarombek/databricks-spark-programs">databricks-spark-programs</a>
+repository, and I plan to write more about this codebase soon.
+</p>
 <SectionTitle title="Databricks Workflows vs Airflow">Databricks Workflows vs. Airflow</SectionTitle>
+<p>
+As previously mentioned, Databricks is attempting to create a one-stop cloud solution for data science and AI.  One
+piece of software often used alongside Databricks is Apache Airflow, a data pipeline management tool.  I’ve written
+about the basics of <a href="https://jarombek.com/blog/jan-17-2022-airflow">Apache Airflow</a> and have
+<a href="https://github.com/AJarombek/data-analytics-prototypes/tree/master/Airflow">Airflow code available on GitHub</a>.
+</p>
+<p>
+During the conference, Databricks discussed workflows, an alternative to Airflow integrated within the Databricks data
+lakehouse platform.  Both Airflow and Databricks workflows are designed around orchestrating Directed Acyclic Graphs
+(DAGs).  In Airflow, DAGs contain tasks and sensors of various purposes, such as running a Databricks job or waiting
+for a file to exist in AWS S3.  In Databricks workflows, DAGs contain one or more Databricks jobs, which are programs
+that run on a cluster within the Databricks environment.
+</p>
+<p>
+With workflows, Databricks hopes that data engineers will orchestrate their data pipelines within the Databricks
+platform instead of using a third party solution like Airflow.  Although Databricks continues to flesh out their
+workflow solution, Airflow has many more features and integrates seamlessly with other cloud platforms and services.
+Because Airflow is so feature rich, I expect many Databricks customers will continue using it for building data
+pipelines instead of Databricks workflows until the functionality gap between the two closes.
+</p>
 <SectionTitle title="ELT vs ETL">ELT vs. ETL</SectionTitle>
 <SectionTitle title="Spark Connect">Spark Connect</SectionTitle>
 <SectionTitle title="Battle for Comprehensive Data Platform Supremacy">Battle for Comprehensive Data Platform Supremacy</SectionTitle>
