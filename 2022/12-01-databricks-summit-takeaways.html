@@ -54,8 +54,11 @@ During the conference, Databricks discussed workflows, an alternative to Airflow
 lakehouse platform.  Both Airflow and Databricks workflows are designed around orchestrating Directed Acyclic Graphs
 (DAGs).  In Airflow, DAGs contain tasks and sensors of various purposes, such as running a Databricks job or waiting
 for a file to exist in AWS S3.  In Databricks workflows, DAGs contain one or more Databricks jobs, which are programs
-that run on a cluster within the Databricks environment.
+that run on a cluster within the Databricks environment.  Below is an image of a Databricks workflow containing
+multiple jobs.
 </p>
+<InlineImage filename="12-1-22-databricks-workflow.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <p>
 With workflows, Databricks hopes that data engineers will orchestrate their data pipelines within the Databricks
 platform instead of using a third party solution like Airflow.  Although Databricks continues to flesh out their
@@ -63,7 +66,53 @@ workflow solution, Airflow has many more features and integrates seamlessly with
 Because Airflow is so feature rich, I expect many Databricks customers will continue using it for building data
 pipelines instead of Databricks workflows until the functionality gap between the two closes.
 </p>
-<SectionTitle title="ELT vs ETL">ELT vs. ETL</SectionTitle>
+<SectionTitle title="ELT and ETL Processes">ELT and ETL Processes</SectionTitle>
+<ComparisonTable title="ELT vs. ETL">
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Extract, Load, Transform (ELT)
+</h5>
+<div className="jarombek-cte-body">
+<p>
+An ELT is a software engineering process with three steps.  The first step extracts data from a source, the second step
+loads data to a destination, and the third step transforms data within its destination locale.  Unlike an ETL, an ELT
+loads raw source data into its final destination, which is likely a data warehouse, data lake, or data lakehouse.  For example, an
+ELT might extract data from a source database such as PostgreSQL and load it into delta tables within Databricks, and
+then transform the delta tables and save the result set within another delta table.
+</p>
+</div>
+</ComparisonTableEntry>
+<ComparisonTableEntry>
+<h5 className="jarombek-cte-title">
+Extract, Transform, Load (ETL)
+</h5>
+<div className="jarombek-cte-body">
+<p>
+An ETL is a software engineering process with three steps.  The first step extracts data from a source, the second step
+transforms data in an intermediary location, and the third step loads data into a destination.  For example, an ETL
+might extract data from a source database such as PostgreSQL, transform the data in temporary tables within the
+Databricks lakehouse, and then load the data into Parquet files on AWS S3.  ETLs are a more traditional process for
+working with data within a data warehouse setting, although ELTs are increasing in popularity.
+</p>
+</div>
+</ComparisonTableEntry>
+</ComparisonTable>
+<p>
+At the Databricks conference, there was a lot of discussion about ELTs and their potential benefits over ETLs.  The
+greatest benefit of ELTs is a decoupling of the load and transform stages<sup>3</sup>.  In a traditional ETL,
+transforming and loading data is often done in the same process or step of a data pipeline.  The downside of this tight
+coupling is that if an error occurs during the transform stage, data won’t be loaded into the destination location.
+With an ELT, data is loaded into the destination location before any transformations occur, making it available even if
+there is a transformation error.  Some other benefits of ELTs include creating a raw data archive that is queryable
+when business objectives change and speed since the load and transform stages can sometimes be run in
+parallel<sup>4</sup>.
+</p>
+<p>
+A potential downside of ELTs is that unneeded raw, uncleaned data is stored in the destination location, which is likely
+a company's data warehouse, data lake, or data lakehouse (although as previously mentioned, some may see this as a
+positive).  Storing large amounts of raw data can increase security risks and raise compliance or data governance
+concerns<sup>5</sup>.
+</p>
 <SectionTitle title="Spark Connect">Spark Connect</SectionTitle>
 <SectionTitle title="Battle for Comprehensive Data Platform Supremacy">Battle for Comprehensive Data Platform Supremacy</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
