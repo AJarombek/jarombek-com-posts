@@ -5,7 +5,7 @@ work, but also use Databricks and Apache Spark in personal applications.  This s
 engineering conference, the <a href="https://www.databricks.com/dataaisummit/">Databricks Data+AI Summit</a> in San
 Francisco.  The conference was a great way to stay up-to-date on the latest trends in the data engineering industry.
 </p>
-<InlineImage filename="12-1-22-summit-main-stage.jpg" paddingTop="true" paddingBottom="true">
+<InlineImage filename="12-11-22-summit-main-stage.jpg" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
 At the start, the Databricks Data+AI Summit felt more like a concert than a software engineering conference.  However,
@@ -57,7 +57,7 @@ for a file to exist in AWS S3.  In Databricks workflows, DAGs contain one or mor
 that run on a cluster within the Databricks environment.  Below is an image of a Databricks workflow containing
 multiple jobs.
 </p>
-<InlineImage filename="12-1-22-databricks-workflow.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="12-11-22-databricks-workflow.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
 With workflows, Databricks hopes that data engineers will orchestrate their data pipelines within the Databricks
@@ -113,7 +113,49 @@ a company's data warehouse, data lake, or data lakehouse (although as previously
 positive).  Storing large amounts of raw data can increase security risks and raise compliance or data governance
 concerns<sup>5</sup>.
 </p>
+<p>
+Two technologies related to ELTs discussed throughout the Databricks Data+AI Summit were Fivetran and dbt.
+<a href="https://www.fivetran.com/">Fivetran</a> is attempting to redefine ETL data pipelines, instead focusing on ELTs
+that business analysts can set and forget<sup>6</sup>.  With Fivetran, data engineers no longer need to code the
+Extract and Load stages of an ELT, instead focusing their full attention on the Transform stage.  This makes engineers
+more efficient and working on business critical tasks.
+</p>
+<p>
+Fivetran provides connectors for data sources that engineers commonly require data from.  Fivetran has almost two
+hundred data source connectors at the time of this article's writing, including Google Analytics, Salesforce,
+PostgreSQL, and AWS S3, to name a few<sup>7</sup>.  Fivetran supports ten destinations as well, including Databricks,
+Snowflake, and Redshift<sup>8</sup>.  Mix and matching source connections and destinations enables the creation of many
+different ELTs with very little setup.
+</p>
+<p>
+dbt, which stands for "data build tool", is a data transformation workflow tool<sup>9,10</sup>.  dbt allows engineers
+to create data models using YAML documents and SQL <code className="jarombek-inline-code">SELECT</code> statements.
+These models are materialized as views or tables in data warehouses such as Databricks or Snowflake.  Fivetran
+integrates nicely with dbt, making it a common practice to use both technologies together.  I hope to create some code
+samples using Databricks, Fivetran, and dbt together sometime soon!
+</p>
 <SectionTitle title="Spark Connect">Spark Connect</SectionTitle>
+<p>
+Spark Connect, which was announced at the Databricks Data+AI Summit, is a decoupled client server Spark
+architecture<sup>11</sup>.  Spark Connect allows a client application to generate an unresolved Spark plan and send it
+to a server for remote processing.  With its decoupled architecture, a client application, such as a website or mobile
+application, can include Spark code that delegates the heavy lifting to a remote server.  This is different from the
+current data flow where a client application might call an API that behind the scenes runs Spark queries and returns
+their result.
+</p>
+<p>
+Spark Connect sounds really promising, although I haven’t heard much about it since the conference except for a
+<a href="https://www.databricks.com/blog/2022/07/07/introducing-spark-connect-the-power-of-apache-spark-everywhere.html">
+single blog post</a>.  Hopefully we will get more details soon and I can try it out!
+</p>
 <SectionTitle title="Battle for Comprehensive Data Platform Supremacy">Battle for Comprehensive Data Platform Supremacy</SectionTitle>
-<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+While not explicitly discussed at the Databricks Data+AI Summit, it seems clear that Databricks is pushing towards
+creating a comprehensive data platform, as is its biggest competitor Snowflake (amongst others).
+<a href="https://www.macrometa.com/event-stream-processing/databricks-vs-snowflake">This article</a> does a great job
+of highlighting the current differences between Databricks and Snowflake, and if the conference is any indication, both
+platforms will continue to introduce new features and improve upon existing offerings.  I expect most large companies
+to use a combination of both platforms due to each having unique strengths.  You can find my Databricks code within
+my <a href="https://github.com/AJarombek/databricks-spark-programs">databricks-spark-programs repository on GitHub</a>.
+</p>
 </div>
