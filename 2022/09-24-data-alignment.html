@@ -2,46 +2,46 @@
 <p>
 Data alignment in operating systems is something I’ve been aware of throughout my young career, mostly thanks to my
 love for reading software engineering books.  However, it’s not a concept that I’ve explored in depth.  In this
-article, I’ll discuss the basics of data alignment and how it applies to languages like Go.
+article, I’ll discuss the basics of data alignment and how it applies to programming languages like Go.
 </p>
 <SectionTitle title="What is Data Alignment">What is Data Alignment?</SectionTitle>
 <p>
 Data alignment feels like an intimidating topic since alignments differ depending on machine architectures and
 operating systems.  However, data alignment is conceptually equivalent across these different architectures.
-High-level programming languages like Go abstract away much of the complexity as well, making memory alignment
+High-level programming languages like Go abstract away much of the complexity as well, making data alignment
 something an application engineer rarely needs to worry about.
 </p>
 <Definition word="Data Alignment">
 <p>
-Data alignment refers to how data is arranged in computer memory.  Computer memory is the device used to store data for
-immediate use, and most likely refers to main memory;  which in modern computers is Random Access Memory
+Data alignment refers to how data is arranged in computer memory.  Computer memory is a device used to store data for
+immediate use.  Computer memory most likely refers to main memory, which in modern computers is Random Access Memory
 (RAM)<sup>1</sup>.  CPUs perform optimally when data in memory is properly aligned<sup>2,3</sup>.  In fact, many
-processors have requirements that data in memory is properly aligned, or so-called <strong>naturally aligned</strong>
+processors have requirements that force data in memory to be properly aligned, or so-called <strong>naturally aligned</strong>
 <sup>4</sup>.
 </p>
 <p>
 For example, in a processor with a 32-bit architecture (a CPU with a 4 byte word size), data is naturally aligned if it
-is located at a location in memory that is a multiple of 32<sup>5,6</sup>.  If an integer is stored at the 96th bit in
+ exists at a location in memory that is a multiple of 32<sup>5,6</sup>.  For example, if an integer is stored at the 96th bit in
 memory within a 32-bit architecture, it is properly aligned because <code className="jarombek-inline-code">
 96 / 32 == 3</code>.  Similarly, in a processor with a 64-bit architecture (a CPU with an 8 byte word size), data is
-naturally aligned if it is located at a location in memory that is a multiple of 64.
+naturally aligned if it exists at a location in memory that is a multiple of 64.
 </p>
 </Definition>
 <Definition word="Naturally Aligned">
-Data is considered naturally aligned when it is stored at a memory address that is a multiple of its size.  When
-referring to processors, the word size is used to determine the alignment of data.  However, in regards to programming
-language variables, the size of the data type is often used to determine the alignment of data.  For example, in Go, a
+Data is considered naturally aligned when it is stored at a memory address that is a multiple of its size.  With
+ regards to processors, word size is used to determine natural data alignment.  However, in regards to programming
+language variables, the size of a data type is often used to determine the alignment of data.  For example, in Go, a
 16-bit integer (of type <code className="jarombek-inline-code">int16</code>) should be aligned in memory at a location
 that is a multiple of 16 to be naturally aligned.
 </Definition>
 <p>
-In languages with manual memory management, like C and C++, functions to allocate memory such as
+In languages with manual memory management, for example, C and C++, functions to allocate memory such as
 <code className="jarombek-inline-code">malloc()</code> and <code className="jarombek-inline-code">calloc()</code> are
-guaranteed to properly align the memory space they return via a pointer<sup>4</sup>.  Manual memory management is when
+guaranteed to properly align the memory space that they return<sup>4</sup>.  Manual memory management is when
 memory needs to be explicitly managed by a programmer throughout its lifecycle, from creation to garbage
-collection<sup>7</sup>.  Since Go is a programming language with automatic memory management (memory is automatically
-allocated using <code className="jarombek-inline-code">new()</code> or <code className="jarombek-inline-code">
-make()</code> and automatically garbage collected), instances where data alignment is top of mind for engineers are
+collection<sup>7</sup>.  Since Go is a programming language with automatic memory management (it automatically
+allocates memory using <code className="jarombek-inline-code">new()</code> or <code className="jarombek-inline-code">
+make()</code> and automatically garbage collects unused memory), instances where data alignment is top of mind for engineers are
 infrequent.
 </p>
 <SectionTitle title="Data Alignment in Go">Data Alignment in Go</SectionTitle>
@@ -67,7 +67,7 @@ unsafe.Sizeof(false)
 
 // int (on a 64-bit processor)
 // Return value: 8
-unsafe.Sizeof(false)
+unsafe.Sizeof(1)
 
 // string (on a 64-bit processor)
 // Return value: 16
@@ -94,7 +94,7 @@ unsafe.Alignof(false)
 
 // int (on a 64-bit processor)
 // Return value: 8
-unsafe.Alignof(false)
+unsafe.Alignof(1)
 
 // string (on a 64-bit processor)
 // Return value: 8
@@ -106,7 +106,7 @@ unsafe.Alignof([]string{})
 </CodeSnippet>
 <p>
 <code className="jarombek-inline-code">unsafe.Alignof()</code> returns the necessary data alignment for its argument’s
-type in memory.  Therefore, it makes sense that larger types return the word size of the computer processor, which is
+type.  Therefore, it makes sense that larger types return the word size of the computer processor, which is
 equal to the natural alignment in memory.
 </p>
 <p>
@@ -115,16 +115,15 @@ Data types such as <code className="jarombek-inline-code">bool</code>, whose siz
 aligned in memory (its location in memory must be a multiple of the word size, such as 8-bytes on a 64-bit
 architecture).  To achieve this, padding is added after the data type in memory to keep it aligned<sup>9</sup>.  In
 the case of <code className="jarombek-inline-code">bool</code> on a 64-bit machine, one byte is used to store the data
-and another seven bytes are padding.
+and the next seven bytes are padding.
 </p>
 <p>
-If this is the case and a boolean actually takes up a full word size in memory, why do
+If a boolean actually takes up a full word size in memory, why do
 <code className="jarombek-inline-code">unsafe.Sizeof()</code> and <code className="jarombek-inline-code">
-unsafe.Alignof()</code> return <code className="jarombek-inline-code">1</code>?  The answer is within a struct, it is
+unsafe.Alignof()</code> return <code className="jarombek-inline-code">1</code>?  The answer is because within a struct, it is
 possible to "pack" data such that multiple pieces of data are stored within a single word size worth of
-memory<sup>10</sup>.  Data packing is commonly used to save space in a data structure.  The side-effect of data
-structure packing is the order in which struct fields are defined can alter the amount of memory allocated to hold a
-struct instance.
+memory<sup>10</sup>.  Data packing is commonly used to save space in a data structure.  The side effect of data
+structure packing is the order in which struct fields are defined can alter the amount of memory a struct requires.
 </p>
 <p>
 Let’s look at an example.  The following two structs appear to be equivalent, since they have the same fields defined
@@ -144,8 +143,8 @@ type Sample2 struct {
 }
 </CodeSnippet>
 <p>
-However, calling <code className="jarombek-inline-code">unsafe.Sizeof()</code> on instances of these two structs
-reveals their sizes in memory are different.
+However, calling <code className="jarombek-inline-code">unsafe.Sizeof()</code> on these structs
+reveals their sizes are different in memory.
 </p>
 <CodeSnippet language="Go">
 one := Sample1{a: true, b: true, c: 1.0}
@@ -166,7 +165,7 @@ struct definition.
 <p>
 The first two fields in <code className="jarombek-inline-code">Sample1</code>, <code className="jarombek-inline-code">
 a</code> and <code className="jarombek-inline-code">b</code>, are type <code className="jarombek-inline-code">
-bool</code>.  Since the size and alignment of type <code className="jarombek-inline-code">bool</code> is one, both
+bool</code>.  Since the size and alignment of <code className="jarombek-inline-code">bool</code> is one, both
 <code className="jarombek-inline-code">a</code> and <code className="jarombek-inline-code">b</code> can be packed
 together into a single word in memory.  This means the first eight bytes of memory for a struct of type
 <code className="jarombek-inline-code">Sample1</code> consists of <code className="jarombek-inline-code">a</code> and
@@ -196,8 +195,8 @@ alignment_offset_test.go</a>.
 <p>
 As I mentioned previously, C and C++ are programming languages with manual memory management, and standard library
 functions such as <code className="jarombek-inline-code">malloc()</code> and <code className="jarombek-inline-code">
-calloc()</code> are guaranteed to properly align allocated memory.  Similar to Go, a common instance where data
-alignment impacts application code is when dealing with structs.  The struct example I showed in Go with two structs,
+calloc()</code> are guaranteed to properly align allocated memory.  Similar to Go, structs are a common instance where data
+alignment impacts application code.  The struct example I showed in Go with two structs,
 <code className="jarombek-inline-code">Sample1</code> and <code className="jarombek-inline-code">Sample2</code>, is
 implemented in C and C++ below.
 </p>
@@ -251,10 +250,10 @@ int main() {
     auto first = Sample1{true, false, 1.0};
     auto second = Sample2{true, 1.0, false};
 
-	// Return value (on a 64-bit processor): 16
+    // Return value (on a 64-bit processor): 16
     sizeof(first);
 
-	// Return value (on a 64-bit processor): 24
+    // Return value (on a 64-bit processor): 24
     sizeof(second);
 }
 </CodeSnippet>
@@ -273,7 +272,8 @@ aligned.  POSIX defines a function <code className="jarombek-inline-code">posix_
 memory and aligns it at a multiple of its second argument<sup>11,12</sup>.  The first argument of
 <code className="jarombek-inline-code">posix_memalign()</code> is a pointer that will point to the allocated memory
 and the third (and final) argument is the number of bytes to allocate in memory.  The example below allocates 1024
-bytes of memory and aligns it at a multiple of eight.  It frees the memory before using it.
+bytes of memory and aligns it at a multiple of eight.  It frees the newly allocated memory before using it by invoking
+ <code className="jarombek-inline-code">free(buf)</code>.
 </p>
 <CodeSnippet language="C">
 char *buf;
@@ -292,14 +292,14 @@ free(buf);
 Although I aligned the allocated memory on the 64-bit architecture page size (8 bytes) above, any value that is a
 multiple of two and a multiple of <code className="jarombek-inline-code">sizeof(void *)</code> can be used.  On a
 64-bit architecture, <code className="jarombek-inline-code">sizeof(void *)</code> likely returns
-<code className="jarombek-inline-code">8</code> (the page size).  The full code example is available in a
-<a href="https://github.com/AJarombek/system-programming-prototypes/blob/main/memory_management/alignment.c">
+<code className="jarombek-inline-code">8</code> (the page size).  The full code example is available in an
+ <a href="https://github.com/AJarombek/system-programming-prototypes/blob/main/memory_management/alignment.c">
 alignment.c</a> file and is based on my reading of <a href="https://www.oreilly.com/library/view/
 linux-system-programming/9781449341527/">Linux System Programming</a> by Robert Love.
 </p>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 <p>
-Although data alignment may not be top of mind for application engineers, it’s important to understand how it works and
+Although data alignment may not be top of mind for application engineers, it is important to understand how it works and
 its impact on high-level programming languages.  In general, knowing low-level operating system functionality helps
 engineers write better programs in high-level languages, just as knowing data structures and algorithms helps write
 faster and less memory intensive code.  All the code discussed in this article is available in my
