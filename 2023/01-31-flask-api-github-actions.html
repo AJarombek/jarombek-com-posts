@@ -1,0 +1,72 @@
+<div>
+<p>
+Since I graduated from college almost six years ago, I’ve maintained a website, <a href="https://saintsxctf.com/">
+saintsxctf.com</a>, for my former collegiate cross country and track & field teams.  The website has evolved over
+the years, as I’ve explained in <a href="https://jarombek.com/blog/jun-14-2021-saints-xctf-v2-overview">prior
+articles</a>, but at its core it has a client facing mobile app and website, backend APIs, and a database.  The
+main API, written in Python using the Flask framework, has been in service for almost two years now.
+</p>
+<p>
+During the Flask APIs initial development, I wrote many integration tests, asserting that certain API calls
+returned appropriate responses.  I wrote an article about <a href="https://jarombek.com/blog/jan-10-2022-flask-api-testing">
+these tests and how they were configured</a>.  My initial API testing approach was flawed in two ways.  First, it was
+dependent on production data to properly function.  Second, it could only be run locally.
+</p>
+<p>
+Using GitHub Actions and Docker containers, I configured Flask API integration tests as part of my CI/CD pipeline.
+In this article, I’ll give an overview of my application infrastructure and show how GitHub Actions are leveraged to
+run integration tests and code quality tests every time I commit new code.
+</p>
+<SectionTitle title="Application Overview">Application Overview</SectionTitle>
+<p>
+My Flask API is part of a larger "SaintsXCTF" application that is hosted on AWS.  The following image shows my
+application's infrastructure, with the Flask API outlined in red.
+</p>
+<InlineImage filename="1-31-23-saintsxctf-infrastructure-flask-api.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<p>
+The Flask API is a REST API supporting basic CRUD operations (Create, Read, Update, Delete).  A basic request to get a
+list of endpoints related to users in the API is shown below.
+</p>
+<CodeSnippet language="Bash">
+curl https://api.saintsxctf.com/v2/users/links
+</CodeSnippet>
+<CodeSnippet language="JSON">
+{
+   "endpoints":[
+      {
+         "description":"Get all the users in the database.",
+         "link":"/v2/users",
+         "verb":"GET"
+      },
+      {
+         "description":"Create a new user.",
+         "link":"/v2/users",
+         "verb":"POST"
+      },
+      {
+         "description":"Retrieve a single user with a given username.",
+         "link":"/v2/users/&lt;username>",
+         "verb":"GET"
+      },
+      {
+         "description":"Update a user with a given username.",
+         "link":"/v2/users/&lt;username>",
+         "verb":"PUT"
+      },
+      {
+         "description":"Soft delete a user with a given username.",
+         "link":"/v2/users/soft/&lt;username>",
+         "verb":"DELETE"
+      },
+      ...
+   ],
+   "self":"/v2/users/links"
+}
+</CodeSnippet>
+<SectionTitle title="Technology Overview">Technology Overview</SectionTitle>
+<SectionTitle title="GitHub Actions Workflows">GitHub Actions Workflows</SectionTitle>
+<SubTitle title="Lint and Format Workflow">Lint and Format Workflow</SubTitle>
+<SubTitle title="Integration Test Workflow">Integration Test Workflow</SubTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
