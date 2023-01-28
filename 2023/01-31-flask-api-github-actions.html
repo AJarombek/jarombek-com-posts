@@ -25,7 +25,7 @@ application's infrastructure, with the Flask API outlined in red.
 <InlineImage filename="1-31-23-saintsxctf-infrastructure-flask-api.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <p>
-The Flask API is a REST API supporting basic CRUD operations (Create, Read, Update, Delete).  A basic request to get a
+The Flask API is a REST API supporting basic CRUD operations (Create, Read, Update, and Delete).  A basic request to get a
 list of endpoints related to users in the API is shown below.
 </p>
 <CodeSnippet language="Bash">
@@ -65,8 +65,69 @@ curl https://api.saintsxctf.com/v2/users/links
 }
 </CodeSnippet>
 <SectionTitle title="Technology Overview">Technology Overview</SectionTitle>
+<Definition word="Flask">
+Flask is a lightweight web framework for Python that is designed to make it easy to build web applications and APIs.
+It provides an API for handling requests and responses, and allows developers to define routes and views using Python
+functions. Flask is often used for building small to medium-sized web applications and APIs, and can be easily extended
+with a wide range of third-party libraries and packages.
+</Definition>
+<p>
+To integrate Flask API tests and code quality checks into my CI/CD pipeline, technologies such as GitHub Actions,
+Docker, Pylint, and Black are utilized.
+</p>
+<Definition word="GitHub Actions">
+GitHub Actions is a feature of GitHub that allows users to automate their CI/CD workflows by creating custom
+scripts, called "Actions," that can be triggered by specific events on the platform, such as a push to a repository or
+the opening of a pull request. These actions perform tasks such as building and testing code, deploying software, and
+running automated checks.
+</Definition>
+<Definition word="Docker">
+Docker is a platform for developing, shipping, and running applications in containers. Containers are a lightweight and
+portable form of virtualization that allow developers to package an application and its dependencies together in a
+single container, making it easy to deploy and run on any system.  Docker is widely used in software development,
+providing a consistent and efficient way to package and deploy applications. It is platform-agnostic and supports
+multiple operating systems, which enables developers to build and run applications on different environments and
+infrastructures.
+</Definition>
+<Definition word="Pylint">
+Pylint is a source code quality checker for the Python programming language. It checks code for adherence to a certain
+standard, as well as for errors and potential issues. Pylint can be used to check for a wide range of coding issues,
+including coding style, naming conventions, and potential bugs. It also has the ability to generate reports, including
+a detailed list of issues found in the code, and provides suggestions to fix the issues.
+</Definition>
+<Definition word="Black">
+Black is a popular code formatter for the Python programming language. It is a command-line tool that automatically
+reformats Python code according to a set of predefined rules and conventions. Black uses a strict, uncompromising
+approach to formatting, which results in clean and consistent code that is easy to read and maintain. It helps to
+reduce the time spent on code formatting and allows developers to focus on the logic of the code. Black is highly
+configurable and can be set up to work with different coding conventions and styles.
+</Definition>
+<p>
+I use Docker to package components of my application into separate containers.  For example, I have a container for my
+Flask API, MySQL database (used for testing and local development purposes only), web application, and more.  Some of these
+containers are used by GitHub Actions workflows to perform integration tests and code quality checks.
+</p>
 <SectionTitle title="GitHub Actions Workflows">GitHub Actions Workflows</SectionTitle>
+<p>
+My Flask API contains two GitHub Actions workflows - one for linting and formatting Python code and another for API
+integration tests.
+</p>
+<InlineImage filename="1-31-23-github-workflows.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <SubTitle title="Lint and Format Workflow">Lint and Format Workflow</SubTitle>
+<p>
+The linting and formatting workflow is less intricate than the integration test workflow, so I will discuss it first.
+In my API, Python code is linted using Pylint and formatted using Black.  When working locally, using Pylint and Black
+is as simple as the following two commands (run within my
+<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.3/api/src">api/src directory</a>).
+</p>
+<CodeSnippet language="Bash">
+# Pylint Linting
+pylint $(git ls-files '*.py')
+
+# Black Formatting
+black .
+</CodeSnippet>
 <SubTitle title="Integration Test Workflow">Integration Test Workflow</SubTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
