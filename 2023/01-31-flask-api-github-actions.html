@@ -119,7 +119,7 @@ integration tests.
 The linting and formatting workflow is less intricate than the integration test workflow, so I will discuss it first.
 In my API, Python code is linted using Pylint and formatted using Black.  When working locally, using Pylint and Black
 is as simple as the following two commands (run within my
-<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.3/api/src">api/src directory</a>).
+<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.4/api/src">api/src directory</a>).
 </p>
 <CodeSnippet language="Bash">
 # Pylint Linting
@@ -130,7 +130,7 @@ black .
 </CodeSnippet>
 <p>
 The GitHub Actions workflow for linting and formatting has the following configuration, located within
-<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.3/.github/workflows/formatting_linting.yml">
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.4/.github/workflows/formatting_linting.yml">
 formatting_linting.yml</a>.
 </p>
 <CodeSnippet language="YAML">
@@ -192,7 +192,7 @@ requests to the <code className="jarombek-inline-code">main</code> branch and ev
 <code className="jarombek-inline-code">linting_formatting</code> contains a list of steps which execute on the Ubuntu
 virtual machine, which is hosted by GitHub.  Step "Check out repository code" uses git to checkout my repository, and
 step "Black formatting dry run" runs a Black CLI command using the <code className="jarombek-inline-code">--check</code>
-flag within the repositories source code directory (<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.3/api/src">
+flag within the repositories source code directory (<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.4/api/src">
 ./api/src</a>).  The <code className="jarombek-inline-code">--check</code> flag performs a dry-run of Black’s
 formatting, succeeding if the source code is properly formatted and failing with error logs if formatting issues are
 detected.
@@ -210,7 +210,7 @@ files in the repository.
 <p>
 The integration test workflow is more complex, using multiple Docker containers running on an Ubuntu virtual machine
 hosted by GitHub.  It has the following configuration, located within <a href="https://github.com/AJarombek/
-saints-xctf-api/blob/v2.0.3/.github/workflows/integration_test.yml">integration_test.yml</a>.
+saints-xctf-api/blob/v2.0.4/.github/workflows/integration_test.yml">integration_test.yml</a>.
 </p>
 <CodeSnippet language="YAML">
 name: Integration Test
@@ -258,6 +258,7 @@ jobs:
           mysql --protocol=tcp -h db -u root --password=saintsxctf -e "GRANT ALL ON saintsxctf.* TO 'saintsxctflocal'@'%'" -v
           mysql --protocol=tcp -h db -u saintsxctflocal -D saintsxctf --password=saintsxctf -v < test-db-init.sql
           mysql --protocol=tcp -h db -u saintsxctflocal -D saintsxctf --password=saintsxctf -v < test-db-update.sql
+
       - name: Install libraries
         working-directory: ./api/src
         run: pipenv install
@@ -269,7 +270,7 @@ jobs:
           cd logs
           touch saints-xctf-api.log
 
-      - name: Run tests
+      - name: Run Tests
         working-directory: ./api/src
         run: pipenv run flask test
         env:
@@ -282,7 +283,7 @@ Similar to the "Black Formatting & Pylint Linting" workflow, the "Integration Te
 (<code className="jarombek-inline-code">ubuntu-latest</code>).  However, this time, steps within the job are executed
 within a container, based on the Docker image <code className="jarombek-inline-code">ajarombek/saints-xctf-api-cicd</code>.
 This Docker image, which is <a href="https://hub.docker.com/r/ajarombek/saints-xctf-api-cicd">hosted on DockerHub</a>
-and is built from a <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.3/api/src/cicd.test.dockerfile">
+and is built from a <a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.4/api/src/cicd.test.dockerfile">
 Dockerfile in my API repository</a>, installs dependencies needed to run my API integration tests.  Once again, the
 workflow is triggered upon code commits to the <code className="jarombek-inline-code">main</code> branch and any branch
 matching a <code className="jarombek-inline-code">feature/*</code> pattern, along with pull requests to the
@@ -307,10 +308,21 @@ Just like the <code className="jarombek-inline-code">linting_formatting</code> j
 Pylint Linting" workflow, the <code className="jarombek-inline-code">test</code> job contains a list of steps, starting
 with checking out the repository onto the running container.  Step "Setup Database" executes MySQL commands to create a
 user and database for the API tests and populates it with mocked data from <a href="https://github.com/AJarombek/
-saints-xctf-api/blob/v2.0.3/api/src/test-db-init.sql">test-db-init.sql</a> and <a href="https://github.com/AJarombek/
-saints-xctf-api/blob/v2.0.3/api/src/test-db-update.sql">test-db-update.sql</a>.
+saints-xctf-api/blob/v2.0.4/api/src/test-db-init.sql">test-db-init.sql</a> and <a href="https://github.com/AJarombek/
+saints-xctf-api/blob/v2.0.4/api/src/test-db-update.sql">test-db-update.sql</a>.
+</p>
+<p>
+Steps "Install libraries" and "Create Log File" perform some prerequisites to running my tests, such as installing the
+APIs third party dependencies.  Finally, "Run Tests" executes the Flask API integration tests with the command
+<code className="jarombek-inline-code">pipenv run flask test</code>.
 </p>
 <InlineImage filename="1-31-23-integration-test-workflow.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
+<p>
+GitHub Actions are a great way to run CI/CD pipelines for repositories hosted on GitHub.  For my Flask API, configuring 
+code quality checks and integration tests within GitHub Actions workflows was a breeze.  The code for my Flask API 
+discussed in this article is available in a <a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.4">
+saints-xctf-api</a> repository on GitHub.
+</p>
 </div>
