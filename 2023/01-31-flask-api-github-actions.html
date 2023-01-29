@@ -128,6 +128,88 @@ pylint $(git ls-files '*.py')
 # Black Formatting
 black .
 </CodeSnippet>
+<p>
+The GitHub Actions workflow for linting and formatting has the following configuration, located within
+<a href="https://github.com/AJarombek/saints-xctf-api/blob/v2.0.3/.github/workflows/black_formatting.yml">
+formatting_linting.yml</a>.
+</p>
+<CodeSnippet language="YAML">
+name: Black Formatting & Pylint Linting
+
+on:
+  push:
+    branches: ["main", "feature/*"]
+  pull_request:
+    branches: ["main"]
+
+  schedule:
+    - cron: "0 5 * * 5"
+
+  workflow_dispatch:
+
+jobs:
+  linting_formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job running on a ${{ runner.os }} server"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Black formatting dry run
+        uses: psf/black@stable
+        with:
+          options: "--check"
+          src: "./api/src"
+
+      - name: Install Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install Pylint & Pipenv
+        run: |
+          pip install --upgrade pip
+          pip install pylint==2.15.9
+          pip install pipenv==2022.12.19
+
+      - name: Analysing the Code with Pylint
+        working-directory: ./api/src
+        run: |
+          pipenv install --ignore-pipfile --system
+          pylint $(git ls-files '*.py')
+</CodeSnippet>
+<p>
+The "Black Formatting & Pylint Linting" workflow contains a single job, <code className="jarombek-inline-code">
+linting_formatting</code>, running on an Ubuntu virtual machine (<code className="jarombek-inline-code">
+ubuntu-latest</code>)<sup>1</sup>.  It is triggered upon code commits to the <code className="jarombek-inline-code">main</code>
+branch and any branch matching a <code className="jarombek-inline-code">feature/*</code> pattern, along with pull
+requests to the <code className="jarombek-inline-code">main</code> branch and every Friday at 5 AM (using the
+<code className="jarombek-inline-code">0 5 * * 5</code> cron schedule).
+</p>
+<p>
+<code className="jarombek-inline-code">linting_formatting</code> contains a list of steps which execute on the Ubuntu
+virtual machine, which is hosted by GitHub.  Step "Check out repository code" uses git to checkout my repository, and
+step "Black formatting dry run" runs a Black CLI command using the <code className="jarombek-inline-code">--check</code>
+flag within the repositories source code directory (<a href="https://github.com/AJarombek/saints-xctf-api/tree/v2.0.3/api/src">
+./api/src</a>).  The <code className="jarombek-inline-code">--check</code> flag performs a dry-run of Black’s
+formatting, succeeding if the source code is properly formatted and failing with error logs if formatting issues are
+detected.
+</p>
+<p>
+Steps "Install Python 3.8" and "Install Pylint & Pipenv" install the version of Python used by my API along with pylint
+and pipenv third party libraries.  The final step, "Analyzing the Code with Pylint", uses pipenv to install all third
+party dependencies used in the API.  This is required because pylint checks to see if import statements in Python code
+are valid.  It then runs <code className="jarombek-inline-code">pylint $(git ls-files '*.py')</code> to lint all Python
+files in the repository.
+</p>
+<InlineImage filename="1-31-23-linting-formatting-workflow.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <SubTitle title="Integration Test Workflow">Integration Test Workflow</SubTitle>
+<p>
+   
+</p>
+<InlineImage filename="1-31-23-integration-test-workflow.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
