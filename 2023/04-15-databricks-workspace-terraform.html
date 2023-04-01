@@ -1,0 +1,41 @@
+<div>
+<p>
+I’ve worked with Databricks for two years at my full-time job, building ETLs and workflows using Spark and Delta Lake.
+The Databricks data lakehouse is a powerful platform, supporting diverse data workloads in the cloud with simple Spark
+and SQL programming techniques.  Recently, I created my own Databricks infrastructure in my AWS account, allowing me to
+work with Databricks for personal applications and experimentation purposes.  This article demonstrates how to quickly
+set up a Databricks workspace on AWS using Terraform.  The code for this article is available in a
+<a href="https://github.com/AJarombek/databricks-spark-programs">databricks-spark-programs</a> repository on GitHub.
+</p>
+<SectionTitle title="Technology Overview">Technology Overview</SectionTitle>
+<p>
+A prerequisite for building Databricks infrastructure on AWS is an AWS account, a Databricks account, and a local
+development environment with Terraform installed<sup>1</sup>.
+</p>
+<Definition word="AWS">
+
+</Definition>
+<Definition word="Databricks">
+
+</Definition>
+<Definition word="Terraform">
+
+</Definition>
+<p>
+The Databricks infrastructure, provisioned using Terraform, builds a workspace. A workspace is a cloud environment for
+the Databricks data lakehouse<sup>2</sup>.  At a high level, a Databricks workspace consists of a control plane and a
+data plane.  The control place is hosted by Databricks, and mainly consists of a web application to interact with the
+Databricks workspace.  The data plane exists in a tenant's AWS account, and mainly consists of clusters running Apache
+Spark.  The control plane "controls" the clusters within the data plane, scaling them up and down, running Spark jobs,
+etc<sup>3</sup>.
+</p>
+<InlineImage filename="4-15-23-databricks-workspace-ui.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<TextContext>
+Databricks workspace web application home screen
+</TextContext>
+<SectionTitle title="Terraform Module Overview">Terraform Module Overview</SectionTitle>
+<SectionTitle title="Workspace Infrastructure">Workspace Infrastructure</SectionTitle>
+<SectionTitle title="Databricks Resource Infrastructure">Databricks Resource Infrastructure</SectionTitle>
+<SectionTitle title="Conclusions">Conclusions</SectionTitle>
+</div>
