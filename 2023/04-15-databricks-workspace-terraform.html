@@ -13,13 +13,28 @@ A prerequisite for building Databricks infrastructure on AWS is an AWS account, 
 development environment with Terraform installed<sup>1</sup>.
 </p>
 <Definition word="AWS">
-
+AWS (Amazon Web Services) is a cloud computing platform that provides infrastructure services such as computing power,
+storage, networking, and databases.  Services are created on-demand and enable customers to deploy and operate
+applications using various programming languages, tools, and frameworks. AWS also offers managed services for
+higher-level functionalities, such as machine learning, artificial intelligence, and big data processing. The
+platform is designed with high availability, scalability, and fault tolerance in mind, and offers a pay-as-you-go
+pricing model.
 </Definition>
 <Definition word="Databricks">
-
+Databricks is a cloud-based unified analytics platform that simplifies big data processing and machine learning tasks
+using Apache Spark. It allows data engineers, data scientists, and business analysts to collaborate and work with
+large-scale datasets in a secure and scalable environment.  Databricks integrates with Delta Lake, an open-source
+storage layer that provides ACID transactions, schema enforcement, and data versioning for data lakes.  Databricks is
+considered a data lakehouse because it combines the best elements of data lakes (scalable storage and processing of
+structured and unstructured data) with those of data warehouses (relational and analytical capabilities for querying
+and reporting) in a unified platform that supports both batch and real-time data processing.
 </Definition>
 <Definition word="Terraform">
-
+Terraform is an open-source infrastructure as code (IaC) tool developed by HashiCorp that allows users to define and
+manage cloud infrastructure and services in a declarative way using configuration files. It supports multiple cloud
+platforms, including AWS, Microsoft Azure, Google Cloud Platform, and many others, and provides a common language and
+workflow for provisioning, updating, and destroying infrastructure resources in a repeatable and automated manner.
+Terraform also offers a state management system that tracks the current state of infrastructure.
 </Definition>
 <p>
 The Databricks infrastructure, provisioned using Terraform, builds a workspace. A workspace is a cloud environment for
