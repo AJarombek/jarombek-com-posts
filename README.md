@@ -44,6 +44,18 @@ HTML (JSX) files displayed as articles on `jarombek.com`.
 
 [![01/02/2022](https://img.shields.io/badge/Restricting%20Access%20to%20Static%20Website%20Amazon%20S3%20Buckets%20using%20Terraform-Outdated-yellow?style=for-the-badge)](https://jarombek.com/blog/jan-2-2022-s3-restrict-access)
 
+**2021**
+
+[![12/24/2021](https://img.shields.io/badge/Building%20an%20API%20with%20Flask%20and%20SQLAlchemy-Outdated-yellow?style=for-the-badge)](https://jarombek.com/blog/dec-24-2021-flask-python-api)
+
+[![12/03/2021](https://img.shields.io/badge/Redux%20in%20a%20TypeScript%20React%20Application:%20Following%20the%20Ducks%20Pattern-Outdated-yellow?style=for-the-badge)](https://jarombek.com/blog/dec-3-2021-redux-react)
+
+[![11/15/2021](https://img.shields.io/badge/Building%20a%20Web%20Application%20with%20React%20and%20TypeScript-Outdated-yellow?style=for-the-badge)](https://jarombek.com/blog/nov-15-2021-react-typescript)
+
+[![11/01/2021](https://img.shields.io/badge/SaintsXCTF%20Version%202.0:%20React%20Web%20Application%20Overview-Outdated-yellow?style=for-the-badge)](https://jarombek.com/blog/nov-1-2021-saints-xctf-v2-react-web-app)
+
+[![10/25/2021](https://img.shields.io/badge/SaintsXCTF%20Version%202.0:%20Kubernetes%20Infrastructure-Outdated-yellow?style=for-the-badge)](https://jarombek.com/blog/oct-25-2021-saints-xctf-v2-k8s-infrastructure)
+
 ### Commands
 
 **Tokenize an HTML/JSX file as JSON (MacOS)**

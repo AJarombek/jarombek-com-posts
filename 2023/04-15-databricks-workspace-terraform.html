@@ -41,15 +41,109 @@ The Databricks infrastructure, provisioned using Terraform, builds a workspace. 
 the Databricks data lakehouse<sup>2</sup>.  At a high level, a Databricks workspace consists of a control plane and a
 data plane.  The control place is hosted by Databricks, and mainly consists of a web application to interact with the
 Databricks workspace.  The data plane exists in a tenant's AWS account, and mainly consists of clusters running Apache
-Spark.  The control plane "controls" the clusters within the data plane, scaling them up and down, running Spark jobs,
-etc<sup>3</sup>.
+Spark.  The control plane "controls" the clusters within the data plane, scaling them up and down, running Spark jobs
+on worker nodes, etc<sup>3</sup>.
 </p>
-<InlineImage filename="4-15-23-databricks-workspace-ui.png" paddingTop="true" paddingBottom="true">
+<InlineImage filename="4-30-23-databricks-workspace-ui.png" paddingTop="true" paddingBottom="true">
 </InlineImage>
 <TextContext>
 Databricks workspace web application home screen
 </TextContext>
+<p>
+Within a Databricks workspace, resources are created to facilitate data workloads, such as jobs, notebooks, dashboards,
+and more.  Databricks resources can be created manually through the control plane’s user interface or provisioned with
+Terraform.
+</p>
 <SectionTitle title="Terraform Module Overview">Terraform Module Overview</SectionTitle>
+<p>
+My Databricks infrastructure, written using Terraform, consists of multiple modules which are located in a
+<a href="https://github.com/AJarombek/databricks-spark-programs/tree/v1.0.0/infra">databricks-spark-programs GitHub
+repository</a>.
+</p>
+<InlineImage filename="4-30-23-terraform-module-diagram.png" paddingTop="true" paddingBottom="true">
+</InlineImage>
+<TextContext>
+Databricks Terraform Module Diagram
+</TextContext>
+<p>
+The root module creates an entrypoint that builds all the downstream modules.  It contains two files,
+<a href="https://github.com/AJarombek/databricks-spark-programs/blob/v1.0.0/infra/main.tf">main.tf</a> and
+<a href="https://github.com/AJarombek/databricks-spark-programs/blob/v1.0.0/infra/var.tf">var.tf</a>.  The former
+declares the Terraform backend, sets required provider versions, and invokes two downstream modules.  The latter
+defines variables that are used to authenticate with a Databricks account.
+</p>
+<CodeSnippet language="HCL">
+# main.tf
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+terraform {
+  required_version = ">= 1.1.2"
+
+  required_providers {
+    databricks = {
+      source  = "databricks/databricks"
+      version = ">= 1.6.5"
+    }
+
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.15.0"
+    }
+  }
+
+  backend "s3" {
+    bucket  = "andrew-jarombek-terraform-state"
+    encrypt = true
+    key     = "databricks-spark-programs/infra"
+    region  = "us-east-1"
+  }
+}
+
+module "e2" {
+  source                      = "./workspace"
+  databricks_account_username = var.databricks_account_username
+  databricks_account_password = var.databricks_account_password
+  databricks_account_id       = var.databricks_account_id
+}
+
+module "databricks" {
+  source           = "./databricks"
+  databricks_host  = module.e2.databricks_host
+  databricks_token = module.e2.databricks_token
+}
+</CodeSnippet>
+<CodeSnippet language="HCL">
+# var.tf
+
+variable "databricks_account_username" {
+  description = "Username for my Databricks account"
+  default     = ""
+  type        = string
+}
+
+variable "databricks_account_password" {
+  description = "Password for my Databricks account"
+  default     = ""
+  type        = string
+  sensitive   = true
+}
+
+variable "databricks_account_id" {
+  description = "ID for my Databricks account"
+  default     = ""
+  type        = string
+  sensitive   = true
+}
+</CodeSnippet>
+<p>
+The Databricks workspace module, named <code className="jarombek-inline-code">e2</code>, creates a Databricks workspace
+and generates two output variables, <code className="jarombek-inline-code">databricks_host</code> and
+<code className="jarombek-inline-code">databricks_token</code>, which are used in the
+<code className="jarombek-inline-code">databricks</code> module.
+</p>
 <SectionTitle title="Workspace Infrastructure">Workspace Infrastructure</SectionTitle>
 <SectionTitle title="Databricks Resource Infrastructure">Databricks Resource Infrastructure</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
