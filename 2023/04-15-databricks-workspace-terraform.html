@@ -144,7 +144,136 @@ and generates two output variables, <code className="jarombek-inline-code">datab
 <code className="jarombek-inline-code">databricks_token</code>, which are used in the
 <code className="jarombek-inline-code">databricks</code> module.
 </p>
+<p>
+The <code className="jarombek-inline-code">databricks</code> module, located in <a href="https://github.com/AJarombek/
+databricks-spark-programs/tree/v1.0.0/infra/databricks">infra/databricks</a>, is a top-level module which invokes
+multiple submodules, containing resources for use within a Databricks workspace.  It contains three files,
+<a href="https://github.com/AJarombek/databricks-spark-programs/blob/v1.0.0/infra/databricks/main.tf">main.tf</a>,
+<a href="https://github.com/AJarombek/databricks-spark-programs/blob/v1.0.0/infra/databricks/var.tf">var.tf</a>, and
+<a href="https://github.com/AJarombek/databricks-spark-programs/blob/v1.0.0/infra/databricks/providers.tf">providers.tf</a>.
+</p>
+<CodeSnippet language="HCL">
+# main.tf
+
+module "administration" {
+  source           = "./administration"
+  databricks_host  = var.databricks_host
+  databricks_token = var.databricks_token
+}
+
+module "notebooks" {
+  source           = "./notebooks"
+  databricks_host  = var.databricks_host
+  databricks_token = var.databricks_token
+
+  depends_on = [module.administration]
+}
+
+module "jobs" {
+  source           = "./jobs"
+  databricks_host  = var.databricks_host
+  databricks_token = var.databricks_token
+
+  depends_on = [module.administration, module.notebooks]
+}
+
+module "clusters" {
+  source           = "./clusters"
+  databricks_host  = var.databricks_host
+  databricks_token = var.databricks_token
+
+  depends_on = [module.administration]
+}
+
+module "storage" {
+  source           = "./storage"
+  databricks_host  = var.databricks_host
+  databricks_token = var.databricks_token
+
+  depends_on = [module.administration]
+}
+</CodeSnippet>
+<CodeSnippet language="HCL">
+# var.tf
+
+variable "databricks_host" {
+  description = "Host for a Databricks workspace"
+  default     = ""
+  type        = string
+}
+
+variable "databricks_token" {
+  description = "Token for a Databricks workspace"
+  default     = ""
+  type        = string
+  sensitive   = true
+}
+</CodeSnippet>
+<CodeSnippet language="HCL">
+# providers.tf
+
+terraform {
+  required_version = ">= 1.1.2"
+
+  required_providers {
+    databricks = {
+      source  = "databricks/databricks"
+      version = ">= 1.6.5"
+    }
+  }
+}
+
+provider "databricks" {
+  host  = var.databricks_host
+  token = var.databricks_token
+}
+</CodeSnippet>
+<p>
+The remaining modules include resources for configuring the Databricks workspace or populating it. First, let's
+examine the module dedicated to configuring the infrastructure of the Databricks workspace.
+</p>
 <SectionTitle title="Workspace Infrastructure">Workspace Infrastructure</SectionTitle>
+<p>
+The <a href="https://github.com/AJarombek/databricks-spark-programs/tree/main/infra/workspace">workspace</a> Terraform
+module creates a Databricks workspace, which serves as a collaborative environment for data engineering and data
+science teams to develop, execute, and manage big data analytics and machine learning workflows using Apache Spark.
+It contains multiple Terraform files, each responsible for provisioning the necessary infrastructure required for the
+operation of a Databricks workspace.  The first file, <a href="https://github.com/AJarombek/databricks-spark-programs/
+blob/main/infra/workspace/iam.tf">iam.tf</a>, creates a cross-account IAM role that is necessary for building a
+Databricks workspace on AWS<sup>4,5</sup>.
+</p>
+<CodeSnippet language="HCL">
+data "databricks_aws_assume_role_policy" "databricks" {
+  external_id = var.databricks_account_id
+}
+
+data "databricks_aws_crossaccount_policy" "databricks" {}
+
+resource "aws_iam_role" "cross_account_role" {
+  name               = "${local.prefix}-crossaccount"
+  assume_role_policy = data.databricks_aws_assume_role_policy.databricks.json
+}
+
+resource "aws_iam_role_policy" "databricks" {
+  name   = "${local.prefix}-policy"
+  role   = aws_iam_role.cross_account_role.id
+  policy = data.databricks_aws_crossaccount_policy.databricks.json
+}
+
+resource "databricks_mws_credentials" "databricks" {
+  provider         = databricks.mws
+  account_id       = var.databricks_account_id
+  role_arn         = aws_iam_role.cross_account_role.arn
+  credentials_name = "${local.prefix}-creds"
+  depends_on       = [time_sleep.wait]
+}
+
+# Without sleeping after the IAM role creation, a Terraform error occurs.
+resource "time_sleep" "wait" {
+  depends_on      = [aws_iam_role.cross_account_role]
+  create_duration = "10s"
+}
+</CodeSnippet>
 <SectionTitle title="Databricks Resource Infrastructure">Databricks Resource Infrastructure</SectionTitle>
 <SectionTitle title="Conclusions">Conclusions</SectionTitle>
 </div>
